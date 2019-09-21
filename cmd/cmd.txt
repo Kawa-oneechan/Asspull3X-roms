@@ -1,0 +1,2260 @@
+
+cmd.elf:     file format elf32-m68k
+
+
+Disassembly of section .text:
+
+00020000 <initialize-0x20>:
+   20000:	4153           	.short 0x4153
+   20002:	5321           	subqb #1,%a1@-
+   20004:	4efa 001a      	jmp %pc@(20020 <initialize>)
+   20008:	436f           	.short 0x436f
+   2000a:	6d6d           	blts 20079 <LoadFile+0x25>
+   2000c:	616e           	bsrs 2007c <LoadFile+0x28>
+   2000e:	6420           	bccs 20030 <initialize+0x10>
+   20010:	4c69           	.short 0x4c69
+   20012:	6e65           	bgts 20079 <LoadFile+0x25>
+	...
+
+00020020 <initialize>:
+   20020:	46fc 2700      	movew #9984,%sr
+   20024:	41f9 0000 1b86 	lea 1b86 <_stext>,%a0
+   2002a:	43f9 0100 1000 	lea 1001000 <heap>,%a1
+   20030:	203c 0000 0004 	movel #4,%d0
+   20036:	e288           	lsrl #1,%d0
+   20038:	5340           	subqw #1,%d0
+   2003a:	32d8           	movew %a0@+,%a1@+
+   2003c:	51c8 fffc      	dbf %d0,2003a <initialize+0x1a>
+   20040:	41f9 01ff 0000 	lea 1ff0000 <__end+0xfeeff0>,%a0
+   20046:	2e48           	moveal %a0,%sp
+   20048:	4e56 fff8      	linkw %fp,#-8
+   2004c:	4eb9 0002 0978 	jsr 20978 <main>
+   20052:	60fe           	bras 20052 <initialize+0x32>
+
+00020054 <LoadFile>:
+   20054:	4fef fdc0      	lea %sp@(-576),%sp
+   20058:	2079 0100 1008 	moveal 1001008 <interface>,%a0
+   2005e:	2068 0024      	moveal %a0@(36),%a0
+   20062:	2068 003c      	moveal %a0@(60),%a0
+   20066:	200f           	movel %sp,%d0
+   20068:	2f00           	movel %d0,%sp@-
+   2006a:	2f2f 0248      	movel %sp@(584),%sp@-
+   2006e:	4e90           	jsr %a0@
+   20070:	508f           	addql #8,%sp
+   20072:	2f40 023c      	movel %d0,%sp@(572)
+   20076:	2079 0100 1008 	moveal 1001008 <interface>,%a0
+   2007c:	2068 0024      	moveal %a0@(36),%a0
+   20080:	2050           	moveal %a0@,%a0
+   20082:	4878 0001      	pea 1 <__DYNAMIC+0x1>
+   20086:	2f2f 0248      	movel %sp@(584),%sp@-
+   2008a:	701e           	moveq #30,%d0
+   2008c:	d08f           	addl %sp,%d0
+   2008e:	2f00           	movel %d0,%sp@-
+   20090:	4e90           	jsr %a0@
+   20092:	4fef 000c      	lea %sp@(12),%sp
+   20096:	2f40 023c      	movel %d0,%sp@(572)
+   2009a:	4aaf 023c      	tstl %sp@(572)
+   2009e:	6f08           	bles 200a8 <LoadFile+0x54>
+   200a0:	202f 023c      	movel %sp@(572),%d0
+   200a4:	4480           	negl %d0
+   200a6:	607c           	bras 20124 <LoadFile+0xd0>
+   200a8:	206f 0248      	moveal %sp@(584),%a0
+   200ac:	2010           	movel %a0@,%d0
+   200ae:	4a80           	tstl %d0
+   200b0:	6616           	bnes 200c8 <LoadFile+0x74>
+   200b2:	2017           	movel %sp@,%d0
+   200b4:	2f00           	movel %d0,%sp@-
+   200b6:	4eb9 0002 0eec 	jsr 20eec <malloc>
+   200bc:	588f           	addql #4,%sp
+   200be:	206f 0248      	moveal %sp@(584),%a0
+   200c2:	2080           	movel %d0,%a0@
+   200c4:	2f57 024c      	movel %sp@,%sp@(588)
+   200c8:	2017           	movel %sp@,%d0
+   200ca:	b0af 024c      	cmpl %sp@(588),%d0
+   200ce:	6c04           	bges 200d4 <LoadFile+0x80>
+   200d0:	2f57 024c      	movel %sp@,%sp@(588)
+   200d4:	2079 0100 1008 	moveal 1001008 <interface>,%a0
+   200da:	2068 0024      	moveal %a0@(36),%a0
+   200de:	2068 0008      	moveal %a0@(8),%a0
+   200e2:	202f 024c      	movel %sp@(588),%d0
+   200e6:	2f00           	movel %d0,%sp@-
+   200e8:	2f2f 024c      	movel %sp@(588),%sp@-
+   200ec:	701e           	moveq #30,%d0
+   200ee:	d08f           	addl %sp,%d0
+   200f0:	2f00           	movel %d0,%sp@-
+   200f2:	4e90           	jsr %a0@
+   200f4:	4fef 000c      	lea %sp@(12),%sp
+   200f8:	2f40 023c      	movel %d0,%sp@(572)
+   200fc:	4aaf 023c      	tstl %sp@(572)
+   20100:	6c06           	bges 20108 <LoadFile+0xb4>
+   20102:	202f 023c      	movel %sp@(572),%d0
+   20106:	601c           	bras 20124 <LoadFile+0xd0>
+   20108:	2079 0100 1008 	moveal 1001008 <interface>,%a0
+   2010e:	2068 0024      	moveal %a0@(36),%a0
+   20112:	2068 0004      	moveal %a0@(4),%a0
+   20116:	7016           	moveq #22,%d0
+   20118:	d08f           	addl %sp,%d0
+   2011a:	2f00           	movel %d0,%sp@-
+   2011c:	4e90           	jsr %a0@
+   2011e:	588f           	addql #4,%sp
+   20120:	202f 024c      	movel %sp@(588),%d0
+   20124:	4fef 0240      	lea %sp@(576),%sp
+   20128:	4e75           	rts
+
+0002012a <WaitForKey>:
+   2012a:	4e71           	nop
+   2012c:	207c 0d80 0006 	moveal #226492422,%a0
+   20132:	3010           	movew %a0@,%d0
+   20134:	4a40           	tstw %d0
+   20136:	67f4           	beqs 2012c <WaitForKey+0x2>
+   20138:	4e71           	nop
+   2013a:	207c 0d80 0006 	moveal #226492422,%a0
+   20140:	3010           	movew %a0@,%d0
+   20142:	4a40           	tstw %d0
+   20144:	66f4           	bnes 2013a <WaitForKey+0x10>
+   20146:	4e71           	nop
+   20148:	4e75           	rts
+
+0002014a <ShowPic>:
+   2014a:	4fef ffe0      	lea %sp@(-32),%sp
+   2014e:	2079 0100 1008 	moveal 1001008 <interface>,%a0
+   20154:	2068 0024      	moveal %a0@(36),%a0
+   20158:	2068 003c      	moveal %a0@(60),%a0
+   2015c:	43ef 0002      	lea %sp@(2),%a1
+   20160:	2f09           	movel %a1,%sp@-
+   20162:	2f2f 0028      	movel %sp@(40),%sp@-
+   20166:	4e90           	jsr %a0@
+   20168:	508f           	addql #8,%sp
+   2016a:	2f6f 0002 001c 	movel %sp@(2),%sp@(28)
+   20170:	202f 001c      	movel %sp@(28),%d0
+   20174:	2f00           	movel %d0,%sp@-
+   20176:	4eb9 0002 0eec 	jsr 20eec <malloc>
+   2017c:	588f           	addql #4,%sp
+   2017e:	2f40 0018      	movel %d0,%sp@(24)
+   20182:	4aaf 0018      	tstl %sp@(24)
+   20186:	6620           	bnes 201a8 <ShowPic+0x5e>
+   20188:	2079 0100 1008 	moveal 1001008 <interface>,%a0
+   2018e:	2068 0018      	moveal %a0@(24),%a0
+   20192:	2050           	moveal %a0@,%a0
+   20194:	4879 0002 1800 	pea 21800 <__DTOR_END__>
+   2019a:	4e90           	jsr %a0@
+   2019c:	588f           	addql #4,%sp
+   2019e:	4eba ff8a      	jsr %pc@(2012a <WaitForKey>)
+   201a2:	7001           	moveq #1,%d0
+   201a4:	6000 00b2      	braw 20258 <ShowPic+0x10e>
+   201a8:	2f2f 001c      	movel %sp@(28),%sp@-
+   201ac:	2f2f 001c      	movel %sp@(28),%sp@-
+   201b0:	2f2f 002c      	movel %sp@(44),%sp@-
+   201b4:	4eba fe9e      	jsr %pc@(20054 <LoadFile>)
+   201b8:	4fef 000c      	lea %sp@(12),%sp
+   201bc:	206f 0018      	moveal %sp@(24),%a0
+   201c0:	1028 0004      	moveb %a0@(4),%d0
+   201c4:	0c00 0004      	cmpib #4,%d0
+   201c8:	672c           	beqs 201f6 <ShowPic+0xac>
+   201ca:	206f 0018      	moveal %sp@(24),%a0
+   201ce:	1028 0004      	moveb %a0@(4),%d0
+   201d2:	0c00 0008      	cmpib #8,%d0
+   201d6:	671e           	beqs 201f6 <ShowPic+0xac>
+   201d8:	2079 0100 1008 	moveal 1001008 <interface>,%a0
+   201de:	2068 0018      	moveal %a0@(24),%a0
+   201e2:	2050           	moveal %a0@,%a0
+   201e4:	4879 0002 1813 	pea 21813 <__DTOR_END__+0x13>
+   201ea:	4e90           	jsr %a0@
+   201ec:	588f           	addql #4,%sp
+   201ee:	4eba ff3a      	jsr %pc@(2012a <WaitForKey>)
+   201f2:	7002           	moveq #2,%d0
+   201f4:	6062           	bras 20258 <ShowPic+0x10e>
+   201f6:	2079 0100 1008 	moveal 1001008 <interface>,%a0
+   201fc:	2068 001c      	moveal %a0@(28),%a0
+   20200:	2068 0004      	moveal %a0@(4),%a0
+   20204:	2f2f 0018      	movel %sp@(24),%sp@-
+   20208:	4e90           	jsr %a0@
+   2020a:	588f           	addql #4,%sp
+   2020c:	2f2f 0018      	movel %sp@(24),%sp@-
+   20210:	4eb9 0002 0f76 	jsr 20f76 <free>
+   20216:	588f           	addql #4,%sp
+   20218:	4eba ff10      	jsr %pc@(2012a <WaitForKey>)
+   2021c:	2079 0100 1008 	moveal 1001008 <interface>,%a0
+   20222:	2068 0018      	moveal %a0@(24),%a0
+   20226:	2068 0018      	moveal %a0@(24),%a0
+   2022a:	4e90           	jsr %a0@
+   2022c:	2079 0100 1008 	moveal 1001008 <interface>,%a0
+   20232:	2068 001c      	moveal %a0@(28),%a0
+   20236:	2050           	moveal %a0@,%a0
+   20238:	4e90           	jsr %a0@
+   2023a:	2079 0100 1008 	moveal 1001008 <interface>,%a0
+   20240:	2068 0020      	moveal %a0@(32),%a0
+   20244:	2050           	moveal %a0@,%a0
+   20246:	4878 00a0      	pea a0 <_sdata+0x9c>
+   2024a:	4e90           	jsr %a0@
+   2024c:	588f           	addql #4,%sp
+   2024e:	207c 0d80 000c 	moveal #226492428,%a0
+   20254:	4210           	clrb %a0@
+   20256:	7000           	moveq #0,%d0
+   20258:	4fef 0020      	lea %sp@(32),%sp
+   2025c:	4e75           	rts
+
+0002025e <ShowText>:
+   2025e:	4fef efe0      	lea %sp@(-4128),%sp
+   20262:	42af 1010      	clrl %sp@(4112)
+   20266:	42af 1006      	clrl %sp@(4102)
+   2026a:	7001           	moveq #1,%d0
+   2026c:	2f40 100c      	movel %d0,%sp@(4108)
+   20270:	200f           	movel %sp,%d0
+   20272:	223c 0000 1000 	movel #4096,%d1
+   20278:	2f01           	movel %d1,%sp@-
+   2027a:	42a7           	clrl %sp@-
+   2027c:	2f00           	movel %d0,%sp@-
+   2027e:	4eb9 0002 0dee 	jsr 20dee <memset>
+   20284:	4fef 000c      	lea %sp@(12),%sp
+   20288:	4879 0002 181f 	pea 2181f <__DTOR_END__+0x1f>
+   2028e:	2f2f 1028      	movel %sp@(4136),%sp@-
+   20292:	4eb9 0002 1416 	jsr 21416 <fopen>
+   20298:	508f           	addql #8,%sp
+   2029a:	2f40 1002      	movel %d0,%sp@(4098)
+   2029e:	2079 0100 1008 	moveal 1001008 <interface>,%a0
+   202a4:	2068 0018      	moveal %a0@(24),%a0
+   202a8:	2068 0018      	moveal %a0@(24),%a0
+   202ac:	4e90           	jsr %a0@
+   202ae:	42af 101c      	clrl %sp@(4124)
+   202b2:	4878 0051      	pea 51 <_sdata+0x4d>
+   202b6:	4eb9 0002 0eec 	jsr 20eec <malloc>
+   202bc:	588f           	addql #4,%sp
+   202be:	222f 101c      	movel %sp@(4124),%d1
+   202c2:	d281           	addl %d1,%d1
+   202c4:	d281           	addl %d1,%d1
+   202c6:	41ef 1020      	lea %sp@(4128),%a0
+   202ca:	d288           	addl %a0,%d1
+   202cc:	2041           	moveal %d1,%a0
+   202ce:	41e8 efe0      	lea %a0@(-4128),%a0
+   202d2:	2080           	movel %d0,%a0@
+   202d4:	6026           	bras 202fc <ShowText+0x9e>
+   202d6:	52af 101c      	addql #1,%sp@(4124)
+   202da:	4878 0051      	pea 51 <_sdata+0x4d>
+   202de:	4eb9 0002 0eec 	jsr 20eec <malloc>
+   202e4:	588f           	addql #4,%sp
+   202e6:	222f 101c      	movel %sp@(4124),%d1
+   202ea:	d281           	addl %d1,%d1
+   202ec:	d281           	addl %d1,%d1
+   202ee:	41ef 1020      	lea %sp@(4128),%a0
+   202f2:	d288           	addl %a0,%d1
+   202f4:	2041           	moveal %d1,%a0
+   202f6:	41e8 efe0      	lea %a0@(-4128),%a0
+   202fa:	2080           	movel %d0,%a0@
+   202fc:	202f 101c      	movel %sp@(4124),%d0
+   20300:	d080           	addl %d0,%d0
+   20302:	d080           	addl %d0,%d0
+   20304:	223c 0000 1020 	movel #4128,%d1
+   2030a:	d28f           	addl %sp,%d1
+   2030c:	d081           	addl %d1,%d0
+   2030e:	2040           	moveal %d0,%a0
+   20310:	41e8 efe0      	lea %a0@(-4128),%a0
+   20314:	2010           	movel %a0@,%d0
+   20316:	2f2f 1002      	movel %sp@(4098),%sp@-
+   2031a:	4878 0051      	pea 51 <_sdata+0x4d>
+   2031e:	2f00           	movel %d0,%sp@-
+   20320:	4eb9 0002 131a 	jsr 2131a <fgets>
+   20326:	4fef 000c      	lea %sp@(12),%sp
+   2032a:	4a80           	tstl %d0
+   2032c:	66a8           	bnes 202d6 <ShowText+0x78>
+   2032e:	2f6f 101c 1006 	movel %sp@(4124),%sp@(4102)
+   20334:	2f2f 1002      	movel %sp@(4098),%sp@-
+   20338:	4eb9 0002 14c0 	jsr 214c0 <fclose>
+   2033e:	588f           	addql #4,%sp
+   20340:	4aaf 100c      	tstl %sp@(4108)
+   20344:	6700 015e      	beqw 204a4 <ShowText+0x246>
+   20348:	2079 0100 1008 	moveal 1001008 <interface>,%a0
+   2034e:	2068 0018      	moveal %a0@(24),%a0
+   20352:	2068 0014      	moveal %a0@(20),%a0
+   20356:	4878 0007      	pea 7 <_sdata+0x3>
+   2035a:	42a7           	clrl %sp@-
+   2035c:	4e90           	jsr %a0@
+   2035e:	508f           	addql #8,%sp
+   20360:	2079 0100 1008 	moveal 1001008 <interface>,%a0
+   20366:	2068 0018      	moveal %a0@(24),%a0
+   2036a:	2068 0018      	moveal %a0@(24),%a0
+   2036e:	4e90           	jsr %a0@
+   20370:	2079 0100 1008 	moveal 1001008 <interface>,%a0
+   20376:	2068 0018      	moveal %a0@(24),%a0
+   2037a:	2068 0014      	moveal %a0@(20),%a0
+   2037e:	42a7           	clrl %sp@-
+   20380:	4878 0007      	pea 7 <_sdata+0x3>
+   20384:	4e90           	jsr %a0@
+   20386:	508f           	addql #8,%sp
+   20388:	42af 1018      	clrl %sp@(4120)
+   2038c:	6016           	bras 203a4 <ShowText+0x146>
+   2038e:	202f 1018      	movel %sp@(4120),%d0
+   20392:	d080           	addl %d0,%d0
+   20394:	2040           	moveal %d0,%a0
+   20396:	d1fc 0e00 0000 	addal #234881024,%a0
+   2039c:	30bc 0070      	movew #112,%a0@
+   203a0:	52af 1018      	addql #1,%sp@(4120)
+   203a4:	704f           	moveq #79,%d0
+   203a6:	b0af 1018      	cmpl %sp@(4120),%d0
+   203aa:	6ce2           	bges 2038e <ShowText+0x130>
+   203ac:	2079 0100 1008 	moveal 1001008 <interface>,%a0
+   203b2:	2068 0018      	moveal %a0@(24),%a0
+   203b6:	2050           	moveal %a0@,%a0
+   203b8:	2f2f 1006      	movel %sp@(4102),%sp@-
+   203bc:	2f2f 1014      	movel %sp@(4116),%sp@-
+   203c0:	2f2f 102c      	movel %sp@(4140),%sp@-
+   203c4:	4879 0002 1821 	pea 21821 <__DTOR_END__+0x21>
+   203ca:	4e90           	jsr %a0@
+   203cc:	4fef 0010      	lea %sp@(16),%sp
+   203d0:	42af 101c      	clrl %sp@(4124)
+   203d4:	6000 00c0      	braw 20496 <ShowText+0x238>
+   203d8:	202f 101c      	movel %sp@(4124),%d0
+   203dc:	d0af 1010      	addl %sp@(4112),%d0
+   203e0:	b0af 1006      	cmpl %sp@(4102),%d0
+   203e4:	6c00 00ac      	bgew 20492 <ShowText+0x234>
+   203e8:	222f 101c      	movel %sp@(4124),%d1
+   203ec:	5281           	addql #1,%d1
+   203ee:	2001           	movel %d1,%d0
+   203f0:	d080           	addl %d0,%d0
+   203f2:	d080           	addl %d0,%d0
+   203f4:	d081           	addl %d1,%d0
+   203f6:	e988           	lsll #4,%d0
+   203f8:	2f40 1014      	movel %d0,%sp@(4116)
+   203fc:	42af 1018      	clrl %sp@(4120)
+   20400:	607e           	bras 20480 <ShowText+0x222>
+   20402:	202f 101c      	movel %sp@(4124),%d0
+   20406:	d0af 1010      	addl %sp@(4112),%d0
+   2040a:	d080           	addl %d0,%d0
+   2040c:	d080           	addl %d0,%d0
+   2040e:	223c 0000 1020 	movel #4128,%d1
+   20414:	d28f           	addl %sp,%d1
+   20416:	d081           	addl %d1,%d0
+   20418:	2040           	moveal %d0,%a0
+   2041a:	41e8 efe0      	lea %a0@(-4128),%a0
+   2041e:	2210           	movel %a0@,%d1
+   20420:	202f 1018      	movel %sp@(4120),%d0
+   20424:	2041           	moveal %d1,%a0
+   20426:	d1c0           	addal %d0,%a0
+   20428:	1f50 100b      	moveb %a0@,%sp@(4107)
+   2042c:	4a2f 100b      	tstb %sp@(4107)
+   20430:	675a           	beqs 2048c <ShowText+0x22e>
+   20432:	0c2f 000a 100b 	cmpib #10,%sp@(4107)
+   20438:	6756           	beqs 20490 <ShowText+0x232>
+   2043a:	0c2f 000d 100b 	cmpib #13,%sp@(4107)
+   20440:	6738           	beqs 2047a <ShowText+0x21c>
+   20442:	0c2f 0009 100b 	cmpib #9,%sp@(4107)
+   20448:	6606           	bnes 20450 <ShowText+0x1f2>
+   2044a:	1f7c 0020 100b 	moveb #32,%sp@(4107)
+   20450:	202f 1014      	movel %sp@(4116),%d0
+   20454:	2200           	movel %d0,%d1
+   20456:	5281           	addql #1,%d1
+   20458:	2f41 1014      	movel %d1,%sp@(4116)
+   2045c:	d080           	addl %d0,%d0
+   2045e:	2040           	moveal %d0,%a0
+   20460:	d1fc 0e00 0000 	addal #234881024,%a0
+   20466:	102f 100b      	moveb %sp@(4107),%d0
+   2046a:	4880           	extw %d0
+   2046c:	48c0           	extl %d0
+   2046e:	e188           	lsll #8,%d0
+   20470:	2000           	movel %d0,%d0
+   20472:	0040 0007      	oriw #7,%d0
+   20476:	3080           	movew %d0,%a0@
+   20478:	6002           	bras 2047c <ShowText+0x21e>
+   2047a:	4e71           	nop
+   2047c:	52af 1018      	addql #1,%sp@(4120)
+   20480:	704f           	moveq #79,%d0
+   20482:	b0af 1018      	cmpl %sp@(4120),%d0
+   20486:	6c00 ff7a      	bgew 20402 <ShowText+0x1a4>
+   2048a:	6006           	bras 20492 <ShowText+0x234>
+   2048c:	4e71           	nop
+   2048e:	6002           	bras 20492 <ShowText+0x234>
+   20490:	4e71           	nop
+   20492:	52af 101c      	addql #1,%sp@(4124)
+   20496:	721c           	moveq #28,%d1
+   20498:	b2af 101c      	cmpl %sp@(4124),%d1
+   2049c:	6c00 ff3a      	bgew 203d8 <ShowText+0x17a>
+   204a0:	42af 100c      	clrl %sp@(4108)
+   204a4:	207c 0d80 0006 	moveal #226492422,%a0
+   204aa:	3f50 1000      	movew %a0@,%sp@(4096)
+   204ae:	7000           	moveq #0,%d0
+   204b0:	302f 1000      	movew %sp@(4096),%d0
+   204b4:	7200           	moveq #0,%d1
+   204b6:	4601           	notb %d1
+   204b8:	c081           	andl %d1,%d0
+   204ba:	4a80           	tstl %d0
+   204bc:	6f00 fe82      	blew 20340 <ShowText+0xe2>
+   204c0:	207c 0d80 0006 	moveal #226492422,%a0
+   204c6:	3010           	movew %a0@,%d0
+   204c8:	4a40           	tstw %d0
+   204ca:	6702           	beqs 204ce <ShowText+0x270>
+   204cc:	60f2           	bras 204c0 <ShowText+0x262>
+   204ce:	4e71           	nop
+   204d0:	0c6f 0025 1000 	cmpiw #37,%sp@(4096)
+   204d6:	6622           	bnes 204fa <ShowText+0x29c>
+   204d8:	4aaf 1010      	tstl %sp@(4112)
+   204dc:	6f00 fe62      	blew 20340 <ShowText+0xe2>
+   204e0:	70f6           	moveq #-10,%d0
+   204e2:	d1af 1010      	addl %d0,%sp@(4112)
+   204e6:	4aaf 1010      	tstl %sp@(4112)
+   204ea:	6c04           	bges 204f0 <ShowText+0x292>
+   204ec:	42af 1010      	clrl %sp@(4112)
+   204f0:	7201           	moveq #1,%d1
+   204f2:	2f41 100c      	movel %d1,%sp@(4108)
+   204f6:	6000 fe48      	braw 20340 <ShowText+0xe2>
+   204fa:	0c6f 0027 1000 	cmpiw #39,%sp@(4096)
+   20500:	661e           	bnes 20520 <ShowText+0x2c2>
+   20502:	701d           	moveq #29,%d0
+   20504:	d0af 1010      	addl %sp@(4112),%d0
+   20508:	b0af 1006      	cmpl %sp@(4102),%d0
+   2050c:	6c00 fe32      	bgew 20340 <ShowText+0xe2>
+   20510:	700a           	moveq #10,%d0
+   20512:	d1af 1010      	addl %d0,%sp@(4112)
+   20516:	7201           	moveq #1,%d1
+   20518:	2f41 100c      	movel %d1,%sp@(4108)
+   2051c:	6000 fe22      	braw 20340 <ShowText+0xe2>
+   20520:	0c6f 0028 1000 	cmpiw #40,%sp@(4096)
+   20526:	661c           	bnes 20544 <ShowText+0x2e6>
+   20528:	701d           	moveq #29,%d0
+   2052a:	d0af 1010      	addl %sp@(4112),%d0
+   2052e:	b0af 1006      	cmpl %sp@(4102),%d0
+   20532:	6c00 fe0c      	bgew 20340 <ShowText+0xe2>
+   20536:	52af 1010      	addql #1,%sp@(4112)
+   2053a:	7001           	moveq #1,%d0
+   2053c:	2f40 100c      	movel %d0,%sp@(4108)
+   20540:	6000 fdfe      	braw 20340 <ShowText+0xe2>
+   20544:	0c6f 0026 1000 	cmpiw #38,%sp@(4096)
+   2054a:	6620           	bnes 2056c <ShowText+0x30e>
+   2054c:	4aaf 1010      	tstl %sp@(4112)
+   20550:	6f00 fdee      	blew 20340 <ShowText+0xe2>
+   20554:	53af 1010      	subql #1,%sp@(4112)
+   20558:	4aaf 1010      	tstl %sp@(4112)
+   2055c:	6c04           	bges 20562 <ShowText+0x304>
+   2055e:	42af 1010      	clrl %sp@(4112)
+   20562:	7201           	moveq #1,%d1
+   20564:	2f41 100c      	movel %d1,%sp@(4108)
+   20568:	6000 fdd6      	braw 20340 <ShowText+0xe2>
+   2056c:	0c6f 001b 1000 	cmpiw #27,%sp@(4096)
+   20572:	6604           	bnes 20578 <ShowText+0x31a>
+   20574:	7002           	moveq #2,%d0
+   20576:	6022           	bras 2059a <ShowText+0x33c>
+   20578:	2079 0100 1008 	moveal 1001008 <interface>,%a0
+   2057e:	2068 0018      	moveal %a0@(24),%a0
+   20582:	2050           	moveal %a0@,%a0
+   20584:	7000           	moveq #0,%d0
+   20586:	302f 1000      	movew %sp@(4096),%d0
+   2058a:	2f00           	movel %d0,%sp@-
+   2058c:	4879 0002 182d 	pea 2182d <__DTOR_END__+0x2d>
+   20592:	4e90           	jsr %a0@
+   20594:	508f           	addql #8,%sp
+   20596:	6000 fda8      	braw 20340 <ShowText+0xe2>
+   2059a:	4fef 1020      	lea %sp@(4128),%sp
+   2059e:	4e75           	rts
+
+000205a0 <ShowFile>:
+   205a0:	598f           	subql #4,%sp
+   205a2:	4878 002e      	pea 2e <_sdata+0x2a>
+   205a6:	2f2f 000c      	movel %sp@(12),%sp@-
+   205aa:	4eb9 0002 15c4 	jsr 215c4 <strrchr>
+   205b0:	508f           	addql #8,%sp
+   205b2:	2200           	movel %d0,%d1
+   205b4:	5281           	addql #1,%d1
+   205b6:	2e81           	movel %d1,%sp@
+   205b8:	4879 0002 1830 	pea 21830 <__DTOR_END__+0x30>
+   205be:	2f2f 0004      	movel %sp@(4),%sp@-
+   205c2:	4eb9 0002 153c 	jsr 2153c <strcmp>
+   205c8:	508f           	addql #8,%sp
+   205ca:	4a80           	tstl %d0
+   205cc:	660c           	bnes 205da <ShowFile+0x3a>
+   205ce:	2f2f 0008      	movel %sp@(8),%sp@-
+   205d2:	4eba fc8a      	jsr %pc@(2025e <ShowText>)
+   205d6:	588f           	addql #4,%sp
+   205d8:	6056           	bras 20630 <ShowFile+0x90>
+   205da:	4879 0002 1834 	pea 21834 <__DTOR_END__+0x34>
+   205e0:	2f2f 0004      	movel %sp@(4),%sp@-
+   205e4:	4eb9 0002 153c 	jsr 2153c <strcmp>
+   205ea:	508f           	addql #8,%sp
+   205ec:	4a80           	tstl %d0
+   205ee:	660c           	bnes 205fc <ShowFile+0x5c>
+   205f0:	2f2f 0008      	movel %sp@(8),%sp@-
+   205f4:	4eba fb54      	jsr %pc@(2014a <ShowPic>)
+   205f8:	588f           	addql #4,%sp
+   205fa:	6034           	bras 20630 <ShowFile+0x90>
+   205fc:	2079 0100 1008 	moveal 1001008 <interface>,%a0
+   20602:	2068 0018      	moveal %a0@(24),%a0
+   20606:	2068 0010      	moveal %a0@(16),%a0
+   2060a:	42a7           	clrl %sp@-
+   2060c:	42a7           	clrl %sp@-
+   2060e:	4e90           	jsr %a0@
+   20610:	508f           	addql #8,%sp
+   20612:	2079 0100 1008 	moveal 1001008 <interface>,%a0
+   20618:	2068 0018      	moveal %a0@(24),%a0
+   2061c:	2050           	moveal %a0@,%a0
+   2061e:	2f17           	movel %sp@,%sp@-
+   20620:	4879 0002 1838 	pea 21838 <__DTOR_END__+0x38>
+   20626:	4e90           	jsr %a0@
+   20628:	508f           	addql #8,%sp
+   2062a:	4eba fafe      	jsr %pc@(2012a <WaitForKey>)
+   2062e:	7002           	moveq #2,%d0
+   20630:	588f           	addql #4,%sp
+   20632:	4e75           	rts
+
+00020634 <ListFiles>:
+   20634:	4fef fea8      	lea %sp@(-344),%sp
+   20638:	48e7 3e00      	moveml %d2-%d6,%sp@-
+   2063c:	42af 0168      	clrl %sp@(360)
+   20640:	42af 0164      	clrl %sp@(356)
+   20644:	42af 0160      	clrl %sp@(352)
+   20648:	207c 0d80 0032 	moveal #226492466,%a0
+   2064e:	1010           	moveb %a0@,%d0
+   20650:	4880           	extw %d0
+   20652:	48c0           	extl %d0
+   20654:	7201           	moveq #1,%d1
+   20656:	c081           	andl %d1,%d0
+   20658:	4a80           	tstl %d0
+   2065a:	661a           	bnes 20676 <ListFiles+0x42>
+   2065c:	2079 0100 1008 	moveal 1001008 <interface>,%a0
+   20662:	2068 0018      	moveal %a0@(24),%a0
+   20666:	2050           	moveal %a0@,%a0
+   20668:	4879 0002 1859 	pea 21859 <__DTOR_END__+0x59>
+   2066e:	4e90           	jsr %a0@
+   20670:	588f           	addql #4,%sp
+   20672:	6000 02fa      	braw 2096e <ListFiles+0x33a>
+   20676:	2079 0100 1008 	moveal 1001008 <interface>,%a0
+   2067c:	2068 0024      	moveal %a0@(36),%a0
+   20680:	2068 0058      	moveal %a0@(88),%a0
+   20684:	7016           	moveq #22,%d0
+   20686:	d08f           	addl %sp,%d0
+   20688:	2f00           	movel %d0,%sp@-
+   2068a:	4e90           	jsr %a0@
+   2068c:	588f           	addql #4,%sp
+   2068e:	2f40 015c      	movel %d0,%sp@(348)
+   20692:	2079 0100 1008 	moveal 1001008 <interface>,%a0
+   20698:	2068 0018      	moveal %a0@(24),%a0
+   2069c:	2050           	moveal %a0@,%a0
+   2069e:	102f 0016      	moveb %sp@(22),%d0
+   206a2:	4a00           	tstb %d0
+   206a4:	6706           	beqs 206ac <ListFiles+0x78>
+   206a6:	7016           	moveq #22,%d0
+   206a8:	d08f           	addl %sp,%d0
+   206aa:	6006           	bras 206b2 <ListFiles+0x7e>
+   206ac:	203c 0002 1864 	movel #137316,%d0
+   206b2:	2f00           	movel %d0,%sp@-
+   206b4:	4879 0002 1869 	pea 21869 <__DTOR_END__+0x69>
+   206ba:	4e90           	jsr %a0@
+   206bc:	508f           	addql #8,%sp
+   206be:	4aaf 0170      	tstl %sp@(368)
+   206c2:	662c           	bnes 206f0 <ListFiles+0xbc>
+   206c4:	2c3c 0000 016c 	movel #364,%d6
+   206ca:	dc8f           	addl %sp,%d6
+   206cc:	0686 ffff feaa 	addil #-342,%d6
+   206d2:	2f46 0170      	movel %d6,%sp@(368)
+   206d6:	4879 0002 187b 	pea 2187b <__DTOR_END__+0x7b>
+   206dc:	4878 0100      	pea 100 <_sdata+0xfc>
+   206e0:	701e           	moveq #30,%d0
+   206e2:	d08f           	addl %sp,%d0
+   206e4:	2f00           	movel %d0,%sp@-
+   206e6:	4eb9 0002 0cbc 	jsr 20cbc <strcpy_s>
+   206ec:	4fef 000c      	lea %sp@(12),%sp
+   206f0:	2079 0100 1008 	moveal 1001008 <interface>,%a0
+   206f6:	2068 0018      	moveal %a0@(24),%a0
+   206fa:	2050           	moveal %a0@,%a0
+   206fc:	2f2f 0170      	movel %sp@(368),%sp@-
+   20700:	4879 0002 187d 	pea 2187d <__DTOR_END__+0x7d>
+   20706:	4e90           	jsr %a0@
+   20708:	508f           	addql #8,%sp
+   2070a:	2079 0100 1008 	moveal 1001008 <interface>,%a0
+   20710:	2068 0024      	moveal %a0@(36),%a0
+   20714:	2068 0028      	moveal %a0@(40),%a0
+   20718:	2f2f 0170      	movel %sp@(368),%sp@-
+   2071c:	43ef 0130      	lea %sp@(304),%a1
+   20720:	2f09           	movel %a1,%sp@-
+   20722:	4e90           	jsr %a0@
+   20724:	508f           	addql #8,%sp
+   20726:	2f40 015c      	movel %d0,%sp@(348)
+   2072a:	4aaf 015c      	tstl %sp@(348)
+   2072e:	6600 01e6      	bnew 20916 <ListFiles+0x2e2>
+   20732:	2079 0100 1008 	moveal 1001008 <interface>,%a0
+   20738:	2068 0024      	moveal %a0@(36),%a0
+   2073c:	2068 0030      	moveal %a0@(48),%a0
+   20740:	43ef 0116      	lea %sp@(278),%a1
+   20744:	2f09           	movel %a1,%sp@-
+   20746:	43ef 0130      	lea %sp@(304),%a1
+   2074a:	2f09           	movel %a1,%sp@-
+   2074c:	4e90           	jsr %a0@
+   2074e:	508f           	addql #8,%sp
+   20750:	2f40 015c      	movel %d0,%sp@(348)
+   20754:	4aaf 015c      	tstl %sp@(348)
+   20758:	6600 01bc      	bnew 20916 <ListFiles+0x2e2>
+   2075c:	102f 011f      	moveb %sp@(287),%d0
+   20760:	4a00           	tstb %d0
+   20762:	6700 01b2      	beqw 20916 <ListFiles+0x2e2>
+   20766:	4aaf 0174      	tstl %sp@(372)
+   2076a:	6600 00f6      	bnew 20862 <ListFiles+0x22e>
+   2076e:	2079 0100 1008 	moveal 1001008 <interface>,%a0
+   20774:	2068 0018      	moveal %a0@(24),%a0
+   20778:	2050           	moveal %a0@,%a0
+   2077a:	302f 011c      	movew %sp@(284),%d0
+   2077e:	48c0           	extl %d0
+   20780:	7a0f           	moveq #15,%d5
+   20782:	ca80           	andl %d0,%d5
+   20784:	302f 011c      	movew %sp@(284),%d0
+   20788:	ea40           	asrw #5,%d0
+   2078a:	48c0           	extl %d0
+   2078c:	783f           	moveq #63,%d4
+   2078e:	c880           	andl %d0,%d4
+   20790:	302f 011c      	movew %sp@(284),%d0
+   20794:	720b           	moveq #11,%d1
+   20796:	e260           	asrw %d1,%d0
+   20798:	48c0           	extl %d0
+   2079a:	761f           	moveq #31,%d3
+   2079c:	c680           	andl %d0,%d3
+   2079e:	302f 011a      	movew %sp@(282),%d0
+   207a2:	48c0           	extl %d0
+   207a4:	741f           	moveq #31,%d2
+   207a6:	c480           	andl %d0,%d2
+   207a8:	302f 011a      	movew %sp@(282),%d0
+   207ac:	ea40           	asrw #5,%d0
+   207ae:	48c0           	extl %d0
+   207b0:	720f           	moveq #15,%d1
+   207b2:	c280           	andl %d0,%d1
+   207b4:	302f 011a      	movew %sp@(282),%d0
+   207b8:	7c09           	moveq #9,%d6
+   207ba:	ec60           	asrw %d6,%d0
+   207bc:	48c0           	extl %d0
+   207be:	7c7f           	moveq #127,%d6
+   207c0:	c086           	andl %d6,%d0
+   207c2:	0680 0000 07bc 	addil #1980,%d0
+   207c8:	2f05           	movel %d5,%sp@-
+   207ca:	2f04           	movel %d4,%sp@-
+   207cc:	2f03           	movel %d3,%sp@-
+   207ce:	2f02           	movel %d2,%sp@-
+   207d0:	2f01           	movel %d1,%sp@-
+   207d2:	2f00           	movel %d0,%sp@-
+   207d4:	4879 0002 1891 	pea 21891 <__DTOR_END__+0x91>
+   207da:	4e90           	jsr %a0@
+   207dc:	4fef 001c      	lea %sp@(28),%sp
+   207e0:	102f 011e      	moveb %sp@(286),%d0
+   207e4:	4880           	extw %d0
+   207e6:	48c0           	extl %d0
+   207e8:	7210           	moveq #16,%d1
+   207ea:	c081           	andl %d1,%d0
+   207ec:	4a80           	tstl %d0
+   207ee:	6728           	beqs 20818 <ListFiles+0x1e4>
+   207f0:	52af 0164      	addql #1,%sp@(356)
+   207f4:	2079 0100 1008 	moveal 1001008 <interface>,%a0
+   207fa:	2068 0018      	moveal %a0@(24),%a0
+   207fe:	2050           	moveal %a0@,%a0
+   20800:	43ef 0116      	lea %sp@(278),%a1
+   20804:	43e9 0009      	lea %a1@(9),%a1
+   20808:	2f09           	movel %a1,%sp@-
+   2080a:	4879 0002 18b4 	pea 218b4 <__DTOR_END__+0xb4>
+   20810:	4e90           	jsr %a0@
+   20812:	508f           	addql #8,%sp
+   20814:	6000 ff1c      	braw 20732 <ListFiles+0xfe>
+   20818:	202f 0116      	movel %sp@(278),%d0
+   2081c:	d1af 0160      	addl %d0,%sp@(352)
+   20820:	102f 011e      	moveb %sp@(286),%d0
+   20824:	4880           	extw %d0
+   20826:	48c0           	extl %d0
+   20828:	7c02           	moveq #2,%d6
+   2082a:	c086           	andl %d6,%d0
+   2082c:	4a80           	tstl %d0
+   2082e:	6600 00da      	bnew 2090a <ListFiles+0x2d6>
+   20832:	52af 0168      	addql #1,%sp@(360)
+   20836:	2079 0100 1008 	moveal 1001008 <interface>,%a0
+   2083c:	2068 0018      	moveal %a0@(24),%a0
+   20840:	2050           	moveal %a0@,%a0
+   20842:	202f 0116      	movel %sp@(278),%d0
+   20846:	2f00           	movel %d0,%sp@-
+   20848:	43ef 011a      	lea %sp@(282),%a1
+   2084c:	43e9 0009      	lea %a1@(9),%a1
+   20850:	2f09           	movel %a1,%sp@-
+   20852:	4879 0002 18c3 	pea 218c3 <__DTOR_END__+0xc3>
+   20858:	4e90           	jsr %a0@
+   2085a:	4fef 000c      	lea %sp@(12),%sp
+   2085e:	6000 fed2      	braw 20732 <ListFiles+0xfe>
+   20862:	7001           	moveq #1,%d0
+   20864:	b0af 0174      	cmpl %sp@(372),%d0
+   20868:	6600 fec8      	bnew 20732 <ListFiles+0xfe>
+   2086c:	102f 011e      	moveb %sp@(286),%d0
+   20870:	4880           	extw %d0
+   20872:	48c0           	extl %d0
+   20874:	7210           	moveq #16,%d1
+   20876:	c081           	andl %d1,%d0
+   20878:	4a80           	tstl %d0
+   2087a:	674e           	beqs 208ca <ListFiles+0x296>
+   2087c:	52af 0164      	addql #1,%sp@(356)
+   20880:	2079 0100 1008 	moveal 1001008 <interface>,%a0
+   20886:	2068 0018      	moveal %a0@(24),%a0
+   2088a:	2068 0004      	moveal %a0@(4),%a0
+   2088e:	43ef 0116      	lea %sp@(278),%a1
+   20892:	43e9 0009      	lea %a1@(9),%a1
+   20896:	2f09           	movel %a1,%sp@-
+   20898:	4879 0002 18cf 	pea 218cf <__DTOR_END__+0xcf>
+   2089e:	701e           	moveq #30,%d0
+   208a0:	d08f           	addl %sp,%d0
+   208a2:	2f00           	movel %d0,%sp@-
+   208a4:	4e90           	jsr %a0@
+   208a6:	4fef 000c      	lea %sp@(12),%sp
+   208aa:	2079 0100 1008 	moveal 1001008 <interface>,%a0
+   208b0:	2068 0018      	moveal %a0@(24),%a0
+   208b4:	2050           	moveal %a0@,%a0
+   208b6:	7016           	moveq #22,%d0
+   208b8:	d08f           	addl %sp,%d0
+   208ba:	2f00           	movel %d0,%sp@-
+   208bc:	4879 0002 18d4 	pea 218d4 <__DTOR_END__+0xd4>
+   208c2:	4e90           	jsr %a0@
+   208c4:	508f           	addql #8,%sp
+   208c6:	6000 fe6a      	braw 20732 <ListFiles+0xfe>
+   208ca:	202f 0116      	movel %sp@(278),%d0
+   208ce:	d1af 0160      	addl %d0,%sp@(352)
+   208d2:	102f 011e      	moveb %sp@(286),%d0
+   208d6:	4880           	extw %d0
+   208d8:	48c0           	extl %d0
+   208da:	7c02           	moveq #2,%d6
+   208dc:	c086           	andl %d6,%d0
+   208de:	4a80           	tstl %d0
+   208e0:	662e           	bnes 20910 <ListFiles+0x2dc>
+   208e2:	52af 0168      	addql #1,%sp@(360)
+   208e6:	2079 0100 1008 	moveal 1001008 <interface>,%a0
+   208ec:	2068 0018      	moveal %a0@(24),%a0
+   208f0:	2050           	moveal %a0@,%a0
+   208f2:	43ef 0116      	lea %sp@(278),%a1
+   208f6:	43e9 0009      	lea %a1@(9),%a1
+   208fa:	2f09           	movel %a1,%sp@-
+   208fc:	4879 0002 18d4 	pea 218d4 <__DTOR_END__+0xd4>
+   20902:	4e90           	jsr %a0@
+   20904:	508f           	addql #8,%sp
+   20906:	6000 fe2a      	braw 20732 <ListFiles+0xfe>
+   2090a:	4e71           	nop
+   2090c:	6000 fe24      	braw 20732 <ListFiles+0xfe>
+   20910:	4e71           	nop
+   20912:	6000 fe1e      	braw 20732 <ListFiles+0xfe>
+   20916:	2079 0100 1008 	moveal 1001008 <interface>,%a0
+   2091c:	2068 0024      	moveal %a0@(36),%a0
+   20920:	2068 002c      	moveal %a0@(44),%a0
+   20924:	43ef 012c      	lea %sp@(300),%a1
+   20928:	2f09           	movel %a1,%sp@-
+   2092a:	4e90           	jsr %a0@
+   2092c:	588f           	addql #4,%sp
+   2092e:	2f40 015c      	movel %d0,%sp@(348)
+   20932:	2079 0100 1008 	moveal 1001008 <interface>,%a0
+   20938:	2068 0018      	moveal %a0@(24),%a0
+   2093c:	2050           	moveal %a0@,%a0
+   2093e:	2f2f 0160      	movel %sp@(352),%sp@-
+   20942:	4879 0002 18db 	pea 218db <__DTOR_END__+0xdb>
+   20948:	4e90           	jsr %a0@
+   2094a:	508f           	addql #8,%sp
+   2094c:	2079 0100 1008 	moveal 1001008 <interface>,%a0
+   20952:	2068 0018      	moveal %a0@(24),%a0
+   20956:	2050           	moveal %a0@,%a0
+   20958:	203c 0016 8000 	movel #1474560,%d0
+   2095e:	90af 0160      	subl %sp@(352),%d0
+   20962:	2f00           	movel %d0,%sp@-
+   20964:	4879 0002 18ed 	pea 218ed <__DTOR_END__+0xed>
+   2096a:	4e90           	jsr %a0@
+   2096c:	508f           	addql #8,%sp
+   2096e:	4cdf 007c      	moveml %sp@+,%d2-%d6
+   20972:	4fef 0158      	lea %sp@(344),%sp
+   20976:	4e75           	rts
+
+00020978 <main>:
+   20978:	4fef fce4      	lea %sp@(-796),%sp
+   2097c:	23fc 0100 0000 	movel #16777216,1001008 <interface>
+   20982:	0100 1008 
+   20986:	2079 0100 1008 	moveal 1001008 <interface>,%a0
+   2098c:	2068 0020      	moveal %a0@(32),%a0
+   20990:	2050           	moveal %a0@,%a0
+   20992:	4878 00a0      	pea a0 <_sdata+0x9c>
+   20996:	4e90           	jsr %a0@
+   20998:	588f           	addql #4,%sp
+   2099a:	2f7c 2009 0a00 	movel #537463296,%sp@(260)
+   209a0:	0104 
+   209a2:	42af 0318      	clrl %sp@(792)
+   209a6:	42af 0100      	clrl %sp@(256)
+   209aa:	207c 0d80 0005 	moveal #226492421,%a0
+   209b0:	4210           	clrb %a0@
+   209b2:	2079 0100 1008 	moveal 1001008 <interface>,%a0
+   209b8:	2068 0024      	moveal %a0@(36),%a0
+   209bc:	2068 0054      	moveal %a0@(84),%a0
+   209c0:	4878 0100      	pea 100 <_sdata+0xfc>
+   209c4:	200f           	movel %sp,%d0
+   209c6:	0680 0000 020c 	addil #524,%d0
+   209cc:	2f00           	movel %d0,%sp@-
+   209ce:	4e90           	jsr %a0@
+   209d0:	508f           	addql #8,%sp
+   209d2:	2079 0100 1008 	moveal 1001008 <interface>,%a0
+   209d8:	2068 0018      	moveal %a0@(24),%a0
+   209dc:	2050           	moveal %a0@,%a0
+   209de:	200f           	movel %sp,%d0
+   209e0:	0680 0000 0208 	addil #520,%d0
+   209e6:	2f00           	movel %d0,%sp@-
+   209e8:	4879 0002 1901 	pea 21901 <__DTOR_END__+0x101>
+   209ee:	4e90           	jsr %a0@
+   209f0:	508f           	addql #8,%sp
+   209f2:	4878 ffff      	pea ffffffff <__end+0xfeffefef>
+   209f6:	4878 0100      	pea 100 <_sdata+0xfc>
+   209fa:	200f           	movel %sp,%d0
+   209fc:	0680 0000 0110 	addil #272,%d0
+   20a02:	2f00           	movel %d0,%sp@-
+   20a04:	4eb9 0002 131a 	jsr 2131a <fgets>
+   20a0a:	4fef 000c      	lea %sp@(12),%sp
+   20a0e:	203c 0000 031c 	movel #796,%d0
+   20a14:	d08f           	addl %sp,%d0
+   20a16:	0680 ffff fdec 	addil #-532,%d0
+   20a1c:	2f40 0318      	movel %d0,%sp@(792)
+   20a20:	6004           	bras 20a26 <main+0xae>
+   20a22:	52af 0318      	addql #1,%sp@(792)
+   20a26:	206f 0318      	moveal %sp@(792),%a0
+   20a2a:	1010           	moveb %a0@,%d0
+   20a2c:	0c00 0020      	cmpib #32,%d0
+   20a30:	67f0           	beqs 20a22 <main+0xaa>
+   20a32:	200f           	movel %sp,%d0
+   20a34:	0680 0000 0108 	addil #264,%d0
+   20a3a:	2f00           	movel %d0,%sp@-
+   20a3c:	4eb9 0002 15a8 	jsr 215a8 <strlen>
+   20a42:	588f           	addql #4,%sp
+   20a44:	4a80           	tstl %d0
+   20a46:	6f00 026e      	blew 20cb6 <main+0x33e>
+   20a4a:	200f           	movel %sp,%d0
+   20a4c:	0680 0000 0100 	addil #256,%d0
+   20a52:	2f00           	movel %d0,%sp@-
+   20a54:	200f           	movel %sp,%d0
+   20a56:	0680 0000 0108 	addil #264,%d0
+   20a5c:	2f00           	movel %d0,%sp@-
+   20a5e:	2f2f 0320      	movel %sp@(800),%sp@-
+   20a62:	4eb9 0002 16ea 	jsr 216ea <strtok_r>
+   20a68:	4fef 000c      	lea %sp@(12),%sp
+   20a6c:	2f40 0314      	movel %d0,%sp@(788)
+   20a70:	4879 0002 1905 	pea 21905 <__DTOR_END__+0x105>
+   20a76:	2f2f 0318      	movel %sp@(792),%sp@-
+   20a7a:	4eb9 0002 153c 	jsr 2153c <strcmp>
+   20a80:	508f           	addql #8,%sp
+   20a82:	4a80           	tstl %d0
+   20a84:	6600 00dc      	bnew 20b62 <main+0x1ea>
+   20a88:	200f           	movel %sp,%d0
+   20a8a:	0680 0000 0100 	addil #256,%d0
+   20a90:	2f00           	movel %d0,%sp@-
+   20a92:	200f           	movel %sp,%d0
+   20a94:	0680 0000 0108 	addil #264,%d0
+   20a9a:	2f00           	movel %d0,%sp@-
+   20a9c:	42a7           	clrl %sp@-
+   20a9e:	4eb9 0002 16ea 	jsr 216ea <strtok_r>
+   20aa4:	4fef 000c      	lea %sp@(12),%sp
+   20aa8:	2f40 0314      	movel %d0,%sp@(788)
+   20aac:	2079 0100 1008 	moveal 1001008 <interface>,%a0
+   20ab2:	2068 0018      	moveal %a0@(24),%a0
+   20ab6:	2050           	moveal %a0@,%a0
+   20ab8:	2f2f 0314      	movel %sp@(788),%sp@-
+   20abc:	4879 0002 1908 	pea 21908 <__DTOR_END__+0x108>
+   20ac2:	4e90           	jsr %a0@
+   20ac4:	508f           	addql #8,%sp
+   20ac6:	2079 0100 1008 	moveal 1001008 <interface>,%a0
+   20acc:	2068 0024      	moveal %a0@(36),%a0
+   20ad0:	2068 0050      	moveal %a0@(80),%a0
+   20ad4:	2f2f 0314      	movel %sp@(788),%sp@-
+   20ad8:	4e90           	jsr %a0@
+   20ada:	588f           	addql #4,%sp
+   20adc:	2f40 0310      	movel %d0,%sp@(784)
+   20ae0:	4aaf 0310      	tstl %sp@(784)
+   20ae4:	6762           	beqs 20b48 <main+0x1d0>
+   20ae6:	7005           	moveq #5,%d0
+   20ae8:	b0af 0310      	cmpl %sp@(784),%d0
+   20aec:	661a           	bnes 20b08 <main+0x190>
+   20aee:	2079 0100 1008 	moveal 1001008 <interface>,%a0
+   20af4:	2068 0018      	moveal %a0@(24),%a0
+   20af8:	2050           	moveal %a0@,%a0
+   20afa:	4879 0002 1911 	pea 21911 <__DTOR_END__+0x111>
+   20b00:	4e90           	jsr %a0@
+   20b02:	588f           	addql #4,%sp
+   20b04:	6000 feac      	braw 209b2 <main+0x3a>
+   20b08:	7006           	moveq #6,%d0
+   20b0a:	b0af 0310      	cmpl %sp@(784),%d0
+   20b0e:	661a           	bnes 20b2a <main+0x1b2>
+   20b10:	2079 0100 1008 	moveal 1001008 <interface>,%a0
+   20b16:	2068 0018      	moveal %a0@(24),%a0
+   20b1a:	2050           	moveal %a0@,%a0
+   20b1c:	4879 0002 192b 	pea 2192b <__DTOR_END__+0x12b>
+   20b22:	4e90           	jsr %a0@
+   20b24:	588f           	addql #4,%sp
+   20b26:	6000 fe8a      	braw 209b2 <main+0x3a>
+   20b2a:	2079 0100 1008 	moveal 1001008 <interface>,%a0
+   20b30:	2068 0018      	moveal %a0@(24),%a0
+   20b34:	2050           	moveal %a0@,%a0
+   20b36:	2f2f 0310      	movel %sp@(784),%sp@-
+   20b3a:	4879 0002 194d 	pea 2194d <__DTOR_END__+0x14d>
+   20b40:	4e90           	jsr %a0@
+   20b42:	508f           	addql #8,%sp
+   20b44:	6000 fe6c      	braw 209b2 <main+0x3a>
+   20b48:	2079 0100 1008 	moveal 1001008 <interface>,%a0
+   20b4e:	2068 0018      	moveal %a0@(24),%a0
+   20b52:	2050           	moveal %a0@,%a0
+   20b54:	4879 0002 1960 	pea 21960 <__DTOR_END__+0x160>
+   20b5a:	4e90           	jsr %a0@
+   20b5c:	588f           	addql #4,%sp
+   20b5e:	6000 fe52      	braw 209b2 <main+0x3a>
+   20b62:	4879 0002 1964 	pea 21964 <__DTOR_END__+0x164>
+   20b68:	2f2f 0318      	movel %sp@(792),%sp@-
+   20b6c:	4eb9 0002 153c 	jsr 2153c <strcmp>
+   20b72:	508f           	addql #8,%sp
+   20b74:	4a80           	tstl %d0
+   20b76:	6618           	bnes 20b90 <main+0x218>
+   20b78:	4878 0001      	pea 1 <__DYNAMIC+0x1>
+   20b7c:	200f           	movel %sp,%d0
+   20b7e:	0680 0000 020c 	addil #524,%d0
+   20b84:	2f00           	movel %d0,%sp@-
+   20b86:	4eba faac      	jsr %pc@(20634 <ListFiles>)
+   20b8a:	508f           	addql #8,%sp
+   20b8c:	6000 fe24      	braw 209b2 <main+0x3a>
+   20b90:	4879 0002 1968 	pea 21968 <__DTOR_END__+0x168>
+   20b96:	2f2f 0318      	movel %sp@(792),%sp@-
+   20b9a:	4eb9 0002 153c 	jsr 2153c <strcmp>
+   20ba0:	508f           	addql #8,%sp
+   20ba2:	4a80           	tstl %d0
+   20ba4:	6672           	bnes 20c18 <main+0x2a0>
+   20ba6:	200f           	movel %sp,%d0
+   20ba8:	0680 0000 0100 	addil #256,%d0
+   20bae:	2f00           	movel %d0,%sp@-
+   20bb0:	200f           	movel %sp,%d0
+   20bb2:	0680 0000 0108 	addil #264,%d0
+   20bb8:	2f00           	movel %d0,%sp@-
+   20bba:	42a7           	clrl %sp@-
+   20bbc:	4eb9 0002 16ea 	jsr 216ea <strtok_r>
+   20bc2:	4fef 000c      	lea %sp@(12),%sp
+   20bc6:	2f40 0314      	movel %d0,%sp@(788)
+   20bca:	2f6f 0314 030c 	movel %sp@(788),%sp@(780)
+   20bd0:	200f           	movel %sp,%d0
+   20bd2:	0680 0000 0100 	addil #256,%d0
+   20bd8:	2f00           	movel %d0,%sp@-
+   20bda:	200f           	movel %sp,%d0
+   20bdc:	0680 0000 0108 	addil #264,%d0
+   20be2:	2f00           	movel %d0,%sp@-
+   20be4:	42a7           	clrl %sp@-
+   20be6:	4eb9 0002 16ea 	jsr 216ea <strtok_r>
+   20bec:	4fef 000c      	lea %sp@(12),%sp
+   20bf0:	2f40 0314      	movel %d0,%sp@(788)
+   20bf4:	2f6f 0314 0308 	movel %sp@(788),%sp@(776)
+   20bfa:	2079 0100 1008 	moveal 1001008 <interface>,%a0
+   20c00:	2068 0024      	moveal %a0@(36),%a0
+   20c04:	2068 0044      	moveal %a0@(68),%a0
+   20c08:	2f2f 0308      	movel %sp@(776),%sp@-
+   20c0c:	2f2f 0310      	movel %sp@(784),%sp@-
+   20c10:	4e90           	jsr %a0@
+   20c12:	508f           	addql #8,%sp
+   20c14:	6000 fd9c      	braw 209b2 <main+0x3a>
+   20c18:	4879 0002 196c 	pea 2196c <__DTOR_END__+0x16c>
+   20c1e:	2f2f 0318      	movel %sp@(792),%sp@-
+   20c22:	4eb9 0002 153c 	jsr 2153c <strcmp>
+   20c28:	508f           	addql #8,%sp
+   20c2a:	4a80           	tstl %d0
+   20c2c:	663e           	bnes 20c6c <main+0x2f4>
+   20c2e:	200f           	movel %sp,%d0
+   20c30:	0680 0000 0100 	addil #256,%d0
+   20c36:	2f00           	movel %d0,%sp@-
+   20c38:	200f           	movel %sp,%d0
+   20c3a:	0680 0000 0108 	addil #264,%d0
+   20c40:	2f00           	movel %d0,%sp@-
+   20c42:	42a7           	clrl %sp@-
+   20c44:	4eb9 0002 16ea 	jsr 216ea <strtok_r>
+   20c4a:	4fef 000c      	lea %sp@(12),%sp
+   20c4e:	2f40 0314      	movel %d0,%sp@(788)
+   20c52:	2079 0100 1008 	moveal 1001008 <interface>,%a0
+   20c58:	2068 0024      	moveal %a0@(36),%a0
+   20c5c:	2068 0040      	moveal %a0@(64),%a0
+   20c60:	2f2f 0314      	movel %sp@(788),%sp@-
+   20c64:	4e90           	jsr %a0@
+   20c66:	588f           	addql #4,%sp
+   20c68:	6000 fd48      	braw 209b2 <main+0x3a>
+   20c6c:	4879 0002 1970 	pea 21970 <__DTOR_END__+0x170>
+   20c72:	2f2f 0318      	movel %sp@(792),%sp@-
+   20c76:	4eb9 0002 153c 	jsr 2153c <strcmp>
+   20c7c:	508f           	addql #8,%sp
+   20c7e:	4a80           	tstl %d0
+   20c80:	6600 fd30      	bnew 209b2 <main+0x3a>
+   20c84:	200f           	movel %sp,%d0
+   20c86:	0680 0000 0100 	addil #256,%d0
+   20c8c:	2f00           	movel %d0,%sp@-
+   20c8e:	200f           	movel %sp,%d0
+   20c90:	0680 0000 0108 	addil #264,%d0
+   20c96:	2f00           	movel %d0,%sp@-
+   20c98:	42a7           	clrl %sp@-
+   20c9a:	4eb9 0002 16ea 	jsr 216ea <strtok_r>
+   20ca0:	4fef 000c      	lea %sp@(12),%sp
+   20ca4:	2f40 0314      	movel %d0,%sp@(788)
+   20ca8:	2f2f 0314      	movel %sp@(788),%sp@-
+   20cac:	4eba f8f2      	jsr %pc@(205a0 <ShowFile>)
+   20cb0:	588f           	addql #4,%sp
+   20cb2:	6000 fcfe      	braw 209b2 <main+0x3a>
+   20cb6:	4e71           	nop
+   20cb8:	6000 fcf8      	braw 209b2 <main+0x3a>
+
+00020cbc <strcpy_s>:
+   20cbc:	2f02           	movel %d2,%sp@-
+   20cbe:	206f 0008      	moveal %sp@(8),%a0
+   20cc2:	222f 000c      	movel %sp@(12),%d1
+   20cc6:	226f 0010      	moveal %sp@(16),%a1
+   20cca:	b0fc 0000      	cmpaw #0,%a0
+   20cce:	6728           	beqs 20cf8 <strcpy_s+0x3c>
+   20cd0:	4a81           	tstl %d1
+   20cd2:	6724           	beqs 20cf8 <strcpy_s+0x3c>
+   20cd4:	b2fc 0000      	cmpaw #0,%a1
+   20cd8:	6704           	beqs 20cde <strcpy_s+0x22>
+   20cda:	7000           	moveq #0,%d0
+   20cdc:	6010           	bras 20cee <strcpy_s+0x32>
+   20cde:	4210           	clrb %a0@
+   20ce0:	6016           	bras 20cf8 <strcpy_s+0x3c>
+   20ce2:	1431 0800      	moveb %a1@(00000000,%d0:l),%d2
+   20ce6:	1182 0800      	moveb %d2,%a0@(00000000,%d0:l)
+   20cea:	6710           	beqs 20cfc <strcpy_s+0x40>
+   20cec:	5280           	addql #1,%d0
+   20cee:	b280           	cmpl %d0,%d1
+   20cf0:	6ef0           	bgts 20ce2 <strcpy_s+0x26>
+   20cf2:	4210           	clrb %a0@
+   20cf4:	7002           	moveq #2,%d0
+   20cf6:	6006           	bras 20cfe <strcpy_s+0x42>
+   20cf8:	7001           	moveq #1,%d0
+   20cfa:	6002           	bras 20cfe <strcpy_s+0x42>
+   20cfc:	7000           	moveq #0,%d0
+   20cfe:	241f           	movel %sp@+,%d2
+   20d00:	4e75           	rts
+
+00020d02 <strcat_s>:
+   20d02:	48e7 3030      	moveml %d2-%d3/%a2-%a3,%sp@-
+   20d06:	206f 0014      	moveal %sp@(20),%a0
+   20d0a:	222f 0018      	movel %sp@(24),%d1
+   20d0e:	246f 001c      	moveal %sp@(28),%a2
+   20d12:	b0fc 0000      	cmpaw #0,%a0
+   20d16:	6742           	beqs 20d5a <strcat_s+0x58>
+   20d18:	4a81           	tstl %d1
+   20d1a:	673e           	beqs 20d5a <strcat_s+0x58>
+   20d1c:	b4fc 0000      	cmpaw #0,%a2
+   20d20:	6704           	beqs 20d26 <strcat_s+0x24>
+   20d22:	7000           	moveq #0,%d0
+   20d24:	600c           	bras 20d32 <strcat_s+0x30>
+   20d26:	4210           	clrb %a0@
+   20d28:	6030           	bras 20d5a <strcat_s+0x58>
+   20d2a:	4a30 0800      	tstb %a0@(00000000,%d0:l)
+   20d2e:	6708           	beqs 20d38 <strcat_s+0x36>
+   20d30:	5280           	addql #1,%d0
+   20d32:	b280           	cmpl %d0,%d1
+   20d34:	6ef4           	bgts 20d2a <strcat_s+0x28>
+   20d36:	601c           	bras 20d54 <strcat_s+0x52>
+   20d38:	2601           	movel %d1,%d3
+   20d3a:	9680           	subl %d0,%d3
+   20d3c:	93c9           	subal %a1,%a1
+   20d3e:	47f0 0800      	lea %a0@(00000000,%d0:l),%a3
+   20d42:	b689           	cmpl %a1,%d3
+   20d44:	67ea           	beqs 20d30 <strcat_s+0x2e>
+   20d46:	1432 9800      	moveb %a2@(00000000,%a1:l),%d2
+   20d4a:	1782 9800      	moveb %d2,%a3@(00000000,%a1:l)
+   20d4e:	670e           	beqs 20d5e <strcat_s+0x5c>
+   20d50:	5289           	addql #1,%a1
+   20d52:	60ee           	bras 20d42 <strcat_s+0x40>
+   20d54:	4210           	clrb %a0@
+   20d56:	7002           	moveq #2,%d0
+   20d58:	6006           	bras 20d60 <strcat_s+0x5e>
+   20d5a:	7001           	moveq #1,%d0
+   20d5c:	6002           	bras 20d60 <strcat_s+0x5e>
+   20d5e:	7000           	moveq #0,%d0
+   20d60:	4cdf 0c0c      	moveml %sp@+,%d2-%d3/%a2-%a3
+   20d64:	4e75           	rts
+
+00020d66 <strnlen_s>:
+   20d66:	206f 0004      	moveal %sp@(4),%a0
+   20d6a:	7000           	moveq #0,%d0
+   20d6c:	b0fc 0000      	cmpaw #0,%a0
+   20d70:	6712           	beqs 20d84 <strnlen_s+0x1e>
+   20d72:	b0af 0008      	cmpl %sp@(8),%d0
+   20d76:	6c0c           	bges 20d84 <strnlen_s+0x1e>
+   20d78:	4a30 0800      	tstb %a0@(00000000,%d0:l)
+   20d7c:	6704           	beqs 20d82 <strnlen_s+0x1c>
+   20d7e:	5280           	addql #1,%d0
+   20d80:	60f0           	bras 20d72 <strnlen_s+0xc>
+   20d82:	4e75           	rts
+   20d84:	4e75           	rts
+
+00020d86 <strkitten_s>:
+   20d86:	48e7 3020      	moveml %d2-%d3/%a2,%sp@-
+   20d8a:	246f 0010      	moveal %sp@(16),%a2
+   20d8e:	242f 0014      	movel %sp@(20),%d2
+   20d92:	262f 0018      	movel %sp@(24),%d3
+   20d96:	b4fc 0000      	cmpaw #0,%a2
+   20d9a:	672c           	beqs 20dc8 <strkitten_s+0x42>
+   20d9c:	4a82           	tstl %d2
+   20d9e:	6728           	beqs 20dc8 <strkitten_s+0x42>
+   20da0:	4a03           	tstb %d3
+   20da2:	6604           	bnes 20da8 <strkitten_s+0x22>
+   20da4:	4212           	clrb %a2@
+   20da6:	6020           	bras 20dc8 <strkitten_s+0x42>
+   20da8:	2f02           	movel %d2,%sp@-
+   20daa:	2f0a           	movel %a2,%sp@-
+   20dac:	4eba ffb8      	jsr %pc@(20d66 <strnlen_s>)
+   20db0:	508f           	addql #8,%sp
+   20db2:	b082           	cmpl %d2,%d0
+   20db4:	6c0c           	bges 20dc2 <strkitten_s+0x3c>
+   20db6:	1583 0800      	moveb %d3,%a2@(00000000,%d0:l)
+   20dba:	4232 0801      	clrb %a2@(00000001,%d0:l)
+   20dbe:	7000           	moveq #0,%d0
+   20dc0:	6008           	bras 20dca <strkitten_s+0x44>
+   20dc2:	4212           	clrb %a2@
+   20dc4:	7002           	moveq #2,%d0
+   20dc6:	6002           	bras 20dca <strkitten_s+0x44>
+   20dc8:	7001           	moveq #1,%d0
+   20dca:	4cdf 040c      	moveml %sp@+,%d2-%d3/%a2
+   20dce:	4e75           	rts
+
+00020dd0 <memcpy>:
+   20dd0:	202f 0004      	movel %sp@(4),%d0
+   20dd4:	206f 0008      	moveal %sp@(8),%a0
+   20dd8:	7200           	moveq #0,%d1
+   20dda:	b2af 000c      	cmpl %sp@(12),%d1
+   20dde:	670c           	beqs 20dec <memcpy+0x1c>
+   20de0:	2240           	moveal %d0,%a1
+   20de2:	13b0 1800 1800 	moveb %a0@(00000000,%d1:l),%a1@(00000000,%d1:l)
+   20de8:	5281           	addql #1,%d1
+   20dea:	60ee           	bras 20dda <memcpy+0xa>
+   20dec:	4e75           	rts
+
+00020dee <memset>:
+   20dee:	202f 0004      	movel %sp@(4),%d0
+   20df2:	2200           	movel %d0,%d1
+   20df4:	d2af 000c      	addl %sp@(12),%d1
+   20df8:	2040           	moveal %d0,%a0
+   20dfa:	b288           	cmpl %a0,%d1
+   20dfc:	6706           	beqs 20e04 <memset+0x16>
+   20dfe:	10ef 000b      	moveb %sp@(11),%a0@+
+   20e02:	60f6           	bras 20dfa <memset+0xc>
+   20e04:	4e75           	rts
+
+00020e06 <memcmp>:
+   20e06:	2f0a           	movel %a2,%sp@-
+   20e08:	226f 0008      	moveal %sp@(8),%a1
+   20e0c:	7200           	moveq #0,%d1
+   20e0e:	7000           	moveq #0,%d0
+   20e10:	b2af 0010      	cmpl %sp@(16),%d1
+   20e14:	671e           	beqs 20e34 <memcmp+0x2e>
+   20e16:	4a80           	tstl %d0
+   20e18:	661a           	bnes 20e34 <memcmp+0x2e>
+   20e1a:	1031 1800      	moveb %a1@(00000000,%d1:l),%d0
+   20e1e:	4880           	extw %d0
+   20e20:	3040           	moveaw %d0,%a0
+   20e22:	246f 000c      	moveal %sp@(12),%a2
+   20e26:	1032 1800      	moveb %a2@(00000000,%d1:l),%d0
+   20e2a:	4880           	extw %d0
+   20e2c:	90c0           	subaw %d0,%a0
+   20e2e:	2008           	movel %a0,%d0
+   20e30:	5281           	addql #1,%d1
+   20e32:	60dc           	bras 20e10 <memcmp+0xa>
+   20e34:	245f           	moveal %sp@+,%a2
+   20e36:	4e75           	rts
+
+00020e38 <sbrk>:
+   20e38:	222f 0004      	movel %sp@(4),%d1
+   20e3c:	6608           	bnes 20e46 <sbrk+0xe>
+   20e3e:	2039 0100 1000 	movel 1001000 <heap>,%d0
+   20e44:	4e75           	rts
+   20e46:	4ab9 0100 1000 	tstl 1001000 <heap>
+   20e4c:	660a           	bnes 20e58 <sbrk+0x20>
+   20e4e:	23fc 0300 0000 	movel #50331648,1001000 <heap>
+   20e54:	0100 1000 
+   20e58:	2039 0100 1000 	movel 1001000 <heap>,%d0
+   20e5e:	d280           	addl %d0,%d1
+   20e60:	0c81 03ff ffff 	cmpil #67108863,%d1
+   20e66:	6206           	bhis 20e6e <sbrk+0x36>
+   20e68:	23c1 0100 1000 	movel %d1,1001000 <heap>
+   20e6e:	4e75           	rts
+
+00020e70 <brk>:
+   20e70:	2039 0100 1000 	movel 1001000 <heap>,%d0
+   20e76:	23ef 0004 0100 	movel %sp@(4),1001000 <heap>
+   20e7c:	1000 
+   20e7e:	4e75           	rts
+
+00020e80 <malloc_find_free_block>:
+   20e80:	226f 0004      	moveal %sp@(4),%a1
+   20e84:	202f 0008      	movel %sp@(8),%d0
+   20e88:	2079 0100 1004 	moveal 1001004 <_edata>,%a0
+   20e8e:	b0fc 0000      	cmpaw #0,%a0
+   20e92:	6712           	beqs 20ea6 <malloc_find_free_block+0x26>
+   20e94:	4aa8 0008      	tstl %a0@(8)
+   20e98:	6608           	bnes 20ea2 <malloc_find_free_block+0x22>
+   20e9a:	2288           	movel %a0,%a1@
+   20e9c:	2068 0004      	moveal %a0@(4),%a0
+   20ea0:	60ec           	bras 20e8e <malloc_find_free_block+0xe>
+   20ea2:	b090           	cmpl %a0@,%d0
+   20ea4:	6ef4           	bgts 20e9a <malloc_find_free_block+0x1a>
+   20ea6:	2008           	movel %a0,%d0
+   20ea8:	4e75           	rts
+
+00020eaa <malloc_request_space>:
+   20eaa:	48e7 0038      	moveml %a2-%a4,%sp@-
+   20eae:	286f 0010      	moveal %sp@(16),%a4
+   20eb2:	266f 0014      	moveal %sp@(20),%a3
+   20eb6:	2479 0100 1000 	moveal 1001000 <heap>,%a2
+   20ebc:	486b 000c      	pea %a3@(12)
+   20ec0:	4eba ff76      	jsr %pc@(20e38 <sbrk>)
+   20ec4:	588f           	addql #4,%sp
+   20ec6:	72ff           	moveq #-1,%d1
+   20ec8:	b280           	cmpl %d0,%d1
+   20eca:	6718           	beqs 20ee4 <malloc_request_space+0x3a>
+   20ecc:	b8fc 0000      	cmpaw #0,%a4
+   20ed0:	6704           	beqs 20ed6 <malloc_request_space+0x2c>
+   20ed2:	294a 0004      	movel %a2,%a4@(4)
+   20ed6:	248b           	movel %a3,%a2@
+   20ed8:	42aa 0004      	clrl %a2@(4)
+   20edc:	42aa 0008      	clrl %a2@(8)
+   20ee0:	200a           	movel %a2,%d0
+   20ee2:	6002           	bras 20ee6 <malloc_request_space+0x3c>
+   20ee4:	7000           	moveq #0,%d0
+   20ee6:	4cdf 1c00      	moveml %sp@+,%a2-%a4
+   20eea:	4e75           	rts
+
+00020eec <malloc>:
+   20eec:	598f           	subql #4,%sp
+   20eee:	2f0e           	movel %fp,%sp@-
+   20ef0:	2f02           	movel %d2,%sp@-
+   20ef2:	242f 0010      	movel %sp@(16),%d2
+   20ef6:	5382           	subql #1,%d2
+   20ef8:	70fc           	moveq #-4,%d0
+   20efa:	c480           	andl %d0,%d2
+   20efc:	5882           	addql #4,%d2
+   20efe:	6604           	bnes 20f04 <malloc+0x18>
+   20f00:	7000           	moveq #0,%d0
+   20f02:	6062           	bras 20f66 <malloc+0x7a>
+   20f04:	2039 0100 1004 	movel 1001004 <_edata>,%d0
+   20f0a:	662a           	bnes 20f36 <malloc+0x4a>
+   20f0c:	23fc 0300 0000 	movel #50331648,1001004 <_edata>
+   20f12:	0100 1004 
+   20f16:	23fc 0300 0000 	movel #50331648,1001000 <heap>
+   20f1c:	0100 1000 
+   20f20:	2f02           	movel %d2,%sp@-
+   20f22:	42a7           	clrl %sp@-
+   20f24:	4eba ff84      	jsr %pc@(20eaa <malloc_request_space>)
+   20f28:	508f           	addql #8,%sp
+   20f2a:	4a80           	tstl %d0
+   20f2c:	67d2           	beqs 20f00 <malloc+0x14>
+   20f2e:	23c0 0100 1004 	movel %d0,1001004 <_edata>
+   20f34:	602c           	bras 20f62 <malloc+0x76>
+   20f36:	4def 000c      	lea %sp@(12),%fp
+   20f3a:	2d00           	movel %d0,%fp@-
+   20f3c:	2f02           	movel %d2,%sp@-
+   20f3e:	2f0e           	movel %fp,%sp@-
+   20f40:	4eba ff3e      	jsr %pc@(20e80 <malloc_find_free_block>)
+   20f44:	508f           	addql #8,%sp
+   20f46:	4a80           	tstl %d0
+   20f48:	6612           	bnes 20f5c <malloc+0x70>
+   20f4a:	2f02           	movel %d2,%sp@-
+   20f4c:	2f2f 000c      	movel %sp@(12),%sp@-
+   20f50:	4eba ff58      	jsr %pc@(20eaa <malloc_request_space>)
+   20f54:	508f           	addql #8,%sp
+   20f56:	4a80           	tstl %d0
+   20f58:	6608           	bnes 20f62 <malloc+0x76>
+   20f5a:	600a           	bras 20f66 <malloc+0x7a>
+   20f5c:	2040           	moveal %d0,%a0
+   20f5e:	42a8 0008      	clrl %a0@(8)
+   20f62:	720c           	moveq #12,%d1
+   20f64:	d081           	addl %d1,%d0
+   20f66:	241f           	movel %sp@+,%d2
+   20f68:	2c5f           	moveal %sp@+,%fp
+   20f6a:	588f           	addql #4,%sp
+   20f6c:	4e75           	rts
+
+00020f6e <malloc_get_block_ptr>:
+   20f6e:	70f4           	moveq #-12,%d0
+   20f70:	d0af 0004      	addl %sp@(4),%d0
+   20f74:	4e75           	rts
+
+00020f76 <free>:
+   20f76:	206f 0004      	moveal %sp@(4),%a0
+   20f7a:	b0fc 0000      	cmpaw #0,%a0
+   20f7e:	6706           	beqs 20f86 <free+0x10>
+   20f80:	7001           	moveq #1,%d0
+   20f82:	2140 fffc      	movel %d0,%a0@(-4)
+   20f86:	4e75           	rts
+
+00020f88 <realloc>:
+   20f88:	48e7 3020      	moveml %d2-%d3/%a2,%sp@-
+   20f8c:	246f 0010      	moveal %sp@(16),%a2
+   20f90:	202f 0014      	movel %sp@(20),%d0
+   20f94:	b4fc 0000      	cmpaw #0,%a2
+   20f98:	660c           	bnes 20fa6 <realloc+0x1e>
+   20f9a:	2f40 0010      	movel %d0,%sp@(16)
+   20f9e:	4cdf 040c      	moveml %sp@+,%d2-%d3/%a2
+   20fa2:	6000 ff48      	braw 20eec <malloc>
+   20fa6:	262a fff4      	movel %a2@(-12),%d3
+   20faa:	b680           	cmpl %d0,%d3
+   20fac:	6c24           	bges 20fd2 <realloc+0x4a>
+   20fae:	2f00           	movel %d0,%sp@-
+   20fb0:	4eba ff3a      	jsr %pc@(20eec <malloc>)
+   20fb4:	2400           	movel %d0,%d2
+   20fb6:	588f           	addql #4,%sp
+   20fb8:	671c           	beqs 20fd6 <realloc+0x4e>
+   20fba:	2f03           	movel %d3,%sp@-
+   20fbc:	2f0a           	movel %a2,%sp@-
+   20fbe:	2f00           	movel %d0,%sp@-
+   20fc0:	4eba fe0e      	jsr %pc@(20dd0 <memcpy>)
+   20fc4:	2f0a           	movel %a2,%sp@-
+   20fc6:	4eba ffae      	jsr %pc@(20f76 <free>)
+   20fca:	4fef 0010      	lea %sp@(16),%sp
+   20fce:	2002           	movel %d2,%d0
+   20fd0:	6006           	bras 20fd8 <realloc+0x50>
+   20fd2:	200a           	movel %a2,%d0
+   20fd4:	6002           	bras 20fd8 <realloc+0x50>
+   20fd6:	7000           	moveq #0,%d0
+   20fd8:	4cdf 040c      	moveml %sp@+,%d2-%d3/%a2
+   20fdc:	4e75           	rts
+
+00020fde <calloc>:
+   20fde:	2f03           	movel %d3,%sp@-
+   20fe0:	2f02           	movel %d2,%sp@-
+   20fe2:	2f2f 0010      	movel %sp@(16),%sp@-
+   20fe6:	2f2f 0010      	movel %sp@(16),%sp@-
+   20fea:	4eb9 0002 1518 	jsr 21518 <__mulsi3>
+   20ff0:	508f           	addql #8,%sp
+   20ff2:	2600           	movel %d0,%d3
+   20ff4:	2f00           	movel %d0,%sp@-
+   20ff6:	4eba fef4      	jsr %pc@(20eec <malloc>)
+   20ffa:	2400           	movel %d0,%d2
+   20ffc:	2f03           	movel %d3,%sp@-
+   20ffe:	42a7           	clrl %sp@-
+   21000:	2f00           	movel %d0,%sp@-
+   21002:	4eba fdea      	jsr %pc@(20dee <memset>)
+   21006:	4fef 0010      	lea %sp@(16),%sp
+   2100a:	2002           	movel %d2,%d0
+   2100c:	241f           	movel %sp@+,%d2
+   2100e:	261f           	movel %sp@+,%d3
+   21010:	4e75           	rts
+	...
+
+00021014 <fputc>:
+   21014:	598f           	subql #4,%sp
+   21016:	70fe           	moveq #-2,%d0
+   21018:	b0af 000c      	cmpl %sp@(12),%d0
+   2101c:	6622           	bnes 21040 <fputc+0x2c>
+   2101e:	2079 0100 1008 	moveal 1001008 <interface>,%a0
+   21024:	2068 0018      	moveal %a0@(24),%a0
+   21028:	2068 0008      	moveal %a0@(8),%a0
+   2102c:	202f 0008      	movel %sp@(8),%d0
+   21030:	4880           	extw %d0
+   21032:	3240           	moveaw %d0,%a1
+   21034:	2f09           	movel %a1,%sp@-
+   21036:	4e90           	jsr %a0@
+   21038:	588f           	addql #4,%sp
+   2103a:	202f 0008      	movel %sp@(8),%d0
+   2103e:	602e           	bras 2106e <fputc+0x5a>
+   21040:	202f 0008      	movel %sp@(8),%d0
+   21044:	1f40 0003      	moveb %d0,%sp@(3)
+   21048:	2079 0100 1008 	moveal 1001008 <interface>,%a0
+   2104e:	2068 0024      	moveal %a0@(36),%a0
+   21052:	2068 000c      	moveal %a0@(12),%a0
+   21056:	4878 0001      	pea 1 <__DYNAMIC+0x1>
+   2105a:	200f           	movel %sp,%d0
+   2105c:	5e80           	addql #7,%d0
+   2105e:	2f00           	movel %d0,%sp@-
+   21060:	2f2f 0014      	movel %sp@(20),%sp@-
+   21064:	4e90           	jsr %a0@
+   21066:	4fef 000c      	lea %sp@(12),%sp
+   2106a:	202f 0008      	movel %sp@(8),%d0
+   2106e:	588f           	addql #4,%sp
+   21070:	4e75           	rts
+
+00021072 <fputs>:
+   21072:	70fe           	moveq #-2,%d0
+   21074:	b0af 0008      	cmpl %sp@(8),%d0
+   21078:	6638           	bnes 210b2 <fputs+0x40>
+   2107a:	2079 0100 1008 	moveal 1001008 <interface>,%a0
+   21080:	2068 0018      	moveal %a0@(24),%a0
+   21084:	2050           	moveal %a0@,%a0
+   21086:	2f2f 0004      	movel %sp@(4),%sp@-
+   2108a:	4e90           	jsr %a0@
+   2108c:	588f           	addql #4,%sp
+   2108e:	7000           	moveq #0,%d0
+   21090:	602c           	bras 210be <fputs+0x4c>
+   21092:	202f 0004      	movel %sp@(4),%d0
+   21096:	2200           	movel %d0,%d1
+   21098:	5281           	addql #1,%d1
+   2109a:	2f41 0004      	movel %d1,%sp@(4)
+   2109e:	2040           	moveal %d0,%a0
+   210a0:	1010           	moveb %a0@,%d0
+   210a2:	4880           	extw %d0
+   210a4:	3040           	moveaw %d0,%a0
+   210a6:	2f2f 0008      	movel %sp@(8),%sp@-
+   210aa:	2f08           	movel %a0,%sp@-
+   210ac:	4eba ff66      	jsr %pc@(21014 <fputc>)
+   210b0:	508f           	addql #8,%sp
+   210b2:	206f 0004      	moveal %sp@(4),%a0
+   210b6:	1010           	moveb %a0@,%d0
+   210b8:	4a00           	tstb %d0
+   210ba:	66d6           	bnes 21092 <fputs+0x20>
+   210bc:	7000           	moveq #0,%d0
+   210be:	4e75           	rts
+
+000210c0 <fgetc>:
+   210c0:	598f           	subql #4,%sp
+   210c2:	70ff           	moveq #-1,%d0
+   210c4:	b0af 0008      	cmpl %sp@(8),%d0
+   210c8:	6750           	beqs 2111a <fgetc+0x5a>
+   210ca:	2079 0100 1008 	moveal 1001008 <interface>,%a0
+   210d0:	2068 0024      	moveal %a0@(36),%a0
+   210d4:	2068 0020      	moveal %a0@(32),%a0
+   210d8:	2f2f 0008      	movel %sp@(8),%sp@-
+   210dc:	4e90           	jsr %a0@
+   210de:	588f           	addql #4,%sp
+   210e0:	4a80           	tstl %d0
+   210e2:	6708           	beqs 210ec <fgetc+0x2c>
+   210e4:	307c ffff      	moveaw #-1,%a0
+   210e8:	6000 00b0      	braw 2119a <fgetc+0xda>
+   210ec:	2079 0100 1008 	moveal 1001008 <interface>,%a0
+   210f2:	2068 0024      	moveal %a0@(36),%a0
+   210f6:	2068 0008      	moveal %a0@(8),%a0
+   210fa:	4878 0001      	pea 1 <__DYNAMIC+0x1>
+   210fe:	200f           	movel %sp,%d0
+   21100:	5a80           	addql #5,%d0
+   21102:	2f00           	movel %d0,%sp@-
+   21104:	2f2f 0010      	movel %sp@(16),%sp@-
+   21108:	4e90           	jsr %a0@
+   2110a:	4fef 000c      	lea %sp@(12),%sp
+   2110e:	102f 0001      	moveb %sp@(1),%d0
+   21112:	4880           	extw %d0
+   21114:	3040           	moveaw %d0,%a0
+   21116:	6000 0082      	braw 2119a <fgetc+0xda>
+   2111a:	426f 0002      	clrw %sp@(2)
+   2111e:	207c 0d80 0006 	moveal #226492422,%a0
+   21124:	3f50 0002      	movew %a0@,%sp@(2)
+   21128:	7000           	moveq #0,%d0
+   2112a:	302f 0002      	movew %sp@(2),%d0
+   2112e:	7200           	moveq #0,%d1
+   21130:	4601           	notb %d1
+   21132:	c081           	andl %d1,%d0
+   21134:	4a80           	tstl %d0
+   21136:	6fe6           	bles 2111e <fgetc+0x5e>
+   21138:	207c 0d80 0006 	moveal #226492422,%a0
+   2113e:	3010           	movew %a0@,%d0
+   21140:	3000           	movew %d0,%d0
+   21142:	0280 0000 ffff 	andil #65535,%d0
+   21148:	7200           	moveq #0,%d1
+   2114a:	4601           	notb %d1
+   2114c:	c081           	andl %d1,%d0
+   2114e:	4a80           	tstl %d0
+   21150:	6702           	beqs 21154 <fgetc+0x94>
+   21152:	60e4           	bras 21138 <fgetc+0x78>
+   21154:	4e71           	nop
+   21156:	70ff           	moveq #-1,%d0
+   21158:	b0af 0008      	cmpl %sp@(8),%d0
+   2115c:	6628           	bnes 21186 <fgetc+0xc6>
+   2115e:	2079 0100 1008 	moveal 1001008 <interface>,%a0
+   21164:	2068 0018      	moveal %a0@(24),%a0
+   21168:	2068 0008      	moveal %a0@(8),%a0
+   2116c:	7000           	moveq #0,%d0
+   2116e:	302f 0002      	movew %sp@(2),%d0
+   21172:	43f9 0002 1975 	lea 21975 <sctoasc>,%a1
+   21178:	1031 0800      	moveb %a1@(00000000,%d0:l),%d0
+   2117c:	4880           	extw %d0
+   2117e:	3240           	moveaw %d0,%a1
+   21180:	2f09           	movel %a1,%sp@-
+   21182:	4e90           	jsr %a0@
+   21184:	588f           	addql #4,%sp
+   21186:	7000           	moveq #0,%d0
+   21188:	302f 0002      	movew %sp@(2),%d0
+   2118c:	41f9 0002 1975 	lea 21975 <sctoasc>,%a0
+   21192:	1030 0800      	moveb %a0@(00000000,%d0:l),%d0
+   21196:	4880           	extw %d0
+   21198:	3040           	moveaw %d0,%a0
+   2119a:	2008           	movel %a0,%d0
+   2119c:	588f           	addql #4,%sp
+   2119e:	4e75           	rts
+
+000211a0 <getdelim>:
+   211a0:	4fef fff4      	lea %sp@(-12),%sp
+   211a4:	2f03           	movel %d3,%sp@-
+   211a6:	2f02           	movel %d2,%sp@-
+   211a8:	202f 0020      	movel %sp@(32),%d0
+   211ac:	1f40 000a      	moveb %d0,%sp@(10)
+   211b0:	206f 0018      	moveal %sp@(24),%a0
+   211b4:	2010           	movel %a0@,%d0
+   211b6:	4a80           	tstl %d0
+   211b8:	661e           	bnes 211d8 <getdelim+0x38>
+   211ba:	206f 001c      	moveal %sp@(28),%a0
+   211be:	7040           	moveq #64,%d0
+   211c0:	2080           	movel %d0,%a0@
+   211c2:	206f 001c      	moveal %sp@(28),%a0
+   211c6:	2010           	movel %a0@,%d0
+   211c8:	2f00           	movel %d0,%sp@-
+   211ca:	4eb9 0002 0eec 	jsr 20eec <malloc>
+   211d0:	588f           	addql #4,%sp
+   211d2:	206f 0018      	moveal %sp@(24),%a0
+   211d6:	2080           	movel %d0,%a0@
+   211d8:	206f 001c      	moveal %sp@(28),%a0
+   211dc:	2410           	movel %a0@,%d2
+   211de:	206f 0018      	moveal %sp@(24),%a0
+   211e2:	2f50 0010      	movel %a0@,%sp@(16)
+   211e6:	2f2f 0024      	movel %sp@(36),%sp@-
+   211ea:	4eba fed4      	jsr %pc@(210c0 <fgetc>)
+   211ee:	588f           	addql #4,%sp
+   211f0:	2f40 000c      	movel %d0,%sp@(12)
+   211f4:	72ff           	moveq #-1,%d1
+   211f6:	b2af 0024      	cmpl %sp@(36),%d1
+   211fa:	661e           	bnes 2121a <getdelim+0x7a>
+   211fc:	7608           	moveq #8,%d3
+   211fe:	b6af 000c      	cmpl %sp@(12),%d3
+   21202:	6616           	bnes 2121a <getdelim+0x7a>
+   21204:	206f 0018      	moveal %sp@(24),%a0
+   21208:	2010           	movel %a0@,%d0
+   2120a:	b0af 0010      	cmpl %sp@(16),%d0
+   2120e:	6400 00d8      	bccw 212e8 <getdelim+0x148>
+   21212:	53af 0010      	subql #1,%sp@(16)
+   21216:	6000 00d0      	braw 212e8 <getdelim+0x148>
+   2121a:	700d           	moveq #13,%d0
+   2121c:	b0af 000c      	cmpl %sp@(12),%d0
+   21220:	660a           	bnes 2122c <getdelim+0x8c>
+   21222:	72ff           	moveq #-1,%d1
+   21224:	b2af 0024      	cmpl %sp@(36),%d1
+   21228:	6600 00c4      	bnew 212ee <getdelim+0x14e>
+   2122c:	76ff           	moveq #-1,%d3
+   2122e:	b6af 000c      	cmpl %sp@(12),%d3
+   21232:	6700 00c0      	beqw 212f4 <getdelim+0x154>
+   21236:	7001           	moveq #1,%d0
+   21238:	b082           	cmpl %d2,%d0
+   2123a:	6d78           	blts 212b4 <getdelim+0x114>
+   2123c:	206f 001c      	moveal %sp@(28),%a0
+   21240:	2010           	movel %a0@,%d0
+   21242:	7240           	moveq #64,%d1
+   21244:	b280           	cmpl %d0,%d1
+   21246:	6c10           	bges 21258 <getdelim+0xb8>
+   21248:	206f 001c      	moveal %sp@(28),%a0
+   2124c:	2010           	movel %a0@,%d0
+   2124e:	d080           	addl %d0,%d0
+   21250:	206f 001c      	moveal %sp@(28),%a0
+   21254:	2080           	movel %d0,%a0@
+   21256:	6010           	bras 21268 <getdelim+0xc8>
+   21258:	206f 001c      	moveal %sp@(28),%a0
+   2125c:	2050           	moveal %a0@,%a0
+   2125e:	43e8 0040      	lea %a0@(64),%a1
+   21262:	206f 001c      	moveal %sp@(28),%a0
+   21266:	2089           	movel %a1,%a0@
+   21268:	206f 0018      	moveal %sp@(24),%a0
+   2126c:	2210           	movel %a0@,%d1
+   2126e:	206f 001c      	moveal %sp@(28),%a0
+   21272:	2010           	movel %a0@,%d0
+   21274:	d081           	addl %d1,%d0
+   21276:	2200           	movel %d0,%d1
+   21278:	202f 0010      	movel %sp@(16),%d0
+   2127c:	2401           	movel %d1,%d2
+   2127e:	9480           	subl %d0,%d2
+   21280:	206f 001c      	moveal %sp@(28),%a0
+   21284:	2210           	movel %a0@,%d1
+   21286:	206f 0018      	moveal %sp@(24),%a0
+   2128a:	2010           	movel %a0@,%d0
+   2128c:	2f01           	movel %d1,%sp@-
+   2128e:	2f00           	movel %d0,%sp@-
+   21290:	4eb9 0002 0f88 	jsr 20f88 <realloc>
+   21296:	508f           	addql #8,%sp
+   21298:	206f 0018      	moveal %sp@(24),%a0
+   2129c:	2080           	movel %d0,%a0@
+   2129e:	206f 0018      	moveal %sp@(24),%a0
+   212a2:	2210           	movel %a0@,%d1
+   212a4:	206f 001c      	moveal %sp@(28),%a0
+   212a8:	2010           	movel %a0@,%d0
+   212aa:	9082           	subl %d2,%d0
+   212ac:	2601           	movel %d1,%d3
+   212ae:	d680           	addl %d0,%d3
+   212b0:	2f43 0010      	movel %d3,%sp@(16)
+   212b4:	202f 0010      	movel %sp@(16),%d0
+   212b8:	2200           	movel %d0,%d1
+   212ba:	5281           	addql #1,%d1
+   212bc:	2f41 0010      	movel %d1,%sp@(16)
+   212c0:	222f 000c      	movel %sp@(12),%d1
+   212c4:	2040           	moveal %d0,%a0
+   212c6:	1081           	moveb %d1,%a0@
+   212c8:	5382           	subql #1,%d2
+   212ca:	102f 000a      	moveb %sp@(10),%d0
+   212ce:	4880           	extw %d0
+   212d0:	3040           	moveaw %d0,%a0
+   212d2:	b1ef 000c      	cmpal %sp@(12),%a0
+   212d6:	6600 ff0e      	bnew 211e6 <getdelim+0x46>
+   212da:	70ff           	moveq #-1,%d0
+   212dc:	b0af 0024      	cmpl %sp@(36),%d0
+   212e0:	6716           	beqs 212f8 <getdelim+0x158>
+   212e2:	53af 0010      	subql #1,%sp@(16)
+   212e6:	6010           	bras 212f8 <getdelim+0x158>
+   212e8:	4e71           	nop
+   212ea:	6000 fefa      	braw 211e6 <getdelim+0x46>
+   212ee:	4e71           	nop
+   212f0:	6000 fef4      	braw 211e6 <getdelim+0x46>
+   212f4:	4e71           	nop
+   212f6:	6002           	bras 212fa <getdelim+0x15a>
+   212f8:	4e71           	nop
+   212fa:	206f 0010      	moveal %sp@(16),%a0
+   212fe:	4210           	clrb %a0@
+   21300:	222f 0010      	movel %sp@(16),%d1
+   21304:	206f 0018      	moveal %sp@(24),%a0
+   21308:	2010           	movel %a0@,%d0
+   2130a:	2401           	movel %d1,%d2
+   2130c:	9480           	subl %d0,%d2
+   2130e:	2002           	movel %d2,%d0
+   21310:	241f           	movel %sp@+,%d2
+   21312:	261f           	movel %sp@+,%d3
+   21314:	4fef 000c      	lea %sp@(12),%sp
+   21318:	4e75           	rts
+
+0002131a <fgets>:
+   2131a:	518f           	subql #8,%sp
+   2131c:	2f6f 000c 0004 	movel %sp@(12),%sp@(4)
+   21322:	602a           	bras 2134e <fgets+0x34>
+   21324:	2f2f 0014      	movel %sp@(20),%sp@-
+   21328:	4eba fd96      	jsr %pc@(210c0 <fgetc>)
+   2132c:	588f           	addql #4,%sp
+   2132e:	2e80           	movel %d0,%sp@
+   21330:	700a           	moveq #10,%d0
+   21332:	b097           	cmpl %sp@,%d0
+   21334:	6722           	beqs 21358 <fgets+0x3e>
+   21336:	72ff           	moveq #-1,%d1
+   21338:	b297           	cmpl %sp@,%d1
+   2133a:	671c           	beqs 21358 <fgets+0x3e>
+   2133c:	202f 0004      	movel %sp@(4),%d0
+   21340:	2200           	movel %d0,%d1
+   21342:	5281           	addql #1,%d1
+   21344:	2f41 0004      	movel %d1,%sp@(4)
+   21348:	2217           	movel %sp@,%d1
+   2134a:	2040           	moveal %d0,%a0
+   2134c:	1081           	moveb %d1,%a0@
+   2134e:	53af 0010      	subql #1,%sp@(16)
+   21352:	4aaf 0010      	tstl %sp@(16)
+   21356:	66cc           	bnes 21324 <fgets+0xa>
+   21358:	206f 0004      	moveal %sp@(4),%a0
+   2135c:	4210           	clrb %a0@
+   2135e:	202f 000c      	movel %sp@(12),%d0
+   21362:	508f           	addql #8,%sp
+   21364:	4e75           	rts
+
+00021366 <fread>:
+   21366:	598f           	subql #4,%sp
+   21368:	4aaf 000c      	tstl %sp@(12)
+   2136c:	6706           	beqs 21374 <fread+0xe>
+   2136e:	4aaf 0010      	tstl %sp@(16)
+   21372:	6604           	bnes 21378 <fread+0x12>
+   21374:	7000           	moveq #0,%d0
+   21376:	6042           	bras 213ba <fread+0x54>
+   21378:	4297           	clrl %sp@
+   2137a:	6030           	bras 213ac <fread+0x46>
+   2137c:	2079 0100 1008 	moveal 1001008 <interface>,%a0
+   21382:	2068 0024      	moveal %a0@(36),%a0
+   21386:	2068 0008      	moveal %a0@(8),%a0
+   2138a:	202f 000c      	movel %sp@(12),%d0
+   2138e:	2f00           	movel %d0,%sp@-
+   21390:	2f2f 000c      	movel %sp@(12),%sp@-
+   21394:	2f2f 001c      	movel %sp@(28),%sp@-
+   21398:	4e90           	jsr %a0@
+   2139a:	4fef 000c      	lea %sp@(12),%sp
+   2139e:	4a80           	tstl %d0
+   213a0:	6d14           	blts 213b6 <fread+0x50>
+   213a2:	202f 000c      	movel %sp@(12),%d0
+   213a6:	d1af 0008      	addl %d0,%sp@(8)
+   213aa:	5297           	addql #1,%sp@
+   213ac:	2017           	movel %sp@,%d0
+   213ae:	b0af 0010      	cmpl %sp@(16),%d0
+   213b2:	6dc8           	blts 2137c <fread+0x16>
+   213b4:	6002           	bras 213b8 <fread+0x52>
+   213b6:	4e71           	nop
+   213b8:	2017           	movel %sp@,%d0
+   213ba:	588f           	addql #4,%sp
+   213bc:	4e75           	rts
+
+000213be <fwrite>:
+   213be:	598f           	subql #4,%sp
+   213c0:	4aaf 000c      	tstl %sp@(12)
+   213c4:	6706           	beqs 213cc <fwrite+0xe>
+   213c6:	4aaf 0010      	tstl %sp@(16)
+   213ca:	6604           	bnes 213d0 <fwrite+0x12>
+   213cc:	7000           	moveq #0,%d0
+   213ce:	6042           	bras 21412 <fwrite+0x54>
+   213d0:	4297           	clrl %sp@
+   213d2:	6030           	bras 21404 <fwrite+0x46>
+   213d4:	2079 0100 1008 	moveal 1001008 <interface>,%a0
+   213da:	2068 0024      	moveal %a0@(36),%a0
+   213de:	2068 000c      	moveal %a0@(12),%a0
+   213e2:	202f 000c      	movel %sp@(12),%d0
+   213e6:	2f00           	movel %d0,%sp@-
+   213e8:	2f2f 000c      	movel %sp@(12),%sp@-
+   213ec:	2f2f 001c      	movel %sp@(28),%sp@-
+   213f0:	4e90           	jsr %a0@
+   213f2:	4fef 000c      	lea %sp@(12),%sp
+   213f6:	4a80           	tstl %d0
+   213f8:	6d14           	blts 2140e <fwrite+0x50>
+   213fa:	202f 000c      	movel %sp@(12),%d0
+   213fe:	d1af 0008      	addl %d0,%sp@(8)
+   21402:	5297           	addql #1,%sp@
+   21404:	2017           	movel %sp@,%d0
+   21406:	b0af 0010      	cmpl %sp@(16),%d0
+   2140a:	6dc8           	blts 213d4 <fwrite+0x16>
+   2140c:	6002           	bras 21410 <fwrite+0x52>
+   2140e:	4e71           	nop
+   21410:	2017           	movel %sp@,%d0
+   21412:	588f           	addql #4,%sp
+   21414:	4e75           	rts
+
+00021416 <fopen>:
+   21416:	4fef fff4      	lea %sp@(-12),%sp
+   2141a:	422f 000b      	clrb %sp@(11)
+   2141e:	206f 0014      	moveal %sp@(20),%a0
+   21422:	1010           	moveb %a0@,%d0
+   21424:	4880           	extw %d0
+   21426:	3040           	moveaw %d0,%a0
+   21428:	7072           	moveq #114,%d0
+   2142a:	b088           	cmpl %a0,%d0
+   2142c:	670e           	beqs 2143c <fopen+0x26>
+   2142e:	7077           	moveq #119,%d0
+   21430:	b088           	cmpl %a0,%d0
+   21432:	6710           	beqs 21444 <fopen+0x2e>
+   21434:	7061           	moveq #97,%d0
+   21436:	b088           	cmpl %a0,%d0
+   21438:	6712           	beqs 2144c <fopen+0x36>
+   2143a:	6018           	bras 21454 <fopen+0x3e>
+   2143c:	1f7c 0001 000b 	moveb #1,%sp@(11)
+   21442:	6010           	bras 21454 <fopen+0x3e>
+   21444:	1f7c 0006 000b 	moveb #6,%sp@(11)
+   2144a:	6008           	bras 21454 <fopen+0x3e>
+   2144c:	1f7c 0036 000b 	moveb #54,%sp@(11)
+   21452:	4e71           	nop
+   21454:	206f 0014      	moveal %sp@(20),%a0
+   21458:	5288           	addql #1,%a0
+   2145a:	1010           	moveb %a0@,%d0
+   2145c:	0c00 002b      	cmpib #43,%d0
+   21460:	6604           	bnes 21466 <fopen+0x50>
+   21462:	7000           	moveq #0,%d0
+   21464:	6054           	bras 214ba <fopen+0xa4>
+   21466:	4878 0226      	pea 226 <_sdata+0x222>
+   2146a:	4eb9 0002 0eec 	jsr 20eec <malloc>
+   21470:	588f           	addql #4,%sp
+   21472:	2f40 0006      	movel %d0,%sp@(6)
+   21476:	2079 0100 1008 	moveal 1001008 <interface>,%a0
+   2147c:	2068 0024      	moveal %a0@(36),%a0
+   21480:	2050           	moveal %a0@,%a0
+   21482:	102f 000b      	moveb %sp@(11),%d0
+   21486:	4880           	extw %d0
+   21488:	3240           	moveaw %d0,%a1
+   2148a:	2f09           	movel %a1,%sp@-
+   2148c:	2f2f 0014      	movel %sp@(20),%sp@-
+   21490:	2f2f 000e      	movel %sp@(14),%sp@-
+   21494:	4e90           	jsr %a0@
+   21496:	4fef 000c      	lea %sp@(12),%sp
+   2149a:	2f40 0002      	movel %d0,%sp@(2)
+   2149e:	4aaf 0002      	tstl %sp@(2)
+   214a2:	6606           	bnes 214aa <fopen+0x94>
+   214a4:	202f 0006      	movel %sp@(6),%d0
+   214a8:	6010           	bras 214ba <fopen+0xa4>
+   214aa:	2f2f 0006      	movel %sp@(6),%sp@-
+   214ae:	4eb9 0002 0f76 	jsr 20f76 <free>
+   214b4:	588f           	addql #4,%sp
+   214b6:	202f 0002      	movel %sp@(2),%d0
+   214ba:	4fef 000c      	lea %sp@(12),%sp
+   214be:	4e75           	rts
+
+000214c0 <fclose>:
+   214c0:	206f 0004      	moveal %sp@(4),%a0
+   214c4:	1028 0010      	moveb %a0@(16),%d0
+   214c8:	4880           	extw %d0
+   214ca:	48c0           	extl %d0
+   214cc:	7202           	moveq #2,%d1
+   214ce:	c081           	andl %d1,%d0
+   214d0:	4a80           	tstl %d0
+   214d2:	6716           	beqs 214ea <fclose+0x2a>
+   214d4:	2079 0100 1008 	moveal 1001008 <interface>,%a0
+   214da:	2068 0024      	moveal %a0@(36),%a0
+   214de:	2068 0018      	moveal %a0@(24),%a0
+   214e2:	2f2f 0004      	movel %sp@(4),%sp@-
+   214e6:	4e90           	jsr %a0@
+   214e8:	588f           	addql #4,%sp
+   214ea:	2079 0100 1008 	moveal 1001008 <interface>,%a0
+   214f0:	2068 0024      	moveal %a0@(36),%a0
+   214f4:	2068 0004      	moveal %a0@(4),%a0
+   214f8:	2f2f 0004      	movel %sp@(4),%sp@-
+   214fc:	4e90           	jsr %a0@
+   214fe:	588f           	addql #4,%sp
+   21500:	4a80           	tstl %d0
+   21502:	6704           	beqs 21508 <fclose+0x48>
+   21504:	70ff           	moveq #-1,%d0
+   21506:	600e           	bras 21516 <fclose+0x56>
+   21508:	2f2f 0004      	movel %sp@(4),%sp@-
+   2150c:	4eb9 0002 0f76 	jsr 20f76 <free>
+   21512:	588f           	addql #4,%sp
+   21514:	7000           	moveq #0,%d0
+   21516:	4e75           	rts
+
+00021518 <__mulsi3>:
+   21518:	302f 0004      	movew %sp@(4),%d0
+   2151c:	c0ef 000a      	muluw %sp@(10),%d0
+   21520:	322f 0006      	movew %sp@(6),%d1
+   21524:	c2ef 0008      	muluw %sp@(8),%d1
+   21528:	d041           	addw %d1,%d0
+   2152a:	4840           	swap %d0
+   2152c:	4240           	clrw %d0
+   2152e:	322f 0006      	movew %sp@(6),%d1
+   21532:	c2ef 000a      	muluw %sp@(10),%d1
+   21536:	d081           	addl %d1,%d0
+   21538:	4e75           	rts
+	...
+
+0002153c <strcmp>:
+   2153c:	4e56 0000      	linkw %fp,#0
+   21540:	226e 0008      	moveal %fp@(8),%a1
+   21544:	206e 000c      	moveal %fp@(12),%a0
+   21548:	2009           	movel %a1,%d0
+   2154a:	2208           	movel %a0,%d1
+   2154c:	8081           	orl %d1,%d0
+   2154e:	7203           	moveq #3,%d1
+   21550:	c081           	andl %d1,%d0
+   21552:	6624           	bnes 21578 <strcmp+0x3c>
+   21554:	2010           	movel %a0@,%d0
+   21556:	b091           	cmpl %a1@,%d0
+   21558:	661e           	bnes 21578 <strcmp+0x3c>
+   2155a:	2200           	movel %d0,%d1
+   2155c:	0681 fefe feff 	addil #-16843009,%d1
+   21562:	4680           	notl %d0
+   21564:	c081           	andl %d1,%d0
+   21566:	0280 8080 8080 	andil #-2139062144,%d0
+   2156c:	6634           	bnes 215a2 <strcmp+0x66>
+   2156e:	5889           	addql #4,%a1
+   21570:	5888           	addql #4,%a0
+   21572:	2011           	movel %a1@,%d0
+   21574:	b090           	cmpl %a0@,%d0
+   21576:	67e2           	beqs 2155a <strcmp+0x1e>
+   21578:	1011           	moveb %a1@,%d0
+   2157a:	670c           	beqs 21588 <strcmp+0x4c>
+   2157c:	b010           	cmpb %a0@,%d0
+   2157e:	6614           	bnes 21594 <strcmp+0x58>
+   21580:	5289           	addql #1,%a1
+   21582:	5288           	addql #1,%a0
+   21584:	1011           	moveb %a1@,%d0
+   21586:	66f4           	bnes 2157c <strcmp+0x40>
+   21588:	7000           	moveq #0,%d0
+   2158a:	7200           	moveq #0,%d1
+   2158c:	1210           	moveb %a0@,%d1
+   2158e:	9081           	subl %d1,%d0
+   21590:	4e5e           	unlk %fp
+   21592:	4e75           	rts
+   21594:	0280 0000 00ff 	andil #255,%d0
+   2159a:	7200           	moveq #0,%d1
+   2159c:	1210           	moveb %a0@,%d1
+   2159e:	9081           	subl %d1,%d0
+   215a0:	60ee           	bras 21590 <strcmp+0x54>
+   215a2:	7000           	moveq #0,%d0
+   215a4:	4e5e           	unlk %fp
+   215a6:	4e75           	rts
+
+000215a8 <strlen>:
+   215a8:	4e56 0000      	linkw %fp,#0
+   215ac:	222e 0008      	movel %fp@(8),%d1
+   215b0:	2041           	moveal %d1,%a0
+   215b2:	70ff           	moveq #-1,%d0
+   215b4:	4a18           	tstb %a0@+
+   215b6:	66fc           	bnes 215b4 <strlen+0xc>
+   215b8:	2008           	movel %a0,%d0
+   215ba:	9081           	subl %d1,%d0
+   215bc:	5380           	subql #1,%d0
+   215be:	4e5e           	unlk %fp
+   215c0:	4e75           	rts
+	...
+
+000215c4 <strrchr>:
+   215c4:	4e56 0000      	linkw %fp,#0
+   215c8:	48e7 3020      	moveml %d2-%d3/%a2,%sp@-
+   215cc:	222e 0008      	movel %fp@(8),%d1
+   215d0:	242e 000c      	movel %fp@(12),%d2
+   215d4:	6732           	beqs 21608 <strrchr+0x44>
+   215d6:	7600           	moveq #0,%d3
+   215d8:	45f9 0002 1708 	lea 21708 <strchr>,%a2
+   215de:	2f02           	movel %d2,%sp@-
+   215e0:	2f01           	movel %d1,%sp@-
+   215e2:	4e92           	jsr %a2@
+   215e4:	508f           	addql #8,%sp
+   215e6:	4a80           	tstl %d0
+   215e8:	6712           	beqs 215fc <strrchr+0x38>
+   215ea:	2200           	movel %d0,%d1
+   215ec:	5281           	addql #1,%d1
+   215ee:	2600           	movel %d0,%d3
+   215f0:	2f02           	movel %d2,%sp@-
+   215f2:	2f01           	movel %d1,%sp@-
+   215f4:	4e92           	jsr %a2@
+   215f6:	508f           	addql #8,%sp
+   215f8:	4a80           	tstl %d0
+   215fa:	66ee           	bnes 215ea <strrchr+0x26>
+   215fc:	2003           	movel %d3,%d0
+   215fe:	4cee 040c fff4 	moveml %fp@(-12),%d2-%d3/%a2
+   21604:	4e5e           	unlk %fp
+   21606:	4e75           	rts
+   21608:	42ae 000c      	clrl %fp@(12)
+   2160c:	2d41 0008      	movel %d1,%fp@(8)
+   21610:	4cee 040c fff4 	moveml %fp@(-12),%d2-%d3/%a2
+   21616:	4e5e           	unlk %fp
+   21618:	4ef9 0002 1708 	jmp 21708 <strchr>
+	...
+
+00021620 <__strtok_r>:
+   21620:	4e56 0000      	linkw %fp,#0
+   21624:	48e7 203c      	moveml %d2/%a2-%a5,%sp@-
+   21628:	286e 0008      	moveal %fp@(8),%a4
+   2162c:	202e 000c      	movel %fp@(12),%d0
+   21630:	246e 0010      	moveal %fp@(16),%a2
+   21634:	b8fc 0000      	cmpaw #0,%a4
+   21638:	6700 0082      	beqw 216bc <__strtok_r+0x9c>
+   2163c:	4bec 0001      	lea %a4@(1),%a5
+   21640:	1214           	moveb %a4@,%d1
+   21642:	4881           	extw %d1
+   21644:	3641           	moveaw %d1,%a3
+   21646:	2240           	moveal %d0,%a1
+   21648:	1219           	moveb %a1@+,%d1
+   2164a:	4881           	extw %d1
+   2164c:	3041           	moveaw %d1,%a0
+   2164e:	b0fc 0000      	cmpaw #0,%a0
+   21652:	671a           	beqs 2166e <__strtok_r+0x4e>
+   21654:	b1cb           	cmpal %a3,%a0
+   21656:	66f0           	bnes 21648 <__strtok_r+0x28>
+   21658:	4aae 0014      	tstl %fp@(20)
+   2165c:	677e           	beqs 216dc <__strtok_r+0xbc>
+   2165e:	284d           	moveal %a5,%a4
+   21660:	4bec 0001      	lea %a4@(1),%a5
+   21664:	1214           	moveb %a4@,%d1
+   21666:	4881           	extw %d1
+   21668:	3641           	moveaw %d1,%a3
+   2166a:	2240           	moveal %d0,%a1
+   2166c:	60da           	bras 21648 <__strtok_r+0x28>
+   2166e:	b6fc 0000      	cmpaw #0,%a3
+   21672:	675c           	beqs 216d0 <__strtok_r+0xb0>
+   21674:	240d           	movel %a5,%d2
+   21676:	5282           	addql #1,%d2
+   21678:	1215           	moveb %a5@,%d1
+   2167a:	4881           	extw %d1
+   2167c:	3641           	moveaw %d1,%a3
+   2167e:	2240           	moveal %d0,%a1
+   21680:	1219           	moveb %a1@+,%d1
+   21682:	4881           	extw %d1
+   21684:	3041           	moveaw %d1,%a0
+   21686:	b1cb           	cmpal %a3,%a0
+   21688:	6716           	beqs 216a0 <__strtok_r+0x80>
+   2168a:	b0fc 0000      	cmpaw #0,%a0
+   2168e:	66f0           	bnes 21680 <__strtok_r+0x60>
+   21690:	2a42           	moveal %d2,%a5
+   21692:	240d           	movel %a5,%d2
+   21694:	5282           	addql #1,%d2
+   21696:	1215           	moveb %a5@,%d1
+   21698:	4881           	extw %d1
+   2169a:	3641           	moveaw %d1,%a3
+   2169c:	2240           	moveal %d0,%a1
+   2169e:	60e0           	bras 21680 <__strtok_r+0x60>
+   216a0:	b6fc 0000      	cmpaw #0,%a3
+   216a4:	670e           	beqs 216b4 <__strtok_r+0x94>
+   216a6:	4215           	clrb %a5@
+   216a8:	2482           	movel %d2,%a2@
+   216aa:	200c           	movel %a4,%d0
+   216ac:	4cdf 3c04      	moveml %sp@+,%d2/%a2-%a5
+   216b0:	4e5e           	unlk %fp
+   216b2:	4e75           	rts
+   216b4:	7400           	moveq #0,%d2
+   216b6:	2482           	movel %d2,%a2@
+   216b8:	200c           	movel %a4,%d0
+   216ba:	60f0           	bras 216ac <__strtok_r+0x8c>
+   216bc:	2852           	moveal %a2@,%a4
+   216be:	b8fc 0000      	cmpaw #0,%a4
+   216c2:	6600 ff78      	bnew 2163c <__strtok_r+0x1c>
+   216c6:	7000           	moveq #0,%d0
+   216c8:	4cdf 3c04      	moveml %sp@+,%d2/%a2-%a5
+   216cc:	4e5e           	unlk %fp
+   216ce:	4e75           	rts
+   216d0:	4292           	clrl %a2@
+   216d2:	7000           	moveq #0,%d0
+   216d4:	4cdf 3c04      	moveml %sp@+,%d2/%a2-%a5
+   216d8:	4e5e           	unlk %fp
+   216da:	4e75           	rts
+   216dc:	248d           	movel %a5,%a2@
+   216de:	4214           	clrb %a4@
+   216e0:	200c           	movel %a4,%d0
+   216e2:	4cdf 3c04      	moveml %sp@+,%d2/%a2-%a5
+   216e6:	4e5e           	unlk %fp
+   216e8:	4e75           	rts
+
+000216ea <strtok_r>:
+   216ea:	4e56 0000      	linkw %fp,#0
+   216ee:	4878 0001      	pea 1 <__DYNAMIC+0x1>
+   216f2:	2f2e 0010      	movel %fp@(16),%sp@-
+   216f6:	2f2e 000c      	movel %fp@(12),%sp@-
+   216fa:	2f2e 0008      	movel %fp@(8),%sp@-
+   216fe:	4eba ff20      	jsr %pc@(21620 <__strtok_r>)
+   21702:	4e5e           	unlk %fp
+   21704:	4e75           	rts
+	...
+
+00021708 <strchr>:
+   21708:	4e56 0000      	linkw %fp,#0
+   2170c:	48e7 3c00      	moveml %d2-%d5,%sp@-
+   21710:	206e 0008      	moveal %fp@(8),%a0
+   21714:	162e 000f      	moveb %fp@(15),%d3
+   21718:	2008           	movel %a0,%d0
+   2171a:	7203           	moveq #3,%d1
+   2171c:	c081           	andl %d1,%d0
+   2171e:	4a03           	tstb %d3
+   21720:	6760           	beqs 21782 <strchr+0x7a>
+   21722:	4a80           	tstl %d0
+   21724:	6716           	beqs 2173c <strchr+0x34>
+   21726:	1010           	moveb %a0@,%d0
+   21728:	6700 00ba      	beqw 217e4 <strchr+0xdc>
+   2172c:	b003           	cmpb %d3,%d0
+   2172e:	6700 009c      	beqw 217cc <strchr+0xc4>
+   21732:	5288           	addql #1,%a0
+   21734:	2008           	movel %a0,%d0
+   21736:	7203           	moveq #3,%d1
+   21738:	c081           	andl %d1,%d0
+   2173a:	66ea           	bnes 21726 <strchr+0x1e>
+   2173c:	7000           	moveq #0,%d0
+   2173e:	4600           	notb %d0
+   21740:	c0ae 000c      	andl %fp@(12),%d0
+   21744:	2a00           	movel %d0,%d5
+   21746:	e18d           	lsll #8,%d5
+   21748:	8085           	orl %d5,%d0
+   2174a:	2a00           	movel %d0,%d5
+   2174c:	4845           	swap %d5
+   2174e:	4245           	clrw %d5
+   21750:	8a80           	orl %d0,%d5
+   21752:	2210           	movel %a0@,%d1
+   21754:	2005           	movel %d5,%d0
+   21756:	b380           	eorl %d1,%d0
+   21758:	2401           	movel %d1,%d2
+   2175a:	0682 fefe feff 	addil #-16843009,%d2
+   21760:	4681           	notl %d1
+   21762:	c481           	andl %d1,%d2
+   21764:	2800           	movel %d0,%d4
+   21766:	0684 fefe feff 	addil #-16843009,%d4
+   2176c:	2200           	movel %d0,%d1
+   2176e:	4681           	notl %d1
+   21770:	2004           	movel %d4,%d0
+   21772:	c081           	andl %d1,%d0
+   21774:	8082           	orl %d2,%d0
+   21776:	0280 8080 8080 	andil #-2139062144,%d0
+   2177c:	6658           	bnes 217d6 <strchr+0xce>
+   2177e:	5888           	addql #4,%a0
+   21780:	60d0           	bras 21752 <strchr+0x4a>
+   21782:	4a80           	tstl %d0
+   21784:	670e           	beqs 21794 <strchr+0x8c>
+   21786:	4a10           	tstb %a0@
+   21788:	6742           	beqs 217cc <strchr+0xc4>
+   2178a:	5288           	addql #1,%a0
+   2178c:	2008           	movel %a0,%d0
+   2178e:	7203           	moveq #3,%d1
+   21790:	c081           	andl %d1,%d0
+   21792:	66f2           	bnes 21786 <strchr+0x7e>
+   21794:	2010           	movel %a0@,%d0
+   21796:	2200           	movel %d0,%d1
+   21798:	0681 fefe feff 	addil #-16843009,%d1
+   2179e:	4680           	notl %d0
+   217a0:	c081           	andl %d1,%d0
+   217a2:	0280 8080 8080 	andil #-2139062144,%d0
+   217a8:	6618           	bnes 217c2 <strchr+0xba>
+   217aa:	5888           	addql #4,%a0
+   217ac:	2010           	movel %a0@,%d0
+   217ae:	2200           	movel %d0,%d1
+   217b0:	0681 fefe feff 	addil #-16843009,%d1
+   217b6:	4680           	notl %d0
+   217b8:	c081           	andl %d1,%d0
+   217ba:	0280 8080 8080 	andil #-2139062144,%d0
+   217c0:	67e8           	beqs 217aa <strchr+0xa2>
+   217c2:	4a10           	tstb %a0@
+   217c4:	6706           	beqs 217cc <strchr+0xc4>
+   217c6:	5288           	addql #1,%a0
+   217c8:	4a10           	tstb %a0@
+   217ca:	66fa           	bnes 217c6 <strchr+0xbe>
+   217cc:	2008           	movel %a0,%d0
+   217ce:	4cdf 003c      	moveml %sp@+,%d2-%d5
+   217d2:	4e5e           	unlk %fp
+   217d4:	4e75           	rts
+   217d6:	1010           	moveb %a0@,%d0
+   217d8:	670a           	beqs 217e4 <strchr+0xdc>
+   217da:	b003           	cmpb %d3,%d0
+   217dc:	67ee           	beqs 217cc <strchr+0xc4>
+   217de:	5288           	addql #1,%a0
+   217e0:	1010           	moveb %a0@,%d0
+   217e2:	66f6           	bnes 217da <strchr+0xd2>
+   217e4:	7000           	moveq #0,%d0
+   217e6:	4cdf 003c      	moveml %sp@+,%d2-%d5
+   217ea:	4e5e           	unlk %fp
+   217ec:	4e75           	rts
+	...
+
+000217f0 <__CTOR_LIST__>:
+	...
+
+000217f8 <__CTOR_END__>:
+	...
+
+00021800 <__DTOR_END__>:
+   21800:	4661           	notw %a1@-
+   21802:	696c           	bvss 21870 <__DTOR_END__+0x70>
+   21804:	6564           	bcss 2186a <__DTOR_END__+0x6a>
+   21806:	2074 6f20 6d61 	moveal %a4@(00006d61,%d6:l:8),%a0
+   2180c:	6c6c           	bges 2187a <__DTOR_END__+0x7a>
+   2180e:	6f63           	bles 21873 <__DTOR_END__+0x73>
+   21810:	2e0a           	movel %a2,%d7
+   21812:	002e 2e2e 7965 	orib #46,%fp@(31077)
+   21818:	6168           	bsrs 21882 <__DTOR_END__+0x82>
+   2181a:	206e 6f2e      	moveal %fp@(28462),%a0
+   2181e:	0072 0020 2573 	oriw #32,%a2@(20092564)@(2f256420)
+   21824:	2009 2564 2f25 
+   2182a:	6420 
+   2182c:	0025 7800      	orib #0,%a5@-
+   21830:	5458           	addqw #2,%a0@+
+   21832:	5400           	addqb #2,%d0
+   21834:	4150           	.short 0x4150
+   21836:	4900           	chkl %d0,%d4
+   21838:	556e 6b6e      	subqw #2,%fp@(27502)
+   2183c:	6f77           	bles 218b5 <__DTOR_END__+0xb5>
+   2183e:	6e20           	bgts 21860 <__DTOR_END__+0x60>
+   21840:	6669           	bnes 218ab <__DTOR_END__+0xab>
+   21842:	6c65           	bges 218a9 <__DTOR_END__+0xa9>
+   21844:	2074 7970 6520 	moveal %a4@(65202225),%a0
+   2184a:	2225 
+   2184c:	7322           	.short 0x7322
+   2184e:	2e20           	movel %a0@-,%d7
+   21850:	2020           	movel %a0@-,%d0
+   21852:	2020           	movel %a0@-,%d0
+   21854:	2020           	movel %a0@-,%d0
+   21856:	2020           	movel %a0@-,%d0
+   21858:	004e           	.short 0x004e
+   2185a:	6f20           	bles 2187c <__DTOR_END__+0x7c>
+   2185c:	6469           	bccs 218c7 <__DTOR_END__+0xc7>
+   2185e:	736b           	.short 0x736b
+   21860:	2e0a           	movel %a2,%d7
+   21862:	0a00 6e6f      	eorib #111,%d0
+   21866:	6e65           	bgts 218cd <__DTOR_END__+0xcd>
+   21868:	0020 566f      	orib #111,%a0@-
+   2186c:	6c75           	bges 218e3 <__DTOR_END__+0xe3>
+   2186e:	6d65           	blts 218d5 <__DTOR_END__+0xd5>
+   21870:	206e 616d      	moveal %fp@(24941),%a0
+   21874:	653a           	bcss 218b0 <__DTOR_END__+0xb0>
+   21876:	2025           	movel %a5@-,%d0
+   21878:	730a           	.short 0x730a
+   2187a:	002f 0020 4469 	orib #32,%sp@(17513)
+   21880:	7265           	moveq #101,%d1
+   21882:	6374           	blss 218f8 <__DTOR_END__+0xf8>
+   21884:	6f72           	bles 218f8 <__DTOR_END__+0xf8>
+   21886:	7920           	.short 0x7920
+   21888:	6f66           	bles 218f0 <__DTOR_END__+0xf0>
+   2188a:	2025           	movel %a5@-,%d0
+   2188c:	733a           	.short 0x733a
+   2188e:	0a0a           	.short 0x0a0a
+   21890:	0020 2025      	orib #37,%a0@-
+   21894:	3034 645c      	movew %a4@(0000005c,%d6:w:4),%d0
+   21898:	2d25           	movel %a5@-,%fp@-
+   2189a:	3032 6425      	movew %a2@(00000025,%d6:w:4),%d0
+   2189e:	5c2d 2530      	addqb #6,%a5@(9520)
+   218a2:	3264           	moveaw %a4@-,%a1
+   218a4:	2025           	movel %a5@-,%d0
+   218a6:	3032 643a      	movew %a2@(0000003a,%d6:w:4),%d0
+   218aa:	2530 3264      	movel %a0@(00000064,%d3:w:2),%a2@-
+   218ae:	3a25           	movew %a5@-,%d5
+   218b0:	3032 6400      	movew %a2@(00000000,%d6:w:4),%d0
+   218b4:	2020           	movel %a0@-,%d0
+   218b6:	252d 3134      	movel %a5@(12596),%a2@-
+   218ba:	7320           	.short 0x7320
+   218bc:	2864           	moveal %a4@-,%a4
+   218be:	6972           	bvss 21932 <__DTOR_END__+0x132>
+   218c0:	290a           	movel %a2,%a4@-
+   218c2:	0020 2025      	orib #37,%a0@-
+   218c6:	2d31 3473      	movel %a1@(00000073,%d3:w:4),%fp@-
+   218ca:	2025           	movel %a5@-,%d0
+   218cc:	690a           	bvss 218d8 <__DTOR_END__+0xd8>
+   218ce:	005b 2573      	oriw #9587,%a3@+
+   218d2:	5d00           	subqb #6,%d0
+   218d4:	252d 3134      	movel %a5@(12596),%a2@-
+   218d8:	7309           	.short 0x7309
+   218da:	000a           	.short 0x000a
+   218dc:	0909 2538      	movepw %a1@(9528),%d4
+   218e0:	6920           	bvss 21902 <__DTOR_END__+0x102>
+   218e2:	6279           	bhis 2195d <__DTOR_END__+0x15d>
+   218e4:	7465           	moveq #101,%d2
+   218e6:	7320           	.short 0x7320
+   218e8:	7573           	.short 0x7573
+   218ea:	6564           	bcss 21950 <__DTOR_END__+0x150>
+   218ec:	000a           	.short 0x000a
+   218ee:	0909 2538      	movepw %a1@(9528),%d4
+   218f2:	6920           	bvss 21914 <__DTOR_END__+0x114>
+   218f4:	6279           	bhis 2196f <__DTOR_END__+0x16f>
+   218f6:	7465           	moveq #101,%d2
+   218f8:	7320           	.short 0x7320
+   218fa:	6672           	bnes 2196e <__DTOR_END__+0x16e>
+   218fc:	6565           	bcss 21963 <__DTOR_END__+0x163>
+   218fe:	0a0a           	.short 0x0a0a
+   21900:	0025 733e      	orib #62,%a5@-
+   21904:	0063 6400      	oriw #25600,%a3@-
+   21908:	2843           	moveal %d3,%a4
+   2190a:	443a           	.short 0x443a
+   2190c:	2025           	movel %a5@-,%d0
+   2190e:	7329           	.short 0x7329
+   21910:	0043 6f75      	oriw #28533,%d3
+   21914:	6c64           	bges 2197a <sctoasc+0x5>
+   21916:	206e 6f74      	moveal %fp@(28532),%a0
+   2191a:	2066           	moveal %fp@-,%a0
+   2191c:	696e           	bvss 2198c <sctoasc+0x17>
+   2191e:	6420           	bccs 21940 <__DTOR_END__+0x140>
+   21920:	7468           	moveq #104,%d2
+   21922:	6520           	bcss 21944 <__DTOR_END__+0x144>
+   21924:	7061           	moveq #97,%d0
+   21926:	7468           	moveq #104,%d2
+   21928:	2e0a           	movel %a2,%d7
+   2192a:	0054 6865      	oriw #26725,%a4@
+   2192e:	2070 6174 6820 	moveal %a0@(68206e61)@(00000000),%a0
+   21934:	6e61 
+   21936:	6d65           	blts 2199d <sctoasc+0x28>
+   21938:	2066           	moveal %fp@-,%a0
+   2193a:	6f72           	bles 219ae <sctoasc+0x39>
+   2193c:	6d61           	blts 2199f <sctoasc+0x2a>
+   2193e:	7420           	moveq #32,%d2
+   21940:	6973           	bvss 219b5 <sctoasc+0x40>
+   21942:	2069 6e76      	moveal %a1@(28278),%a0
+   21946:	616c           	bsrs 219b4 <sctoasc+0x3f>
+   21948:	6964           	bvss 219ae <sctoasc+0x39>
+   2194a:	2e0a           	movel %a2,%d7
+   2194c:	0053 6869      	oriw #26729,%a3@
+   21950:	7427           	moveq #39,%d2
+   21952:	7320           	.short 0x7320
+   21954:	6675           	bnes 219cb <sctoasc+0x56>
+   21956:	636b           	blss 219c3 <sctoasc+0x4e>
+   21958:	6564           	bcss 219be <sctoasc+0x49>
+   2195a:	3a20           	movew %a0@-,%d5
+   2195c:	2564 0a00      	movel %a4@-,%a2@(2560)
+   21960:	4f4b           	.short 0x4f4b
+   21962:	0a00 6469      	eorib #105,%d0
+   21966:	7200           	moveq #0,%d1
+   21968:	7265           	moveq #101,%d1
+   2196a:	6e00 6465      	bgtw 27dd1 <_etext+0x624b>
+   2196e:	6c00 7368      	bgew 28cd8 <_etext+0x7152>
+   21972:	6f77           	bles 219eb <sctoasc+0x76>
+	...
+
+00021975 <sctoasc>:
+	...
+   2197d:	0809 0000 000a 0000 0000 0000 0000 0000     ................
+   2198d:	0000 001b 0000 0000 2000 0000 0000 0000     ........ .......
+	...
+   219a5:	3031 3233 3435 3637 3839 0000 0000 0000     0123456789......
+   219b5:	0061 6263 6465 6667 6869 6a6b 6c6d 6e6f     .abcdefghijklmno
+   219c5:	7071 7273 7475 7677 7879 7a00 0000 0000     pqrstuvwxyz.....
+	...
+   21a2d:	0000 3b3d 2c2d 2e2f 6000 0000 0000 0000     ..;=,-./`.......
+	...
+   21a4d:	0000 005b 5c5d 2700 0000 0000 0000 0000     ...[\]'.........
+	...
+   21a7d:	0809 0000 000a 0000 0000 0000 0000 0000     ................
+   21a8d:	0000 001b 0000 0000 2000 0000 0000 0000     ........ .......
+	...
+   21aa5:	2921 4023 2425 5e5e 262a 2800 0000 0000     )!@#$%^^&*(.....
+   21ab5:	0041 4243 4445 4647 4849 4a4b 4c4d 4e4f     .ABCDEFGHIJKLMNO
+   21ac5:	5051 5253 5455 5657 5859 5a00 0000 0000     PQRSTUVWXYZ.....
+	...
+   21b2d:	0000 3a2b 3c5f 3e3f 7e00 0000 0000 0000     ..:+<_>?~.......
+	...
+   21b4d:	0000 007b 7c7d 2200 0000 0000 0000 0000     ...{|}".........
+	...
+
+00021b76 <__INIT_SECTION__>:
+   21b76:	4e56 0000      	linkw %fp,#0
+   21b7a:	4e5e           	unlk %fp
+   21b7c:	4e75           	rts
+
+00021b7e <__FINI_SECTION__>:
+   21b7e:	4e56 0000      	linkw %fp,#0
+   21b82:	4e5e           	unlk %fp
+   21b84:	4e75           	rts

@@ -1,0 +1,51 @@
+PCX
+	[CCLL LLLL]
+	get value A
+	if top bits of A both set
+		len = bottom six bits of A
+		get value B
+		emit B len times
+	else
+		emit A as-is
+
+GBA RLE
+	[CLLL LLLL]
+	get value A
+	len = bottom seven bits of A
+	if top bit of A set
+		get value B
+		emit B len+3 times
+	else
+		get and emit value B len times
+
+So how do we encode such behavior into control registers?
+
+	.+BA 2211 VVVV LLLL LLLL MMMM MMMM 0100
+	 ||| | |  |    |         |_____________ Detection mask: 0xC0 for PCX, 0x80 for GBA-RLE
+	 ||| | |  |    |_______________________ Length mask: 0x3F for PCX, 0x7F for GBA-RLE
+	 ||| | |  |____________________________ Length add value: 0 for PCX, 3 for GBA-RLE
+	 ||| | |_______________________________ RLE run style:
+	 ||| |                                    0: get a new byte to repeat
+	 ||| |_________________________________ Raw run style:
+	 |||                                      0: get and emit a single byte value (PCX)
+	 |||                                      1: use a whole run of individual values (GBA)
+	 |||___________________________________ Use length add value for raw runs
+	 ||____________________________________ Use length add value for RLE runs (GBA)
+	 |_____________________________________ Add 1 to length
+
+PCX:	0000 0000 0000 0011 1111 1100 0000 0100		RLE_NOADD | RLE_GETSINGLE | RLE_LADD(0) | RLE_LMASK(0x3F) | RLE_DMASK(0xC0) | BLIT_RLE
+	   0    0    0    3    F   C     0    4		0x0003FC04
+GBA:	0010 0100 0011 0111 1111 1000 0000 0100		RLE_ADDRLE | RLE_RAWRUNS | RLE_LADD(3) | RLE_LMASK(0x7F) | RLE_DMASK(0x80) | BLIT_RLE
+	   2    4    3    7    F    8    0    4		0x2436F804
+
+RLE_LEN1	0x80000000
+RLE_NOADD	0x00000000
+RLE_ADDRAW	0x20000000
+RLE_ADDRLE	0x40000000
+RLE_ADDBOTH	0x60000000
+RLE_GETSINGLE	0x00000000
+RLE_RAWRUNS	0x04000000
+RLE_LADD(x)	((x) << 20)
+RLE_LMASK(x)	((x) << 12)
+RLE_DMASK(x)	((x) <<  4)
+BLIT_RLE	0x00000004

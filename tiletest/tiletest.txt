@@ -1,0 +1,1740 @@
+
+tiletest.elf:     file format elf32-m68k
+
+
+Disassembly of section .text:
+
+00020000 <initialize-0x20>:
+   20000:	4153           	.short 0x4153
+   20002:	5321           	subqb #1,%a1@-
+   20004:	4efa 001a      	jmp %pc@(20020 <initialize>)
+   20008:	4865           	.short 0x4865
+   2000a:	6c6c           	bges 20078 <tileset+0x24>
+   2000c:	6f20           	bles 2002e <initialize+0xe>
+   2000e:	576f 726c      	subqw #3,%sp@(29292)
+   20012:	6421           	bccs 20035 <initialize+0x15>
+	...
+
+00020020 <initialize>:
+   20020:	46fc 2700      	movew #9984,%sr
+   20024:	41f9 0000 259e 	lea 259e <_stext>,%a0
+   2002a:	43f9 0100 1000 	lea 1001000 <heap>,%a1
+   20030:	203c 0000 0004 	movel #4,%d0
+   20036:	e288           	lsrl #1,%d0
+   20038:	5340           	subqw #1,%d0
+   2003a:	32d8           	movew %a0@+,%a1@+
+   2003c:	51c8 fffc      	dbf %d0,2003a <initialize+0x1a>
+   20040:	41f9 01ff 0000 	lea 1ff0000 <__end+0xfeeff0>,%a0
+   20046:	2e48           	moveal %a0,%sp
+   20048:	4e56 fff8      	linkw %fp,#-8
+   2004c:	4eb9 0002 2054 	jsr 22054 <main>
+   20052:	60fe           	bras 20052 <initialize+0x32>
+
+00020054 <tileset>:
+	...
+   20474:	00f0           	.short 0x00f0
+   20476:	0f00           	btst %d7,%d0
+   20478:	00ff           	.short 0x00ff
+   2047a:	ff00           	.short 0xff00
+   2047c:	00ff           	.short 0x00ff
+   2047e:	ff02           	.short 0xff02
+   20480:	00ff           	.short 0x00ff
+   20482:	ff02           	.short 0xff02
+   20484:	00f0           	.short 0x00f0
+   20486:	2f02           	movel %d2,%sp@-
+   20488:	0000 2200      	orib #0,%d0
+   2048c:	00f0           	.short 0x00f0
+   2048e:	0f00           	btst %d7,%d0
+   20490:	0000 2200      	orib #0,%d0
+   20494:	f00f           	.short 0xf00f
+   20496:	ff00           	.short 0xff00
+   20498:	f02f           	.short 0xf02f
+   2049a:	ff02           	.short 0xff02
+   2049c:	f02f           	.short 0xf02f
+   2049e:	ff02           	.short 0xff02
+   204a0:	0022 2002      	orib #2,%a2@-
+	...
+   204b8:	f00f           	.short 0xf00f
+   204ba:	ff00           	.short 0xff00
+   204bc:	ffff           	.short 0xffff
+   204be:	ff0f           	.short 0xff0f
+   204c0:	f02f           	.short 0xf02f
+   204c2:	ff22           	.short 0xff22
+   204c4:	ffff           	.short 0xffff
+   204c6:	ff0f           	.short 0xff0f
+   204c8:	f02f           	.short 0xf02f
+   204ca:	ff22           	.short 0xff22
+   204cc:	0022 2002      	orib #2,%a2@-
+   204d0:	0000 0000      	orib #0,%d0
+   204d4:	00f0           	.short 0x00f0
+   204d6:	0f00           	btst %d7,%d0
+   204d8:	00ff           	.short 0x00ff
+   204da:	ff0f           	.short 0xff0f
+   204dc:	f02f           	.short 0xf02f
+   204de:	2222           	movel %a2@-,%d1
+   204e0:	00ff           	.short 0x00ff
+   204e2:	ff00           	.short 0xff00
+   204e4:	0020 f20f      	orib #15,%a0@-
+   204e8:	f0ff           	.short 0xf0ff
+   204ea:	ff22           	.short 0xff22
+   204ec:	00f2           	.short 0x00f2
+   204ee:	2f02           	movel %d2,%sp@-
+   204f0:	0000 2200      	orib #0,%d0
+   204f4:	f00f           	.short 0xf00f
+   204f6:	000f           	.short 0x000f
+   204f8:	f02f           	.short 0xf02f
+   204fa:	f02f           	.short 0xf02f
+   204fc:	0022 ff22      	orib #34,%a2@-
+   20500:	00f0           	.short 0x00f0
+   20502:	2f02           	movel %d2,%sp@-
+   20504:	00ff           	.short 0x00ff
+   20506:	2200           	movel %d0,%d1
+   20508:	f02f           	.short 0xf02f
+   2050a:	f20f           	.short 0xf20f
+   2050c:	f022           	.short 0xf022
+   2050e:	f02f           	.short 0xf02f
+   20510:	0002 0022      	orib #34,%d2
+   20514:	00ff           	.short 0x00ff
+   20516:	0f00           	btst %d7,%d0
+   20518:	f02f           	.short 0xf02f
+   2051a:	ff00           	.short 0xff00
+   2051c:	00ff           	.short 0x00ff
+   2051e:	2f02           	movel %d2,%sp@-
+   20520:	f0ff           	.short 0xf0ff
+   20522:	f20f           	.short 0xf20f
+   20524:	fff2           	.short 0xfff2
+   20526:	ff22           	.short 0xff22
+   20528:	ff02           	.short 0xff02
+   2052a:	ff02           	.short 0xff02
+   2052c:	f0ff           	.short 0xf0ff
+   2052e:	f00f           	.short 0xf00f
+   20530:	0022 0222      	orib #34,%a2@-
+   20534:	00f0           	.short 0x00f0
+   20536:	0f00           	btst %d7,%d0
+   20538:	00f0           	.short 0x00f0
+   2053a:	2f00           	movel %d0,%sp@-
+   2053c:	00f0           	.short 0x00f0
+   2053e:	2f00           	movel %d0,%sp@-
+   20540:	0000 2200      	orib #0,%d0
+	...
+   20554:	0000 ff00      	orib #0,%d0
+   20558:	00f0           	.short 0x00f0
+   2055a:	2f02           	movel %d2,%sp@-
+   2055c:	00ff           	.short 0x00ff
+   2055e:	2200           	movel %d0,%d1
+   20560:	00ff           	.short 0x00ff
+   20562:	0200 00ff      	andib #-1,%d0
+   20566:	0200 00f0      	andib #-16,%d0
+   2056a:	0f00           	btst %d7,%d0
+   2056c:	0000 ff00      	orib #0,%d0
+   20570:	0000 2002      	orib #2,%d0
+   20574:	00ff           	.short 0x00ff
+   20576:	0000 00f0      	orib #-16,%d0
+   2057a:	0f00           	btst %d7,%d0
+   2057c:	0000 ff00      	orib #0,%d0
+   20580:	0000 ff02      	orib #2,%d0
+   20584:	0000 ff02      	orib #2,%d0
+   20588:	00f0           	.short 0x00f0
+   2058a:	2f02           	movel %d2,%sp@-
+   2058c:	00ff           	.short 0x00ff
+   2058e:	2200           	movel %d0,%d1
+   20590:	0020 0200      	orib #0,%a0@-
+   20594:	0000 0000      	orib #0,%d0
+   20598:	f00f           	.short 0xf00f
+   2059a:	ff00           	.short 0xff00
+   2059c:	00ff           	.short 0x00ff
+   2059e:	2f02           	movel %d2,%sp@-
+   205a0:	ffff           	.short 0xffff
+   205a2:	ff0f           	.short 0xff0f
+   205a4:	20ff           	.short 0x20ff
+   205a6:	2f22           	movel %a2@-,%sp@-
+   205a8:	f02f           	.short 0xf02f
+   205aa:	ff00           	.short 0xff00
+   205ac:	0022 2002      	orib #2,%a2@-
+	...
+   205b8:	00f0           	.short 0x00f0
+   205ba:	0f00           	btst %d7,%d0
+   205bc:	00f0           	.short 0x00f0
+   205be:	2f00           	movel %d0,%sp@-
+   205c0:	f0ff           	.short 0xf0ff
+   205c2:	ff0f           	.short 0xff0f
+   205c4:	00f2           	.short 0x00f2
+   205c6:	2f22           	movel %a2@-,%sp@-
+   205c8:	00f0           	.short 0x00f0
+   205ca:	2f00           	movel %d0,%sp@-
+   205cc:	0000 2200      	orib #0,%d0
+	...
+   205e8:	00f0           	.short 0x00f0
+   205ea:	0f00           	btst %d7,%d0
+   205ec:	00f0           	.short 0x00f0
+   205ee:	2f00           	movel %d0,%sp@-
+   205f0:	00ff           	.short 0x00ff
+   205f2:	2200           	movel %d0,%d1
+	...
+   20600:	f0ff           	.short 0xf0ff
+   20602:	ff0f           	.short 0xff0f
+   20604:	0022 2222      	orib #34,%a2@-
+	...
+   20628:	00f0           	.short 0x00f0
+   2062a:	0f00           	btst %d7,%d0
+   2062c:	00f0           	.short 0x00f0
+   2062e:	2f00           	movel %d0,%sp@-
+   20630:	0000 2200      	orib #0,%d0
+   20634:	0000 000f      	orib #15,%d0
+   20638:	0000 f02f      	orib #47,%d0
+   2063c:	0000 ff22      	orib #34,%d0
+   20640:	00f0           	.short 0x00f0
+   20642:	2f02           	movel %d2,%sp@-
+   20644:	00ff           	.short 0x00ff
+   20646:	2200           	movel %d0,%d1
+   20648:	f02f           	.short 0xf02f
+   2064a:	0200 f022      	andib #34,%d0
+   2064e:	0000 0002      	orib #2,%d0
+   20652:	0000 00ff      	orib #-1,%d0
+   20656:	0f00           	btst %d7,%d0
+   20658:	f020           	.short 0xf020
+   2065a:	ff00           	.short 0xff00
+   2065c:	ff02           	.short 0xff02
+   2065e:	f00f           	.short 0xf00f
+   20660:	ff02           	.short 0xff02
+   20662:	f02f           	.short 0xf02f
+   20664:	ff02           	.short 0xff02
+   20666:	f02f           	.short 0xf02f
+   20668:	f00f           	.short 0xf00f
+   2066a:	f022           	.short 0xf022
+   2066c:	00ff           	.short 0x00ff
+   2066e:	0f02           	btst %d7,%d2
+   20670:	0020 2200      	orib #0,%a0@-
+   20674:	00f0           	.short 0x00f0
+   20676:	0f00           	btst %d7,%d0
+   20678:	00ff           	.short 0x00ff
+   2067a:	2f00           	movel %d0,%sp@-
+   2067c:	00f0           	.short 0x00f0
+   2067e:	2f00           	movel %d0,%sp@-
+   20680:	00f0           	.short 0x00f0
+   20682:	2f00           	movel %d0,%sp@-
+   20684:	00f0           	.short 0x00f0
+   20686:	2f00           	movel %d0,%sp@-
+   20688:	00f0           	.short 0x00f0
+   2068a:	2f00           	movel %d0,%sp@-
+   2068c:	f0ff           	.short 0xf0ff
+   2068e:	ff0f           	.short 0xff0f
+   20690:	0022 2222      	orib #34,%a2@-
+   20694:	f0ff           	.short 0xf0ff
+   20696:	ff00           	.short 0xff00
+   20698:	ff22           	.short 0xff22
+   2069a:	f20f           	.short 0xf20f
+   2069c:	2002           	movel %d2,%d0
+   2069e:	ff2f           	.short 0xff2f
+   206a0:	00ff           	.short 0x00ff
+   206a2:	ff22           	.short 0xff22
+   206a4:	f0ff           	.short 0xf0ff
+   206a6:	2f02           	movel %d2,%sp@-
+   206a8:	ff2f           	.short 0xff2f
+   206aa:	2200           	movel %d0,%d1
+   206ac:	ffff           	.short 0xffff
+   206ae:	ff0f           	.short 0xff0f
+   206b0:	2022           	movel %a2@-,%d0
+   206b2:	2222           	movel %a2@-,%d1
+   206b4:	f0ff           	.short 0xf0ff
+   206b6:	ff0f           	.short 0xff0f
+   206b8:	0022 ff22      	orib #34,%a2@-
+   206bc:	00f0           	.short 0x00f0
+   206be:	2f02           	movel %d2,%sp@-
+   206c0:	00ff           	.short 0x00ff
+   206c2:	ff00           	.short 0xff00
+   206c4:	0020 f20f      	orib #15,%a0@-
+   206c8:	ff00           	.short 0xff00
+   206ca:	f02f           	.short 0xf02f
+   206cc:	f0ff           	.short 0xf0ff
+   206ce:	ff22           	.short 0xff22
+   206d0:	0022 2202      	orib #2,%a2@-
+   206d4:	00f0           	.short 0x00f0
+   206d6:	ff00           	.short 0xff00
+   206d8:	00ff           	.short 0x00ff
+   206da:	ff02           	.short 0xff02
+   206dc:	f02f           	.short 0xf02f
+   206de:	ff02           	.short 0xff02
+   206e0:	ff22           	.short 0xff22
+   206e2:	ff02           	.short 0xff02
+   206e4:	ffff           	.short 0xffff
+   206e6:	ff0f           	.short 0xff0f
+   206e8:	2022           	movel %a2@-,%d0
+   206ea:	ff22           	.short 0xff22
+   206ec:	0000 ff02      	orib #2,%d0
+   206f0:	0000 2002      	orib #2,%d0
+   206f4:	ffff           	.short 0xffff
+   206f6:	ff00           	.short 0xff00
+   206f8:	ff22           	.short 0xff22
+   206fa:	2202           	movel %d2,%d1
+   206fc:	ffff           	.short 0xffff
+   206fe:	ff00           	.short 0xff00
+   20700:	2022           	movel %a2@-,%d0
+   20702:	f20f           	.short 0xf20f
+   20704:	0000 f02f      	orib #47,%d0
+   20708:	ff00           	.short 0xff00
+   2070a:	f02f           	.short 0xf02f
+   2070c:	f0ff           	.short 0xf0ff
+   2070e:	ff22           	.short 0xff22
+   20710:	0022 2202      	orib #2,%a2@-
+   20714:	00ff           	.short 0x00ff
+   20716:	ff00           	.short 0xff00
+   20718:	f02f           	.short 0xf02f
+   2071a:	2202           	movel %d2,%d1
+   2071c:	ff22           	.short 0xff22
+   2071e:	0000 ffff      	orib #-1,%d0
+   20722:	ff00           	.short 0xff00
+   20724:	ff22           	.short 0xff22
+   20726:	f20f           	.short 0xf20f
+   20728:	ff02           	.short 0xff02
+   2072a:	f02f           	.short 0xf02f
+   2072c:	f0ff           	.short 0xf0ff
+   2072e:	ff22           	.short 0xff22
+   20730:	0022 2202      	orib #2,%a2@-
+   20734:	ffff           	.short 0xffff
+   20736:	ff0f           	.short 0xff0f
+   20738:	ff22           	.short 0xff22
+   2073a:	f22f           	.short 0xf22f
+   2073c:	2002           	movel %d2,%d0
+   2073e:	ff22           	.short 0xff22
+   20740:	00f0           	.short 0x00f0
+   20742:	2f02           	movel %d2,%sp@-
+   20744:	00ff           	.short 0x00ff
+   20746:	2200           	movel %d0,%d1
+   20748:	00ff           	.short 0x00ff
+   2074a:	0200 00ff      	andib #-1,%d0
+   2074e:	0200 0020      	andib #32,%d0
+   20752:	0200 f0ff      	andib #-1,%d0
+   20756:	0f00           	btst %d7,%d0
+   20758:	0f22           	btst %d7,%a2@-
+   2075a:	f200           	.short 0xf200
+   2075c:	ff00           	.short 0xff00
+   2075e:	f002           	.short 0xf002
+   20760:	f0ff           	.short 0xf0ff
+   20762:	0f02           	btst %d7,%d2
+   20764:	0ff2 ff0f 2f00 	bset %d7,%a2@(00000000)@(2f00f22f,%sp:l:8)
+   2076a:	f22f 
+   2076c:	f0ff           	.short 0xf0ff
+   2076e:	ff22           	.short 0xff22
+   20770:	0022 2202      	orib #2,%a2@-
+   20774:	f0ff           	.short 0xf0ff
+   20776:	ff00           	.short 0xff00
+   20778:	ff22           	.short 0xff22
+   2077a:	f20f           	.short 0xf20f
+   2077c:	ff02           	.short 0xff02
+   2077e:	f02f           	.short 0xf02f
+   20780:	f0ff           	.short 0xf0ff
+   20782:	ff2f           	.short 0xff2f
+   20784:	0022 f22f      	orib #47,%a2@-
+   20788:	0000 ff22      	orib #34,%d0
+   2078c:	f0ff           	.short 0xf0ff
+   2078e:	2f02           	movel %d2,%sp@-
+   20790:	0022 2200      	orib #0,%a2@-
+	...
+   2079c:	00f0           	.short 0x00f0
+   2079e:	0f00           	btst %d7,%d0
+   207a0:	00f0           	.short 0x00f0
+   207a2:	2f00           	movel %d0,%sp@-
+   207a4:	0000 2200      	orib #0,%d0
+   207a8:	00f0           	.short 0x00f0
+   207aa:	0f00           	btst %d7,%d0
+   207ac:	00f0           	.short 0x00f0
+   207ae:	2f00           	movel %d0,%sp@-
+   207b0:	0000 2200      	orib #0,%d0
+	...
+   207bc:	00f0           	.short 0x00f0
+   207be:	0f00           	btst %d7,%d0
+   207c0:	00f0           	.short 0x00f0
+   207c2:	2f00           	movel %d0,%sp@-
+   207c4:	0000 2200      	orib #0,%d0
+   207c8:	00f0           	.short 0x00f0
+   207ca:	0f00           	btst %d7,%d0
+   207cc:	00f0           	.short 0x00f0
+   207ce:	2f00           	movel %d0,%sp@-
+   207d0:	00ff           	.short 0x00ff
+   207d2:	2200           	movel %d0,%d1
+   207d4:	0000 ff00      	orib #0,%d0
+   207d8:	00f0           	.short 0x00f0
+   207da:	2f02           	movel %d2,%sp@-
+   207dc:	00ff           	.short 0x00ff
+   207de:	2200           	movel %d0,%d1
+   207e0:	f02f           	.short 0xf02f
+   207e2:	0200 00ff      	andib #-1,%d0
+   207e6:	0000 00f0      	orib #-16,%d0
+   207ea:	0f00           	btst %d7,%d0
+   207ec:	0000 ff00      	orib #0,%d0
+   207f0:	0000 2002      	orib #2,%d0
+	...
+   207fc:	00ff           	.short 0x00ff
+   207fe:	ff00           	.short 0xff00
+   20800:	0020 2202      	orib #2,%a0@-
+   20804:	00ff           	.short 0x00ff
+   20806:	ff00           	.short 0xff00
+   20808:	0020 2202      	orib #2,%a0@-
+	...
+   20814:	00ff           	.short 0x00ff
+   20816:	0000 00f0      	orib #-16,%d0
+   2081a:	0f00           	btst %d7,%d0
+   2081c:	0000 ff00      	orib #0,%d0
+   20820:	0000 f00f      	orib #15,%d0
+   20824:	0000 ff22      	orib #34,%d0
+   20828:	00f0           	.short 0x00f0
+   2082a:	2f02           	movel %d2,%sp@-
+   2082c:	00ff           	.short 0x00ff
+   2082e:	2200           	movel %d0,%d1
+   20830:	0020 0200      	orib #0,%a0@-
+   20834:	f0ff           	.short 0xf0ff
+   20836:	ff00           	.short 0xff00
+   20838:	ff22           	.short 0xff22
+   2083a:	f20f           	.short 0xf20f
+   2083c:	2002           	movel %d2,%d0
+   2083e:	f02f           	.short 0xf02f
+   20840:	00f0           	.short 0x00f0
+   20842:	ff22           	.short 0xff22
+   20844:	00ff           	.short 0x00ff
+   20846:	2f02           	movel %d2,%sp@-
+   20848:	0020 2200      	orib #0,%a0@-
+   2084c:	00ff           	.short 0x00ff
+   2084e:	0f00           	btst %d7,%d0
+   20850:	0020 2200      	orib #0,%a0@-
+   20854:	f0ff           	.short 0xf0ff
+   20856:	ff00           	.short 0xff00
+   20858:	ff22           	.short 0xff22
+   2085a:	ff0f           	.short 0xff0f
+   2085c:	fff2           	.short 0xfff2
+   2085e:	202f fff2      	movel %sp@(-14),%d0
+   20862:	022f ff02 ff2f 	andib #2,%sp@(-209)
+   20868:	ff02           	.short 0xff02
+   2086a:	2022           	movel %a2@-,%d0
+   2086c:	f0ff           	.short 0xf0ff
+   2086e:	ff0f           	.short 0xff0f
+   20870:	0022 2222      	orib #34,%a2@-
+   20874:	00ff           	.short 0x00ff
+   20876:	0f00           	btst %d7,%d0
+   20878:	f02f           	.short 0xf02f
+   2087a:	ff00           	.short 0xff00
+   2087c:	ff22           	.short 0xff22
+   2087e:	f00f           	.short 0xf00f
+   20880:	ff02           	.short 0xff02
+   20882:	f02f           	.short 0xf02f
+   20884:	ffff           	.short 0xffff
+   20886:	ff2f           	.short 0xff2f
+   20888:	ff22           	.short 0xff22
+   2088a:	f22f           	.short 0xf22f
+   2088c:	ff02           	.short 0xff02
+   2088e:	f02f           	.short 0xf02f
+   20890:	2002           	movel %d2,%d0
+   20892:	0022 ffff      	orib #-1,%a2@-
+   20896:	ff00           	.short 0xff00
+   20898:	ff22           	.short 0xff22
+   2089a:	f20f           	.short 0xf20f
+   2089c:	ff02           	.short 0xff02
+   2089e:	f02f           	.short 0xf02f
+   208a0:	ffff           	.short 0xffff
+   208a2:	ff22           	.short 0xff22
+   208a4:	ff22           	.short 0xff22
+   208a6:	f20f           	.short 0xf20f
+   208a8:	ff02           	.short 0xff02
+   208aa:	f02f           	.short 0xf02f
+   208ac:	ffff           	.short 0xffff
+   208ae:	ff22           	.short 0xff22
+   208b0:	2022           	movel %a2@-,%d0
+   208b2:	2202           	movel %d2,%d1
+   208b4:	00ff           	.short 0x00ff
+   208b6:	ff00           	.short 0xff00
+   208b8:	f02f           	.short 0xf02f
+   208ba:	f20f           	.short 0xf20f
+   208bc:	ff22           	.short 0xff22
+   208be:	0022 ff02      	orib #2,%a2@-
+   208c2:	0000 ff02      	orib #2,%d0
+   208c6:	0000 f00f      	orib #15,%d0
+   208ca:	f00f           	.short 0xf00f
+   208cc:	00ff           	.short 0x00ff
+   208ce:	ff22           	.short 0xff22
+   208d0:	0020 2202      	orib #2,%a0@-
+   208d4:	ffff           	.short 0xffff
+   208d6:	0f00           	btst %d7,%d0
+   208d8:	ff22           	.short 0xff22
+   208da:	ff00           	.short 0xff00
+   208dc:	ff02           	.short 0xff02
+   208de:	f00f           	.short 0xf00f
+   208e0:	ff02           	.short 0xff02
+   208e2:	f02f           	.short 0xf02f
+   208e4:	ff02           	.short 0xff02
+   208e6:	f02f           	.short 0xf02f
+   208e8:	ff02           	.short 0xff02
+   208ea:	ff22           	.short 0xff22
+   208ec:	ffff           	.short 0xffff
+   208ee:	2f02           	movel %d2,%sp@-
+   208f0:	2022           	movel %a2@-,%d0
+   208f2:	2200           	movel %d0,%d1
+   208f4:	ffff           	.short 0xffff
+   208f6:	ff0f           	.short 0xff0f
+   208f8:	ff22           	.short 0xff22
+   208fa:	2222           	movel %a2@-,%d1
+   208fc:	ff02           	.short 0xff02
+   208fe:	0000 ffff      	orib #-1,%d0
+   20902:	ff00           	.short 0xff00
+   20904:	ff22           	.short 0xff22
+   20906:	2202           	movel %d2,%d1
+   20908:	ff02           	.short 0xff02
+   2090a:	0000 ffff      	orib #-1,%d0
+   2090e:	ff0f           	.short 0xff0f
+   20910:	2022           	movel %a2@-,%d0
+   20912:	2222           	movel %a2@-,%d1
+   20914:	ffff           	.short 0xffff
+   20916:	ff0f           	.short 0xff0f
+   20918:	ff22           	.short 0xff22
+   2091a:	2222           	movel %a2@-,%d1
+   2091c:	ff02           	.short 0xff02
+   2091e:	0000 ffff      	orib #-1,%d0
+   20922:	ff00           	.short 0xff00
+   20924:	ff22           	.short 0xff22
+   20926:	2202           	movel %d2,%d1
+   20928:	ff02           	.short 0xff02
+   2092a:	0000 ff02      	orib #2,%d0
+   2092e:	0000 2002      	orib #2,%d0
+   20932:	0000 00ff      	orib #-1,%d0
+   20936:	ff0f           	.short 0xff0f
+   20938:	f02f           	.short 0xf02f
+   2093a:	2222           	movel %a2@-,%d1
+   2093c:	ff22           	.short 0xff22
+   2093e:	0000 ff02      	orib #2,%d0
+   20942:	ff0f           	.short 0xff0f
+   20944:	ff02           	.short 0xff02
+   20946:	f02f           	.short 0xf02f
+   20948:	f00f           	.short 0xf00f
+   2094a:	f02f           	.short 0xf02f
+   2094c:	00ff           	.short 0x00ff
+   2094e:	ff2f           	.short 0xff2f
+   20950:	0020 2222      	orib #34,%a0@-
+   20954:	ff00           	.short 0xff00
+   20956:	f00f           	.short 0xf00f
+   20958:	ff02           	.short 0xff02
+   2095a:	f02f           	.short 0xf02f
+   2095c:	ff02           	.short 0xff02
+   2095e:	f02f           	.short 0xf02f
+   20960:	ffff           	.short 0xffff
+   20962:	ff2f           	.short 0xff2f
+   20964:	ff22           	.short 0xff22
+   20966:	f22f           	.short 0xf22f
+   20968:	ff02           	.short 0xff02
+   2096a:	f02f           	.short 0xf02f
+   2096c:	ff02           	.short 0xff02
+   2096e:	f02f           	.short 0xf02f
+   20970:	2002           	movel %d2,%d0
+   20972:	0022 f0ff      	orib #-1,%a2@-
+   20976:	ff0f           	.short 0xff0f
+   20978:	00f2           	.short 0x00f2
+   2097a:	2f22           	movel %a2@-,%sp@-
+   2097c:	00f0           	.short 0x00f0
+   2097e:	2f00           	movel %d0,%sp@-
+   20980:	00f0           	.short 0x00f0
+   20982:	2f00           	movel %d0,%sp@-
+   20984:	00f0           	.short 0x00f0
+   20986:	2f00           	movel %d0,%sp@-
+   20988:	00f0           	.short 0x00f0
+   2098a:	2f00           	movel %d0,%sp@-
+   2098c:	f0ff           	.short 0xf0ff
+   2098e:	ff0f           	.short 0xff0f
+   20990:	0022 2222      	orib #34,%a2@-
+   20994:	0000 f00f      	orib #15,%d0
+   20998:	0000 f02f      	orib #47,%d0
+   2099c:	0000 f02f      	orib #47,%d0
+   209a0:	0000 f02f      	orib #47,%d0
+   209a4:	0000 f02f      	orib #47,%d0
+   209a8:	ff00           	.short 0xff00
+   209aa:	f02f           	.short 0xf02f
+   209ac:	f0ff           	.short 0xf0ff
+   209ae:	ff22           	.short 0xff22
+   209b0:	0022 2202      	orib #2,%a2@-
+   209b4:	ff00           	.short 0xff00
+   209b6:	f00f           	.short 0xf00f
+   209b8:	ff02           	.short 0xff02
+   209ba:	ff22           	.short 0xff22
+   209bc:	fff2           	.short 0xfff2
+   209be:	2f02           	movel %d2,%sp@-
+   209c0:	ffff           	.short 0xffff
+   209c2:	2200           	movel %d0,%d1
+   209c4:	ffff           	.short 0xffff
+   209c6:	0f00           	btst %d7,%d0
+   209c8:	fff2           	.short 0xfff2
+   209ca:	ff00           	.short 0xff00
+   209cc:	ff02           	.short 0xff02
+   209ce:	ff0f           	.short 0xff0f
+   209d0:	2002           	movel %d2,%d0
+   209d2:	2022           	movel %a2@-,%d0
+   209d4:	ff00           	.short 0xff00
+   209d6:	0000 ff02      	orib #2,%d0
+   209da:	0000 ff02      	orib #2,%d0
+   209de:	0000 ff02      	orib #2,%d0
+   209e2:	0000 ff02      	orib #2,%d0
+   209e6:	0000 ff02      	orib #2,%d0
+   209ea:	0000 ffff      	orib #-1,%d0
+   209ee:	ff0f           	.short 0xff0f
+   209f0:	2022           	movel %a2@-,%d0
+   209f2:	2222           	movel %a2@-,%d1
+   209f4:	ff00           	.short 0xff00
+   209f6:	f00f           	.short 0xf00f
+   209f8:	ff0f           	.short 0xff0f
+   209fa:	ff2f           	.short 0xff2f
+   209fc:	ffff           	.short 0xffff
+   209fe:	ff2f           	.short 0xff2f
+   20a00:	ffff           	.short 0xffff
+   20a02:	ff2f           	.short 0xff2f
+   20a04:	fff2           	.short 0xfff2
+   20a06:	f22f           	.short 0xf22f
+   20a08:	ff02           	.short 0xff02
+   20a0a:	f22f           	.short 0xf22f
+   20a0c:	ff02           	.short 0xff02
+   20a0e:	f02f           	.short 0xf02f
+   20a10:	2002           	movel %d2,%d0
+   20a12:	0022 ff00      	orib #0,%a2@-
+   20a16:	f00f           	.short 0xf00f
+   20a18:	ff0f           	.short 0xff0f
+   20a1a:	f02f           	.short 0xf02f
+   20a1c:	ffff           	.short 0xffff
+   20a1e:	f02f           	.short 0xf02f
+   20a20:	ffff           	.short 0xffff
+   20a22:	ff2f           	.short 0xff2f
+   20a24:	fff2           	.short 0xfff2
+   20a26:	ff2f           	.short 0xff2f
+   20a28:	ff02           	.short 0xff02
+   20a2a:	ff2f           	.short 0xff2f
+   20a2c:	ff02           	.short 0xff02
+   20a2e:	f02f           	.short 0xf02f
+   20a30:	2002           	movel %d2,%d0
+   20a32:	0022 f0ff      	orib #-1,%a2@-
+   20a36:	ff00           	.short 0xff00
+   20a38:	ff22           	.short 0xff22
+   20a3a:	f20f           	.short 0xf20f
+   20a3c:	ff02           	.short 0xff02
+   20a3e:	f02f           	.short 0xf02f
+   20a40:	ff02           	.short 0xff02
+   20a42:	f02f           	.short 0xf02f
+   20a44:	ff02           	.short 0xff02
+   20a46:	f02f           	.short 0xf02f
+   20a48:	ff02           	.short 0xff02
+   20a4a:	f02f           	.short 0xf02f
+   20a4c:	f0ff           	.short 0xf0ff
+   20a4e:	ff22           	.short 0xff22
+   20a50:	0022 2202      	orib #2,%a2@-
+   20a54:	ffff           	.short 0xffff
+   20a56:	ff00           	.short 0xff00
+   20a58:	ff22           	.short 0xff22
+   20a5a:	f20f           	.short 0xf20f
+   20a5c:	ff02           	.short 0xff02
+   20a5e:	f02f           	.short 0xf02f
+   20a60:	ff02           	.short 0xff02
+   20a62:	f02f           	.short 0xf02f
+   20a64:	ffff           	.short 0xffff
+   20a66:	ff22           	.short 0xff22
+   20a68:	ff22           	.short 0xff22
+   20a6a:	2202           	movel %d2,%d1
+   20a6c:	ff02           	.short 0xff02
+   20a6e:	0000 2002      	orib #2,%d0
+   20a72:	0000 f0ff      	orib #-1,%d0
+   20a76:	ff00           	.short 0xff00
+   20a78:	ff22           	.short 0xff22
+   20a7a:	f20f           	.short 0xf20f
+   20a7c:	ff02           	.short 0xff02
+   20a7e:	f02f           	.short 0xf02f
+   20a80:	ff02           	.short 0xff02
+   20a82:	f02f           	.short 0xf02f
+   20a84:	fff2           	.short 0xfff2
+   20a86:	ff2f           	.short 0xff2f
+   20a88:	ff02           	.short 0xff02
+   20a8a:	ff22           	.short 0xff22
+   20a8c:	f0ff           	.short 0xf0ff
+   20a8e:	2f0f           	movel %sp,%sp@-
+   20a90:	0022 2220      	orib #32,%a2@-
+   20a94:	ffff           	.short 0xffff
+   20a96:	ff00           	.short 0xff00
+   20a98:	ff22           	.short 0xff22
+   20a9a:	f20f           	.short 0xf20f
+   20a9c:	ff02           	.short 0xff02
+   20a9e:	f02f           	.short 0xf02f
+   20aa0:	ff02           	.short 0xff02
+   20aa2:	ff2f           	.short 0xff2f
+   20aa4:	ffff           	.short 0xffff
+   20aa6:	2f22           	movel %a2@-,%sp@-
+   20aa8:	fff2           	.short 0xfff2
+   20aaa:	ff00           	.short 0xff00
+   20aac:	ff02           	.short 0xff02
+   20aae:	ff0f           	.short 0xff0f
+   20ab0:	2002           	movel %d2,%d0
+   20ab2:	2022           	movel %a2@-,%d0
+   20ab4:	f0ff           	.short 0xf0ff
+   20ab6:	0f00           	btst %d7,%d0
+   20ab8:	ff22           	.short 0xff22
+   20aba:	ff00           	.short 0xff00
+   20abc:	ff02           	.short 0xff02
+   20abe:	2002           	movel %d2,%d0
+   20ac0:	f0ff           	.short 0xf0ff
+   20ac2:	ff00           	.short 0xff00
+   20ac4:	0022 f20f      	orib #15,%a2@-
+   20ac8:	ff00           	.short 0xff00
+   20aca:	f02f           	.short 0xf02f
+   20acc:	f0ff           	.short 0xf0ff
+   20ace:	ff22           	.short 0xff22
+   20ad0:	0022 2202      	orib #2,%a2@-
+   20ad4:	f0ff           	.short 0xf0ff
+   20ad6:	ff0f           	.short 0xff0f
+   20ad8:	00f2           	.short 0x00f2
+   20ada:	2f22           	movel %a2@-,%sp@-
+   20adc:	00f0           	.short 0x00f0
+   20ade:	2f00           	movel %d0,%sp@-
+   20ae0:	00f0           	.short 0x00f0
+   20ae2:	2f00           	movel %d0,%sp@-
+   20ae4:	00f0           	.short 0x00f0
+   20ae6:	2f00           	movel %d0,%sp@-
+   20ae8:	00f0           	.short 0x00f0
+   20aea:	2f00           	movel %d0,%sp@-
+   20aec:	00f0           	.short 0x00f0
+   20aee:	2f00           	movel %d0,%sp@-
+   20af0:	0000 2200      	orib #0,%d0
+   20af4:	ff00           	.short 0xff00
+   20af6:	f00f           	.short 0xf00f
+   20af8:	ff02           	.short 0xff02
+   20afa:	f02f           	.short 0xf02f
+   20afc:	ff02           	.short 0xff02
+   20afe:	f02f           	.short 0xf02f
+   20b00:	ff02           	.short 0xff02
+   20b02:	f02f           	.short 0xf02f
+   20b04:	ff02           	.short 0xff02
+   20b06:	f02f           	.short 0xf02f
+   20b08:	ff02           	.short 0xff02
+   20b0a:	f02f           	.short 0xf02f
+   20b0c:	f0ff           	.short 0xf0ff
+   20b0e:	ff22           	.short 0xff22
+   20b10:	0022 2202      	orib #2,%a2@-
+   20b14:	ff00           	.short 0xff00
+   20b16:	f00f           	.short 0xf00f
+   20b18:	ff02           	.short 0xff02
+   20b1a:	f02f           	.short 0xf02f
+   20b1c:	ff02           	.short 0xff02
+   20b1e:	f02f           	.short 0xf02f
+   20b20:	ff02           	.short 0xff02
+   20b22:	f02f           	.short 0xf02f
+   20b24:	f00f           	.short 0xf00f
+   20b26:	ff22           	.short 0xff22
+   20b28:	00ff           	.short 0x00ff
+   20b2a:	2f02           	movel %d2,%sp@-
+   20b2c:	00f0           	.short 0x00f0
+   20b2e:	2200           	movel %d0,%d1
+   20b30:	0000 0200      	orib #0,%d0
+   20b34:	ff00           	.short 0xff00
+   20b36:	f00f           	.short 0xf00f
+   20b38:	ff02           	.short 0xff02
+   20b3a:	f02f           	.short 0xf02f
+   20b3c:	fff2           	.short 0xfff2
+   20b3e:	f02f           	.short 0xf02f
+   20b40:	ffff           	.short 0xffff
+   20b42:	ff2f           	.short 0xff2f
+   20b44:	ffff           	.short 0xffff
+   20b46:	ff2f           	.short 0xff2f
+   20b48:	f02f           	.short 0xf02f
+   20b4a:	ff22           	.short 0xff22
+   20b4c:	f022           	.short 0xf022
+   20b4e:	f002           	.short 0xf002
+   20b50:	0002 0002      	orib #2,%d2
+   20b54:	ff00           	.short 0xff00
+   20b56:	f00f           	.short 0xf00f
+   20b58:	ff0f           	.short 0xff0f
+   20b5a:	ff2f           	.short 0xff2f
+   20b5c:	f0ff           	.short 0xf0ff
+   20b5e:	ff22           	.short 0xff22
+   20b60:	00ff           	.short 0x00ff
+   20b62:	2f02           	movel %d2,%sp@-
+   20b64:	f0ff           	.short 0xf0ff
+   20b66:	ff00           	.short 0xff00
+   20b68:	ff2f           	.short 0xff2f
+   20b6a:	ff0f           	.short 0xff0f
+   20b6c:	ff22           	.short 0xff22
+   20b6e:	f02f           	.short 0xf02f
+   20b70:	2002           	movel %d2,%d0
+   20b72:	0022 f00f      	orib #15,%a2@-
+   20b76:	f00f           	.short 0xf00f
+   20b78:	f02f           	.short 0xf02f
+   20b7a:	f02f           	.short 0xf02f
+   20b7c:	f02f           	.short 0xf02f
+   20b7e:	f02f           	.short 0xf02f
+   20b80:	00ff           	.short 0x00ff
+   20b82:	ff22           	.short 0xff22
+   20b84:	00f0           	.short 0x00f0
+   20b86:	2f02           	movel %d2,%sp@-
+   20b88:	00f0           	.short 0x00f0
+   20b8a:	2f00           	movel %d0,%sp@-
+   20b8c:	00f0           	.short 0x00f0
+   20b8e:	2f00           	movel %d0,%sp@-
+   20b90:	0000 2200      	orib #0,%d0
+   20b94:	ffff           	.short 0xffff
+   20b96:	ff0f           	.short 0xff0f
+   20b98:	2022           	movel %a2@-,%d0
+   20b9a:	ff2f           	.short 0xff2f
+   20b9c:	00f0           	.short 0x00f0
+   20b9e:	ff22           	.short 0xff22
+   20ba0:	00ff           	.short 0x00ff
+   20ba2:	2f02           	movel %d2,%sp@-
+   20ba4:	f0ff           	.short 0xf0ff
+   20ba6:	2200           	movel %d0,%d1
+   20ba8:	ff2f           	.short 0xff2f
+   20baa:	0200 ffff      	andib #-1,%d0
+   20bae:	ff0f           	.short 0xff0f
+   20bb0:	2022           	movel %a2@-,%d0
+   20bb2:	2222           	movel %a2@-,%d1
+   20bb4:	00ff           	.short 0x00ff
+   20bb6:	ff00           	.short 0xff00
+   20bb8:	00ff           	.short 0x00ff
+   20bba:	2202           	movel %d2,%d1
+   20bbc:	00ff           	.short 0x00ff
+   20bbe:	0200 00ff      	andib #-1,%d0
+   20bc2:	0200 00ff      	andib #-1,%d0
+   20bc6:	0200 00ff      	andib #-1,%d0
+   20bca:	0200 00ff      	andib #-1,%d0
+   20bce:	ff00           	.short 0xff00
+   20bd0:	0020 2202      	orib #2,%a0@-
+   20bd4:	f000           	.short 0xf000
+   20bd6:	0000 f00f      	orib #15,%d0
+   20bda:	0000 00ff      	orib #-1,%d0
+   20bde:	0000 00f0      	orib #-16,%d0
+   20be2:	0f00           	btst %d7,%d0
+   20be4:	0000 ff00      	orib #0,%d0
+   20be8:	0000 f00f      	orib #15,%d0
+   20bec:	0000 002f      	orib #47,%d0
+   20bf0:	0000 0020      	orib #32,%d0
+   20bf4:	00ff           	.short 0x00ff
+   20bf6:	ff00           	.short 0xff00
+   20bf8:	0020 ff02      	orib #2,%a0@-
+   20bfc:	0000 ff02      	orib #2,%d0
+   20c00:	0000 ff02      	orib #2,%d0
+   20c04:	0000 ff02      	orib #2,%d0
+   20c08:	0000 ff02      	orib #2,%d0
+   20c0c:	00ff           	.short 0x00ff
+   20c0e:	ff02           	.short 0xff02
+   20c10:	0020 2202      	orib #2,%a0@-
+   20c14:	00f0           	.short 0x00f0
+   20c16:	0000 000f      	orib #15,%d0
+   20c1a:	0f00           	btst %d7,%d0
+   20c1c:	f020           	.short 0xf020
+   20c1e:	f000           	.short 0xf000
+   20c20:	0f02           	btst %d7,%d2
+   20c22:	000f           	.short 0x000f
+   20c24:	2000           	movel %d0,%d0
+   20c26:	0020 0000      	orib #0,%a0@-
+	...
+   20c4e:	0000 ffff      	orib #-1,%d0
+   20c52:	ff0f           	.short 0xff0f
+   20c54:	f00f           	.short 0xf00f
+   20c56:	0000 00ff      	orib #-1,%d0
+   20c5a:	0000 0020      	orib #32,%d0
+   20c5e:	0200 0000      	andib #0,%d0
+	...
+   20c7a:	0000 f0ff      	orib #-1,%d0
+   20c7e:	ff0f           	.short 0xff0f
+   20c80:	ff22           	.short 0xff22
+   20c82:	f22f           	.short 0xf22f
+   20c84:	ff02           	.short 0xff02
+   20c86:	f02f           	.short 0xf02f
+   20c88:	ff02           	.short 0xff02
+   20c8a:	f02f           	.short 0xf02f
+   20c8c:	f0ff           	.short 0xf0ff
+   20c8e:	ff2f           	.short 0xff2f
+   20c90:	0022 2222      	orib #34,%a2@-
+   20c94:	ff00           	.short 0xff00
+   20c96:	0000 ff02      	orib #2,%d0
+   20c9a:	0000 ffff      	orib #-1,%d0
+   20c9e:	ff00           	.short 0xff00
+   20ca0:	ff22           	.short 0xff22
+   20ca2:	f20f           	.short 0xf20f
+   20ca4:	ff02           	.short 0xff02
+   20ca6:	f02f           	.short 0xf02f
+   20ca8:	ff02           	.short 0xff02
+   20caa:	f02f           	.short 0xf02f
+   20cac:	ffff           	.short 0xffff
+   20cae:	ff22           	.short 0xff22
+   20cb0:	2022           	movel %a2@-,%d0
+   20cb2:	2202           	movel %d2,%d1
+	...
+   20cbc:	f0ff           	.short 0xf0ff
+   20cbe:	ff00           	.short 0xff00
+   20cc0:	ff22           	.short 0xff22
+   20cc2:	f20f           	.short 0xf20f
+   20cc4:	ff02           	.short 0xff02
+   20cc6:	0022 ff02      	orib #2,%a2@-
+   20cca:	0000 f0ff      	orib #-1,%d0
+   20cce:	ff0f           	.short 0xff0f
+   20cd0:	0022 2222      	orib #34,%a2@-
+   20cd4:	0000 f00f      	orib #15,%d0
+   20cd8:	0000 f02f      	orib #47,%d0
+   20cdc:	f0ff           	.short 0xf0ff
+   20cde:	ff2f           	.short 0xff2f
+   20ce0:	ff22           	.short 0xff22
+   20ce2:	f22f           	.short 0xf22f
+   20ce4:	ff02           	.short 0xff02
+   20ce6:	f02f           	.short 0xf02f
+   20ce8:	ff02           	.short 0xff02
+   20cea:	f02f           	.short 0xf02f
+   20cec:	f0ff           	.short 0xf0ff
+   20cee:	ff2f           	.short 0xff2f
+   20cf0:	0022 2222      	orib #34,%a2@-
+	...
+   20cfc:	f0ff           	.short 0xf0ff
+   20cfe:	ff00           	.short 0xff00
+   20d00:	ff22           	.short 0xff22
+   20d02:	f20f           	.short 0xf20f
+   20d04:	ffff           	.short 0xffff
+   20d06:	ff2f           	.short 0xff2f
+   20d08:	ff22           	.short 0xff22
+   20d0a:	2222           	movel %a2@-,%d1
+   20d0c:	f0ff           	.short 0xf0ff
+   20d0e:	ff00           	.short 0xff00
+   20d10:	0022 2202      	orib #2,%a2@-
+   20d14:	00f0           	.short 0x00f0
+   20d16:	ff00           	.short 0xff00
+   20d18:	00ff           	.short 0x00ff
+   20d1a:	f20f           	.short 0xf20f
+   20d1c:	00ff           	.short 0x00ff
+   20d1e:	0222 f0ff      	andib #-1,%a2@-
+   20d22:	ff00           	.short 0xff00
+   20d24:	00ff           	.short 0x00ff
+   20d26:	2202           	movel %d2,%d1
+   20d28:	00ff           	.short 0x00ff
+   20d2a:	0200 00ff      	andib #-1,%d0
+   20d2e:	0200 0020      	andib #32,%d0
+   20d32:	0200 0000      	andib #0,%d0
+   20d36:	0000 0000      	orib #0,%d0
+   20d3a:	0000 f0ff      	orib #-1,%d0
+   20d3e:	ff0f           	.short 0xff0f
+   20d40:	ff22           	.short 0xff22
+   20d42:	f22f           	.short 0xf22f
+   20d44:	ff02           	.short 0xff02
+   20d46:	f02f           	.short 0xf02f
+   20d48:	f0ff           	.short 0xf0ff
+   20d4a:	ff2f           	.short 0xff2f
+   20d4c:	0022 f22f      	orib #47,%a2@-
+   20d50:	f0ff           	.short 0xf0ff
+   20d52:	ff22           	.short 0xff22
+   20d54:	ff00           	.short 0xff00
+   20d56:	0000 ff02      	orib #2,%d0
+   20d5a:	0000 ffff      	orib #-1,%d0
+   20d5e:	ff00           	.short 0xff00
+   20d60:	ff22           	.short 0xff22
+   20d62:	f20f           	.short 0xf20f
+   20d64:	ff02           	.short 0xff02
+   20d66:	f02f           	.short 0xf02f
+   20d68:	ff02           	.short 0xff02
+   20d6a:	f02f           	.short 0xf02f
+   20d6c:	ff02           	.short 0xff02
+   20d6e:	f02f           	.short 0xf02f
+   20d70:	2002           	movel %d2,%d0
+   20d72:	0022 00f0      	orib #-16,%a2@-
+   20d76:	0f00           	btst %d7,%d0
+   20d78:	0000 2200      	orib #0,%d0
+   20d7c:	00ff           	.short 0x00ff
+   20d7e:	0f00           	btst %d7,%d0
+   20d80:	00f0           	.short 0x00f0
+   20d82:	2f00           	movel %d0,%sp@-
+   20d84:	00f0           	.short 0x00f0
+   20d86:	2f00           	movel %d0,%sp@-
+   20d88:	00f0           	.short 0x00f0
+   20d8a:	2f00           	movel %d0,%sp@-
+   20d8c:	00ff           	.short 0x00ff
+   20d8e:	ff00           	.short 0xff00
+   20d90:	0020 2202      	orib #2,%a0@-
+   20d94:	00f0           	.short 0x00f0
+   20d96:	0f00           	btst %d7,%d0
+   20d98:	0000 2200      	orib #0,%d0
+   20d9c:	00ff           	.short 0x00ff
+   20d9e:	0f00           	btst %d7,%d0
+   20da0:	00f0           	.short 0x00f0
+   20da2:	2f00           	movel %d0,%sp@-
+   20da4:	00f0           	.short 0x00f0
+   20da6:	2f00           	movel %d0,%sp@-
+   20da8:	00f0           	.short 0x00f0
+   20daa:	2f00           	movel %d0,%sp@-
+   20dac:	00f0           	.short 0x00f0
+   20dae:	2f00           	movel %d0,%sp@-
+   20db0:	f0ff           	.short 0xf0ff
+   20db2:	2200           	movel %d0,%d1
+   20db4:	ff00           	.short 0xff00
+   20db6:	0000 ff02      	orib #2,%d0
+   20dba:	0000 ff02      	orib #2,%d0
+   20dbe:	ff00           	.short 0xff00
+   20dc0:	fff2           	.short 0xfff2
+   20dc2:	2f02           	movel %d2,%sp@-
+   20dc4:	ffff           	.short 0xffff
+   20dc6:	2200           	movel %d0,%d1
+   20dc8:	fff2           	.short 0xfff2
+   20dca:	0f00           	btst %d7,%d0
+   20dcc:	ff02           	.short 0xff02
+   20dce:	ff00           	.short 0xff00
+   20dd0:	2002           	movel %d2,%d0
+   20dd2:	2002           	movel %d2,%d0
+   20dd4:	00ff           	.short 0x00ff
+   20dd6:	0f00           	btst %d7,%d0
+   20dd8:	00f0           	.short 0x00f0
+   20dda:	2f00           	movel %d0,%sp@-
+   20ddc:	00f0           	.short 0x00f0
+   20dde:	2f00           	movel %d0,%sp@-
+   20de0:	00f0           	.short 0x00f0
+   20de2:	2f00           	movel %d0,%sp@-
+   20de4:	00f0           	.short 0x00f0
+   20de6:	2f00           	movel %d0,%sp@-
+   20de8:	00f0           	.short 0x00f0
+   20dea:	2f00           	movel %d0,%sp@-
+   20dec:	00ff           	.short 0x00ff
+   20dee:	ff00           	.short 0xff00
+   20df0:	0020 2202      	orib #2,%a0@-
+	...
+   20dfc:	ff0f           	.short 0xff0f
+   20dfe:	ff00           	.short 0xff00
+   20e00:	ffff           	.short 0xffff
+   20e02:	ff0f           	.short 0xff0f
+   20e04:	fff2           	.short 0xfff2
+   20e06:	f22f           	.short 0xf22f
+   20e08:	ff02           	.short 0xff02
+   20e0a:	f22f           	.short 0xf22f
+   20e0c:	ff02           	.short 0xff02
+   20e0e:	f02f           	.short 0xf02f
+   20e10:	2002           	movel %d2,%d0
+   20e12:	0022 0000      	orib #0,%a2@-
+   20e16:	0000 0000      	orib #0,%d0
+   20e1a:	0000 ffff      	orib #-1,%d0
+   20e1e:	ff00           	.short 0xff00
+   20e20:	ff22           	.short 0xff22
+   20e22:	f20f           	.short 0xf20f
+   20e24:	ff02           	.short 0xff02
+   20e26:	f02f           	.short 0xf02f
+   20e28:	ff02           	.short 0xff02
+   20e2a:	f02f           	.short 0xf02f
+   20e2c:	ff02           	.short 0xff02
+   20e2e:	f02f           	.short 0xf02f
+   20e30:	2002           	movel %d2,%d0
+   20e32:	0022 0000      	orib #0,%a2@-
+   20e36:	0000 0000      	orib #0,%d0
+   20e3a:	0000 f0ff      	orib #-1,%d0
+   20e3e:	ff00           	.short 0xff00
+   20e40:	ff22           	.short 0xff22
+   20e42:	f20f           	.short 0xf20f
+   20e44:	ff02           	.short 0xff02
+   20e46:	f02f           	.short 0xf02f
+   20e48:	ff02           	.short 0xff02
+   20e4a:	f02f           	.short 0xf02f
+   20e4c:	f0ff           	.short 0xf0ff
+   20e4e:	ff22           	.short 0xff22
+   20e50:	0022 2202      	orib #2,%a2@-
+	...
+   20e5c:	ffff           	.short 0xffff
+   20e5e:	ff00           	.short 0xff00
+   20e60:	ff22           	.short 0xff22
+   20e62:	f20f           	.short 0xf20f
+   20e64:	ff02           	.short 0xff02
+   20e66:	f02f           	.short 0xf02f
+   20e68:	ff02           	.short 0xff02
+   20e6a:	f02f           	.short 0xf02f
+   20e6c:	ffff           	.short 0xffff
+   20e6e:	ff22           	.short 0xff22
+   20e70:	ff22           	.short 0xff22
+   20e72:	2202           	movel %d2,%d1
+	...
+   20e7c:	f0ff           	.short 0xf0ff
+   20e7e:	ff0f           	.short 0xff0f
+   20e80:	ff22           	.short 0xff22
+   20e82:	f22f           	.short 0xf22f
+   20e84:	ff02           	.short 0xff02
+   20e86:	f02f           	.short 0xf02f
+   20e88:	ff02           	.short 0xff02
+   20e8a:	f02f           	.short 0xf02f
+   20e8c:	f0ff           	.short 0xf0ff
+   20e8e:	ff2f           	.short 0xff2f
+   20e90:	0022 f22f      	orib #47,%a2@-
+	...
+   20e9c:	ffff           	.short 0xffff
+   20e9e:	ff00           	.short 0xff00
+   20ea0:	ff22           	.short 0xff22
+   20ea2:	f20f           	.short 0xf20f
+   20ea4:	ff02           	.short 0xff02
+   20ea6:	0022 ff02      	orib #2,%a2@-
+   20eaa:	0000 ff02      	orib #2,%d0
+   20eae:	0000 2002      	orib #2,%d0
+	...
+   20eba:	0000 f0ff      	orib #-1,%d0
+   20ebe:	ff00           	.short 0xff00
+   20ec0:	ff2f           	.short 0xff2f
+   20ec2:	2202           	movel %d2,%d1
+   20ec4:	f0ff           	.short 0xf0ff
+   20ec6:	ff00           	.short 0xff00
+   20ec8:	0022 ff0f      	orib #15,%a2@-
+   20ecc:	ffff           	.short 0xffff
+   20ece:	ff22           	.short 0xff22
+   20ed0:	2022           	movel %a2@-,%d0
+   20ed2:	2202           	movel %d2,%d1
+   20ed4:	0000 0000      	orib #0,%d0
+   20ed8:	00ff           	.short 0x00ff
+   20eda:	0000 ffff      	orib #-1,%d0
+   20ede:	ff00           	.short 0xff00
+   20ee0:	20ff           	.short 0x20ff
+   20ee2:	2202           	movel %d2,%d1
+   20ee4:	00ff           	.short 0x00ff
+   20ee6:	0200 00ff      	andib #-1,%d0
+   20eea:	f20f           	.short 0xf20f
+   20eec:	00f0           	.short 0x00f0
+   20eee:	ff22           	.short 0xff22
+   20ef0:	0000 2202      	orib #2,%d0
+	...
+   20efc:	ff00           	.short 0xff00
+   20efe:	f00f           	.short 0xf00f
+   20f00:	ff02           	.short 0xff02
+   20f02:	f02f           	.short 0xf02f
+   20f04:	ff02           	.short 0xff02
+   20f06:	f02f           	.short 0xf02f
+   20f08:	ff02           	.short 0xff02
+   20f0a:	f02f           	.short 0xf02f
+   20f0c:	f0ff           	.short 0xf0ff
+   20f0e:	ff2f           	.short 0xff2f
+   20f10:	0022 2222      	orib #34,%a2@-
+	...
+   20f1c:	ff00           	.short 0xff00
+   20f1e:	f00f           	.short 0xf00f
+   20f20:	ff02           	.short 0xff02
+   20f22:	f02f           	.short 0xf02f
+   20f24:	f00f           	.short 0xf00f
+   20f26:	ff22           	.short 0xff22
+   20f28:	00ff           	.short 0x00ff
+   20f2a:	2f02           	movel %d2,%sp@-
+   20f2c:	00f0           	.short 0x00f0
+   20f2e:	2200           	movel %d0,%d1
+   20f30:	0000 0200      	orib #0,%d0
+	...
+   20f3c:	ff00           	.short 0xff00
+   20f3e:	f00f           	.short 0xf00f
+   20f40:	ff02           	.short 0xff02
+   20f42:	f02f           	.short 0xf02f
+   20f44:	fff2           	.short 0xfff2
+   20f46:	f02f           	.short 0xf02f
+   20f48:	ffff           	.short 0xffff
+   20f4a:	ff2f           	.short 0xff2f
+   20f4c:	f02f           	.short 0xf02f
+   20f4e:	ff22           	.short 0xff22
+   20f50:	0022 2002      	orib #2,%a2@-
+	...
+   20f5c:	ff00           	.short 0xff00
+   20f5e:	f00f           	.short 0xf00f
+   20f60:	f00f           	.short 0xf00f
+   20f62:	ff22           	.short 0xff22
+   20f64:	00ff           	.short 0x00ff
+   20f66:	2f02           	movel %d2,%sp@-
+   20f68:	f02f           	.short 0xf02f
+   20f6a:	ff00           	.short 0xff00
+   20f6c:	ff22           	.short 0xff22
+   20f6e:	f00f           	.short 0xf00f
+   20f70:	2002           	movel %d2,%d0
+   20f72:	0022 0000      	orib #0,%a2@-
+   20f76:	0000 0000      	orib #0,%d0
+   20f7a:	0000 ff00      	orib #0,%d0
+   20f7e:	f00f           	.short 0xf00f
+   20f80:	ff02           	.short 0xff02
+   20f82:	f02f           	.short 0xf02f
+   20f84:	ff02           	.short 0xff02
+   20f86:	f02f           	.short 0xf02f
+   20f88:	f0ff           	.short 0xf0ff
+   20f8a:	ff2f           	.short 0xff2f
+   20f8c:	0022 f22f      	orib #47,%a2@-
+   20f90:	f0ff           	.short 0xf0ff
+   20f92:	ff22           	.short 0xff22
+	...
+   20f9c:	ffff           	.short 0xffff
+   20f9e:	ff0f           	.short 0xff0f
+   20fa0:	20f2 ff22 00ff 	movel %a2@(000000ff,%sp:l:8)@(00002f02),%a0@+
+   20fa6:	2f02 
+   20fa8:	f0ff           	.short 0xf0ff
+   20faa:	2200           	movel %d0,%d1
+   20fac:	ffff           	.short 0xffff
+   20fae:	ff0f           	.short 0xff0f
+   20fb0:	2022           	movel %a2@-,%d0
+   20fb2:	2222           	movel %a2@-,%d1
+   20fb4:	00f0           	.short 0x00f0
+   20fb6:	ff00           	.short 0xff00
+   20fb8:	00ff           	.short 0x00ff
+   20fba:	2202           	movel %d2,%d1
+   20fbc:	00ff           	.short 0x00ff
+   20fbe:	0200 f02f      	andib #47,%d0
+   20fc2:	0200 00ff      	andib #-1,%d0
+   20fc6:	0000 00ff      	orib #-1,%d0
+   20fca:	0200 00f0      	andib #-16,%d0
+   20fce:	ff00           	.short 0xff00
+   20fd0:	0000 2202      	orib #2,%d0
+   20fd4:	00f0           	.short 0x00f0
+   20fd6:	0f00           	btst %d7,%d0
+   20fd8:	00f0           	.short 0x00f0
+   20fda:	2f00           	movel %d0,%sp@-
+   20fdc:	00f0           	.short 0x00f0
+   20fde:	2f00           	movel %d0,%sp@-
+   20fe0:	00f0           	.short 0x00f0
+   20fe2:	2f00           	movel %d0,%sp@-
+   20fe4:	00f0           	.short 0x00f0
+   20fe6:	2f00           	movel %d0,%sp@-
+   20fe8:	00f0           	.short 0x00f0
+   20fea:	2f00           	movel %d0,%sp@-
+   20fec:	00f0           	.short 0x00f0
+   20fee:	2f00           	movel %d0,%sp@-
+   20ff0:	00f0           	.short 0x00f0
+   20ff2:	2f00           	movel %d0,%sp@-
+   20ff4:	00ff           	.short 0x00ff
+   20ff6:	0f00           	btst %d7,%d0
+   20ff8:	0020 ff00      	orib #0,%a0@-
+   20ffc:	0000 ff02      	orib #2,%d0
+   21000:	0000 f00f      	orib #15,%d0
+   21004:	0000 ff22      	orib #34,%d0
+   21008:	0000 ff02      	orib #2,%d0
+   2100c:	00ff           	.short 0x00ff
+   2100e:	2f02           	movel %d2,%sp@-
+   21010:	0020 2200      	orib #0,%a0@-
+	...
+   2101c:	f00f           	.short 0xf00f
+   2101e:	0000 ffff      	orib #-1,%d0
+   21022:	000f           	.short 0x000f
+   21024:	2ff2           	.short 0x2ff2
+   21026:	ff2f           	.short 0xff2f
+   21028:	2000           	movel %d0,%d0
+   2102a:	ff22           	.short 0xff22
+   2102c:	0000 2002      	orib #2,%d0
+	...
+   21054:	1111           	moveb %a1@,%a0@-
+   21056:	1111           	moveb %a1@,%a0@-
+   21058:	3331 3331 3331 	movew %a1@(33313331,%d3:w:2)@(00000000),%a1@-
+   2105e:	3331 
+   21060:	1111           	moveb %a1@,%a0@-
+   21062:	1111           	moveb %a1@,%a0@-
+   21064:	2222           	movel %a2@-,%d1
+   21066:	2222           	movel %a2@-,%d1
+   21068:	2222           	movel %a2@-,%d1
+   2106a:	2222           	movel %a2@-,%d1
+   2106c:	1111           	moveb %a1@,%a0@-
+   2106e:	1111           	moveb %a1@,%a0@-
+   21070:	1111           	moveb %a1@,%a0@-
+   21072:	1111           	moveb %a1@,%a0@-
+   21074:	1111           	moveb %a1@,%a0@-
+   21076:	1111           	moveb %a1@,%a0@-
+   21078:	1111           	moveb %a1@,%a0@-
+   2107a:	1111           	moveb %a1@,%a0@-
+   2107c:	1011           	moveb %a1@,%d0
+   2107e:	1011           	moveb %a1@,%d0
+   21080:	1110           	moveb %a0@,%a0@-
+   21082:	1110           	moveb %a0@,%a0@-
+   21084:	0101           	btst %d0,%d1
+   21086:	0101           	btst %d0,%d1
+   21088:	1010           	moveb %a0@,%d0
+   2108a:	1010           	moveb %a0@,%d0
+   2108c:	0101           	btst %d0,%d1
+   2108e:	0001 1000      	orib #0,%d1
+   21092:	0110           	btst %d0,%a0@
+	...
+
+00022054 <main>:
+   22054:	4fef fff4      	lea %sp@(-12),%sp
+   22058:	23fc 0100 0000 	movel #16777216,1001008 <interface>
+   2205e:	0100 1008 
+   22062:	207c 0d80 0004 	moveal #226492420,%a0
+   22068:	10bc 0063      	moveb #99,%a0@
+   2206c:	207c 0d80 000c 	moveal #226492428,%a0
+   22072:	4210           	clrb %a0@
+   22074:	2079 0100 1008 	moveal 1001008 <interface>,%a0
+   2207a:	2068 0018      	moveal %a0@(24),%a0
+   2207e:	2068 0018      	moveal %a0@(24),%a0
+   22082:	4e90           	jsr %a0@
+   22084:	2079 0100 1008 	moveal 1001008 <interface>,%a0
+   2208a:	2068 0020      	moveal %a0@(32),%a0
+   2208e:	2068 0018      	moveal %a0@(24),%a0
+   22092:	4878 0002      	pea 2 <__DYNAMIC+0x2>
+   22096:	4878 0400      	pea 400 <_sdata+0x3fc>
+   2209a:	4879 0002 0054 	pea 20054 <tileset>
+   220a0:	2f3c 0e08 0000 	movel #235405312,%sp@-
+   220a6:	4e90           	jsr %a0@
+   220a8:	4fef 0010      	lea %sp@(16),%sp
+   220ac:	2f7c 0002 250c 	movel #140556,%sp@(8)
+   220b2:	0008 
+   220b4:	42af 0004      	clrl %sp@(4)
+   220b8:	6026           	bras 220e0 <main+0x8c>
+   220ba:	202f 0004      	movel %sp@(4),%d0
+   220be:	d080           	addl %d0,%d0
+   220c0:	2040           	moveal %d0,%a0
+   220c2:	d1fc 0e00 0000 	addal #234881024,%a0
+   220c8:	202f 0008      	movel %sp@(8),%d0
+   220cc:	2200           	movel %d0,%d1
+   220ce:	5281           	addql #1,%d1
+   220d0:	2f41 0008      	movel %d1,%sp@(8)
+   220d4:	2240           	moveal %d0,%a1
+   220d6:	1011           	moveb %a1@,%d0
+   220d8:	4880           	extw %d0
+   220da:	3080           	movew %d0,%a0@
+   220dc:	52af 0004      	addql #1,%sp@(4)
+   220e0:	206f 0008      	moveal %sp@(8),%a0
+   220e4:	1010           	moveb %a0@,%d0
+   220e6:	4a00           	tstb %d0
+   220e8:	66d0           	bnes 220ba <main+0x66>
+   220ea:	2f7c 0002 254d 	movel #140621,%sp@(8)
+   220f0:	0008 
+   220f2:	42af 0004      	clrl %sp@(4)
+   220f6:	6028           	bras 22120 <main+0xcc>
+   220f8:	7040           	moveq #64,%d0
+   220fa:	d0af 0004      	addl %sp@(4),%d0
+   220fe:	d080           	addl %d0,%d0
+   22100:	2040           	moveal %d0,%a0
+   22102:	d1fc 0e00 0000 	addal #234881024,%a0
+   22108:	202f 0008      	movel %sp@(8),%d0
+   2210c:	2200           	movel %d0,%d1
+   2210e:	5281           	addql #1,%d1
+   22110:	2f41 0008      	movel %d1,%sp@(8)
+   22114:	2240           	moveal %d0,%a1
+   22116:	1011           	moveb %a1@,%d0
+   22118:	4880           	extw %d0
+   2211a:	3080           	movew %d0,%a0@
+   2211c:	52af 0004      	addql #1,%sp@(4)
+   22120:	206f 0008      	moveal %sp@(8),%a0
+   22124:	1010           	moveb %a0@,%d0
+   22126:	4a00           	tstb %d0
+   22128:	66ce           	bnes 220f8 <main+0xa4>
+   2212a:	2f7c 0000 0080 	movel #128,%sp@(4)
+   22130:	0004 
+   22132:	6018           	bras 2214c <main+0xf8>
+   22134:	202f 0004      	movel %sp@(4),%d0
+   22138:	d080           	addl %d0,%d0
+   2213a:	2040           	moveal %d0,%a0
+   2213c:	d1fc 0e00 0000 	addal #234881024,%a0
+   22142:	30bc 0057      	movew #87,%a0@
+   22146:	7040           	moveq #64,%d0
+   22148:	d1af 0004      	addl %d0,%sp@(4)
+   2214c:	0caf 0000 07ff 	cmpil #2047,%sp@(4)
+   22152:	0004 
+   22154:	6fde           	bles 22134 <main+0xe0>
+   22156:	207c 0e00 0200 	moveal #234881536,%a0
+   2215c:	30bc 0462      	movew #1122,%a0@
+   22160:	4297           	clrl %sp@
+   22162:	2079 0100 1008 	moveal 1001008 <interface>,%a0
+   22168:	2068 0020      	moveal %a0@(32),%a0
+   2216c:	2068 0010      	moveal %a0@(16),%a0
+   22170:	4e90           	jsr %a0@
+   22172:	207c 0d80 0012 	moveal #226492434,%a0
+   22178:	2017           	movel %sp@,%d0
+   2217a:	3080           	movew %d0,%a0@
+   2217c:	5497           	addql #2,%sp@
+   2217e:	60e2           	bras 22162 <main+0x10e>
+
+00022180 <strcpy_s>:
+   22180:	2f02           	movel %d2,%sp@-
+   22182:	206f 0008      	moveal %sp@(8),%a0
+   22186:	222f 000c      	movel %sp@(12),%d1
+   2218a:	226f 0010      	moveal %sp@(16),%a1
+   2218e:	b0fc 0000      	cmpaw #0,%a0
+   22192:	6728           	beqs 221bc <strcpy_s+0x3c>
+   22194:	4a81           	tstl %d1
+   22196:	6724           	beqs 221bc <strcpy_s+0x3c>
+   22198:	b2fc 0000      	cmpaw #0,%a1
+   2219c:	6704           	beqs 221a2 <strcpy_s+0x22>
+   2219e:	7000           	moveq #0,%d0
+   221a0:	6010           	bras 221b2 <strcpy_s+0x32>
+   221a2:	4210           	clrb %a0@
+   221a4:	6016           	bras 221bc <strcpy_s+0x3c>
+   221a6:	1431 0800      	moveb %a1@(00000000,%d0:l),%d2
+   221aa:	1182 0800      	moveb %d2,%a0@(00000000,%d0:l)
+   221ae:	6710           	beqs 221c0 <strcpy_s+0x40>
+   221b0:	5280           	addql #1,%d0
+   221b2:	b280           	cmpl %d0,%d1
+   221b4:	6ef0           	bgts 221a6 <strcpy_s+0x26>
+   221b6:	4210           	clrb %a0@
+   221b8:	7002           	moveq #2,%d0
+   221ba:	6006           	bras 221c2 <strcpy_s+0x42>
+   221bc:	7001           	moveq #1,%d0
+   221be:	6002           	bras 221c2 <strcpy_s+0x42>
+   221c0:	7000           	moveq #0,%d0
+   221c2:	241f           	movel %sp@+,%d2
+   221c4:	4e75           	rts
+
+000221c6 <strcat_s>:
+   221c6:	48e7 3030      	moveml %d2-%d3/%a2-%a3,%sp@-
+   221ca:	206f 0014      	moveal %sp@(20),%a0
+   221ce:	222f 0018      	movel %sp@(24),%d1
+   221d2:	246f 001c      	moveal %sp@(28),%a2
+   221d6:	b0fc 0000      	cmpaw #0,%a0
+   221da:	6742           	beqs 2221e <strcat_s+0x58>
+   221dc:	4a81           	tstl %d1
+   221de:	673e           	beqs 2221e <strcat_s+0x58>
+   221e0:	b4fc 0000      	cmpaw #0,%a2
+   221e4:	6704           	beqs 221ea <strcat_s+0x24>
+   221e6:	7000           	moveq #0,%d0
+   221e8:	600c           	bras 221f6 <strcat_s+0x30>
+   221ea:	4210           	clrb %a0@
+   221ec:	6030           	bras 2221e <strcat_s+0x58>
+   221ee:	4a30 0800      	tstb %a0@(00000000,%d0:l)
+   221f2:	6708           	beqs 221fc <strcat_s+0x36>
+   221f4:	5280           	addql #1,%d0
+   221f6:	b280           	cmpl %d0,%d1
+   221f8:	6ef4           	bgts 221ee <strcat_s+0x28>
+   221fa:	601c           	bras 22218 <strcat_s+0x52>
+   221fc:	2601           	movel %d1,%d3
+   221fe:	9680           	subl %d0,%d3
+   22200:	93c9           	subal %a1,%a1
+   22202:	47f0 0800      	lea %a0@(00000000,%d0:l),%a3
+   22206:	b689           	cmpl %a1,%d3
+   22208:	67ea           	beqs 221f4 <strcat_s+0x2e>
+   2220a:	1432 9800      	moveb %a2@(00000000,%a1:l),%d2
+   2220e:	1782 9800      	moveb %d2,%a3@(00000000,%a1:l)
+   22212:	670e           	beqs 22222 <strcat_s+0x5c>
+   22214:	5289           	addql #1,%a1
+   22216:	60ee           	bras 22206 <strcat_s+0x40>
+   22218:	4210           	clrb %a0@
+   2221a:	7002           	moveq #2,%d0
+   2221c:	6006           	bras 22224 <strcat_s+0x5e>
+   2221e:	7001           	moveq #1,%d0
+   22220:	6002           	bras 22224 <strcat_s+0x5e>
+   22222:	7000           	moveq #0,%d0
+   22224:	4cdf 0c0c      	moveml %sp@+,%d2-%d3/%a2-%a3
+   22228:	4e75           	rts
+
+0002222a <strnlen_s>:
+   2222a:	206f 0004      	moveal %sp@(4),%a0
+   2222e:	7000           	moveq #0,%d0
+   22230:	b0fc 0000      	cmpaw #0,%a0
+   22234:	6712           	beqs 22248 <strnlen_s+0x1e>
+   22236:	b0af 0008      	cmpl %sp@(8),%d0
+   2223a:	6c0c           	bges 22248 <strnlen_s+0x1e>
+   2223c:	4a30 0800      	tstb %a0@(00000000,%d0:l)
+   22240:	6704           	beqs 22246 <strnlen_s+0x1c>
+   22242:	5280           	addql #1,%d0
+   22244:	60f0           	bras 22236 <strnlen_s+0xc>
+   22246:	4e75           	rts
+   22248:	4e75           	rts
+
+0002224a <strkitten_s>:
+   2224a:	48e7 3020      	moveml %d2-%d3/%a2,%sp@-
+   2224e:	246f 0010      	moveal %sp@(16),%a2
+   22252:	242f 0014      	movel %sp@(20),%d2
+   22256:	262f 0018      	movel %sp@(24),%d3
+   2225a:	b4fc 0000      	cmpaw #0,%a2
+   2225e:	672c           	beqs 2228c <strkitten_s+0x42>
+   22260:	4a82           	tstl %d2
+   22262:	6728           	beqs 2228c <strkitten_s+0x42>
+   22264:	4a03           	tstb %d3
+   22266:	6604           	bnes 2226c <strkitten_s+0x22>
+   22268:	4212           	clrb %a2@
+   2226a:	6020           	bras 2228c <strkitten_s+0x42>
+   2226c:	2f02           	movel %d2,%sp@-
+   2226e:	2f0a           	movel %a2,%sp@-
+   22270:	4eba ffb8      	jsr %pc@(2222a <strnlen_s>)
+   22274:	508f           	addql #8,%sp
+   22276:	b082           	cmpl %d2,%d0
+   22278:	6c0c           	bges 22286 <strkitten_s+0x3c>
+   2227a:	1583 0800      	moveb %d3,%a2@(00000000,%d0:l)
+   2227e:	4232 0801      	clrb %a2@(00000001,%d0:l)
+   22282:	7000           	moveq #0,%d0
+   22284:	6008           	bras 2228e <strkitten_s+0x44>
+   22286:	4212           	clrb %a2@
+   22288:	7002           	moveq #2,%d0
+   2228a:	6002           	bras 2228e <strkitten_s+0x44>
+   2228c:	7001           	moveq #1,%d0
+   2228e:	4cdf 040c      	moveml %sp@+,%d2-%d3/%a2
+   22292:	4e75           	rts
+
+00022294 <memcpy>:
+   22294:	202f 0004      	movel %sp@(4),%d0
+   22298:	206f 0008      	moveal %sp@(8),%a0
+   2229c:	7200           	moveq #0,%d1
+   2229e:	b2af 000c      	cmpl %sp@(12),%d1
+   222a2:	670c           	beqs 222b0 <memcpy+0x1c>
+   222a4:	2240           	moveal %d0,%a1
+   222a6:	13b0 1800 1800 	moveb %a0@(00000000,%d1:l),%a1@(00000000,%d1:l)
+   222ac:	5281           	addql #1,%d1
+   222ae:	60ee           	bras 2229e <memcpy+0xa>
+   222b0:	4e75           	rts
+
+000222b2 <memset>:
+   222b2:	202f 0004      	movel %sp@(4),%d0
+   222b6:	2200           	movel %d0,%d1
+   222b8:	d2af 000c      	addl %sp@(12),%d1
+   222bc:	2040           	moveal %d0,%a0
+   222be:	b288           	cmpl %a0,%d1
+   222c0:	6706           	beqs 222c8 <memset+0x16>
+   222c2:	10ef 000b      	moveb %sp@(11),%a0@+
+   222c6:	60f6           	bras 222be <memset+0xc>
+   222c8:	4e75           	rts
+
+000222ca <memcmp>:
+   222ca:	2f0a           	movel %a2,%sp@-
+   222cc:	226f 0008      	moveal %sp@(8),%a1
+   222d0:	7200           	moveq #0,%d1
+   222d2:	7000           	moveq #0,%d0
+   222d4:	b2af 0010      	cmpl %sp@(16),%d1
+   222d8:	671e           	beqs 222f8 <memcmp+0x2e>
+   222da:	4a80           	tstl %d0
+   222dc:	661a           	bnes 222f8 <memcmp+0x2e>
+   222de:	1031 1800      	moveb %a1@(00000000,%d1:l),%d0
+   222e2:	4880           	extw %d0
+   222e4:	3040           	moveaw %d0,%a0
+   222e6:	246f 000c      	moveal %sp@(12),%a2
+   222ea:	1032 1800      	moveb %a2@(00000000,%d1:l),%d0
+   222ee:	4880           	extw %d0
+   222f0:	90c0           	subaw %d0,%a0
+   222f2:	2008           	movel %a0,%d0
+   222f4:	5281           	addql #1,%d1
+   222f6:	60dc           	bras 222d4 <memcmp+0xa>
+   222f8:	245f           	moveal %sp@+,%a2
+   222fa:	4e75           	rts
+
+000222fc <sbrk>:
+   222fc:	222f 0004      	movel %sp@(4),%d1
+   22300:	6608           	bnes 2230a <sbrk+0xe>
+   22302:	2039 0100 1000 	movel 1001000 <heap>,%d0
+   22308:	4e75           	rts
+   2230a:	4ab9 0100 1000 	tstl 1001000 <heap>
+   22310:	660a           	bnes 2231c <sbrk+0x20>
+   22312:	23fc 0300 0000 	movel #50331648,1001000 <heap>
+   22318:	0100 1000 
+   2231c:	2039 0100 1000 	movel 1001000 <heap>,%d0
+   22322:	d280           	addl %d0,%d1
+   22324:	0c81 03ff ffff 	cmpil #67108863,%d1
+   2232a:	6206           	bhis 22332 <sbrk+0x36>
+   2232c:	23c1 0100 1000 	movel %d1,1001000 <heap>
+   22332:	4e75           	rts
+
+00022334 <brk>:
+   22334:	2039 0100 1000 	movel 1001000 <heap>,%d0
+   2233a:	23ef 0004 0100 	movel %sp@(4),1001000 <heap>
+   22340:	1000 
+   22342:	4e75           	rts
+
+00022344 <malloc_find_free_block>:
+   22344:	226f 0004      	moveal %sp@(4),%a1
+   22348:	202f 0008      	movel %sp@(8),%d0
+   2234c:	2079 0100 1004 	moveal 1001004 <_edata>,%a0
+   22352:	b0fc 0000      	cmpaw #0,%a0
+   22356:	6712           	beqs 2236a <malloc_find_free_block+0x26>
+   22358:	4aa8 0008      	tstl %a0@(8)
+   2235c:	6608           	bnes 22366 <malloc_find_free_block+0x22>
+   2235e:	2288           	movel %a0,%a1@
+   22360:	2068 0004      	moveal %a0@(4),%a0
+   22364:	60ec           	bras 22352 <malloc_find_free_block+0xe>
+   22366:	b090           	cmpl %a0@,%d0
+   22368:	6ef4           	bgts 2235e <malloc_find_free_block+0x1a>
+   2236a:	2008           	movel %a0,%d0
+   2236c:	4e75           	rts
+
+0002236e <malloc_request_space>:
+   2236e:	48e7 0038      	moveml %a2-%a4,%sp@-
+   22372:	286f 0010      	moveal %sp@(16),%a4
+   22376:	266f 0014      	moveal %sp@(20),%a3
+   2237a:	2479 0100 1000 	moveal 1001000 <heap>,%a2
+   22380:	486b 000c      	pea %a3@(12)
+   22384:	4eba ff76      	jsr %pc@(222fc <sbrk>)
+   22388:	588f           	addql #4,%sp
+   2238a:	72ff           	moveq #-1,%d1
+   2238c:	b280           	cmpl %d0,%d1
+   2238e:	6718           	beqs 223a8 <malloc_request_space+0x3a>
+   22390:	b8fc 0000      	cmpaw #0,%a4
+   22394:	6704           	beqs 2239a <malloc_request_space+0x2c>
+   22396:	294a 0004      	movel %a2,%a4@(4)
+   2239a:	248b           	movel %a3,%a2@
+   2239c:	42aa 0004      	clrl %a2@(4)
+   223a0:	42aa 0008      	clrl %a2@(8)
+   223a4:	200a           	movel %a2,%d0
+   223a6:	6002           	bras 223aa <malloc_request_space+0x3c>
+   223a8:	7000           	moveq #0,%d0
+   223aa:	4cdf 1c00      	moveml %sp@+,%a2-%a4
+   223ae:	4e75           	rts
+
+000223b0 <malloc>:
+   223b0:	598f           	subql #4,%sp
+   223b2:	2f0e           	movel %fp,%sp@-
+   223b4:	2f02           	movel %d2,%sp@-
+   223b6:	242f 0010      	movel %sp@(16),%d2
+   223ba:	5382           	subql #1,%d2
+   223bc:	70fc           	moveq #-4,%d0
+   223be:	c480           	andl %d0,%d2
+   223c0:	5882           	addql #4,%d2
+   223c2:	6604           	bnes 223c8 <malloc+0x18>
+   223c4:	7000           	moveq #0,%d0
+   223c6:	6062           	bras 2242a <malloc+0x7a>
+   223c8:	2039 0100 1004 	movel 1001004 <_edata>,%d0
+   223ce:	662a           	bnes 223fa <malloc+0x4a>
+   223d0:	23fc 0300 0000 	movel #50331648,1001004 <_edata>
+   223d6:	0100 1004 
+   223da:	23fc 0300 0000 	movel #50331648,1001000 <heap>
+   223e0:	0100 1000 
+   223e4:	2f02           	movel %d2,%sp@-
+   223e6:	42a7           	clrl %sp@-
+   223e8:	4eba ff84      	jsr %pc@(2236e <malloc_request_space>)
+   223ec:	508f           	addql #8,%sp
+   223ee:	4a80           	tstl %d0
+   223f0:	67d2           	beqs 223c4 <malloc+0x14>
+   223f2:	23c0 0100 1004 	movel %d0,1001004 <_edata>
+   223f8:	602c           	bras 22426 <malloc+0x76>
+   223fa:	4def 000c      	lea %sp@(12),%fp
+   223fe:	2d00           	movel %d0,%fp@-
+   22400:	2f02           	movel %d2,%sp@-
+   22402:	2f0e           	movel %fp,%sp@-
+   22404:	4eba ff3e      	jsr %pc@(22344 <malloc_find_free_block>)
+   22408:	508f           	addql #8,%sp
+   2240a:	4a80           	tstl %d0
+   2240c:	6612           	bnes 22420 <malloc+0x70>
+   2240e:	2f02           	movel %d2,%sp@-
+   22410:	2f2f 000c      	movel %sp@(12),%sp@-
+   22414:	4eba ff58      	jsr %pc@(2236e <malloc_request_space>)
+   22418:	508f           	addql #8,%sp
+   2241a:	4a80           	tstl %d0
+   2241c:	6608           	bnes 22426 <malloc+0x76>
+   2241e:	600a           	bras 2242a <malloc+0x7a>
+   22420:	2040           	moveal %d0,%a0
+   22422:	42a8 0008      	clrl %a0@(8)
+   22426:	720c           	moveq #12,%d1
+   22428:	d081           	addl %d1,%d0
+   2242a:	241f           	movel %sp@+,%d2
+   2242c:	2c5f           	moveal %sp@+,%fp
+   2242e:	588f           	addql #4,%sp
+   22430:	4e75           	rts
+
+00022432 <malloc_get_block_ptr>:
+   22432:	70f4           	moveq #-12,%d0
+   22434:	d0af 0004      	addl %sp@(4),%d0
+   22438:	4e75           	rts
+
+0002243a <free>:
+   2243a:	206f 0004      	moveal %sp@(4),%a0
+   2243e:	b0fc 0000      	cmpaw #0,%a0
+   22442:	6706           	beqs 2244a <free+0x10>
+   22444:	7001           	moveq #1,%d0
+   22446:	2140 fffc      	movel %d0,%a0@(-4)
+   2244a:	4e75           	rts
+
+0002244c <realloc>:
+   2244c:	48e7 3020      	moveml %d2-%d3/%a2,%sp@-
+   22450:	246f 0010      	moveal %sp@(16),%a2
+   22454:	202f 0014      	movel %sp@(20),%d0
+   22458:	b4fc 0000      	cmpaw #0,%a2
+   2245c:	660c           	bnes 2246a <realloc+0x1e>
+   2245e:	2f40 0010      	movel %d0,%sp@(16)
+   22462:	4cdf 040c      	moveml %sp@+,%d2-%d3/%a2
+   22466:	6000 ff48      	braw 223b0 <malloc>
+   2246a:	262a fff4      	movel %a2@(-12),%d3
+   2246e:	b680           	cmpl %d0,%d3
+   22470:	6c24           	bges 22496 <realloc+0x4a>
+   22472:	2f00           	movel %d0,%sp@-
+   22474:	4eba ff3a      	jsr %pc@(223b0 <malloc>)
+   22478:	2400           	movel %d0,%d2
+   2247a:	588f           	addql #4,%sp
+   2247c:	671c           	beqs 2249a <realloc+0x4e>
+   2247e:	2f03           	movel %d3,%sp@-
+   22480:	2f0a           	movel %a2,%sp@-
+   22482:	2f00           	movel %d0,%sp@-
+   22484:	4eba fe0e      	jsr %pc@(22294 <memcpy>)
+   22488:	2f0a           	movel %a2,%sp@-
+   2248a:	4eba ffae      	jsr %pc@(2243a <free>)
+   2248e:	4fef 0010      	lea %sp@(16),%sp
+   22492:	2002           	movel %d2,%d0
+   22494:	6006           	bras 2249c <realloc+0x50>
+   22496:	200a           	movel %a2,%d0
+   22498:	6002           	bras 2249c <realloc+0x50>
+   2249a:	7000           	moveq #0,%d0
+   2249c:	4cdf 040c      	moveml %sp@+,%d2-%d3/%a2
+   224a0:	4e75           	rts
+
+000224a2 <calloc>:
+   224a2:	2f03           	movel %d3,%sp@-
+   224a4:	2f02           	movel %d2,%sp@-
+   224a6:	2f2f 0010      	movel %sp@(16),%sp@-
+   224aa:	2f2f 0010      	movel %sp@(16),%sp@-
+   224ae:	4eb9 0002 24d8 	jsr 224d8 <__mulsi3>
+   224b4:	508f           	addql #8,%sp
+   224b6:	2600           	movel %d0,%d3
+   224b8:	2f00           	movel %d0,%sp@-
+   224ba:	4eba fef4      	jsr %pc@(223b0 <malloc>)
+   224be:	2400           	movel %d0,%d2
+   224c0:	2f03           	movel %d3,%sp@-
+   224c2:	42a7           	clrl %sp@-
+   224c4:	2f00           	movel %d0,%sp@-
+   224c6:	4eba fdea      	jsr %pc@(222b2 <memset>)
+   224ca:	4fef 0010      	lea %sp@(16),%sp
+   224ce:	2002           	movel %d2,%d0
+   224d0:	241f           	movel %sp@+,%d2
+   224d2:	261f           	movel %sp@+,%d3
+   224d4:	4e75           	rts
+	...
+
+000224d8 <__mulsi3>:
+   224d8:	302f 0004      	movew %sp@(4),%d0
+   224dc:	c0ef 000a      	muluw %sp@(10),%d0
+   224e0:	322f 0006      	movew %sp@(6),%d1
+   224e4:	c2ef 0008      	muluw %sp@(8),%d1
+   224e8:	d041           	addw %d1,%d0
+   224ea:	4840           	swap %d0
+   224ec:	4240           	clrw %d0
+   224ee:	322f 0006      	movew %sp@(6),%d1
+   224f2:	c2ef 000a      	muluw %sp@(10),%d1
+   224f6:	d081           	addl %d1,%d0
+   224f8:	4e75           	rts
+	...
+
+000224fc <__CTOR_LIST__>:
+	...
+
+00022504 <__CTOR_END__>:
+	...
+
+0002250c <__DTOR_END__>:
+   2250c:	4865           	.short 0x4865
+   2250e:	6c6c           	bges 2257c <__DTOR_END__+0x70>
+   22510:	6f20           	bles 22532 <__DTOR_END__+0x26>
+   22512:	776f           	.short 0x776f
+   22514:	726c           	moveq #108,%d1
+   22516:	6421           	bccs 22539 <__DTOR_END__+0x2d>
+   22518:	2031 2032      	movel %a1@(00000032,%d2:w),%d0
+   2251c:	2033 2077      	movel %a3@(00000077,%d2:w),%d0
+   22520:	616b           	bsrs 2258d <__DTOR_END__+0x81>
+   22522:	6b61           	bmis 22585 <__DTOR_END__+0x79>
+   22524:	206a 6177      	moveal %a2@(24951),%a0
+   22528:	616b           	bsrs 22595 <__INIT_SECTION__+0x7>
+   2252a:	6b61           	bmis 2258d <__DTOR_END__+0x81>
+   2252c:	3031 3233      	movew %a1@(00000033,%d3:w:2),%d0
+   22530:	3435 3637      	movew %a5@(00000037,%d3:w:8),%d2
+   22534:	3839 3031 3233 	movew 30313233 <__end+0x2f312223>,%d4
+   2253a:	3435 3637      	movew %a5@(00000037,%d3:w:8),%d2
+   2253e:	3839 3031 3233 	movew 30313233 <__end+0x2f312223>,%d4
+   22544:	3435 3637      	movew %a5@(00000037,%d3:w:8),%d2
+   22548:	4845           	swap %d5
+   2254a:	5921           	subqb #4,%a1@-
+   2254c:	0054 6869      	oriw #26729,%a4@
+   22550:	7320           	.short 0x7320
+   22552:	6973           	bvss 225c7 <_etext+0x29>
+   22554:	206c 696e      	moveal %a4@(26990),%a0
+   22558:	6520           	bcss 2257a <__DTOR_END__+0x6e>
+   2255a:	7477           	moveq #119,%d2
+   2255c:	6f2e           	bles 2258c <__DTOR_END__+0x80>
+   2255e:	2e2e 2050      	movel %fp@(8272),%d7
+   22562:	6574           	bcss 225d8 <_etext+0x3a>
+   22564:	6572           	bcss 225d8 <_etext+0x3a>
+   22566:	2050           	moveal %a0@,%a0
+   22568:	6970           	bvss 225da <_etext+0x3c>
+   2256a:	6572           	bcss 225de <_etext+0x40>
+   2256c:	2070 6963 6b65 	moveal %a0@(00006b65)@(64206120),%a0
+   22572:	6420 6120 
+   22576:	7065           	moveq #101,%d0
+   22578:	636b           	blss 225e5 <_etext+0x47>
+   2257a:	206f 6620      	moveal %sp@(26144),%a0
+   2257e:	7069           	moveq #105,%d0
+   22580:	636b           	blss 225ed <_etext+0x4f>
+   22582:	6c65           	bges 225e9 <_etext+0x4b>
+   22584:	6420           	bccs 225a6 <_etext+0x8>
+   22586:	7065           	moveq #101,%d0
+   22588:	7070           	moveq #112,%d0
+   2258a:	6572           	bcss 225fe <_etext+0x60>
+   2258c:	7300           	.short 0x7300
+
+0002258e <__INIT_SECTION__>:
+   2258e:	4e56 0000      	linkw %fp,#0
+   22592:	4e5e           	unlk %fp
+   22594:	4e75           	rts
+
+00022596 <__FINI_SECTION__>:
+   22596:	4e56 0000      	linkw %fp,#0
+   2259a:	4e5e           	unlk %fp
+   2259c:	4e75           	rts

@@ -1,0 +1,230 @@
+#include "../ass.h"
+#include "funcs.h"
+
+extern IBios interface;
+extern int32_t vsprintf(char*, const char*, va_list);
+
+const IDrawingLibrary drawingLibrary =
+{
+	ResetPalette, DisplayPicture,
+	FadeToBlack, FadeFromBlack,
+	FadeToWhite, FadeFromWhite,
+	DrawString, DrawFormat, DrawChar
+};
+
+#define DRAWCHAR4(WIDTH) \
+	char* glyph = (char*)0x0E100A00 + (c * 8); \
+	char* target = (char*)0x0E000000 + (y * (WIDTH/2)) + (x / 2); \
+	if (x % 2 == 0) { for (int32_t line = 0; line < 8; line++) { \
+			char g = *glyph++; for (int32_t bit = 0; bit < 8; bit += 2) { \
+				int32_t p = g >> bit; \
+				if (p & 1) *target = (*target & 0x0F) | (color << 4); \
+				if (p & 2) *target = (*target & 0xF0) | color; \
+				target++; } target += (WIDTH/2) - 4; \
+		} }	else { for (int32_t line = 0; line < 8; line++) { \
+			char g = *glyph++; if (g & 1) *target = (*target & 0xF0) | color; \
+			for (int32_t bit = 1; bit < 7; bit += 2) { target++; int32_t p = g >> bit; \
+				if (p & 1) *target = (*target & 0x0F) | (color << 4); \
+				if (p & 2) *target = (*target & 0xF0) | color; \
+			} target++; if ((g >> 7) & 1) *target = (*target & 0x0F) | (color << 4); \
+			target += (WIDTH/2) - 4; } }
+#define DRAWCHAR8(WIDTH) \
+	char* glyph = (char*)0x0E100A00 + (c * 8); \
+	char* target = (char*)0x0E000000 + (y * (WIDTH)) + x; \
+	for (int32_t line = 0; line < 8; line++) { for (int32_t bit = 0; bit < 8; bit++) { \
+			int32_t pixel = (*glyph >> bit) & 1; if (pixel == 0) continue; \
+			target[bit] = color; \
+		}  glyph++; target += (WIDTH); }
+
+void DrawChar4_320(char c, int32_t x, int32_t y, int32_t color) { DRAWCHAR4(320) }
+void DrawChar4_640(char c, int32_t x, int32_t y, int32_t color) { DRAWCHAR4(640) }
+void DrawChar8_320(char c, int32_t x, int32_t y, int32_t color) { DRAWCHAR8(320) }
+void DrawChar8_640(char c, int32_t x, int32_t y, int32_t color) { DRAWCHAR8(640) }
+
+static const uint16_t palette[] = {
+	0x0000, 0x5400, 0x02A0, 0x56a0, 0x0015, 0x5415, 0x0115, 0x56B5,
+	0x294A, 0x7D4A, 0x2BEA, 0x7FEA, 0x295F, 0x7D5F, 0x2BFF, 0x7FFF,
+};
+
+
+void ResetPalette()
+{
+	for (int32_t idx = 0; idx < 16; idx++)
+	{
+		PALETTE[idx] = palette[idx];
+	}
+}
+
+void DisplayPicture(TImageFile* picData)
+{
+	int32_t mode = -1;
+	if (picData->Width == 320)
+	{
+		if (picData->Height == 240 || picData->Height == 200)
+			mode = SMODE_320 | SMODE_240;
+		else if (picData->Height == 480 || picData->Height == 400)
+			mode = SMODE_320;
+	}
+	else if (picData->Width == 640)
+	{
+		if (picData->Height == 240 || picData->Height == 200)
+			mode = SMODE_240;
+		else if (picData->Height == 480 || picData->Height == 400)
+			mode = 0;
+		if (picData->Height == 200 || picData->Height == 400)
+			mode |= SMODE_BOLD;
+	}
+	if (mode > -1)
+	{
+		//mode |= (picData->BitDepth == 8) ? SMODE_BMP2 : SMODE_BMP1;
+		//REG_SCREENMODE = (uint8_t)mode;
+		if (picData->BitDepth == 8)
+			SetBitmapMode256(mode | SMODE_SPRITES);
+		else
+			SetBitmapMode16(mode);
+	}
+	int32_t colors = (picData->BitDepth == 8) ? 256 : 16;
+	if (picData->Flags & 1)
+		RleUnpack((void*)0x0E000000, (int8_t*)(picData + picData->ImageOffset));
+	else
+		DmaCopy((void*)0x0E000000, (int8_t*)((int32_t)picData + picData->ImageOffset), picData->ByteSize, DMA_INT);
+	DmaCopy((void*)0x0E100000, (int8_t*)((int32_t)picData + picData->ColorOffset), colors * 1, DMA_SHORT);
+}
+
+void FadeToBlack()
+{
+	for (int32_t i = 0; i < 32; i++)
+	{
+		REG_SCREENFADE = i;
+		//dpf("FadeToBlack %d", i);
+		WaitForVBlank();
+	}
+	/*
+	REG_SCREENFADE = 2;  WaitForVBlank();
+	REG_SCREENFADE = 4;  WaitForVBlank();
+	REG_SCREENFADE = 6;  WaitForVBlank();
+	REG_SCREENFADE = 8;  WaitForVBlank();
+	REG_SCREENFADE = 10; WaitForVBlank();
+	REG_SCREENFADE = 12; WaitForVBlank();
+	REG_SCREENFADE = 14; WaitForVBlank();
+	REG_SCREENFADE = 16; WaitForVBlank();
+	REG_SCREENFADE = 18; WaitForVBlank();
+	REG_SCREENFADE = 20; WaitForVBlank();
+	REG_SCREENFADE = 22; WaitForVBlank();
+	REG_SCREENFADE = 24; WaitForVBlank();
+	REG_SCREENFADE = 26; WaitForVBlank();
+	REG_SCREENFADE = 28; WaitForVBlank();
+	REG_SCREENFADE = 30; WaitForVBlank();
+	REG_SCREENFADE = 31; WaitForVBlank();
+	*/
+}
+
+void FadeFromBlack()
+{
+	for (int32_t i = 31; i >= 0; --i)
+	{
+		REG_SCREENFADE = i;
+		WaitForVBlank();
+	}
+	/*
+	REG_SCREENFADE = 31; WaitForVBlank();
+	REG_SCREENFADE = 30; WaitForVBlank();
+	REG_SCREENFADE = 28; WaitForVBlank();
+	REG_SCREENFADE = 26; WaitForVBlank();
+	REG_SCREENFADE = 24; WaitForVBlank();
+	REG_SCREENFADE = 22; WaitForVBlank();
+	REG_SCREENFADE = 20; WaitForVBlank();
+	REG_SCREENFADE = 18; WaitForVBlank();
+	REG_SCREENFADE = 16; WaitForVBlank();
+	REG_SCREENFADE = 14; WaitForVBlank();
+	REG_SCREENFADE = 12; WaitForVBlank();
+	REG_SCREENFADE = 10; WaitForVBlank();
+	REG_SCREENFADE = 8;  WaitForVBlank();
+	REG_SCREENFADE = 6;  WaitForVBlank();
+	REG_SCREENFADE = 4;  WaitForVBlank();
+	REG_SCREENFADE = 2;  WaitForVBlank();
+	*/
+}
+
+void FadeToWhite()
+{
+/*	for (int32_t i = 0; i < 32; i++)
+	{
+		REG_SCREENFADE = 0x80 | i;
+		WaitForVBlank();
+	} */
+	REG_SCREENFADE = 0x80 | 2;  WaitForVBlank();
+	REG_SCREENFADE = 0x80 | 4;  WaitForVBlank();
+	REG_SCREENFADE = 0x80 | 6;  WaitForVBlank();
+	REG_SCREENFADE = 0x80 | 8;  WaitForVBlank();
+	REG_SCREENFADE = 0x80 | 10; WaitForVBlank();
+	REG_SCREENFADE = 0x80 | 12; WaitForVBlank();
+	REG_SCREENFADE = 0x80 | 14; WaitForVBlank();
+	REG_SCREENFADE = 0x80 | 16; WaitForVBlank();
+	REG_SCREENFADE = 0x80 | 18; WaitForVBlank();
+	REG_SCREENFADE = 0x80 | 20; WaitForVBlank();
+	REG_SCREENFADE = 0x80 | 22; WaitForVBlank();
+	REG_SCREENFADE = 0x80 | 24; WaitForVBlank();
+	REG_SCREENFADE = 0x80 | 26; WaitForVBlank();
+	REG_SCREENFADE = 0x80 | 28; WaitForVBlank();
+	REG_SCREENFADE = 0x80 | 30; WaitForVBlank();
+	REG_SCREENFADE = 0x80 | 31; WaitForVBlank();
+}
+
+void FadeFromWhite()
+{
+/*	for (int32_t i = 31; i >= 0; --i)
+	{
+		REG_SCREENFADE = 0x80 | i;
+		WaitForVBlank();
+	} */
+	REG_SCREENFADE = 0x80 | 31; WaitForVBlank();
+	REG_SCREENFADE = 0x80 | 30; WaitForVBlank();
+	REG_SCREENFADE = 0x80 | 28; WaitForVBlank();
+	REG_SCREENFADE = 0x80 | 26; WaitForVBlank();
+	REG_SCREENFADE = 0x80 | 24; WaitForVBlank();
+	REG_SCREENFADE = 0x80 | 22; WaitForVBlank();
+	REG_SCREENFADE = 0x80 | 20; WaitForVBlank();
+	REG_SCREENFADE = 0x80 | 18; WaitForVBlank();
+	REG_SCREENFADE = 0x80 | 16; WaitForVBlank();
+	REG_SCREENFADE = 0x80 | 14; WaitForVBlank();
+	REG_SCREENFADE = 0x80 | 12; WaitForVBlank();
+	REG_SCREENFADE = 0x80 | 10; WaitForVBlank();
+	REG_SCREENFADE = 0x80 | 8;  WaitForVBlank();
+	REG_SCREENFADE = 0x80 | 6;  WaitForVBlank();
+	REG_SCREENFADE = 0x80 | 4;  WaitForVBlank();
+	REG_SCREENFADE = 0x80 | 2;  WaitForVBlank();
+}
+
+void DrawString(const char* str, int32_t x, int32_t y, int32_t color)
+{
+	if (interface.DrawChar == NULL) return;
+	while(*str)
+	{
+		DrawChar(*str++, x, y, color);
+		x += 8;
+	}
+}
+
+void DrawFormat(const char* format, int32_t x, int32_t y, int32_t color, ...)
+{
+	if (interface.DrawChar == NULL) return;
+	char buffer[1024];
+	va_list args;
+	va_start(args, format);
+	vsprintf(buffer, format, args);
+	//WriteString(buffer);
+	char *b = buffer;
+	while(*b)
+	{
+		DrawChar(*b++, x, y, color);
+		x += 8;
+	}
+	va_end(args);
+}
+
+void DrawChar(char c, int32_t x, int32_t y, int32_t color)
+{
+	interface.DrawChar(c, x, y, color);
+}
+
