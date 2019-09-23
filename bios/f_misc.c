@@ -53,13 +53,13 @@ void EnableSprites(int enabled)
 
 void WaitForVBlank()
 {
-	long tickCount = REG_TICKCOUNT;
-	while (REG_TICKCOUNT == tickCount) { ; }
+//	long tickCount = REG_TICKCOUNT;
+//	while (REG_TICKCOUNT == tickCount) { ; }
 //	REG_INTRMODE |= 0x80;
-//	while(REG_LINE >= 480);
-//	while(REG_LINE < 480);
-	if (interface.VBlank)
-		interface.VBlank();
+	while(REG_LINE >= 480);
+	while(REG_LINE < 480);
+//	if (interface.VBlank)
+//		interface.VBlank();
 }
 
 void WaitForVBlanks(int i)

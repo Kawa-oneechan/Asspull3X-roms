@@ -35,7 +35,7 @@ Linker script and memory map
                 0x00000000                __DYNAMIC = 0x0
                 0x06000000                PROVIDE (__stack, 0x6000000)
 
-.text           0x00000000     0x9344
+.text           0x00000000     0x9348
  *(.text .text.*)
  .text          0x00000000      0x140 crt0.o
  .text          0x00000140        0x0 font.o
@@ -53,183 +53,184 @@ Linker script and memory map
                 0x000002d6                ZeroHandler
                 0x000002fe                VBlankHandler
                 0x00000310                TriggerLineHandler
- .text.startup  0x00000322      0x2a4 main.o
+ .text.startup  0x00000322      0x2ac main.o
                 0x00000322                main
- *fill*         0x000005c6        0x2 
- .text          0x000005c8      0x32a f_text.o
-                0x000005c8                SetCursor
-                0x000005ec                SetTextColor
-                0x00000600                Format
-                0x0000061e                SetBold
-                0x00000638                ClearScreen
-                0x0000068a                dpf
-                0x00000700                ScrollIfNeeded
-                0x000007de                WriteChar
-                0x00000894                Write
- *fill*         0x000008f2        0x2 
- .text          0x000008f4      0x5f2 f_draw.o
-                0x000008f4                ResetPalette
-                0x0000090e                DrawChar
-                0x00000922                DrawString
-                0x0000095e                DisplayPicture
-                0x00000a7c                FadeToBlack
-                0x00000a9e                FadeFromBlack
-                0x00000ac2                FadeToWhite
-                0x00000b3a                FadeFromWhite
-                0x00000bb2                DrawFormat
-                0x00000c0a                DrawChar4_320
-                0x00000d20                DrawChar4_640
-                0x00000e36                DrawChar8_320
-                0x00000e8e                DrawChar8_640
- *fill*         0x00000ee6        0x2 
- .text          0x00000ee8      0x224 f_misc.o
-                0x00000ee8                SetTextMode
-                0x00000f1e                SetBitmapMode16
-                0x00000f6e                SetBitmapMode256
-                0x00000fbe                WaitForVBlank
-                0x00000fde                WaitForVBlanks
-                0x00000ffa                DmaCopy
-                0x00001024                DmaClear
-                0x0000104e                MidiReset
-                0x00001072                RleUnpack
-                0x000010f2                EnableSprites
- .text          0x0000110c      0x26e f_disk.o
-                0x0000110c                FilePosition
-                0x00001116                FileEnd
-                0x0000112c                FileSize
-                0x00001136                FileTouch
-                0x0000113a                FileErrStr
-                0x00001156                CloseFile
-                0x0000115c                ReadFile
-                0x0000118a                WriteFile
-                0x000011b8                SeekFile
-                0x000011f6                TruncateFile
-                0x000011fc                FlushFile
-                0x00001202                CloseDir
-                0x00001208                ReadDir
-                0x0000120e                FindNext
-                0x00001214                GetLabel
-                0x0000122c                MountIfNeeded
-                0x00001250                OpenFile
-                0x0000127e                OpenDir
-                0x000012a0                FindFirst
-                0x000012d2                FileStat
-                0x000012f4                UnlinkFile
-                0x0000130a                RenameFile
-                0x0000132c                MakeDir
-                0x00001342                ChangeDir
-                0x00001358                GetCurrentDir
- *fill*         0x0000137a        0x2 
- .text          0x0000137c      0x356 ../ass-rt.o
-                0x0000137c                strcpy_s
-                0x000013c2                strcat_s
-                0x00001426                strnlen_s
-                0x00001446                strkitten_s
-                0x00001490                memcpy
-                0x000014ae                memset
-                0x000014c6                memcmp
-                0x000014f8                sbrk
-                0x00001530                brk
-                0x00001540                malloc_find_free_block
-                0x0000156a                malloc_request_space
-                0x000015ac                malloc
-                0x0000162e                malloc_get_block_ptr
-                0x00001636                free
-                0x00001648                realloc
-                0x0000169e                calloc
- *fill*         0x000016d2        0x2 
- .text          0x000016d4      0x4b2 printf.o
-                0x00001876                strnlen
-                0x00001898                vsprintf
-                0x00001b6a                sprintf
- *fill*         0x00001b86        0x2 
- .text          0x00001b88     0x2a0a ff.o
-                0x00002ec0                f_mount
-                0x00002f2e                f_open
-                0x000031b0                f_read
-                0x000033a4                f_write
-                0x000035d2                f_sync
-                0x000036bc                f_close
-                0x000036ec                f_chdir
-                0x0000376c                f_getcwd
-                0x000038f4                f_lseek
-                0x00003ad6                f_opendir
-                0x00003b76                f_closedir
-                0x00003b9a                f_readdir
-                0x00003c10                f_findnext
-                0x00003c5c                f_findfirst
-                0x00003c92                f_stat
-                0x00003cfe                f_getfree
-                0x00003e10                f_truncate
-                0x00003f08                f_unlink
-                0x0000400a                f_mkdir
-                0x00004198                f_rename
-                0x0000432a                f_getlabel
-                0x00004402                f_setlabel
- *fill*         0x00004592        0x2 
- .text          0x00004594       0xf6 diskio.o
-                0x00004594                disk_read
-                0x000045f8                disk_write
-                0x00004648                disk_ioctl
- *fill*         0x0000468a        0x2 
- .text          0x0000468c       0x22 c:/devkitpro/devkit68k/bin/../lib/gcc/m68k-elf/5.2.0/m68000\libgcc.a(_mulsi3.o)
-                0x0000468c                __mulsi3
- *fill*         0x000046ae        0x2 
- .text          0x000046b0       0x5c c:/devkitpro/devkit68k/bin/../lib/gcc/m68k-elf/5.2.0/m68000\libgcc.a(_udivsi3.o)
-                0x000046b0                __udivsi3
- .text          0x0000470c       0x2e c:/devkitpro/devkit68k/bin/../lib/gcc/m68k-elf/5.2.0/m68000\libgcc.a(_divsi3.o)
-                0x0000470c                __divsi3
- *fill*         0x0000473a        0x2 
- .text          0x0000473c       0x2e c:/devkitpro/devkit68k/bin/../lib/gcc/m68k-elf/5.2.0/m68000\libgcc.a(_umodsi3.o)
-                0x0000473c                __umodsi3
-                0x0000476c                . = ALIGN (0x4)
- *fill*         0x0000476a        0x2 
+ *fill*         0x000005ce        0x2 
+ .text          0x000005d0      0x32a f_text.o
+                0x000005d0                SetCursor
+                0x000005f4                SetTextColor
+                0x00000608                Format
+                0x00000626                SetBold
+                0x00000640                ClearScreen
+                0x00000692                dpf
+                0x00000708                ScrollIfNeeded
+                0x000007e6                WriteChar
+                0x0000089c                Write
+ *fill*         0x000008fa        0x2 
+ .text          0x000008fc      0x5f2 f_draw.o
+                0x000008fc                ResetPalette
+                0x00000916                DrawChar
+                0x0000092a                DrawString
+                0x00000966                DisplayPicture
+                0x00000a84                FadeToBlack
+                0x00000aa6                FadeFromBlack
+                0x00000aca                FadeToWhite
+                0x00000b42                FadeFromWhite
+                0x00000bba                DrawFormat
+                0x00000c12                DrawChar4_320
+                0x00000d28                DrawChar4_640
+                0x00000e3e                DrawChar8_320
+                0x00000e96                DrawChar8_640
+ *fill*         0x00000eee        0x2 
+ .text          0x00000ef0      0x21e f_misc.o
+                0x00000ef0                SetTextMode
+                0x00000f26                SetBitmapMode16
+                0x00000f76                SetBitmapMode256
+                0x00000fc6                WaitForVBlank
+                0x00000fe0                WaitForVBlanks
+                0x00000ffc                DmaCopy
+                0x00001026                DmaClear
+                0x00001050                MidiReset
+                0x00001074                RleUnpack
+                0x000010f4                EnableSprites
+ *fill*         0x0000110e        0x2 
+ .text          0x00001110      0x26e f_disk.o
+                0x00001110                FilePosition
+                0x0000111a                FileEnd
+                0x00001130                FileSize
+                0x0000113a                FileTouch
+                0x0000113e                FileErrStr
+                0x0000115a                CloseFile
+                0x00001160                ReadFile
+                0x0000118e                WriteFile
+                0x000011bc                SeekFile
+                0x000011fa                TruncateFile
+                0x00001200                FlushFile
+                0x00001206                CloseDir
+                0x0000120c                ReadDir
+                0x00001212                FindNext
+                0x00001218                GetLabel
+                0x00001230                MountIfNeeded
+                0x00001254                OpenFile
+                0x00001282                OpenDir
+                0x000012a4                FindFirst
+                0x000012d6                FileStat
+                0x000012f8                UnlinkFile
+                0x0000130e                RenameFile
+                0x00001330                MakeDir
+                0x00001346                ChangeDir
+                0x0000135c                GetCurrentDir
+ *fill*         0x0000137e        0x2 
+ .text          0x00001380      0x356 ../ass-rt.o
+                0x00001380                strcpy_s
+                0x000013c6                strcat_s
+                0x0000142a                strnlen_s
+                0x0000144a                strkitten_s
+                0x00001494                memcpy
+                0x000014b2                memset
+                0x000014ca                memcmp
+                0x000014fc                sbrk
+                0x00001534                brk
+                0x00001544                malloc_find_free_block
+                0x0000156e                malloc_request_space
+                0x000015b0                malloc
+                0x00001632                malloc_get_block_ptr
+                0x0000163a                free
+                0x0000164c                realloc
+                0x000016a2                calloc
+ *fill*         0x000016d6        0x2 
+ .text          0x000016d8      0x4b2 printf.o
+                0x0000187a                strnlen
+                0x0000189c                vsprintf
+                0x00001b6e                sprintf
+ *fill*         0x00001b8a        0x2 
+ .text          0x00001b8c     0x2a0a ff.o
+                0x00002ec4                f_mount
+                0x00002f32                f_open
+                0x000031b4                f_read
+                0x000033a8                f_write
+                0x000035d6                f_sync
+                0x000036c0                f_close
+                0x000036f0                f_chdir
+                0x00003770                f_getcwd
+                0x000038f8                f_lseek
+                0x00003ada                f_opendir
+                0x00003b7a                f_closedir
+                0x00003b9e                f_readdir
+                0x00003c14                f_findnext
+                0x00003c60                f_findfirst
+                0x00003c96                f_stat
+                0x00003d02                f_getfree
+                0x00003e14                f_truncate
+                0x00003f0c                f_unlink
+                0x0000400e                f_mkdir
+                0x0000419c                f_rename
+                0x0000432e                f_getlabel
+                0x00004406                f_setlabel
+ *fill*         0x00004596        0x2 
+ .text          0x00004598       0xf6 diskio.o
+                0x00004598                disk_read
+                0x000045fc                disk_write
+                0x0000464c                disk_ioctl
+ *fill*         0x0000468e        0x2 
+ .text          0x00004690       0x22 c:/devkitpro/devkit68k/bin/../lib/gcc/m68k-elf/5.2.0/m68000\libgcc.a(_mulsi3.o)
+                0x00004690                __mulsi3
+ *fill*         0x000046b2        0x2 
+ .text          0x000046b4       0x5c c:/devkitpro/devkit68k/bin/../lib/gcc/m68k-elf/5.2.0/m68000\libgcc.a(_udivsi3.o)
+                0x000046b4                __udivsi3
+ .text          0x00004710       0x2e c:/devkitpro/devkit68k/bin/../lib/gcc/m68k-elf/5.2.0/m68000\libgcc.a(_divsi3.o)
+                0x00004710                __divsi3
+ *fill*         0x0000473e        0x2 
+ .text          0x00004740       0x2e c:/devkitpro/devkit68k/bin/../lib/gcc/m68k-elf/5.2.0/m68000\libgcc.a(_umodsi3.o)
+                0x00004740                __umodsi3
+                0x00004770                . = ALIGN (0x4)
+ *fill*         0x0000476e        0x2 
  *(.rodata .rodata.*)
- .rodata        0x0000476c     0x3000 font.o
-                0x0000476c                fontTiles
- .rodata        0x0000776c     0x1000 chelsie.o
-                0x0000776c                chelsieTiles
- .rodata        0x0000876c      0x1e0 hdma.o
-                0x0000876c                hdma1
+ .rodata        0x00004770     0x3000 font.o
+                0x00004770                fontTiles
+ .rodata        0x00007770     0x1000 chelsie.o
+                0x00007770                chelsieTiles
+ .rodata        0x00008770      0x1e0 hdma.o
+                0x00008770                hdma1
  .rodata.str1.1
-                0x0000894c       0x9b main.o
+                0x00008950       0x9b main.o
                                  0xa5 (size before relaxing)
- *fill*         0x000089e7        0x1 
- .rodata        0x000089e8      0x142 main.o
-                0x000089e8                logo
- .rodata        0x00008b2a      0x41c f_text.o
-                0x00008f2a                textLibrary
- .rodata        0x00008f46       0x44 f_draw.o
-                0x00008f66                drawingLibrary
- .rodata        0x00008f8a       0x28 f_misc.o
-                0x00008f8a                miscLibrary
+ *fill*         0x000089eb        0x1 
+ .rodata        0x000089ec      0x142 main.o
+                0x000089ec                logo
+ .rodata        0x00008b2e      0x41c f_text.o
+                0x00008f2e                textLibrary
+ .rodata        0x00008f4a       0x44 f_draw.o
+                0x00008f6a                drawingLibrary
+ .rodata        0x00008f8e       0x28 f_misc.o
+                0x00008f8e                miscLibrary
  .rodata.str1.1
-                0x00008fb2      0x1fe f_disk.o
+                0x00008fb6      0x1fe f_disk.o
                                 0x1ff (size before relaxing)
- .rodata        0x000091b0       0xb0 f_disk.o
-                0x00009200                diskLibrary
+ .rodata        0x000091b4       0xb0 f_disk.o
+                0x00009204                diskLibrary
  .rodata.str1.1
-                0x00009260       0x2b printf.o
+                0x00009264       0x2b printf.o
  .rodata.str1.1
-                0x0000928b       0x19 ff.o
- .rodata        0x000092a4       0x90 ff.o
+                0x0000928f       0x19 ff.o
+ .rodata        0x000092a8       0x90 ff.o
  *(.gcc_except_table)
-                0x00009334                . = ALIGN (0x2)
-                0x00009334                __INIT_SECTION__ = .
-                0x00009334        0x4 LONG 0x4e560000
+                0x00009338                . = ALIGN (0x2)
+                0x00009338                __INIT_SECTION__ = .
+                0x00009338        0x4 LONG 0x4e560000
  *(.init)
-                0x00009338        0x2 SHORT 0x4e5e
-                0x0000933a        0x2 SHORT 0x4e75
-                0x0000933c                __FINI_SECTION__ = .
-                0x0000933c        0x4 LONG 0x4e560000
+                0x0000933c        0x2 SHORT 0x4e5e
+                0x0000933e        0x2 SHORT 0x4e75
+                0x00009340                __FINI_SECTION__ = .
+                0x00009340        0x4 LONG 0x4e560000
  *(.fini)
-                0x00009340        0x2 SHORT 0x4e5e
-                0x00009342        0x2 SHORT 0x4e75
-                0x00009344                _etext = .
+                0x00009344        0x2 SHORT 0x4e5e
+                0x00009346        0x2 SHORT 0x4e75
+                0x00009348                _etext = .
  *(.lit)
-                0x00009344                _stext = SIZEOF (.text)
+                0x00009348                _stext = SIZEOF (.text)
 
-.data           0x01000000       0x2c load address 0x00009344
+.data           0x01000000       0x2c load address 0x00009348
  *(.got.plt)
  *(.got)
  *(.shdata)
@@ -256,7 +257,7 @@ Linker script and memory map
                 0x0100002c                _edata = .
                 0x0000002c                _sdata = SIZEOF (.data)
 
-.bss            0x0100002c      0x260 load address 0x00009370
+.bss            0x0100002c      0x260 load address 0x00009374
                 0x0100002c                . = ALIGN (0x4)
                 0x0100002c                __bss_start = .
  *(.shbss)

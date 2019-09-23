@@ -37,7 +37,7 @@
 	.long	TriggerLineHandler	| 28. Level 4 autovector
 	.long	nullHandler		| 29. Level 5 autovector
 	.long	VBlankHandler		| 30. Level 6 autovector
-	.long	nullHandler		| 31. Level 1 autovector
+	.long	VBlankHandler		| 31. Level 7 autovector
 	.long	nullHandler		| 32. TRAP0
 	.long	nullHandler		| 33. TRAP1
 	.long	nullHandler		| 34. TRAP2

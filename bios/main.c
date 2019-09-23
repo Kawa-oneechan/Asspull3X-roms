@@ -279,7 +279,7 @@ int32_t main(void)
 				}
 			}
 
-			//WaitForVBlank();
+			WaitForVBlank();
 			//UpdateChelsie();
 			//noise();
 			continue;
