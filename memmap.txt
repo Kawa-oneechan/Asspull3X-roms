@@ -136,10 +136,10 @@ IO
 			|||________ 240px tall instead of 480px
 			||_________ 320px wide instead of 640px
 			|__________ Bold in text mode
-00005	IntrMode	.... .THV
-			      |||__ Enable VBlank
-			      ||___ Enable TriggerLine
-			      |____ VBlank triggered
+00005	Interrupts	X... .VH.
+			|     ||___ HBlank triggered
+			|     |____ VBlank triggered
+			|__________ Disable interrupts
 00006	KeyIn		scan
 00008	Joypad		YXBA RLDU
 0000A	TickCount	sval

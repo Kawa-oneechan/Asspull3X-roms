@@ -267,7 +267,7 @@ typedef struct IBios
 	int16_t extensions;
 	void(*Exception)(void);
 	void(*VBlank)(void);
-	void(*TriggerLine)(void);
+	void(*HBlank)(void);
 	void(*DrawChar)(char, int32_t, int32_t, int32_t);
 	ITextLibrary* textLibrary;
 	IDrawingLibrary* drawingLibrary;

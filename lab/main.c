@@ -427,7 +427,6 @@ int32_t main()
 	char* trimmed = NULL;
 	char* token, *ptr = NULL;
 	char path[MAXPATH];
-	REG_INTRMODE = 0;
 
 	//printf("What's your name?\n");
 	//gets(cwd, MAX_CWD);

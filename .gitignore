@@ -22,3 +22,7 @@ Debug
 *.sdf
 *.VC.*
 *.vcxproj.*
+*.elf
+*.map
+*.apb
+*.txt

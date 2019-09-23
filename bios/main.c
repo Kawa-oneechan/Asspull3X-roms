@@ -218,7 +218,6 @@ int32_t main(void)
 	//entry();
 
 	SetupChelsie();
-	REG_INTRMODE = IMODE_VBLANK; // | IMODE_TRIGGER;
 	interface.VBlank = UpdateChelsie;
 	//interface.TriggerLine = TriggerTest;
 	//REG_TRIGGERLINE = 64;
@@ -233,6 +232,8 @@ int32_t main(void)
 	Logo();
 	MIDI_PROGRAM(1, MIDI_SEASHORE);
 	MIDI_KEYON(1, MIDI_C4, 80);
+
+	FadeFromBlack();
 
 	int32_t* cartCode = (int32_t*)0x00020000;
 	void(*entry)(void)= (void*)0x00020004;
@@ -334,11 +335,11 @@ loadIt:
 		HideChelsie();
 		REG_HDMACONTROL[0] = 0;
 		interface.VBlank = 0;
-		interface.TriggerLine = 0;
+		interface.HBlank = 0;
 		attribs = 0x0F;
 		ClearScreen();
 		ResetPalette();
-		WaitForVBlank();
+		//WaitForVBlank();
 		REG_SCREENFADE = 0;
 		entry();
 	}
@@ -380,16 +381,18 @@ void ZeroHandler()
 	asm("rte");
 }
 
-void VBlankHandler()
+void NMIHandler()
 {
-	if (interface.VBlank != 0)
-		interface.VBlank();
-	asm("rte");
-}
-
-void TriggerLineHandler()
-{
-	if (interface.TriggerLine)
-		interface.TriggerLine();
+	int interrupts = REG_INTRMODE;
+	if (interrupts & 4)
+	{
+		if (interface.VBlank != 0) interface.VBlank();
+		interrupts &= ~4;
+	}
+	else if (interrupts & 2)
+	{
+		if (interface.HBlank != 0) interface.HBlank();
+		interrupts &= ~2;
+	}
 	asm("rte");
 }

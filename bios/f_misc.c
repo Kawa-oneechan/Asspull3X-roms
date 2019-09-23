@@ -53,11 +53,11 @@ void EnableSprites(int enabled)
 
 void WaitForVBlank()
 {
-//	long tickCount = REG_TICKCOUNT;
-//	while (REG_TICKCOUNT == tickCount) { ; }
+	long tickCount = REG_TICKCOUNT;
+	while (REG_TICKCOUNT == tickCount) { ; }
 //	REG_INTRMODE |= 0x80;
-	while(REG_LINE >= 480);
-	while(REG_LINE < 480);
+//	while(REG_LINE >= 480);
+//	while(REG_LINE < 480);
 //	if (interface.VBlank)
 //		interface.VBlank();
 }
@@ -176,8 +176,7 @@ void RleUnpack(int8_t* dst, int8_t* src)
 	header |= *src++ << 16;
 	header |= *src++ << 24;
 	int len = header >> 8;*/
-	char ints = REG_INTRMODE;
-	REG_INTRMODE = 0;
+	REG_INTRMODE |= 0x80;
 	src++;
 	int len = *src << 16;
 	len |= *src << 8;
@@ -196,7 +195,7 @@ void RleUnpack(int8_t* dst, int8_t* src)
 				len--;
 				if(len == 0)
 				{
-					REG_INTRMODE = ints;
+					REG_INTRMODE &= ~0x80;
 					return;
 				}
 			}
@@ -210,7 +209,7 @@ void RleUnpack(int8_t* dst, int8_t* src)
 				len--;
 				if(len == 0)
 				{
-					REG_INTRMODE = ints;
+					REG_INTRMODE &= ~0x80;
 					return;
 				}
 			}

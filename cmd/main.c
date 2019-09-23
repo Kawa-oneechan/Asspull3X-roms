@@ -290,7 +290,6 @@ int32_t main()
 	char* trimmed = NULL;
 	char* token, *ptr = NULL;
 	char path[MAXPATH];
-	REG_INTRMODE = 0;
 
 	while(1)
 	{
