@@ -33,7 +33,7 @@ extern void DmaCopy(void*, const void*, uint32_t, int32_t);
 extern void DmaClear(void*, int32_t, uint32_t, int32_t);
 extern void MidiReset(void);
 extern void LzUnpack(int8_t*, int8_t*);
-extern void RleUnpack(int8_t*, int8_t*);
+extern void RleUnpack(int8_t*, int8_t*, uint32_t);
 extern int32_t OpenFile(TFileHandle*, const char*, char);
 extern int32_t CloseFile(TFileHandle*);
 extern int32_t ReadFile(TFileHandle*, void*, uint32_t);

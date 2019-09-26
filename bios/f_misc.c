@@ -170,14 +170,25 @@ void LzUnpack(char* dst, char* src)
 */
 
 
-void RleUnpack(int8_t* dst, int8_t* src)
+void RleUnpack(int8_t* dst, int8_t* src, uint32_t size)
 {
-	/*int header = *src++ << 0;
-	header |= *src++ << 8;
-	header |= *src++ << 16;
-	header |= *src++ << 24;
-	int len = header >> 8;*/
 	REG_INTRMODE |= 0x80;
+	int8_t data;
+	uint8_t rle;
+	dpf("RleUnpack: %d bytes from %x to %x", size, src, dst);
+	while (size > 0)
+	{
+		rle = *src++;
+		rle++;
+		data = *src++;
+		for (; rle > 0; rle--)
+		{
+			size--;
+			*dst++ = data;
+		}
+	}
+	REG_INTRMODE &= ~0x80;
+/*
 	src++;
 	int len = *src << 16;
 	len |= *src << 8;
@@ -216,4 +227,5 @@ void RleUnpack(int8_t* dst, int8_t* src)
 			}
 		}
 	}
+*/
 }

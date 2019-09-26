@@ -28,10 +28,10 @@ extern const TImageFile splashData;
 void Display(char* what)
 {
 	for (int y = 76; y < 84; y++)
-		DmaClear((void*)0x0E000000 + (y * 320) + 170, 0, 70, DMA_SHORT);
+		DmaClear((void*)0x0E000000 + (y * 160) + 86, 0, 35, DMA_SHORT);
 	int pos = 240 - (strnlen_s(what, 16) * 4); //len * 8, but halved.
-	DrawString(what, pos + 1, 77, 50);
-	DrawString(what, pos, 76, 62);
+	DrawString(what, pos + 1, 77, 9);
+	DrawString(what, pos, 76, 15);
 }
 
 int32_t main(void)
@@ -46,8 +46,8 @@ int32_t main(void)
 	REG_HDMACONTROL[0] = DMA_ENABLE | HDMA_DOUBLE | (DMA_SHORT << 4) | (0 << 8) | (480 << 20);
 	sprintf(biosVer, "BIOS v%d.%d", (interface.biosVersion >> 8) & 0xFF, (interface.biosVersion >> 0) & 0xFF);
 	dpf(biosVer);
-	DrawString(biosVer, 2, 2, 50);
-	DrawString(biosVer, 1, 1, 1);
+	DrawString(biosVer, 2, 2, 9);
+	DrawString(biosVer, 1, 1, 14);
 	MIDI_PROGRAM(1, MIDI_SEASHORE);
 	MIDI_KEYON(1, MIDI_C4, 80);
 	Display("* INSERT CART *");

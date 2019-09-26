@@ -84,10 +84,12 @@ void DisplayPicture(TImageFile* picData)
 			SetBitmapMode16(mode);
 	}
 	int32_t colors = (picData->BitDepth == 8) ? 256 : 16;
+	int8_t* source = (int8_t*)picData;
+	source += picData->ImageOffset;
 	if (picData->Flags & 1)
-		RleUnpack((void*)0x0E000000, (int8_t*)(picData + picData->ImageOffset));
+		RleUnpack((void*)0x0E000000, source, picData->ByteSize);
 	else
-		DmaCopy((void*)0x0E000000, (int8_t*)((int32_t)picData + picData->ImageOffset), picData->ByteSize, DMA_INT);
+		DmaCopy((void*)0x0E000000, source, picData->ByteSize, DMA_INT);
 	DmaCopy((void*)0x0E100000, (int8_t*)((int32_t)picData + picData->ColorOffset), colors * 1, DMA_SHORT);
 }
 

@@ -226,7 +226,7 @@ typedef struct IMiscLibrary
 	void(*DmaClear)(void*, int32_t, uint32_t, int32_t);
 	void(*MidiReset)(void);
 //	void(*LzUnpack)(int8_t*, int8_t*);
-	void(*RleUnpack)(int8_t*, int8_t*);
+	void(*RleUnpack)(int8_t*, int8_t*, uint32_t);
 } IMiscLibrary;
 
 typedef struct IDiskLibrary
