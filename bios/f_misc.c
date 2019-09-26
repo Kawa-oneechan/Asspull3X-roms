@@ -40,7 +40,8 @@ void SetBitmapMode256(int flags)
 	REG_SCREENMODE = SMODE_BMP2 | flags;
 	textWidth = (flags & SMODE_320) ? 40 : 80;
 	textHeight = (flags & SMODE_240) ? 30 : 60;
-	interface.DrawChar = (flags & SMODE_320) ? DrawChar8_320 : DrawChar8_640;
+	//interface.DrawChar = (flags & SMODE_320) ? DrawChar8_320 : DrawChar8_640;
+	interface.DrawChar = DrawChar8_320;
 }
 
 void EnableSprites(int enabled)

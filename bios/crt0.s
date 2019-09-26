@@ -117,7 +117,7 @@ typedef struct IBios
 */
 interface:
 	.long 0x41535321	| ASS!
-	.short 0x0001, 0	| 0.2, no extensions
+	.short 0x0002, 0	| 0.2, no extensions
 	.long ExHandler
 	.long 0			| No VBlank
 	.long 0			| No HBlank

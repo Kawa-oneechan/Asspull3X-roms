@@ -199,16 +199,19 @@ void FadeFromWhite()
 void DrawString(const char* str, int32_t x, int32_t y, int32_t color)
 {
 	if (interface.DrawChar == NULL) return;
+	REG_INTRMODE |= 0x80;
 	while(*str)
 	{
 		DrawChar(*str++, x, y, color);
 		x += 8;
 	}
+	REG_INTRMODE &= ~0x80;
 }
 
 void DrawFormat(const char* format, int32_t x, int32_t y, int32_t color, ...)
 {
 	if (interface.DrawChar == NULL) return;
+	REG_INTRMODE |= 0x80;
 	char buffer[1024];
 	va_list args;
 	va_start(args, format);
@@ -221,6 +224,7 @@ void DrawFormat(const char* format, int32_t x, int32_t y, int32_t color, ...)
 		x += 8;
 	}
 	va_end(args);
+	REG_INTRMODE &= ~0x80;
 }
 
 void DrawChar(char c, int32_t x, int32_t y, int32_t color)
