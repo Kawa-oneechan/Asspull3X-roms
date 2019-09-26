@@ -27,11 +27,17 @@ extern const TImageFile splashData;
 
 void Display(char* what)
 {
-	for (int y = 76; y < 84; y++)
-		DmaClear((void*)0x0E000000 + (y * 160) + 86, 0, 35, DMA_SHORT);
+	//for (int y = 76; y < 84; y++)
+	//	DmaClear((void*)0x0E000000 + (y * 320) + 170, 0, 70, DMA_SHORT);
+	REG_BLITSOURCE = 0;
+	REG_BLITTARGET = 0x0E000000 + (76 * 320) + 170;
+	REG_BLITLENGTH = 280;
+	REG_BLITCONTROL = BLIT_SET | BLIT_INT | BLIT_STRIDESKIP | BLIT_SOURCESTRIDE(35) | BLIT_TARGETSTRIDE(80);
+	//(80 << 20) | (35 << 8) | (2 << 5) | (1 << 4) | (2 << 0);
+
 	int pos = 240 - (strnlen_s(what, 16) * 4); //len * 8, but halved.
-	DrawString(what, pos + 1, 77, 9);
-	DrawString(what, pos, 76, 15);
+	DrawString(what, pos + 1, 77, 50);
+	DrawString(what, pos, 76, 62);
 }
 
 int32_t main(void)
@@ -46,8 +52,8 @@ int32_t main(void)
 	REG_HDMACONTROL[0] = DMA_ENABLE | HDMA_DOUBLE | (DMA_SHORT << 4) | (0 << 8) | (480 << 20);
 	sprintf(biosVer, "BIOS v%d.%d", (interface.biosVersion >> 8) & 0xFF, (interface.biosVersion >> 0) & 0xFF);
 	dpf(biosVer);
-	DrawString(biosVer, 2, 2, 9);
-	DrawString(biosVer, 1, 1, 14);
+	DrawString(biosVer, 2, 2, 50);
+	DrawString(biosVer, 1, 1, 1);
 	MIDI_PROGRAM(1, MIDI_SEASHORE);
 	MIDI_KEYON(1, MIDI_C4, 80);
 	Display("* INSERT CART *");

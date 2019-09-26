@@ -67,6 +67,10 @@ extern void free(void*);
 #define REG_HDMACONTROL	((uint32_t*)(MEM_IO+0x0080))
 #define REG_HDMASOURCE	((uint32_t*)(MEM_IO+0x00A0))
 #define REG_HDMATARGET	((uint32_t*)(MEM_IO+0x00C0))
+#define REG_BLITCONTROL	*(uint32_t*)(MEM_IO+0x0100)
+#define REG_BLITSOURCE	*(uint32_t*)(MEM_IO+0x0104)
+#define REG_BLITTARGET	*(uint32_t*)(MEM_IO+0x0108)
+#define REG_BLITLENGTH	*(uint32_t*)(MEM_IO+0x010C)
 
 #define DMA_BYTE 0
 #define DMA_SHORT 1
@@ -86,6 +90,17 @@ extern void free(void*);
 #define IMODE_VBLANK 1		// Enable VBlank.
 #define IMODE_TRIGGER 2		// Enable TriggerLine.
 #define IMODE_INVBLANK 4	// VBlank is triggered.
+
+#define BLIT_COPY				(1 << 0)
+#define BLIT_SET				(2 << 0)
+#define BLIT_INVERT				(3 << 0)
+#define BLIT_UNRLE				(4 << 0)
+#define BLIT_STRIDESKIP			(1 << 4)
+#define BLIT_BYTE				(0 << 5)
+#define BLIT_SHORT				(1 << 5)
+#define BLIT_INT				(2 << 5)
+#define BLIT_SOURCESTRIDE(x)	((x) << 8)
+#define BLIT_TARGETSTRIDE(x)	((x) << 20)
 
 typedef struct TImageFile
 {

@@ -172,23 +172,14 @@ void LzUnpack(char* dst, char* src)
 
 void RleUnpack(int8_t* dst, int8_t* src, uint32_t size)
 {
+	REG_BLITSOURCE = (int32_t)src;
+	REG_BLITTARGET = (int32_t)dst;
+	REG_BLITLENGTH = (int32_t)size * 3; //TODO: uncertain
+	REG_BLITCONTROL= BLIT_UNRLE;
+/*
 	REG_INTRMODE |= 0x80;
 	int8_t data;
 	uint8_t rle;
-	dpf("RleUnpack: %d bytes from %x to %x", size, src, dst);
-	while (size > 0)
-	{
-		rle = *src++;
-		rle++;
-		data = *src++;
-		for (; rle > 0; rle--)
-		{
-			size--;
-			*dst++ = data;
-		}
-	}
-	REG_INTRMODE &= ~0x80;
-/*
 	src++;
 	int len = *src << 16;
 	len |= *src << 8;
@@ -227,5 +218,6 @@ void RleUnpack(int8_t* dst, int8_t* src, uint32_t size)
 			}
 		}
 	}
+	REG_INTRMODE &= ~0x80;
 */
 }
