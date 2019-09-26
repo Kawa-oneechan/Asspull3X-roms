@@ -29,8 +29,9 @@ void Display(char* what)
 {
 	for (int y = 76; y < 84; y++)
 		DmaClear((void*)0x0E000000 + (y * 320) + 170, 0, 70, DMA_SHORT);
-	DrawString(what, 177, 77, 50);
-	DrawString(what, 176, 76, 62);
+	int pos = 240 - (strnlen_s(what, 16) * 4); //len * 8, but halved.
+	DrawString(what, pos + 1, 77, 50);
+	DrawString(what, pos, 76, 62);
 }
 
 int32_t main(void)
