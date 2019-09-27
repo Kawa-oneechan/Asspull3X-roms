@@ -26,10 +26,10 @@ Linker script and memory map
                 0x00000000                __DYNAMIC = 0x0
                 0x06000000                PROVIDE (__stack, 0x6000000)
 
-.text           0x00020000     0x1a44
+.text           0x00020000     0x1a3c
  *(.text .text.*)
  .text          0x00020000       0x54 crt0.o
- .text          0x00020054     0x11ca main.o
+ .text          0x00020054     0x11c2 main.o
                 0x00020054                WaitForKey
                 0x00020074                fputc
                 0x000200d2                fputs
@@ -42,78 +42,78 @@ Linker script and memory map
                 0x00020520                fclose
                 0x00020578                ListFiles
                 0x000208bc                main
-                0x00020bb6                LoadFile
-                0x00020c8c                ReadChar
-                0x00020cb8                ReadShort
-                0x00020ce4                ReadShortLE
-                0x00020d28                ReadInt
-                0x00020d52                ReadIntLE
-                0x00020dbc                UnRLE
-                0x00020e60                LoadPCX
- *fill*         0x0002121e        0x2 
- .text          0x00021220      0x356 ../ass-rt.o
-                0x00021220                strcpy_s
-                0x00021266                strcat_s
-                0x000212ca                strnlen_s
-                0x000212ea                strkitten_s
-                0x00021334                memcpy
-                0x00021352                memset
-                0x0002136a                memcmp
-                0x0002139c                sbrk
-                0x000213d4                brk
-                0x000213e4                malloc_find_free_block
-                0x0002140e                malloc_request_space
-                0x00021450                malloc
-                0x000214d2                malloc_get_block_ptr
-                0x000214da                free
-                0x000214ec                realloc
-                0x00021542                calloc
- *fill*         0x00021576        0x2 
- .text          0x00021578       0x22 c:/devkitpro/devkit68k/bin/../lib/gcc/m68k-elf/5.2.0/m68000\libgcc.a(_mulsi3.o)
-                0x00021578                __mulsi3
- *fill*         0x0002159a        0x2 
- .text          0x0002159c       0x6c c:/devkitpro/devkit68k/bin/../lib/gcc/m68k-elf/5.2.0/../../../../m68k-elf/lib/m68000\libc.a(lib_a-strcmp.o)
-                0x0002159c                strcmp
- .text          0x00021608       0x1a c:/devkitpro/devkit68k/bin/../lib/gcc/m68k-elf/5.2.0/../../../../m68k-elf/lib/m68000\libc.a(lib_a-strlen.o)
-                0x00021608                strlen
- *fill*         0x00021622        0x2 
- .text          0x00021624       0xe6 c:/devkitpro/devkit68k/bin/../lib/gcc/m68k-elf/5.2.0/../../../../m68k-elf/lib/m68000\libc.a(lib_a-strtok_r.o)
-                0x00021624                __strtok_r
-                0x000216ee                strtok_r
-                0x0002170c                . = ALIGN (0x4)
- *fill*         0x0002170a        0x2 
-                0x0002170c                __CTOR_LIST__ = .
-                0x0002170c                ___CTOR_LIST__ = .
-                0x0002170c        0x4 LONG 0x0 (((__CTOR_END__ - __CTOR_LIST__) / 0x4) - 0x2)
+                0x00020bae                LoadFile
+                0x00020c84                ReadChar
+                0x00020cb0                ReadShort
+                0x00020cdc                ReadShortLE
+                0x00020d20                ReadInt
+                0x00020d4a                ReadIntLE
+                0x00020db4                UnRLE
+                0x00020e58                LoadPCX
+ *fill*         0x00021216        0x2 
+ .text          0x00021218      0x356 ../ass-rt.o
+                0x00021218                strcpy_s
+                0x0002125e                strcat_s
+                0x000212c2                strnlen_s
+                0x000212e2                strkitten_s
+                0x0002132c                memcpy
+                0x0002134a                memset
+                0x00021362                memcmp
+                0x00021394                sbrk
+                0x000213cc                brk
+                0x000213dc                malloc_find_free_block
+                0x00021406                malloc_request_space
+                0x00021448                malloc
+                0x000214ca                malloc_get_block_ptr
+                0x000214d2                free
+                0x000214e4                realloc
+                0x0002153a                calloc
+ *fill*         0x0002156e        0x2 
+ .text          0x00021570       0x22 c:/devkitpro/devkit68k/bin/../lib/gcc/m68k-elf/5.2.0/m68000\libgcc.a(_mulsi3.o)
+                0x00021570                __mulsi3
+ *fill*         0x00021592        0x2 
+ .text          0x00021594       0x6c c:/devkitpro/devkit68k/bin/../lib/gcc/m68k-elf/5.2.0/../../../../m68k-elf/lib/m68000\libc.a(lib_a-strcmp.o)
+                0x00021594                strcmp
+ .text          0x00021600       0x1a c:/devkitpro/devkit68k/bin/../lib/gcc/m68k-elf/5.2.0/../../../../m68k-elf/lib/m68000\libc.a(lib_a-strlen.o)
+                0x00021600                strlen
+ *fill*         0x0002161a        0x2 
+ .text          0x0002161c       0xe6 c:/devkitpro/devkit68k/bin/../lib/gcc/m68k-elf/5.2.0/../../../../m68k-elf/lib/m68000\libc.a(lib_a-strtok_r.o)
+                0x0002161c                __strtok_r
+                0x000216e6                strtok_r
+                0x00021704                . = ALIGN (0x4)
+ *fill*         0x00021702        0x2 
+                0x00021704                __CTOR_LIST__ = .
+                0x00021704                ___CTOR_LIST__ = .
+                0x00021704        0x4 LONG 0x0 (((__CTOR_END__ - __CTOR_LIST__) / 0x4) - 0x2)
  *(.ctors)
-                0x00021710        0x4 LONG 0x0
-                0x00021714                __CTOR_END__ = .
-                0x00021714                __DTOR_LIST__ = .
-                0x00021714                ___DTOR_LIST__ = .
-                0x00021714        0x4 LONG 0x0 (((__DTOR_END__ - __DTOR_LIST__) / 0x4) - 0x2)
+                0x00021708        0x4 LONG 0x0
+                0x0002170c                __CTOR_END__ = .
+                0x0002170c                __DTOR_LIST__ = .
+                0x0002170c                ___DTOR_LIST__ = .
+                0x0002170c        0x4 LONG 0x0 (((__DTOR_END__ - __DTOR_LIST__) / 0x4) - 0x2)
  *(.dtors)
-                0x00021718        0x4 LONG 0x0
-                0x0002171c                __DTOR_END__ = .
+                0x00021710        0x4 LONG 0x0
+                0x00021714                __DTOR_END__ = .
  *(.rodata .rodata.*)
- .rodata        0x0002171c      0x317 main.o
+ .rodata        0x00021714      0x317 main.o
  *(.gcc_except_table)
-                0x00021a34                . = ALIGN (0x2)
- *fill*         0x00021a33        0x1 
-                0x00021a34                __INIT_SECTION__ = .
-                0x00021a34        0x4 LONG 0x4e560000
+                0x00021a2c                . = ALIGN (0x2)
+ *fill*         0x00021a2b        0x1 
+                0x00021a2c                __INIT_SECTION__ = .
+                0x00021a2c        0x4 LONG 0x4e560000
  *(.init)
+                0x00021a30        0x2 SHORT 0x4e5e
+                0x00021a32        0x2 SHORT 0x4e75
+                0x00021a34                __FINI_SECTION__ = .
+                0x00021a34        0x4 LONG 0x4e560000
+ *(.fini)
                 0x00021a38        0x2 SHORT 0x4e5e
                 0x00021a3a        0x2 SHORT 0x4e75
-                0x00021a3c                __FINI_SECTION__ = .
-                0x00021a3c        0x4 LONG 0x4e560000
- *(.fini)
-                0x00021a40        0x2 SHORT 0x4e5e
-                0x00021a42        0x2 SHORT 0x4e75
-                0x00021a44                _etext = .
+                0x00021a3c                _etext = .
  *(.lit)
-                0x00001a44                _stext = SIZEOF (.text)
+                0x00001a3c                _stext = SIZEOF (.text)
 
-.data           0x01001000        0x4 load address 0x00021a44
+.data           0x01001000        0x4 load address 0x00021a3c
  *(.got.plt)
  *(.got)
  *(.shdata)
@@ -129,7 +129,7 @@ Linker script and memory map
                 0x01001004                _edata = .
                 0x00000004                _sdata = SIZEOF (.data)
 
-.bss            0x01001004        0x8 load address 0x00021a48
+.bss            0x01001004        0x8 load address 0x00021a40
                 0x01001004                . = ALIGN (0x4)
                 0x01001004                __bss_start = .
  *(.shbss)

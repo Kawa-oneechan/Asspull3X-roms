@@ -44,7 +44,7 @@ LDFLAGS += -Wl,-Map $(MAPFILE) -nostartfiles
 
 ../$(TARGET).apb : $(TARGET).elf
 	$(OBJCOPY) -O binary $< $@
-	$(CROSS)objdump -d $(TARGET).elf > $(TARGET).txt
+#	$(CROSS)objdump -d $(TARGET).elf > $(TARGET).txt
 
 $(TARGET).elf : $(OFILES) $(AFILES) Makefile $(DEPENDFILE)
 	@echo > $(MAPFILE)

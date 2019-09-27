@@ -1,4 +1,4 @@
 	.global picData
 	.text
 picData:
-	.incbin "ranmya.api"
+	.incbin "../ass_ranmya.api"

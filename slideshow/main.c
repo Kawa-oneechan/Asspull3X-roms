@@ -64,12 +64,12 @@ int32_t main(void)
 		//PALETTE[15] = 0x7FFF;
 		//DRAW->DrawString(info.fname, 9, 9, 0);
 		//DRAW->DrawString(info.fname, 8, 8, 15);
-		//DRAW->FadeFromBlack();
+		DRAW->FadeFromBlack();
 		free(image);
 
 		//MISC->WaitForVBlanks(60);
 		WaitForKey();
-		//DRAW->FadeToBlack();
+		DRAW->FadeToBlack();
 
 		ret = DISK->FindNext(&dir, &info);
 	}

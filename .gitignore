@@ -4,6 +4,7 @@ Debug
 *.slo
 *.lo
 *.o
+!devkitARM/arm-none-eabi/lib/*.o
 *.obj
 *.gch
 *.pch
@@ -22,7 +23,9 @@ Debug
 *.sdf
 *.VC.*
 *.vcxproj.*
-*.elf
-*.map
 *.apb
 *.txt
+*.img
+*.elf
+*.ap3
+*.map

@@ -30,10 +30,10 @@ Linker script and memory map
                 0x00000000                __DYNAMIC = 0x0
                 0x06000000                PROVIDE (__stack, 0x6000000)
 
-.text           0x00020000     0x1b86
+.text           0x00020000     0x1b7e
  *(.text .text.*)
  .text          0x00020000       0x54 crt0.o
- .text          0x00020054      0xc68 main.o
+ .text          0x00020054      0xc60 main.o
                 0x00020054                LoadFile
                 0x0002012a                WaitForKey
                 0x0002014a                ShowPic
@@ -41,86 +41,86 @@ Linker script and memory map
                 0x000205a0                ShowFile
                 0x00020634                ListFiles
                 0x00020978                main
- .text          0x00020cbc      0x356 ../ass-rt.o
-                0x00020cbc                strcpy_s
-                0x00020d02                strcat_s
-                0x00020d66                strnlen_s
-                0x00020d86                strkitten_s
-                0x00020dd0                memcpy
-                0x00020dee                memset
-                0x00020e06                memcmp
-                0x00020e38                sbrk
-                0x00020e70                brk
-                0x00020e80                malloc_find_free_block
-                0x00020eaa                malloc_request_space
-                0x00020eec                malloc
-                0x00020f6e                malloc_get_block_ptr
-                0x00020f76                free
-                0x00020f88                realloc
-                0x00020fde                calloc
- *fill*         0x00021012        0x2 
- .text          0x00021014      0x504 ../ass-std.o
-                0x00021014                fputc
-                0x00021072                fputs
-                0x000210c0                fgetc
-                0x000211a0                getdelim
-                0x0002131a                fgets
-                0x00021366                fread
-                0x000213be                fwrite
-                0x00021416                fopen
-                0x000214c0                fclose
- .text          0x00021518       0x22 c:/devkitpro/devkit68k/bin/../lib/gcc/m68k-elf/5.2.0/m68000\libgcc.a(_mulsi3.o)
-                0x00021518                __mulsi3
- *fill*         0x0002153a        0x2 
- .text          0x0002153c       0x6c c:/devkitpro/devkit68k/bin/../lib/gcc/m68k-elf/5.2.0/../../../../m68k-elf/lib/m68000\libc.a(lib_a-strcmp.o)
-                0x0002153c                strcmp
- .text          0x000215a8       0x1a c:/devkitpro/devkit68k/bin/../lib/gcc/m68k-elf/5.2.0/../../../../m68k-elf/lib/m68000\libc.a(lib_a-strlen.o)
-                0x000215a8                strlen
- *fill*         0x000215c2        0x2 
- .text          0x000215c4       0x5a c:/devkitpro/devkit68k/bin/../lib/gcc/m68k-elf/5.2.0/../../../../m68k-elf/lib/m68000\libc.a(lib_a-strrchr.o)
-                0x000215c4                strrchr
- *fill*         0x0002161e        0x2 
- .text          0x00021620       0xe6 c:/devkitpro/devkit68k/bin/../lib/gcc/m68k-elf/5.2.0/../../../../m68k-elf/lib/m68000\libc.a(lib_a-strtok_r.o)
-                0x00021620                __strtok_r
-                0x000216ea                strtok_r
- *fill*         0x00021706        0x2 
- .text          0x00021708       0xe6 c:/devkitpro/devkit68k/bin/../lib/gcc/m68k-elf/5.2.0/../../../../m68k-elf/lib/m68000\libc.a(lib_a-strchr.o)
-                0x00021708                strchr
-                0x000217f0                . = ALIGN (0x4)
- *fill*         0x000217ee        0x2 
-                0x000217f0                __CTOR_LIST__ = .
-                0x000217f0                ___CTOR_LIST__ = .
-                0x000217f0        0x4 LONG 0x0 (((__CTOR_END__ - __CTOR_LIST__) / 0x4) - 0x2)
+ .text          0x00020cb4      0x356 ../ass-rt.o
+                0x00020cb4                strcpy_s
+                0x00020cfa                strcat_s
+                0x00020d5e                strnlen_s
+                0x00020d7e                strkitten_s
+                0x00020dc8                memcpy
+                0x00020de6                memset
+                0x00020dfe                memcmp
+                0x00020e30                sbrk
+                0x00020e68                brk
+                0x00020e78                malloc_find_free_block
+                0x00020ea2                malloc_request_space
+                0x00020ee4                malloc
+                0x00020f66                malloc_get_block_ptr
+                0x00020f6e                free
+                0x00020f80                realloc
+                0x00020fd6                calloc
+ *fill*         0x0002100a        0x2 
+ .text          0x0002100c      0x504 ../ass-std.o
+                0x0002100c                fputc
+                0x0002106a                fputs
+                0x000210b8                fgetc
+                0x00021198                getdelim
+                0x00021312                fgets
+                0x0002135e                fread
+                0x000213b6                fwrite
+                0x0002140e                fopen
+                0x000214b8                fclose
+ .text          0x00021510       0x22 c:/devkitpro/devkit68k/bin/../lib/gcc/m68k-elf/5.2.0/m68000\libgcc.a(_mulsi3.o)
+                0x00021510                __mulsi3
+ *fill*         0x00021532        0x2 
+ .text          0x00021534       0x6c c:/devkitpro/devkit68k/bin/../lib/gcc/m68k-elf/5.2.0/../../../../m68k-elf/lib/m68000\libc.a(lib_a-strcmp.o)
+                0x00021534                strcmp
+ .text          0x000215a0       0x1a c:/devkitpro/devkit68k/bin/../lib/gcc/m68k-elf/5.2.0/../../../../m68k-elf/lib/m68000\libc.a(lib_a-strlen.o)
+                0x000215a0                strlen
+ *fill*         0x000215ba        0x2 
+ .text          0x000215bc       0x5a c:/devkitpro/devkit68k/bin/../lib/gcc/m68k-elf/5.2.0/../../../../m68k-elf/lib/m68000\libc.a(lib_a-strrchr.o)
+                0x000215bc                strrchr
+ *fill*         0x00021616        0x2 
+ .text          0x00021618       0xe6 c:/devkitpro/devkit68k/bin/../lib/gcc/m68k-elf/5.2.0/../../../../m68k-elf/lib/m68000\libc.a(lib_a-strtok_r.o)
+                0x00021618                __strtok_r
+                0x000216e2                strtok_r
+ *fill*         0x000216fe        0x2 
+ .text          0x00021700       0xe6 c:/devkitpro/devkit68k/bin/../lib/gcc/m68k-elf/5.2.0/../../../../m68k-elf/lib/m68000\libc.a(lib_a-strchr.o)
+                0x00021700                strchr
+                0x000217e8                . = ALIGN (0x4)
+ *fill*         0x000217e6        0x2 
+                0x000217e8                __CTOR_LIST__ = .
+                0x000217e8                ___CTOR_LIST__ = .
+                0x000217e8        0x4 LONG 0x0 (((__CTOR_END__ - __CTOR_LIST__) / 0x4) - 0x2)
  *(.ctors)
-                0x000217f4        0x4 LONG 0x0
-                0x000217f8                __CTOR_END__ = .
-                0x000217f8                __DTOR_LIST__ = .
-                0x000217f8                ___DTOR_LIST__ = .
-                0x000217f8        0x4 LONG 0x0 (((__DTOR_END__ - __DTOR_LIST__) / 0x4) - 0x2)
+                0x000217ec        0x4 LONG 0x0
+                0x000217f0                __CTOR_END__ = .
+                0x000217f0                __DTOR_LIST__ = .
+                0x000217f0                ___DTOR_LIST__ = .
+                0x000217f0        0x4 LONG 0x0 (((__DTOR_END__ - __DTOR_LIST__) / 0x4) - 0x2)
  *(.dtors)
-                0x000217fc        0x4 LONG 0x0
-                0x00021800                __DTOR_END__ = .
+                0x000217f4        0x4 LONG 0x0
+                0x000217f8                __DTOR_END__ = .
  *(.rodata .rodata.*)
- .rodata        0x00021800      0x175 main.o
- .rodata        0x00021975      0x200 ../ass-std.o
+ .rodata        0x000217f8      0x175 main.o
+ .rodata        0x0002196d      0x200 ../ass-std.o
  *(.gcc_except_table)
-                0x00021b76                . = ALIGN (0x2)
- *fill*         0x00021b75        0x1 
-                0x00021b76                __INIT_SECTION__ = .
-                0x00021b76        0x4 LONG 0x4e560000
+                0x00021b6e                . = ALIGN (0x2)
+ *fill*         0x00021b6d        0x1 
+                0x00021b6e                __INIT_SECTION__ = .
+                0x00021b6e        0x4 LONG 0x4e560000
  *(.init)
+                0x00021b72        0x2 SHORT 0x4e5e
+                0x00021b74        0x2 SHORT 0x4e75
+                0x00021b76                __FINI_SECTION__ = .
+                0x00021b76        0x4 LONG 0x4e560000
+ *(.fini)
                 0x00021b7a        0x2 SHORT 0x4e5e
                 0x00021b7c        0x2 SHORT 0x4e75
-                0x00021b7e                __FINI_SECTION__ = .
-                0x00021b7e        0x4 LONG 0x4e560000
- *(.fini)
-                0x00021b82        0x2 SHORT 0x4e5e
-                0x00021b84        0x2 SHORT 0x4e75
-                0x00021b86                _etext = .
+                0x00021b7e                _etext = .
  *(.lit)
-                0x00001b86                _stext = SIZEOF (.text)
+                0x00001b7e                _stext = SIZEOF (.text)
 
-.data           0x01001000        0x4 load address 0x00021b86
+.data           0x01001000        0x4 load address 0x00021b7e
  *(.got.plt)
  *(.got)
  *(.shdata)
@@ -139,7 +139,7 @@ Linker script and memory map
                 0x01001004                _edata = .
                 0x00000004                _sdata = SIZEOF (.data)
 
-.bss            0x01001004        0x8 load address 0x00021b8a
+.bss            0x01001004        0x8 load address 0x00021b82
                 0x01001004                . = ALIGN (0x4)
                 0x01001004                __bss_start = .
  *(.shbss)

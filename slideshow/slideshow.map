@@ -20,67 +20,67 @@ Linker script and memory map
                 0x00000000                __DYNAMIC = 0x0
                 0x06000000                PROVIDE (__stack, 0x6000000)
 
-.text           0x00020000      0x650
+.text           0x00020000      0x670
  *(.text .text.*)
  .text          0x00020000       0x54 crt0.o
- .text          0x00020054      0x24c main.o
+ .text          0x00020054      0x26c main.o
                 0x00020054                LoadFile
                 0x00020108                WaitForKey
                 0x00020148                main
- .text          0x000202a0      0x356 ../ass-rt.o
-                0x000202a0                strcpy_s
-                0x000202e6                strcat_s
-                0x0002034a                strnlen_s
-                0x0002036a                strkitten_s
-                0x000203b4                memcpy
-                0x000203d2                memset
-                0x000203ea                memcmp
-                0x0002041c                sbrk
-                0x00020454                brk
-                0x00020464                malloc_find_free_block
-                0x0002048e                malloc_request_space
-                0x000204d0                malloc
-                0x00020552                malloc_get_block_ptr
-                0x0002055a                free
-                0x0002056c                realloc
-                0x000205c2                calloc
- *fill*         0x000205f6        0x2 
- .text          0x000205f8       0x22 c:/devkitpro/devkit68k/bin/../lib/gcc/m68k-elf/5.2.0/m68000\libgcc.a(_mulsi3.o)
-                0x000205f8                __mulsi3
-                0x0002061c                . = ALIGN (0x4)
- *fill*         0x0002061a        0x2 
-                0x0002061c                __CTOR_LIST__ = .
-                0x0002061c                ___CTOR_LIST__ = .
-                0x0002061c        0x4 LONG 0x0 (((__CTOR_END__ - __CTOR_LIST__) / 0x4) - 0x2)
+ .text          0x000202c0      0x356 ../ass-rt.o
+                0x000202c0                strcpy_s
+                0x00020306                strcat_s
+                0x0002036a                strnlen_s
+                0x0002038a                strkitten_s
+                0x000203d4                memcpy
+                0x000203f2                memset
+                0x0002040a                memcmp
+                0x0002043c                sbrk
+                0x00020474                brk
+                0x00020484                malloc_find_free_block
+                0x000204ae                malloc_request_space
+                0x000204f0                malloc
+                0x00020572                malloc_get_block_ptr
+                0x0002057a                free
+                0x0002058c                realloc
+                0x000205e2                calloc
+ *fill*         0x00020616        0x2 
+ .text          0x00020618       0x22 c:/devkitpro/devkit68k/bin/../lib/gcc/m68k-elf/5.2.0/m68000\libgcc.a(_mulsi3.o)
+                0x00020618                __mulsi3
+                0x0002063c                . = ALIGN (0x4)
+ *fill*         0x0002063a        0x2 
+                0x0002063c                __CTOR_LIST__ = .
+                0x0002063c                ___CTOR_LIST__ = .
+                0x0002063c        0x4 LONG 0x0 (((__CTOR_END__ - __CTOR_LIST__) / 0x4) - 0x2)
  *(.ctors)
-                0x00020620        0x4 LONG 0x0
-                0x00020624                __CTOR_END__ = .
-                0x00020624                __DTOR_LIST__ = .
-                0x00020624                ___DTOR_LIST__ = .
-                0x00020624        0x4 LONG 0x0 (((__DTOR_END__ - __DTOR_LIST__) / 0x4) - 0x2)
+                0x00020640        0x4 LONG 0x0
+                0x00020644                __CTOR_END__ = .
+                0x00020644                __DTOR_LIST__ = .
+                0x00020644                ___DTOR_LIST__ = .
+                0x00020644        0x4 LONG 0x0 (((__DTOR_END__ - __DTOR_LIST__) / 0x4) - 0x2)
  *(.dtors)
-                0x00020628        0x4 LONG 0x0
-                0x0002062c                __DTOR_END__ = .
+                0x00020648        0x4 LONG 0x0
+                0x0002064c                __DTOR_END__ = .
  *(.rodata .rodata.*)
- .rodata        0x0002062c       0x13 main.o
+ .rodata        0x0002064c       0x13 main.o
  *(.gcc_except_table)
-                0x00020640                . = ALIGN (0x2)
- *fill*         0x0002063f        0x1 
-                0x00020640                __INIT_SECTION__ = .
-                0x00020640        0x4 LONG 0x4e560000
+                0x00020660                . = ALIGN (0x2)
+ *fill*         0x0002065f        0x1 
+                0x00020660                __INIT_SECTION__ = .
+                0x00020660        0x4 LONG 0x4e560000
  *(.init)
-                0x00020644        0x2 SHORT 0x4e5e
-                0x00020646        0x2 SHORT 0x4e75
-                0x00020648                __FINI_SECTION__ = .
-                0x00020648        0x4 LONG 0x4e560000
+                0x00020664        0x2 SHORT 0x4e5e
+                0x00020666        0x2 SHORT 0x4e75
+                0x00020668                __FINI_SECTION__ = .
+                0x00020668        0x4 LONG 0x4e560000
  *(.fini)
-                0x0002064c        0x2 SHORT 0x4e5e
-                0x0002064e        0x2 SHORT 0x4e75
-                0x00020650                _etext = .
+                0x0002066c        0x2 SHORT 0x4e5e
+                0x0002066e        0x2 SHORT 0x4e75
+                0x00020670                _etext = .
  *(.lit)
-                0x00000650                _stext = SIZEOF (.text)
+                0x00000670                _stext = SIZEOF (.text)
 
-.data           0x01001000        0x4 load address 0x00020650
+.data           0x01001000        0x4 load address 0x00020670
  *(.got.plt)
  *(.got)
  *(.shdata)
@@ -93,7 +93,7 @@ Linker script and memory map
                 0x01001004                _edata = .
                 0x00000004                _sdata = SIZEOF (.data)
 
-.bss            0x01001004        0x8 load address 0x00020654
+.bss            0x01001004        0x8 load address 0x00020674
                 0x01001004                . = ALIGN (0x4)
                 0x01001004                __bss_start = .
  *(.shbss)

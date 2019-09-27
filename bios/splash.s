@@ -1,4 +1,4 @@
 	.global splashData
 	.text
 splashData:
-	.incbin "splash.api"
+	.incbin "../splash.api"
