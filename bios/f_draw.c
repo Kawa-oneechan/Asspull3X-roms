@@ -71,9 +71,9 @@ void DisplayPicture(TImageFile* picData)
 			mode = SMODE_240;
 		else if (picData->Height == 480 || picData->Height == 400)
 			mode = 0;
-		if (picData->Height == 200 || picData->Height == 400)
-			mode |= SMODE_BOLD;
 	}
+	if (picData->Height == 200 || picData->Height == 400)
+		mode |= SMODE_BOLD;
 	if (mode > -1)
 	{
 		//mode |= (picData->BitDepth == 8) ? SMODE_BMP2 : SMODE_BMP1;
@@ -98,7 +98,6 @@ void FadeToBlack()
 	for (int32_t i = 0; i < 32; i++)
 	{
 		REG_SCREENFADE = i;
-		WaitForVBlank();
 		WaitForVBlank();
 	}
 	/*

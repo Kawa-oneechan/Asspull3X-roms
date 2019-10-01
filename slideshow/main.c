@@ -14,18 +14,21 @@ void* LoadFile(const char* path, void* buffer, int32_t len)
 	ret = DISK->OpenFile(&file, path, FA_READ);
 	//void* target = mem;
 	if (ret > 0) return (void*)ret;
-	/*for(;;)
+
+	void *target = buffer;
+	for(;;)
 	{
-		ret = f_read(&file, target, 1024, &bytesRead);
-		if (ret > 0) return (void*)ret;
-		target += bytesRead;
-		if (bytesRead < 1024)
+		ret = DISK->ReadFile(&file, target, 1024);
+		if (ret < 0) return (void*)ret;
+		target += ret;
+		if (ret < 1024)
 			break;
-	}*/
-	if (nfo.fsize < len) len = nfo.fsize;
+	}
+
+	//if (nfo.fsize < len) len = nfo.fsize;
 	//printf("LoadFile: gonna try reading %d bytes to %x.\n", len, buffer);
-	ret = DISK->ReadFile(&file, buffer, len);
-	if (ret < 0) return (void*)ret;
+	//ret = DISK->ReadFile(&file, buffer, len);
+	//if (ret < 0) return (void*)ret;
 	DISK->CloseFile(&file);
 	return buffer;
 }
