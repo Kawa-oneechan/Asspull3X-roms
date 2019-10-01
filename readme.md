@@ -31,5 +31,4 @@ Normally, the A3X draws 240 or 480 lines, but by setting the bold font flag in g
 The `png` files can be passed to the included `img2ass` tool to convert them to `api` files ("*a*ss*p*ull *i*mage"). The various applications listed above can use them.
 ## Acknowledgements
 * `bios` uses [*FatFS* by ChaN](http://elm-chan.org/fsw/ff/00index_e.html). The splash screen is edited from the copy protection screen from *Ranma ½ Hiryuu Densetsu*.
-* `slideshow` uses images from several PC-98 games: *Doki Doki Vacation* by Cocktail Soft, *Manami no Doko Made Iku no* by Wendy Magazine, *Sex* and *Stars* by Aypio.
-* `twohundred` uses the startup screen from *Wolfenstein 3D* by id Software.
+* *Farah Furcett* character named by Screwtape.
