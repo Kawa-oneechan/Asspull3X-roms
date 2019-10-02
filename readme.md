@@ -1,6 +1,6 @@
 # Asspull IIIx
 ## ROM source archive
-This repository contains the full source for the *Asspull IIIx* ROM files — the BIOS and boot firmware, and a handful of functionality tests. They can be built in [https://devkitpro.org/ devkitPro].
+This repository contains the full source for the *Asspull IIIx* ROM files — the BIOS and boot firmware, and a handful of functionality tests. They can be built in [devkitPro](https://devkitpro.org/).
 ### `_disk1_` and `_disk2_`
 These two folders are the source for `disk1.img` and `disk2.img`, as built with the included copy of `bfi.exe`.
 ### `bios`
