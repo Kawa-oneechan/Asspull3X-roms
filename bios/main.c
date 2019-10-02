@@ -43,87 +43,108 @@ void Display(char* what)
 int32_t main(void)
 {
 	char biosVer[32];
-	WaitForVBlank();
-	REG_SCREENFADE = 31;
-	DisplayPicture((TImageFile*)&splashData);
-	DmaCopy((int8_t*)0x0E100200, (int8_t*)&fontTiles, 12288, DMA_INT);
-	REG_HDMASOURCE[0] = (int32_t)hdma1;
-	REG_HDMATARGET[0] = (int32_t)PALETTE;
-	REG_HDMACONTROL[0] = DMA_ENABLE | HDMA_DOUBLE | (DMA_SHORT << 4) | (0 << 8) | (480 << 20);
-	sprintf(biosVer, "BIOS v%d.%d", (interface.biosVersion >> 8) & 0xFF, (interface.biosVersion >> 0) & 0xFF);
-	dpf(biosVer);
-	DrawString(biosVer, 2, 2, 50);
-	DrawString(biosVer, 1, 1, 1);
-	MIDI_PROGRAM(1, MIDI_SEASHORE);
-	MIDI_KEYON(1, MIDI_C4, 80);
-	Display("* INSERT CART *");
-	FadeFromBlack();
-
 	int32_t* cartCode = (int32_t*)0x00020000;
 	void(*entry)(void)= (void*)0x00020004;
 	char* cartName = (char*)0x00020008;
-	int32_t haveDisk;
+	int32_t haveDisk = 0, hadDisk = 0;
+	int32_t showSplash = 0;
+
 	while(1)
 	{
 		if (*cartCode != 0x41535321) //ASS!
 		{
 			haveDisk = *(volatile uint8_t*)(0x0D800032) & 1;
-			if (haveDisk)
+			if (haveDisk && !hadDisk)
 			{
+				hadDisk = 1;
+				dpf("got disk");
 				//We got a disk!
 				DIR dir;
 				FILEINFO info;
 				FILE file;
 				int32_t ret = FindFirst(&dir, &info, "0:/", "start.app");
 				CloseDir(&dir);
-				if (ret == 0 && info.fname[0])
+				if (ret == 0)
 				{
-					ret = OpenFile(&file, "0:/start.app", FA_READ);
-					if (ret)
+					if (info.fname[0])
 					{
-						Display("Not a boot disk.");
-						continue;
+						dpf("got start.app");
+						ret = OpenFile(&file, "0:/start.app", FA_READ);
+						ret = ReadFile(&file, (void*)0x01002000, info.fsize);
+						if (ret < 0)
+						{
+							if (showSplash) Display("Failed to read. ");
+							continue;
+						}
+						ret = CloseFile(&file);
+						entry = (void*)0x01002020;
+						cartName = (char*)0x01002008;
+						break;
 					}
-					ret = ReadFile(&file, (void*)0x01002000, info.fsize);
-					if (ret < 0)
-					{
-						Display("Failed to read. ");
-						continue;
-					}
-					ret = CloseFile(&file);
-					entry = (void*)0x01002020;
-					cartName = (char*)0x01002008;
-					goto loadIt;
+				}
+				else
+				{
+					dpf("not good");
+					if (showSplash) Display("Not a boot disk.");
+					continue;
 				}
 			}
-
-			WaitForVBlank();
-			continue;
+			else if (!haveDisk && hadDisk)
+			{
+				hadDisk = 0;
+				dpf("lost disk");
+				Display("* INSERT CAT *");
+				continue;
+			}
 		}
 		else
 		{
 			entry = (void*)0x00020004;
-			Display("* INSERT  CART *");
+			break;
 		}
 
+		if (!showSplash)
+		{
+			showSplash = 1;
+			WaitForVBlank();
+			REG_SCREENFADE = 31;
+			DisplayPicture((TImageFile*)&splashData);
+			DmaCopy((int8_t*)0x0E100200, (int8_t*)&fontTiles, 12288, DMA_INT);
+			REG_HDMASOURCE[0] = (int32_t)hdma1;
+			REG_HDMATARGET[0] = (int32_t)PALETTE;
+			REG_HDMACONTROL[0] = DMA_ENABLE | HDMA_DOUBLE | (DMA_SHORT << 4) | (0 << 8) | (480 << 20);
+			sprintf(biosVer, "BIOS v%d.%d", (interface.biosVersion >> 8) & 0xFF, (interface.biosVersion >> 0) & 0xFF);
+			dpf(biosVer);
+			DrawString(biosVer, 2, 2, 50);
+			DrawString(biosVer, 1, 1, 1);
+			MIDI_PROGRAM(1, MIDI_SEASHORE);
+			MIDI_KEYON(1, MIDI_C4, 80);
+			Display("* INSERT CART *");
+			FadeFromBlack();
+		}
+		else
+		{
+			WaitForVBlank();
+		}
+		continue;
+	}
 
-loadIt:
+	if (showSplash)
+	{
 		MidiReset();
-
 		MIDI_PROGRAM(1, MIDI_GUITARFRETNOISE);
 		MIDI_KEYON(1, MIDI_C4, 80);
-
 		Display(cartName);
 		FadeToBlack();
-		REG_HDMACONTROL[0] = 0;
-		interface.VBlank = 0;
-		interface.HBlank = 0;
-		attribs = 0x0F;
-		ClearScreen();
-		ResetPalette();
-		REG_SCREENFADE = 0;
-		entry();
 	}
+	REG_HDMACONTROL[0] = 0;
+	REG_SCREENFADE = 0;
+	interface.VBlank = 0;
+	interface.HBlank = 0;
+	attribs = 0x0F;
+	ClearScreen();
+	ResetPalette();
+	entry();
 }
 
 void ExHandler()
