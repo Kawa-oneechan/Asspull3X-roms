@@ -7,8 +7,8 @@ These two folders are the source for `disk1.img` and `disk2.img`, as built with 
 This is the complete source of the BIOS and boot firmware. It compiles to `ass-bios.apb` ("*a*ss*p*ull *b*ios") and contains several functions available to other programs, subdivided into a couple different libraries, Amiga style.
 ### `cmd`
 This is an attempt to create a DOS prompt, basically, to navigate standard-issue 1.44 MB FAT floppy diskettes. It's very simple and does not currently work *at all*. Last time it did, it had `cd`, `dir`, `ren`, `del`, and `show` commands. The `show` command would work on `txt` files as well as images in `api` format.
-### `devkitARM`
-Misnamed for historical reasons, but this folder contains the specs and linker scripts for the system. Merge it into devkitPro's `devkitARM` folder.
+### `devkit68k`
+Contains the linker scripts and such. Merge it into devkitPro's `devkit68K` folder.
 ### `disktest`
 A complete mess that was at one point a disk navigator.
 ### `fromdisk`

@@ -3,6 +3,3 @@
 *link:
 %(old_link) -T asspull.ld%s
 
-*startfile:
-asspull_crt0%O%s crti%O%s crtbegin%O%s
-
