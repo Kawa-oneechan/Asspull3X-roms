@@ -11,7 +11,7 @@ IBios* interface;
 
 #define MAP ((uint16_t*)0x0E000000)
 
-extern const uint16_t hdma1[];
+extern const uint16_t hdma1[], titleMap[];
 extern const uint16_t tilesTiles[256];
 extern const uint16_t tilesPal[16];
 
@@ -49,9 +49,25 @@ unsigned int rand()
 
 void WaitForKey()
 {
-	while (REG_KEYIN == 0);
-	vbl();
-	while (REG_KEYIN != 0);
+	while (REG_KEYIN != 0) { vbl(); }
+	while (REG_KEYIN == 0) { vbl(); }
+	while (REG_KEYIN != 0) { vbl(); }
+}
+
+void TitleScreen()
+{
+	uint16_t* dst = MAP;
+	uint16_t* src = (uint16_t*)titleMap;
+	for (int line = 0; line < 30; line++)
+	{
+		for (int row = 0; row < 40; row++)
+			*dst++ = *src++;
+		dst += 24;
+	}
+	DRAW->FadeFromBlack();
+	WaitForKey();
+	DRAW->FadeToBlack();
+	rndseed = REG_TICKCOUNT;
 }
 
 void* Peek()
@@ -105,6 +121,10 @@ void Write(int y, int x, char* str)
 void DrawBoard()
 {
 	int i;
+
+	for (i = 0; i < WIDTH * HEIGHT; i++)
+		MAP[i] = 0;
+
 	Tile(0, 0, 18);
 	Tile(0, WIDTH - 1, 19);
 	Tile(HEIGHT - 1, 0, 20);
@@ -213,6 +233,8 @@ int main(void)
 	MIDI_PROGRAM(1, MIDI_ACOUSTICBASS);
 	MIDI_PROGRAM(2, MIDI_FX4ATMOSPHERE);
 	MIDI_PROGRAM(3, MIDI_GUNSHOT);
+
+	TitleScreen();
 
 	DrawBoard();
 	PlaceAndDrawFruit();
