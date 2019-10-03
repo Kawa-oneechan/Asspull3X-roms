@@ -1,5 +1,4 @@
 #include "../ass.h"
-#include "../ass-std.h"
 IBios* interface;
 
 #define KEY_UP 0xC8
@@ -16,7 +15,7 @@ extern const uint16_t hdma1[];
 extern const uint16_t tilesTiles[256];
 extern const uint16_t tilesPal[16];
 
-int score = 0;
+int score = 0, fruitTimer = 0;
 
 typedef struct
 {
@@ -177,6 +176,8 @@ void MovePlayer(pos head)
 	//Check if we're eating the fruit
 	if (head.x == fruit.x && head.y == fruit.y)
 	{
+		MIDI_KEYON(2, MIDI_A5, 80);
+		fruitTimer = 2;
 		PlaceAndDrawFruit();
 		score += 1000;
 	}
@@ -192,7 +193,7 @@ void MovePlayer(pos head)
 	Tile(head.y, head.x, 2);
 
 	char buffer[25];
-	sprintf(buffer, "%d", score);
+	TEXT->Format(buffer, "%d", score);
 	Write(HEIGHT - 1, 2, buffer);
 }
 
@@ -209,6 +210,10 @@ int main(void)
 
 	int key = KEY_RIGHT;
 
+	MIDI_PROGRAM(1, MIDI_ACOUSTICBASS);
+	MIDI_PROGRAM(2, MIDI_FX4ATMOSPHERE);
+	MIDI_PROGRAM(3, MIDI_GUNSHOT);
+
 	DrawBoard();
 	PlaceAndDrawFruit();
 	pos head = { 5, 5 };
@@ -224,6 +229,20 @@ int main(void)
 		vbl();
 		vbl();
 		vbl();
+
+		if (fruitTimer)
+		{
+			fruitTimer--;
+			if (fruitTimer == 1)
+			{
+				MIDI_KEYOFF(2, MIDI_A5, 80);
+				MIDI_KEYON(2, MIDI_D6, 80);
+			}
+			if (fruitTimer == 0)
+			{
+				MIDI_KEYOFF(2, MIDI_D6, 80);
+			}
+		}
 
 		int in = REG_KEYIN;
 		rndseed += in;
@@ -259,9 +278,15 @@ int main(void)
 				break;
 		}
 		if (!InBounds(head))
+		{
+			MIDI_KEYON(3, MIDI_C2, 80);
 			GameOver();
+		}
 		else
+		{
+			MIDI_KEYON(1, (MIDI_C2 + (rand() % 3)), (40 + (rand() % 10)));
 			MovePlayer(head);
+		}
 	}
 	GameOver();
 
