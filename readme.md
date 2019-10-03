@@ -23,6 +23,8 @@ A more graphical Hello World featuring the *previous*, placeholder mascot. Shoul
 An old, short test involving interrupts that has to be compiled with the BIOS rules.
 ### `slideshow`
 Tries to display all the `api` files on the currently-inserted diskette.
+### `snake`
+Your classic snake game. Not Nibbles — that would require level layouts. Maybe later?
 ### `tiletest`
 Early work to test the games console-style tilemap mode.
 ### `twohundred`
@@ -32,3 +34,4 @@ The `png` files can be passed to the included `img2ass` tool to convert them to 
 ## Acknowledgements
 * `bios` uses [*FatFS* by ChaN](http://elm-chan.org/fsw/ff/00index_e.html). The splash screen is edited from the copy protection screen from *Ranma ½ Hiryuu Densetsu*.
 * *Farah Furcett* character named by Screwtape.
+* Snake game ported from [an implementation by Jason Kruse](https://github.com/mnisjk/snake).

@@ -57,7 +57,6 @@ extern void free(void*);
 #define REG_KEYIN		*(volatile uint16_t*)(MEM_IO+0x0006)
 #define REG_TICKCOUNT	*(volatile uint32_t*)(MEM_IO+0x0008)
 #define REG_SCREENFADE	*(int8_t*)(MEM_IO+0x000C)
-#define REG_TRIGGERLINE	*(int8_t*)(MEM_IO+0x000D)
 #define REG_DEBUGOUT	*(char*)(MEM_IO+0x000E)
 #define REG_DMASOURCE	*(volatile uint32_t*)(MEM_IO+0x0020)
 #define REG_DMATARGET	*(volatile uint32_t*)(MEM_IO+0x0024)
@@ -71,6 +70,7 @@ extern void free(void*);
 #define REG_BLITSOURCE	*(uint32_t*)(MEM_IO+0x0104)
 #define REG_BLITTARGET	*(uint32_t*)(MEM_IO+0x0108)
 #define REG_BLITLENGTH	*(uint32_t*)(MEM_IO+0x010C)
+#define REG_BLITKEY		*(uint32_t*)(MEM_IO+0x0110)
 
 #define DMA_BYTE 0
 #define DMA_SHORT 1

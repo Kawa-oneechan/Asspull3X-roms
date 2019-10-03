@@ -49,6 +49,8 @@ int32_t main(void)
 	int32_t haveDisk = 0, hadDisk = 0;
 	int32_t showSplash = 0;
 
+	DmaCopy((int8_t*)0x0E100200, (int8_t*)&fontTiles, 12288, DMA_INT);
+
 	while(1)
 	{
 		if (*cartCode != 0x41535321) //ASS!
@@ -109,7 +111,6 @@ int32_t main(void)
 			WaitForVBlank();
 			REG_SCREENFADE = 31;
 			DisplayPicture((TImageFile*)&splashData);
-			DmaCopy((int8_t*)0x0E100200, (int8_t*)&fontTiles, 12288, DMA_INT);
 			REG_HDMASOURCE[0] = (int32_t)hdma1;
 			REG_HDMATARGET[0] = (int32_t)PALETTE;
 			REG_HDMACONTROL[0] = DMA_ENABLE | HDMA_DOUBLE | (DMA_SHORT << 4) | (0 << 8) | (480 << 20);
