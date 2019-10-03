@@ -7,10 +7,10 @@ IBios* interface;
 #define KEY_RIGHT 0xCD
 #define KEY_DOWN 0xD0
 
-#define g_width 80
-#define g_height 30
+#define WIDTH 40
+#define HEIGHT 30
 
-int g_score = 0;
+int score = 0;
 
 typedef struct
 {
@@ -19,11 +19,11 @@ typedef struct
 } pos;
 pos fruit;
 
-char spaces[g_width * g_height] = {0};
+char spaces[WIDTH * HEIGHT] = {0};
 
 struct s_node
 {
-	pos *position; //TODO: make this a void pointer for generality.
+	void *value;
 	struct s_node *prev;
 	struct s_node *next;
 } *front = NULL, *back = NULL;
@@ -49,16 +49,16 @@ void WaitForKey()
 	while (REG_KEYIN != 0);
 }
 
-pos* peek()
+void* Peek()
 {
-	return front == NULL ? NULL : front->position;
+	return front == NULL ? NULL : front->value;
 }
 
-pos* Dequeue()
+void* Dequeue()
 {
 	node *oldfront = front;
 	front = front->next;
-	return oldfront->position;
+	return oldfront->value;
 }
 
 void Enqueue(pos position)
@@ -68,7 +68,7 @@ void Enqueue(pos position)
 
    newpos->x = position.x;
    newpos->y = position.y;
-   newnode->position = newpos;
+   newnode->value = newpos;
 
    if (front == NULL && back == NULL)
 	   front = back = newnode;
@@ -82,7 +82,7 @@ void Enqueue(pos position)
 
 void Write(int y, int x, char attribs, char* str)
 {
-	int pos = (80 * y) + x;
+	int pos = (WIDTH * y) + x;
 	char *b = str;
 	while (*b)
 	{
@@ -92,20 +92,20 @@ void Write(int y, int x, char attribs, char* str)
 	}
 }
 
-void snake_draw_board()
+void DrawBoard()
 {
 	int i;
-	for (i=0; i<g_height; i++)
+	for (i=0; i<HEIGHT; i++)
 	{
 		Write(i, 0,         0x0E, "\x11\x11");
-		Write(i, g_width-2, 0x0E, "\x11\x11");
+		Write(i, WIDTH-2, 0x0E, "\x11\x11");
 	}
-	for (i=1; i<g_width-1; i++)
+	for (i=1; i<WIDTH-1; i++)
 	{
 		Write(0, i,          0x0E, "\x11");
-		Write(g_height-1, i, 0x0E, "\x11");
+		Write(HEIGHT-1, i, 0x0E, "\x11");
 	}
-	Write(g_height-1, 3, 0x0B, " Score: ");
+	Write(HEIGHT-1, 3, 0x0B, " Score: ");
 }
 
 void GameOver()
@@ -122,18 +122,18 @@ void GameOver()
 
 int InBounds(pos position)
 {
-	return position.y < g_height - 1 && position.y > 0 && position.x < g_width - 1 && position.x > 0;
+	return position.y < HEIGHT - 1 && position.y > 1 && position.x < WIDTH - 2 && position.x > 0;
 }
 
 int CoordinateToIndex(pos position)
 {
-	return g_width * position.y + position.x;
+	return WIDTH * position.y + position.x;
 }
 
 pos IndexToCoordinate(int index)
 {
-	int x = index % g_width;
-	int y = index / g_width;
+	int x = index % WIDTH;
+	int y = index / WIDTH;
 	return (pos) { x, y };
 }
 
@@ -142,7 +142,7 @@ void PlaceAndDrawFruit()
 	int idx;
 	do
 	{
-		idx = rand() % (g_width * g_height);
+		idx = rand() % (WIDTH * HEIGHT);
 		fruit = IndexToCoordinate(idx);
 	}
 	while(spaces[idx] || !InBounds(fruit));
@@ -157,14 +157,14 @@ void MovePlayer(pos head)
 		GameOver();
 	spaces[idx] = 1; //Mark the space as occupied
 	Enqueue(head);
-	g_score += 10;
+	score += 10;
 
 	//Check if we're eating the fruit
 	if (head.x == fruit.x && head.y == fruit.y)
 	{
 		Write(fruit.y, fruit.x, 0x12, "!");
 		PlaceAndDrawFruit();
-		g_score += 1000;
+		score += 1000;
 	}
 	else
 	{
@@ -178,21 +178,21 @@ void MovePlayer(pos head)
 	Write(head.y, head.x, 0x1A, "\x83");
 
 	char buffer[25];
-	sprintf(buffer, "%d ", g_score);
-	Write(g_height-1, 11, 0x0A, buffer);
+	sprintf(buffer, "%d ", score);
+	Write(HEIGHT-1, 11, 0x0A, buffer);
 }
 
 int main(void)
 {
 	interface = (IBios*)(0x01000000);
-	MISC->SetTextMode(SMODE_240 | SMODE_BOLD);
+	MISC->SetTextMode(SMODE_320 | SMODE_240 | SMODE_BOLD);
 	TEXT->SetTextColor(1, 15);
 	TEXT->ClearScreen();
 	TEXT->SetCursorPosition(0, 0);
 
 	int key = KEY_RIGHT;
 
-	snake_draw_board();
+	DrawBoard();
 	PlaceAndDrawFruit();
 	pos head = { 5, 5 };
 	Enqueue(head);
