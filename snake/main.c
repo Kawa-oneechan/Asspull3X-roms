@@ -10,6 +10,12 @@ IBios* interface;
 #define WIDTH 40
 #define HEIGHT 30
 
+#define MAP ((uint16_t*)0x0E000000)
+
+extern const uint16_t hdma1[];
+extern const uint16_t tilesTiles[256];
+extern const uint16_t tilesPal[16];
+
 int score = 0;
 
 typedef struct
@@ -80,32 +86,41 @@ void Enqueue(pos position)
    }
 }
 
-void Write(int y, int x, char attribs, char* str)
+void Tile(int y, int x, uint16_t tile)
 {
-	int pos = (WIDTH * y) + x;
+	MAP[(y * 64) + x] = tile;
+}
+
+void Write(int y, int x, char* str)
+{
 	char *b = str;
 	while (*b)
 	{
-		((int16_t*)MEM_VRAM)[pos] = (*b << 8) | attribs;
+		if (*b >= '0' && *b < '9')
+			Tile(y, x++, *b - '0' + 8);
+		//((int16_t*)MEM_VRAM)[pos] = (*b << 8) | attribs;
 		b++;
-		pos++;
 	}
 }
 
 void DrawBoard()
 {
 	int i;
-	for (i=0; i<HEIGHT; i++)
+	Tile(0, 0, 18);
+	Tile(0, WIDTH - 1, 19);
+	Tile(HEIGHT - 1, 0, 20);
+	Tile(HEIGHT - 1, WIDTH - 1, 21);
+	for (i = 1; i < HEIGHT - 1; i++)
 	{
-		Write(i, 0,         0x0E, "\x11\x11");
-		Write(i, WIDTH-2, 0x0E, "\x11\x11");
+		Tile(i, 0, 23);
+		Tile(i, WIDTH - 1, 23);
 	}
-	for (i=1; i<WIDTH-1; i++)
+	for (i = 1; i < WIDTH - 1; i++)
 	{
-		Write(0, i,          0x0E, "\x11");
-		Write(HEIGHT-1, i, 0x0E, "\x11");
+		Tile(0, i, 22);
+		Tile(HEIGHT - 1, i, 22);
 	}
-	Write(HEIGHT-1, 3, 0x0B, " Score: ");
+	//Write(HEIGHT - 1, 3, 0x0B, " Score: ");
 }
 
 void GameOver()
@@ -122,7 +137,7 @@ void GameOver()
 
 int InBounds(pos position)
 {
-	return position.y < HEIGHT - 1 && position.y > 1 && position.x < WIDTH - 2 && position.x > 0;
+	return position.y < HEIGHT - 1 && position.y > 0 && position.x < WIDTH - 1 && position.x > 0;
 }
 
 int CoordinateToIndex(pos position)
@@ -146,7 +161,7 @@ void PlaceAndDrawFruit()
 		fruit = IndexToCoordinate(idx);
 	}
 	while(spaces[idx] || !InBounds(fruit));
-	Write(fruit.y, fruit.x, 0x1C, "\x02");
+	Tile(fruit.y, fruit.x, 1);
 }
 
 void MovePlayer(pos head)
@@ -162,7 +177,6 @@ void MovePlayer(pos head)
 	//Check if we're eating the fruit
 	if (head.x == fruit.x && head.y == fruit.y)
 	{
-		Write(fruit.y, fruit.x, 0x12, "!");
 		PlaceAndDrawFruit();
 		score += 1000;
 	}
@@ -171,24 +185,27 @@ void MovePlayer(pos head)
 		//Handle the tail
 		pos *tail = Dequeue();
 		spaces[CoordinateToIndex(*tail)] = 0;
-		Write(tail->y, tail->x, 0x10, " ");
+		Tile(tail->y, tail->x, 0);
 	}
 
 	//Draw the new head
-	Write(head.y, head.x, 0x1A, "\x83");
+	Tile(head.y, head.x, 2);
 
 	char buffer[25];
-	sprintf(buffer, "%d ", score);
-	Write(HEIGHT-1, 11, 0x0A, buffer);
+	sprintf(buffer, "%d", score);
+	Write(HEIGHT - 1, 2, buffer);
 }
 
 int main(void)
 {
 	interface = (IBios*)(0x01000000);
-	MISC->SetTextMode(SMODE_320 | SMODE_240 | SMODE_BOLD);
-	TEXT->SetTextColor(1, 15);
-	TEXT->ClearScreen();
-	TEXT->SetCursorPosition(0, 0);
+	MISC->SetTextMode(SMODE_TILE | SMODE_320 | SMODE_240);
+	MISC->DmaCopy(PALETTE, (int8_t*)&tilesPal, 16, DMA_INT);
+	MISC->DmaCopy((int8_t*)0x0E080000, (int8_t*)&tilesTiles, 1024, DMA_INT);
+	MISC->DmaClear(MAP, 0, WIDTH * HEIGHT, 2);
+	REG_HDMASOURCE[0] = (int32_t)hdma1;
+	REG_HDMATARGET[0] = (int32_t)PALETTE;
+	REG_HDMACONTROL[0] = DMA_ENABLE | HDMA_DOUBLE | (DMA_SHORT << 4) | (0 << 8) | (480 << 20);
 
 	int key = KEY_RIGHT;
 
@@ -196,6 +213,8 @@ int main(void)
 	PlaceAndDrawFruit();
 	pos head = { 5, 5 };
 	Enqueue(head);
+
+	DRAW->FadeFromBlack();
 
 	while(1)
 	{
