@@ -49,6 +49,8 @@ int32_t main(void)
 	int32_t haveDisk = 0, hadDisk = 0;
 	int32_t showSplash = 0;
 
+	DmaClear((int8_t*)0x01001000, 0, 0x003F0000, DMA_INT); //Reset cart's workram
+
 	DmaCopy((int8_t*)0x0E100200, (int8_t*)&fontTiles, 12288, DMA_INT);
 
 	while(1)

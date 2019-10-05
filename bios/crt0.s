@@ -71,7 +71,7 @@
 	.long	nullHandler		| 63. Reserved by Motorola
 
 initialize:
-	 move    #0x2700,%sr		| disable interrupts
+	move    #0x2700,%sr		| disable interrupts
 
 | Copy initialized variables from ROM to Work RAM
 	lea     _stext,%a0
