@@ -72,6 +72,39 @@ void WaitForKey()
 	while (REG_KEYIN != 0) { vbl(); }
 }
 
+void TitleMusic()
+{
+	static int cursor = 0, timer = 0, lastPitch;
+	const int tune[] =
+	{
+		MIDI_G4, 8,
+		MIDI_A4, 8,
+		MIDI_B4, 8,
+		MIDI_A4, 8,
+		MIDI_G4, 8,
+		MIDI_A4, 8,
+		MIDI_B4, 16,
+		MIDI_G4, 16,
+		MIDI_G4, 32,
+		0, 0
+	};
+	if (timer == 0)
+	{
+		MIDI_KEYOFF(1, lastPitch, 40);
+		lastPitch = tune[cursor++];
+		timer = tune[cursor++];
+		if (lastPitch == 0)
+		{
+			interface->VBlank = 0;
+			return;
+		}
+		MIDI_KEYON(1, lastPitch, 40);
+	}
+	else
+		timer--;
+	//MIDI_KEYON(1, (MIDI_C2 + (rand() % 3)), (40 + (rand() % 10)));
+}
+
 void TitleScreen()
 {
 	uint16_t* dst = MAP;
@@ -83,7 +116,11 @@ void TitleScreen()
 		dst += 24;
 	}
 	DRAW->FadeFromBlack();
+
+	interface->VBlank = TitleMusic;
+
 	WaitForKey();
+	interface->VBlank = 0;
 	DRAW->FadeToBlack();
 	rndseed = REG_TICKCOUNT;
 }
@@ -130,7 +167,10 @@ void DrawBoard()
 		Tile(0, i, 22);
 		Tile(HEIGHT - 1, i, 22);
 	}
-	//Write(HEIGHT - 1, 3, 0x0B, " Score: ");
+
+	for (i = 3; i < 7; i++)
+		Tile(HEIGHT -1, i, i);
+	Tile(HEIGHT -1, 7, 8);
 }
 
 void GameOver()
@@ -205,9 +245,8 @@ void MovePlayer(pos head)
 	Tile(head.y, head.x, 2);
 
 	char buffer[25];
-	//TEXT->Format(buffer, "%d", score);
 	ultoa(score, buffer);
-	Write(HEIGHT - 1, 2, buffer);
+	Write(HEIGHT - 1, 7, buffer);
 }
 
 int main(void)
