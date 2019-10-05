@@ -15,24 +15,17 @@ extern const uint16_t hdma1[], titleMap[];
 extern const uint16_t tilesTiles[256];
 extern const uint16_t tilesPal[16];
 
-int score = 0, fruitTimer = 0;
+unsigned long score = 0;
+int fruitTimer = 0;
 
 typedef struct
 {
-	int x;
-	int y;
+	char x;
+	char y;
 } pos;
 pos fruit;
 
 char spaces[WIDTH * HEIGHT] = {0};
-
-struct s_node
-{
-	void *value;
-	struct s_node *prev;
-	struct s_node *next;
-} *front = NULL, *back = NULL;
-typedef struct s_node node;
 
 unsigned int rndseed = 0xDEADBEEF;
 
@@ -45,6 +38,31 @@ unsigned int rand()
 {
 	rndseed = (rndseed * 0x41C64E6D) + 0x6073;
 	return rndseed;
+}
+
+void ultoa(unsigned long val, char *buf)
+{
+	char *p;
+	char *firstdig;
+	char temp;
+	unsigned int digval;
+	p = buf;
+	firstdig = p;
+	do
+	{
+		digval = (unsigned)(val % 10);
+		val /= 10;
+		*p++ = (char)(digval + '0');
+	} while (val > 0);
+	*p-- = '\0';
+	do
+	{
+		temp = *p;
+		*p = *firstdig;
+		*firstdig = temp;
+		--p;
+		++firstdig;
+	} while (firstdig < p);
 }
 
 void WaitForKey()
@@ -70,36 +88,9 @@ void TitleScreen()
 	rndseed = REG_TICKCOUNT;
 }
 
-void* Peek()
-{
-	return front == NULL ? NULL : front->value;
-}
-
-void* Dequeue()
-{
-	node *oldfront = front;
-	front = front->next;
-	return oldfront->value;
-}
-
-void Enqueue(pos position)
-{
-   pos *newpos   = (pos*)malloc(sizeof(position));
-   node *newnode = (node*)malloc(sizeof(node));
-
-   newpos->x = position.x;
-   newpos->y = position.y;
-   newnode->value = newpos;
-
-   if (front == NULL && back == NULL)
-	   front = back = newnode;
-   else
-   {
-	   back->next = newnode;
-	   newnode->prev = back;
-	   back = newnode;
-   }
-}
+#define MAXSNAKEBITS 1024
+pos snakeBits[MAXSNAKEBITS];
+int headCursor = 0, tailCursor = 0;
 
 void Tile(int y, int x, uint16_t tile)
 {
@@ -145,12 +136,6 @@ void DrawBoard()
 void GameOver()
 {
 	DRAW->FadeToWhite();
-	while(front)
-	{
-		node *n = front;
-		front = front->next;
-		free(n);
-	}
 	while(1);
 }
 
@@ -190,7 +175,12 @@ void MovePlayer(pos head)
 	if (spaces[idx])
 		GameOver();
 	spaces[idx] = 1; //Mark the space as occupied
-	Enqueue(head);
+
+	snakeBits[headCursor].x = head.x;
+	snakeBits[headCursor].y = head.y;
+	headCursor++;
+	if (headCursor == MAXSNAKEBITS) headCursor = 0;
+
 	score += 10;
 
 	//Check if we're eating the fruit
@@ -204,7 +194,9 @@ void MovePlayer(pos head)
 	else
 	{
 		//Handle the tail
-		pos *tail = Dequeue();
+		pos *tail = &snakeBits[tailCursor];
+		tailCursor++;
+		if (tailCursor == MAXSNAKEBITS) tailCursor = 0;
 		spaces[CoordinateToIndex(*tail)] = 0;
 		Tile(tail->y, tail->x, 0);
 	}
@@ -213,7 +205,8 @@ void MovePlayer(pos head)
 	Tile(head.y, head.x, 2);
 
 	char buffer[25];
-	TEXT->Format(buffer, "%d", score);
+	//TEXT->Format(buffer, "%d", score);
+	ultoa(score, buffer);
 	Write(HEIGHT - 1, 2, buffer);
 }
 
@@ -239,7 +232,10 @@ int main(void)
 	DrawBoard();
 	PlaceAndDrawFruit();
 	pos head = { 5, 5 };
-	Enqueue(head);
+	snakeBits[headCursor].x = head.x;
+	snakeBits[headCursor].y = head.y;
+	headCursor++;
+	if (headCursor == MAXSNAKEBITS) headCursor = 0;
 
 	DRAW->FadeFromBlack();
 
