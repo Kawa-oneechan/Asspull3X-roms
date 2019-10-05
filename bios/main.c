@@ -49,8 +49,6 @@ int32_t main(void)
 	int32_t haveDisk = 0, hadDisk = 0;
 	int32_t showSplash = 0;
 
-	DmaClear((int8_t*)0x01001000, 0, 0x003F0000, DMA_INT); //Reset cart's workram
-
 	DmaCopy((int8_t*)0x0E100200, (int8_t*)&fontTiles, 12288, DMA_INT);
 
 	while(1)
@@ -140,8 +138,10 @@ int32_t main(void)
 		Display(cartName);
 		FadeToBlack();
 	}
+	DmaClear((int8_t*)0x01001000, 0, 0x003F0000, DMA_INT); //Reset cart's workram
+	REG_SCREENMODE = REG_SCREENFADE = REG_MAPSET1 = REG_MAPSET2 = 0x0;
+	REG_SCROLLX1 = REG_SCROLLX2 = REG_SCROLLY1 = REG_SCROLLY2 = 0;
 	REG_HDMACONTROL[0] = 0;
-	REG_SCREENFADE = 0;
 	interface.VBlank = 0;
 	interface.HBlank = 0;
 	attribs = 0x0F;

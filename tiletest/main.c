@@ -1,10 +1,6 @@
 #include "../ass.h"
 IBios* interface;
 
-#define MAP ((uint16_t*)0x0E000000)
-#define REG_SCROLLX1 *(uint16_t*)(MEM_IO+0x0010)
-#define REG_SCROLLY1 *(uint16_t*)(MEM_IO+0x0012)
-
 #define MAPWIDTH 130
 #define SCREENWIDTH 64
 
@@ -13,13 +9,18 @@ extern const uint16_t bg1Map[], levelMap[];
 
 void DrawStripe(int source, int target)
 {
-	uint16_t *s = (uint16_t*)&levelMap[source];
-	uint16_t *d = &(MAP[target]);
+	uint16_t *s1 = (uint16_t*)&bg1Map[source];
+	uint16_t *d1 = &(MAP1[target]);
+	uint16_t *s2 = (uint16_t*)&levelMap[source];
+	uint16_t *d2 = &(MAP2[target]);
 	for (int i = 0; i < 34; i++)
 	{
-		*d = *s;
-		s += MAPWIDTH;
-		d += SCREENWIDTH;
+		*d1 = *s1;
+		*d2 = *s2;
+		s1 += MAPWIDTH;
+		s2 += MAPWIDTH;
+		d1 += SCREENWIDTH;
+		d2 += SCREENWIDTH;
 	}
 }
 
@@ -36,16 +37,21 @@ int main(void)
 	MISC->DmaCopy((int8_t*)0x0E080000, (int8_t*)&tilesetTiles, 2560, DMA_INT);
 	MISC->DmaCopy(PALETTE, (int8_t*)&tilesetPal, 64, DMA_SHORT);
 
+	REG_MAPSET1 = 0x80; //just enable it, don't worry about tile offsets.
+	REG_MAPSET2 = 0x80;
+
 	for (int i = 0; i < SCREENWIDTH; i++)
 		DrawStripe(i, i);
 
-	REG_SCROLLY1 = 16;
+	REG_SCROLLY1 = 32;
+	REG_SCROLLY2 = 16;
 	int scroll = 0;
 	int col = 40;
 	while(1)
 	{
 		vbl();
 		REG_SCROLLX1 = scroll;
+		REG_SCROLLX2 = scroll;
 		scroll += 1;
 		if (scroll % 8 == 0)
 		{

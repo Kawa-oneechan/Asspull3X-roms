@@ -50,6 +50,8 @@ extern void free(void*);
 #define MEM_VRAM	0x0E000000
 #define MEM_IO		0x0D800000
 #define PALETTE		((uint16_t*)0x0E100000)
+#define MAP1		((uint16_t*)0x0E000000)
+#define MAP2		((uint16_t*)0x0E008000)
 
 #define REG_LINE		*(volatile uint16_t*)(MEM_IO+0x0000)
 #define REG_SCREENMODE	*(int8_t*)(MEM_IO+0x0004)
@@ -58,6 +60,12 @@ extern void free(void*);
 #define REG_TICKCOUNT	*(volatile uint32_t*)(MEM_IO+0x0008)
 #define REG_SCREENFADE	*(int8_t*)(MEM_IO+0x000C)
 #define REG_DEBUGOUT	*(char*)(MEM_IO+0x000E)
+#define REG_MAPSET1		*(uint8_t*)(MEM_IO+0x0010)
+#define REG_MAPSET2		*(uint8_t*)(MEM_IO+0x0011)
+#define REG_SCROLLX1	*(uint16_t*)(MEM_IO+0x0012)
+#define REG_SCROLLX2	*(uint16_t*)(MEM_IO+0x0014)
+#define REG_SCROLLY1	*(uint16_t*)(MEM_IO+0x0016)
+#define REG_SCROLLY2	*(uint16_t*)(MEM_IO+0x0018)
 #define REG_DMASOURCE	*(volatile uint32_t*)(MEM_IO+0x0020)
 #define REG_DMATARGET	*(volatile uint32_t*)(MEM_IO+0x0024)
 #define REG_DMALENGTH	*(volatile uint32_t*)(MEM_IO+0x0028)

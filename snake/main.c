@@ -9,8 +9,6 @@ IBios* interface;
 #define WIDTH 40
 #define HEIGHT 30
 
-#define MAP ((uint16_t*)0x0E000000)
-
 extern const uint16_t hdma1[], titleMap[];
 extern const uint16_t tilesTiles[256];
 extern const uint16_t tilesPal[16];
@@ -107,7 +105,7 @@ void TitleMusic()
 
 void TitleScreen()
 {
-	uint16_t* dst = MAP;
+	uint16_t* dst = MAP1;
 	uint16_t* src = (uint16_t*)titleMap;
 	for (int line = 0; line < 30; line++)
 	{
@@ -131,7 +129,7 @@ int headCursor = 0, tailCursor = 0;
 
 void Tile(int y, int x, uint16_t tile)
 {
-	MAP[(y * 64) + x] = tile;
+	MAP1[(y * 64) + x] = tile;
 }
 
 void Write(int y, int x, char* str)
@@ -151,7 +149,7 @@ void DrawBoard()
 	int i;
 
 	for (i = 0; i < WIDTH * HEIGHT; i++)
-		MAP[i] = 0;
+		MAP1[i] = 0;
 
 	Tile(0, 0, 18);
 	Tile(0, WIDTH - 1, 19);
@@ -255,10 +253,11 @@ int main(void)
 	MISC->SetTextMode(SMODE_TILE | SMODE_320 | SMODE_240);
 	MISC->DmaCopy(PALETTE, (int8_t*)&tilesPal, 16, DMA_INT);
 	MISC->DmaCopy((int8_t*)0x0E080000, (int8_t*)&tilesTiles, 1024, DMA_INT);
-	MISC->DmaClear(MAP, 0, WIDTH * HEIGHT, 2);
+	MISC->DmaClear(MAP1, 0, WIDTH * HEIGHT, 2);
 	REG_HDMASOURCE[0] = (int32_t)hdma1;
 	REG_HDMATARGET[0] = (int32_t)PALETTE;
 	REG_HDMACONTROL[0] = DMA_ENABLE | HDMA_DOUBLE | (DMA_SHORT << 4) | (0 << 8) | (480 << 20);
+	REG_MAPSET1 = 0x80;
 
 	int key = KEY_RIGHT;
 
