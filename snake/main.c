@@ -1,6 +1,8 @@
 #include "../ass.h"
 IBios* interface;
 
+#define REG_JOYPAD *(volatile uint16_t*)(MEM_IO+0x0044)
+
 #define KEY_UP 0xC8
 #define KEY_LEFT 0xCB
 #define KEY_RIGHT 0xCD
@@ -66,7 +68,7 @@ void ultoa(unsigned long val, char *buf)
 void WaitForKey()
 {
 	while (REG_KEYIN != 0) { vbl(); }
-	while (REG_KEYIN == 0) { vbl(); }
+	while (REG_KEYIN == 0 && REG_JOYPAD == 0) { vbl(); }
 	while (REG_KEYIN != 0) { vbl(); }
 }
 
@@ -301,6 +303,10 @@ int main(void)
 		}
 
 		int in = REG_KEYIN;
+		if (REG_JOYPAD & 1) in = KEY_UP;
+		else if (REG_JOYPAD & 2) in = KEY_RIGHT;
+		else if (REG_JOYPAD & 4) in = KEY_DOWN;
+		else if (REG_JOYPAD & 8) in = KEY_LEFT;
 		rndseed += in;
 
 		switch (in)
