@@ -89,7 +89,7 @@ extern void free(void*);
 #define SMODE_TEXT 0		// Specifies PC CGA-style text mode.
 #define SMODE_BMP1 1		// Specifies a linear-addressed 16-color four bits per pixel bitmap mode.
 #define SMODE_BMP2 2		// Specifies a linear-addressed 256-color eight bits per pixel bitmap mode.
-#define SMODE_TILE 3
+#define SMODE_TILE 0x63		// Specifies a dual-tilemap system. Forces 320x240 resolution.
 #define SMODE_SPRITES 0x10	// Specifies that sprites should be displayed.
 #define SMODE_240 0x20		// Specifies that instead of 480 lines, the screen height should be halved to 240.
 #define SMODE_320 0x40		// Specifies that the screen width should be halved from 640 to 320.

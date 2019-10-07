@@ -5,6 +5,7 @@ IBios* interface;
 #define SCREENWIDTH 64
 
 extern const uint16_t tilesetPal[], tilesetTiles[], hdma1[];
+extern const uint16_t farahPal[], farahTiles[];
 extern const uint16_t bg1Map[], levelMap[];
 
 void DrawStripe(int source, int target)
@@ -24,10 +25,28 @@ void DrawStripe(int source, int target)
 	}
 }
 
+#define SPRITEA_BUILD(t,e,p)	\
+(								\
+	(((p) & 15) << 12) |		\
+	(((e) &  1) << 11) |		\
+	(((t) & 0x1FF) << 0)		\
+)
+#define SPRITEB_BUILD(hp,vp,dw,dh,hf,vf,ds,pr)	\
+(												\
+	(((pr) & 3) << 30) |						\
+	(((ds) & 1) << 28) |						\
+	(((vf) & 1) << 27) |						\
+	(((hf) & 1) << 26) |						\
+	(((dh) & 1) << 25) |						\
+	(((dw) & 1) << 24) |						\
+	(((vp) & 0x7FF) << 12) |					\
+	(((hp) & 0x7FF) << 0)						\
+)
+
 int main(void)
 {
 	interface = (IBios*)(0x01000000);
-	REG_SCREENMODE = SMODE_TILE | SMODE_320 | SMODE_240;
+	REG_SCREENMODE = SMODE_TILE | SMODE_SPRITES;
 	REG_SCREENFADE = 0;
 
 	REG_HDMASOURCE[0] = (int32_t)hdma1;
@@ -36,6 +55,11 @@ int main(void)
 
 	MISC->DmaCopy((int8_t*)0x0E080000, (int8_t*)&tilesetTiles, 2560, DMA_INT);
 	MISC->DmaCopy(PALETTE, (int8_t*)&tilesetPal, 64, DMA_SHORT);
+
+	MISC->DmaCopy((int8_t*)0x0E082000, (int8_t*)&farahTiles, 64, DMA_INT);
+	MISC->DmaCopy(PALETTE + 32, (int8_t*)&farahPal, 32, DMA_SHORT);
+	*(uint16_t*)0xE108000 = SPRITEA_BUILD(256, 1, 2);
+	*(uint32_t*)0xE108200 = SPRITEB_BUILD(152, 176, 0, 1, 0, 0, 1, 1);
 
 	REG_MAPSET1 = 0x80; //just enable it, don't worry about tile offsets.
 	REG_MAPSET2 = 0x80;
