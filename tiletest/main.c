@@ -6,6 +6,7 @@ IBios* interface;
 
 extern const uint16_t tilesetPal[], tilesetTiles[], hdma1[];
 extern const uint16_t farahPal[], farahTiles[];
+extern const uint16_t grassTiles[], questionTiles[];
 extern const uint16_t bg1Map[], levelMap[];
 
 void DrawStripe(int source, int target)
@@ -71,12 +72,19 @@ int main(void)
 	REG_SCROLLY2 = 16;
 	int scroll = 0;
 	int col = 40;
+	int animation = 0;
 	while(1)
 	{
 		vbl();
 		REG_SCROLLX1 = scroll;
 		REG_SCROLLX2 = scroll;
 		scroll += 1;
+		if (scroll % 4 == 0)
+		{
+			animation++;
+			MISC->DmaCopy((int8_t*)0x0E080020, (int8_t*)&questionTiles + ((animation % 9) * 128), 32, DMA_INT);
+			MISC->DmaCopy((int8_t*)0x0E080240, (int8_t*)&grassTiles + ((animation % 3) * 192), 48, DMA_INT);
+		}
 		if (scroll % 8 == 0)
 		{
 			col++;
