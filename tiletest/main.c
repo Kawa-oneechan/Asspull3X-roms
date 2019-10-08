@@ -50,6 +50,8 @@ int main(void)
 	REG_SCREENMODE = SMODE_TILE | SMODE_SPRITES;
 	REG_SCREENFADE = 0;
 
+	REG_INTRMODE |= 0x80;
+
 	REG_HDMASOURCE[0] = (int32_t)hdma1;
 	REG_HDMATARGET[0] = (int32_t)PALETTE;
 	REG_HDMACONTROL[0] = DMA_ENABLE | HDMA_DOUBLE | (DMA_SHORT << 4) | (0 << 8) | (480 << 20);
@@ -68,18 +70,20 @@ int main(void)
 	for (int i = 0; i < SCREENWIDTH; i++)
 		DrawStripe(i, i);
 
+	REG_INTRMODE &= ~0x80;
+
 	REG_SCROLLY1 = 32;
 	REG_SCROLLY2 = 16;
 	int scroll = 0;
 	int col = 40;
 	int animation = 0;
-	while(1)
+	for(;;)
 	{
 		vbl();
 		REG_SCROLLX1 = scroll;
 		REG_SCROLLX2 = scroll;
 		scroll += 1;
-		if (scroll % 4 == 0)
+		if (REG_TICKCOUNT % 4 == 0)
 		{
 			animation++;
 			MISC->DmaCopy((int8_t*)0x0E080020, (int8_t*)&questionTiles + ((animation % 9) * 128), 32, DMA_INT);
