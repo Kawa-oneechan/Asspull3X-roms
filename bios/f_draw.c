@@ -93,108 +93,46 @@ void DisplayPicture(TImageFile* picData)
 	DmaCopy((void*)0x0E100000, (int8_t*)((int32_t)picData + picData->ColorOffset), colors * 1, DMA_SHORT);
 }
 
+#define FADESPEED 2
+
 void FadeToBlack()
 {
-	for (int32_t i = 0; i < 32; i++)
+	for (int32_t i = 0; i < 32; i += FADESPEED)
 	{
 		REG_SCREENFADE = i;
 		WaitForVBlank();
 	}
-	/*
-	REG_SCREENFADE = 2;  WaitForVBlank();
-	REG_SCREENFADE = 4;  WaitForVBlank();
-	REG_SCREENFADE = 6;  WaitForVBlank();
-	REG_SCREENFADE = 8;  WaitForVBlank();
-	REG_SCREENFADE = 10; WaitForVBlank();
-	REG_SCREENFADE = 12; WaitForVBlank();
-	REG_SCREENFADE = 14; WaitForVBlank();
-	REG_SCREENFADE = 16; WaitForVBlank();
-	REG_SCREENFADE = 18; WaitForVBlank();
-	REG_SCREENFADE = 20; WaitForVBlank();
-	REG_SCREENFADE = 22; WaitForVBlank();
-	REG_SCREENFADE = 24; WaitForVBlank();
-	REG_SCREENFADE = 26; WaitForVBlank();
-	REG_SCREENFADE = 28; WaitForVBlank();
-	REG_SCREENFADE = 30; WaitForVBlank();
-	REG_SCREENFADE = 31; WaitForVBlank();
-	*/
+	REG_SCREENFADE = 31;
 }
 
 void FadeFromBlack()
 {
-	for (int32_t i = 31; i >= 0; --i)
+	for (int32_t i = 31; i >= 0; i -= FADESPEED)
 	{
 		REG_SCREENFADE = i;
 		WaitForVBlank();
 	}
-	/*
-	REG_SCREENFADE = 31; WaitForVBlank();
-	REG_SCREENFADE = 30; WaitForVBlank();
-	REG_SCREENFADE = 28; WaitForVBlank();
-	REG_SCREENFADE = 26; WaitForVBlank();
-	REG_SCREENFADE = 24; WaitForVBlank();
-	REG_SCREENFADE = 22; WaitForVBlank();
-	REG_SCREENFADE = 20; WaitForVBlank();
-	REG_SCREENFADE = 18; WaitForVBlank();
-	REG_SCREENFADE = 16; WaitForVBlank();
-	REG_SCREENFADE = 14; WaitForVBlank();
-	REG_SCREENFADE = 12; WaitForVBlank();
-	REG_SCREENFADE = 10; WaitForVBlank();
-	REG_SCREENFADE = 8;  WaitForVBlank();
-	REG_SCREENFADE = 6;  WaitForVBlank();
-	REG_SCREENFADE = 4;  WaitForVBlank();
-	REG_SCREENFADE = 2;  WaitForVBlank();
-	*/
+	REG_SCREENFADE = 0;
 }
 
 void FadeToWhite()
 {
-/*	for (int32_t i = 0; i < 32; i++)
+	for (int32_t i = 0; i < 32; i += FADESPEED)
 	{
 		REG_SCREENFADE = 0x80 | i;
 		WaitForVBlank();
-	} */
-	REG_SCREENFADE = 0x80 | 2;  WaitForVBlank();
-	REG_SCREENFADE = 0x80 | 4;  WaitForVBlank();
-	REG_SCREENFADE = 0x80 | 6;  WaitForVBlank();
-	REG_SCREENFADE = 0x80 | 8;  WaitForVBlank();
-	REG_SCREENFADE = 0x80 | 10; WaitForVBlank();
-	REG_SCREENFADE = 0x80 | 12; WaitForVBlank();
-	REG_SCREENFADE = 0x80 | 14; WaitForVBlank();
-	REG_SCREENFADE = 0x80 | 16; WaitForVBlank();
-	REG_SCREENFADE = 0x80 | 18; WaitForVBlank();
-	REG_SCREENFADE = 0x80 | 20; WaitForVBlank();
-	REG_SCREENFADE = 0x80 | 22; WaitForVBlank();
-	REG_SCREENFADE = 0x80 | 24; WaitForVBlank();
-	REG_SCREENFADE = 0x80 | 26; WaitForVBlank();
-	REG_SCREENFADE = 0x80 | 28; WaitForVBlank();
-	REG_SCREENFADE = 0x80 | 30; WaitForVBlank();
-	REG_SCREENFADE = 0x80 | 31; WaitForVBlank();
+	}
+	REG_SCREENFADE = 0x80 | 31;
 }
 
 void FadeFromWhite()
 {
-/*	for (int32_t i = 31; i >= 0; --i)
+	for (int32_t i = 31; i >= 0; i -= FADESPEED)
 	{
 		REG_SCREENFADE = 0x80 | i;
 		WaitForVBlank();
-	} */
-	REG_SCREENFADE = 0x80 | 31; WaitForVBlank();
-	REG_SCREENFADE = 0x80 | 30; WaitForVBlank();
-	REG_SCREENFADE = 0x80 | 28; WaitForVBlank();
-	REG_SCREENFADE = 0x80 | 26; WaitForVBlank();
-	REG_SCREENFADE = 0x80 | 24; WaitForVBlank();
-	REG_SCREENFADE = 0x80 | 22; WaitForVBlank();
-	REG_SCREENFADE = 0x80 | 20; WaitForVBlank();
-	REG_SCREENFADE = 0x80 | 18; WaitForVBlank();
-	REG_SCREENFADE = 0x80 | 16; WaitForVBlank();
-	REG_SCREENFADE = 0x80 | 14; WaitForVBlank();
-	REG_SCREENFADE = 0x80 | 12; WaitForVBlank();
-	REG_SCREENFADE = 0x80 | 10; WaitForVBlank();
-	REG_SCREENFADE = 0x80 | 8;  WaitForVBlank();
-	REG_SCREENFADE = 0x80 | 6;  WaitForVBlank();
-	REG_SCREENFADE = 0x80 | 4;  WaitForVBlank();
-	REG_SCREENFADE = 0x80 | 2;  WaitForVBlank();
+	}
+	REG_SCREENFADE = 0x80;
 }
 
 void DrawString(const char* str, int32_t x, int32_t y, int32_t color)

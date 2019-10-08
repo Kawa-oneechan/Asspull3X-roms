@@ -76,7 +76,7 @@ int32_t main(void)
 	MISC->SetTextMode(SMODE_240 | SMODE_BOLD);
 	DRAW->ResetPalette();
 	TEXT->ClearScreen();
-	REG_SCREENFADE = 0;
 	printf("The end!\n");
+	DRAW->FadeFromBlack();
 	return 0;
 }
