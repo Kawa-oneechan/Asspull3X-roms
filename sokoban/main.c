@@ -3,6 +3,7 @@ IBios* interface;
 
 extern const uint16_t tilesTiles[], tilesPal[];
 extern const uint16_t playerTiles[], playerPal[];
+extern const uint16_t hdma1[];
 
 #define WIDTH 40
 #define HEIGHT 30
@@ -43,7 +44,7 @@ extern const uint16_t playerTiles[], playerPal[];
 #define ANIMSPEED 32
 
 const char * const levels[] = {
-	"4x3#|4x#.#|4x#-#|4x#-#|5#$5#|#.--$@$--.#|5#$5#|4x#-#|4x#-#|4x#.#|4x3#",
+	"||8x3#|8x#.#|8x#-#|8x#-#|4x5#$5#|4x#.--$@$--.#|4x5#$5#|8x#-#|8x#-#|8x#.#|8x3#",
 	"20#|#@$.#.$11-.#|##-3#$8#-#-##|x#-#.$-#-4.-#3-##|x#-#3-#-4$-3#$##|x#-#-#.#7-.#-##|x#-#-3#6-$##-##|x#-#-##7-$.#-##|x#-#-#.-#5-$##-##|x#-#-#$-#6-.#--#|x#-#-#-#--8#-#|x#-#-#-.#-#4-#.$-#|x#-#-#-$#3-#--#.$-#|x#-#-#--##$#-$##.$-#|x#-#-$-.#.4-.#.$-#|x#-15#-#|x#$--$-$8-..-#|x#.#15-#|x19#",
 	"14#-4#|#5-.3#--##-#*.#|#5-$#.$$-.#-#-$#|#.##--.##.$-.#-#--#|#5-$-#4-3#--##|##$16-#|#7-#4-#5-#|#-7#$8#-#|#-..$3-$@5-$.#-#|#-3#3-#$8#-#|#-7#-#8-#|#5-#3-#-$.#--$-#|#-$-$-#-#-##-#5-#|#--$--#3-.#5-3#|#-$-$-6#4-##|#5-5.#.-3#|15#",
 	"-3#12-4#|x#-14#--#|x#@$.14-#|x#$#-#$11#.#|x#-#-#-13#|x#-#-#-#9-..#|x#-#-#-#-4#-6#|x#-#-#-#7-$3-#|x#-#-#-6#-4#-#|x#-#-#-#--$8-#|x#-#-#-#-4#-6#|x#-#-#-#11-#|x#-#$#-10#--#|x#-#3-.#5.--#--#|##-#-#--#5$#3-$#|#--#-##-#5.--#--#|#4-.#-#5$#-#--#|7#9-$..#|6-14#",
@@ -88,11 +89,13 @@ char map[BOUNDS*BOUNDS] = {0};
 int playerX = 0, playerY = 0;
 int lastDir;
 
-void drawPlayer(int dir)
+int cameraX, cameraY;
+
+void drawPlayer()
 {
 	int tile = 0;
 	int flip = 0;
-	switch (dir)
+	switch (lastDir)
 	{
 		case 0: //left
 			break;
@@ -109,18 +112,16 @@ void drawPlayer(int dir)
 	if (REG_TICKCOUNT % ANIMSPEED > (ANIMSPEED / 2))
 		tile += 8;
 
-	lastDir = dir;
-
 	//these really need to be defined...
 	*(uint16_t*)0xE108000 = SPRITEA_BUILD(tile + 256, 1, 0);
-	*(uint32_t*)0xE108200 = SPRITEB_BUILD(playerX * 16, (playerY - 1) * 16, 0, 1, flip, 0, 1, 1);
+	*(uint32_t*)0xE108200 = SPRITEB_BUILD((playerX - cameraX) * 16, (playerY - cameraY - 1) * 16, 0, 1, flip, 0, 1, 1);
 }
 
 void drawTile(int i, int j, int tile)
 {
 	if (tile == WALL && j < BOUNDS)
 	{
-		if (map[(j * BOUNDS) + BOUNDS + i] != WALL)
+		if (map[((j + cameraY) * BOUNDS) + BOUNDS + i + cameraX] != WALL)
 			tile = WALLALT;
 	}
 	int pos = (j * 128) + (i * 2);
@@ -133,22 +134,51 @@ void drawTile(int i, int j, int tile)
 void draw()
 {
 	char* here = map;
+	here += cameraY * BOUNDS;
+	here += cameraX;
 	REG_INTRMODE |= 0x80;
 	for (int j = 0; j < BOUNDS; j++)
 		for (int i = 0; i < BOUNDS; i++)
 			drawTile(i, j, *here++);
-	//MAP1[(playerY * 64) + playerX] = 5;
-	drawPlayer(2);
+	drawPlayer();
+}
+
+void focus()
+{
+	int moved = 0;
+	while (playerY - cameraY < 5 && cameraY > 0)
+	{
+		moved = 1;
+		cameraY--;
+	}
+	while (playerY - cameraY > 10)
+	{
+		moved = 1;
+		cameraY++;
+	}
+	while (playerX - cameraX < 5 && cameraX > 0)
+	{
+		moved = 1;
+		cameraX--;
+	}
+	while (playerX - cameraX > 12)
+	{
+		moved = 1;
+		cameraX++;
+	}
+	if (moved)
+		draw();
+	drawPlayer(lastDir);
 }
 
 void move(char byX, char byY)
 {
 	char *under = &map[(playerY * BOUNDS) + playerX];
 	char *here = &map[((playerY + byY) * BOUNDS) + playerX + byX];
-	int dir = 0;
-	if (byX == -1) dir = 1;
-	else if (byY == 1) dir = 2;
-	else if (byY == -1) dir = 3;
+	lastDir = 0;
+	if (byX == -1) lastDir = 1;
+	else if (byY == 1) lastDir = 2;
+	else if (byY == -1) lastDir = 3;
 	if (*here == WALL)
 		return;
 	else if (*here & BOX)
@@ -157,25 +187,20 @@ void move(char byX, char byY)
 		char *further = &map[((playerY + byY + byY) * BOUNDS) + playerX + byX + byX];
 		if ((*further != WALL) && !(*further & BOX))
 		{
-			//MAP1[(playerY * 64) + playerX] = *under;
-			drawTile(playerX + byX, playerY + byY, *under);
+			drawTile(playerX - cameraX + byX, playerY - cameraY + byY, *under);
 			*further |= BOX;
 			*here &= ~BOX;
 			playerX += byX;
 			playerY += byY;
-			//MAP1[((playerY + byY) * 64) + playerX + byX] = *further;
-			drawTile(playerX + byX, playerY + byY, *further);
-			//MAP1[(playerY * 64) + playerX] = 5;
-			drawPlayer(dir);
+			drawTile(playerX - cameraX + byX, playerY - cameraY + byY, *further);
+			focus();
 		}
 	}
 	else
 	{
-		//MAP1[(playerY * 64) + playerX] = *under;
 		playerX += byX;
 		playerY += byY;
-		//MAP1[(playerY * 64) + playerX] = 5;
-		drawPlayer(dir);
+		focus();
 	}
 }
 
@@ -242,8 +267,8 @@ void loadFromCode(const char* source)
 				break;
 			case '@':
 				type = SPACE;
-				playerX = row;
-				playerY = col;
+				playerX = col;
+				playerY = row;
 				break;
 		}
 		if (type != -1)
@@ -315,12 +340,17 @@ int main(void)
 	MISC->DmaCopy(PALETTE, (int16_t*)&tilesPal, 16, DMA_INT);
 	MISC->DmaCopy(PALETTE + 32, (int16_t*)&playerPal, 16, DMA_INT);
 	MISC->DmaClear(MAP1, 0, WIDTH * HEIGHT, 2);
+	REG_HDMASOURCE[0] = (int32_t)hdma1;
+	REG_HDMATARGET[0] = (int32_t)PALETTE;
+	REG_HDMACONTROL[0] = DMA_ENABLE | HDMA_DOUBLE | (DMA_SHORT << 4) | (0 << 8) | (480 << 20);
 	REG_SCREENFADE = 31;
 	REG_MAPSET1 = 0x80;
 	REG_INTRMODE |= 0x80;
 	clearLevel();
 	levelNum = 0;
+	cameraX = cameraY = 0;
 	loadFromCode(levels[levelNum]);
+	lastDir = 2;
 	draw();
 	DRAW->FadeFromBlack();
 
@@ -328,18 +358,21 @@ int main(void)
 	{
 		int in = REG_KEYIN;
 		drawPlayer(lastDir);
-		while (REG_KEYIN != 0) { drawPlayer(lastDir); vbl(); }
+		while (REG_KEYIN != 0) { drawPlayer(lastDir); }
 		switch (in)
 		{
 			case KEY_LEFT: move(-1, 0); break;
 			case KEY_RIGHT: move(1, 0); break;
 			case KEY_UP: move(0, -1); break;
 			case KEY_DOWN: move(0, 1); break;
-			case 0x53:
+			case 0x13:
 				DRAW->FadeToWhite();
 				levelNum++;
 				loadFromCode(levels[levelNum]);
+				lastDir = 2;
+				cameraX = cameraY = 0;
 				draw();
+				focus();
 				DRAW->FadeFromWhite();
 				break;
 		}
@@ -348,7 +381,10 @@ int main(void)
 			DRAW->FadeToWhite();
 			levelNum++;
 			loadFromCode(levels[levelNum]);
+			lastDir = 2;
+			cameraX = cameraY = 0;
 			draw();
+			focus();
 			DRAW->FadeFromWhite();
 		}
 	}
