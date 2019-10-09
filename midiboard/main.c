@@ -1,11 +1,11 @@
 #include "../ass.h"
 IBios* interface;
 
-//TODO: add graphical keyboard with highlighting keys
+extern const TImageFile pianoData;
 
 static const char sctopit[] = {
 //   0   1   2   3   4   5   6   7   8   9   a   b   c   d   e   f
-	 0,  0,  0, 24, 26,  0, 30, 32, 34,  0, 37, 39,  0, 90,  0, 00,  // 0x00
+	 0,  0,  0, 25, 27,  0, 30, 32, 34,  0, 37, 39,  0, 42,  0, 00,  // 0x00
 	24, 26, 28, 29, 31, 33, 35, 36, 38, 40, 41, 43,  0,  0,  0, 13,  // 0x10
 	15,  0, 18, 20, 22,  0, 25, 27,  0,  0,  0,  0, 12, 14, 16, 17,  // 0x20
 	19, 21, 23, 24, 26, 28,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  // 0x30
@@ -37,45 +37,66 @@ static const char* const pits[] = {
 	"C9","C#9","D9","D#9","E9","F9","F#9","G9","G#9","A9","A#9","B9",
 };
 
+#define IVORY 0x7FFF
+#define EBONY 0x0C63
+#define KEYON 0x005D
+
+#define KEYPALSTART 16
+#define NUMKEYS 32
+//1 means that key is black.
+static const char colors[] = { 0,1,0,1,0,0,1,0,1,0,1,0,0,1,0,1,0,0,1,0,1,0,1,0,0,1,0,1,0,0,1,0,1,0,1,0,0,1,0,1,0,0,1,0,1,0,1,0 };
+
 int main(void)
 {
 	interface = (IBios*)(0x01000000);
-	MISC->SetTextMode(SMODE_240 | SMODE_BOLD);
-	TEXT->SetTextColor(1, 7);
-	TEXT->ClearScreen();
+	REG_SCREENFADE = 31;
+	DRAW->DisplayPicture((TImageFile*)&pianoData);
+
+	//Clear out all keys
+	for (int i = 0; i < NUMKEYS; i++)
+	{
+		PALETTE[KEYPALSTART + i] = colors[i] ? EBONY : IVORY; //live together in perfect harmony...
+	}
+
+	DRAW->FadeFromBlack();
 
 	short lastKey = 0;
 	int pitoff = 48;
+	int lastPit = -1;
+	int lastPitOffed = -1;
+	int pit = 0;
 	MIDI_PROGRAM(1, MIDI_ACOUSTICGRANDPIANO);
 	while(1)
 	{
 		unsigned short key = REG_KEYIN;
-		TEXT->SetCursorPosition(12, 6);
 
 		if ((key & 0xFF) > 0)
 		{
-			if (lastKey != key)
+			lastKey = key;
+			if (sctopit[key] > 0 && lastPit != pit)
 			{
-				lastKey = key;
-				if (sctopit[key] > 0)
-				{
-					int pit = sctopit[key] + pitoff;
-					MIDI_KEYON(1, pit, 80);
-					TEXT->SetTextColor(1, 15);
-					printf("%4s", pits[pit]);
-				}
-				else if(key == 0xD0)
-				{
-					if (pitoff > 0) pitoff -= 12;
-				}
-				else if(key == 0xC8)
-				{
-					if (pitoff < 108) pitoff += 12;
-				}
+				lastPit = pit;
+				lastPitOffed = pit + pitoff;
+				pit = sctopit[key];
+				PALETTE[KEYPALSTART - 12 + pit] = KEYON;
+				MIDI_KEYON(1, (pit + pitoff), 80);
+			}
+			else if(key == 0xD0)
+			{
+				if (pitoff > 0) pitoff -= 12;
+			}
+			else if(key == 0xC8)
+			{
+				if (pitoff < 108) pitoff += 12;
 			}
 		}
-		else
+		else if (lastPit > -1)
+		{
+			PALETTE[KEYPALSTART - 12 + lastPit] = colors[lastPit] ? EBONY : IVORY;
+			MIDI_KEYOFF(1, lastPitOffed, 80);
+			lastPit = -1;
 			lastKey = 0;
+		}
 		vbl();
 	}
 }
