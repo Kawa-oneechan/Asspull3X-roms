@@ -104,7 +104,7 @@ void draw()
 
 void move(char byX, char byY)
 {
-	char *under = &map[(playerY * BOUNDS) + playerX];
+	//char *under = &map[(playerY * BOUNDS) + playerX];
 	char *here = &map[((playerY + byY) * BOUNDS) + playerX + byX];
 	lastDir = 0;
 	if (byX == -1) lastDir = 1;
@@ -118,9 +118,11 @@ void move(char byX, char byY)
 		char *further = &map[((playerY + byY + byY) * BOUNDS) + playerX + byX + byX];
 		if ((*further != WALL) && !(*further & BOX))
 		{
-			drawTile(playerX + byX, playerY + byY, *under);
 			*further |= BOX;
-			*here &= ~BOX;
+			//*here &= ~BOX;
+			if (*here == BOX) *here = SPACE;
+			else if (*here == BOXINGOAL) *here = GOAL;
+			drawTile(playerX + byX, playerY + byY, *here);
 			playerX += byX;
 			playerY += byY;
 			drawTile(playerX + byX, playerY + byY, *further);
@@ -146,7 +148,7 @@ void loadFromCode(const char* source)
 		map[i] = EXTERIOR;
 	while ((ch = *source++))
 	{
-		REG_DEBUGOUT = ch;
+		//REG_DEBUGOUT = ch;
 		type = -1;
 		switch (ch)
 		{
@@ -263,6 +265,56 @@ void nextLevel()
 	DRAW->FadeFromWhite();
 }
 
+static int musicTimer[4];
+static char* musicCursor[4];
+static int musicChannel[4];
+static int musicLastNote[4];
+static int musicNumTracks;
+extern const char* const musicTracks[];
+extern const char musicSettings[];
+
+void music()
+{
+	if (musicNumTracks == -1)
+	{
+		musicNumTracks = musicSettings[0];
+		for (int i = 0; i < musicNumTracks; i++)
+		{
+			musicTimer[i] = 0;
+			musicCursor[i] = (char*)musicTracks[i];
+			musicChannel[i] = musicSettings[1 + (i * 2)];
+			MIDI_PROGRAM(musicChannel[i], musicSettings[2 + (i * 2)]);
+		}
+	}
+	for (int i = 0; i < musicNumTracks; i++)
+	{
+		if (musicTimer[i] == 0)
+		{
+			if (musicLastNote[i] > 0)
+				MIDI_KEYOFF(musicChannel[i], musicLastNote[i], 80);
+			char newNote = *musicCursor[i]++;
+			if (newNote == 1)
+			{	//repeat
+				musicCursor[i] = (char*)musicTracks[i];
+				continue;
+			}
+			char length = *musicCursor[i]++;
+			if ((length & 0x80) == 0)
+			{	// not tied?
+				if (musicLastNote[i] > 0)
+					MIDI_KEYOFF(musicChannel[i], musicLastNote[i], 80);
+				if (newNote > 0)
+					MIDI_KEYON(musicChannel[i], newNote, 80);
+			}
+			length &= ~0x80;
+			musicLastNote[i] = newNote;
+			musicTimer[i] = (128 / length) / 2;
+		}
+		else
+			musicTimer[i]--;
+	}
+}
+
 void WaitForKey()
 {
 	while (REG_KEYIN != 0) { vbl(); }
@@ -291,6 +343,8 @@ int main(void)
 	REG_SCREENFADE = 31;
 	REG_MAPSET1 = 0x80;
 	REG_INTRMODE |= 0x80;
+	musicNumTracks = -1;
+
 	levelNum = -1;
 	nextLevel();
 
@@ -298,7 +352,10 @@ int main(void)
 	{
 		int in = REG_KEYIN;
 		drawPlayer(lastDir);
-		while (REG_KEYIN != 0) { drawPlayer(lastDir); }
+		vbl();
+		music();
+		if (REG_TICKCOUNT % 4 < 3)
+			continue;
 		switch (in)
 		{
 			case KEY_LEFT: move(-1, 0); break;
