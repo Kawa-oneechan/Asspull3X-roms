@@ -12,18 +12,52 @@ extern int sprintf(char *buf, const char *fmt, ...);
 int inVblank;
 
 //from crt0.s
-extern IBios interface;
+IBios* interface;
 
 extern int32_t cursorPos;
 extern int8_t attribs;
 extern int8_t textWidth, textHeight;
 
 extern void cartStart();
-extern IBios interface;
 
 extern const uint16_t hdma1[], hdma2[];
 extern const uint16_t fontTiles[];
 extern const TImageFile splashData;
+
+void* LoadFile(const char* path, void* buffer, int32_t len)
+{
+	FILE file;
+	FILEINFO nfo;
+	int regs = REG_INTRMODE;
+	REG_INTRMODE |= 0x80;
+	int32_t ret = DISK->FileStat(path, &nfo);
+
+	ret = DISK->OpenFile(&file, path, FA_READ);
+	if (ret > 0)
+	{
+		REG_INTRMODE = regs;
+		return (void*)ret;
+	}
+
+	void *target = buffer;
+	for(;;)
+	{
+		ret = DISK->ReadFile(&file, target, 1024);
+		if (ret < 0)
+		{
+			REG_INTRMODE = regs;
+			return (void*)ret;
+		}
+
+		target += ret;
+		if (ret < 1024)
+			break;
+	}
+
+	DISK->CloseFile(&file);
+	REG_INTRMODE = regs;
+	return buffer;
+}
 
 void Display(char* what)
 {
@@ -43,11 +77,16 @@ void Display(char* what)
 int32_t main(void)
 {
 	char biosVer[32];
+	interface = (IBios*)(0x01000000);
 	int32_t* cartCode = (int32_t*)0x00020000;
 	void(*entry)(void)= (void*)0x00020004;
 	char* cartName = (char*)0x00020008;
 	int32_t haveDisk = 0, hadDisk = 0;
 	int32_t showSplash = 0;
+	char message[32] = "* INSERT CART *";
+
+	sprintf(biosVer, "BIOS v%d.%d", (interface->biosVersion >> 8) & 0xFF, (interface->biosVersion >> 0) & 0xFF);
+	dpf(biosVer);
 
 	DmaCopy((int8_t*)0x0E100200, (int8_t*)&fontTiles, 12288, DMA_INT);
 
@@ -75,7 +114,8 @@ int32_t main(void)
 						ret = ReadFile(&file, (void*)0x01002000, info.fsize);
 						if (ret < 0)
 						{
-							if (showSplash) Display("Failed to read. ");
+							strcpy_s(message, 32, "Couldn't read.");
+							if (showSplash) Display(message);
 							continue;
 						}
 						ret = CloseFile(&file);
@@ -83,19 +123,21 @@ int32_t main(void)
 						cartName = (char*)0x01002008;
 						break;
 					}
-				}
-				else
-				{
-					dpf("not good");
-					if (showSplash) Display("Not a boot disk.");
-					continue;
+					else
+					{
+						dpf("not good");
+						strcpy_s(message, 32, "Not a boot disk.");
+						if (showSplash) Display(message);
+						continue;
+					}
 				}
 			}
 			else if (!haveDisk && hadDisk)
 			{
 				hadDisk = 0;
 				dpf("lost disk");
-				Display("* INSERT CAT *");
+				strcpy_s(message, 32, "* INSERT CART *");
+				if (showSplash) Display(message);
 				continue;
 			}
 		}
@@ -114,13 +156,11 @@ int32_t main(void)
 			REG_HDMASOURCE[0] = (int32_t)hdma1;
 			REG_HDMATARGET[0] = (int32_t)PALETTE;
 			REG_HDMACONTROL[0] = DMA_ENABLE | HDMA_DOUBLE | (DMA_SHORT << 4) | (0 << 8) | (480 << 20);
-			sprintf(biosVer, "BIOS v%d.%d", (interface.biosVersion >> 8) & 0xFF, (interface.biosVersion >> 0) & 0xFF);
-			dpf(biosVer);
 			DrawString(biosVer, 2, 2, 50);
 			DrawString(biosVer, 1, 1, 1);
 			MIDI_PROGRAM(1, MIDI_SEASHORE);
 			MIDI_KEYON(1, MIDI_C4, 80);
-			Display("* INSERT CART *");
+			Display(message);
 			FadeFromBlack();
 		}
 		else
@@ -138,12 +178,13 @@ int32_t main(void)
 		Display(cartName);
 		FadeToBlack();
 	}
-	DmaClear((int8_t*)0x01001000, 0, 0x003F0000, DMA_INT); //Reset cart's workram
+	if (entry == (void*)0x00020004)
+		DmaClear((int8_t*)0x01001000, 0, 0x003F0000, DMA_INT); //Reset cart's workram
 	REG_SCREENMODE = REG_SCREENFADE = REG_MAPSET1 = REG_MAPSET2 = 0x0;
 	REG_SCROLLX1 = REG_SCROLLX2 = REG_SCROLLY1 = REG_SCROLLY2 = 0;
 	REG_HDMACONTROL[0] = 0;
-	interface.VBlank = 0;
-	interface.HBlank = 0;
+	interface->VBlank = 0;
+	interface->HBlank = 0;
 	attribs = 0x0F;
 	ClearScreen();
 	ResetPalette();
@@ -191,12 +232,12 @@ void NMIHandler()
 	int interrupts = REG_INTRMODE;
 	if (interrupts & 4)
 	{
-		if (interface.VBlank != 0) interface.VBlank();
+		if (interface->VBlank != 0) interface->VBlank();
 		interrupts &= ~4;
 	}
 	else if (interrupts & 2)
 	{
-		if (interface.HBlank != 0) interface.HBlank();
+		if (interface->HBlank != 0) interface->HBlank();
 		interrupts &= ~2;
 	}
 	asm("rte");
