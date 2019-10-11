@@ -1,7 +1,6 @@
 #include "../ass.h"
 #include "funcs.h"
 
-extern IBios interface;
 extern int32_t vsprintf(char*, const char*, va_list);
 extern int32_t cursorPos;
 extern char attribs, textWidth, textHeight;

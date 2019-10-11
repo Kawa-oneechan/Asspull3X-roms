@@ -1,7 +1,6 @@
 #include "../ass.h"
 #include "funcs.h"
 
-extern IBios interface;
 extern int32_t vsprintf(char*, const char*, va_list);
 
 const IDrawingLibrary drawingLibrary =
@@ -137,7 +136,7 @@ void FadeFromWhite()
 
 void DrawString(const char* str, int32_t x, int32_t y, int32_t color)
 {
-	if (interface.DrawChar == NULL) return;
+	if (interface->DrawChar == NULL) return;
 	REG_INTRMODE |= 0x80;
 	while(*str)
 	{
@@ -149,7 +148,7 @@ void DrawString(const char* str, int32_t x, int32_t y, int32_t color)
 
 void DrawFormat(const char* format, int32_t x, int32_t y, int32_t color, ...)
 {
-	if (interface.DrawChar == NULL) return;
+	if (interface->DrawChar == NULL) return;
 	REG_INTRMODE |= 0x80;
 	char buffer[1024];
 	va_list args;
@@ -168,6 +167,6 @@ void DrawFormat(const char* format, int32_t x, int32_t y, int32_t color, ...)
 
 void DrawChar(char c, int32_t x, int32_t y, int32_t color)
 {
-	interface.DrawChar(c, x, y, color);
+	interface->DrawChar(c, x, y, color);
 }
 

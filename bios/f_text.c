@@ -1,7 +1,6 @@
 #include "../ass.h"
 #include "funcs.h"
 
-extern IBios interface;
 extern int32_t vsprintf(char*, const char*, va_list);
 
 void(*oldVBlank)(void);
@@ -20,7 +19,7 @@ const ITextLibrary textLibrary =
 #define TEXT_HEIGHT 25
 #define TAB_STOPS 8
 int32_t cursorPos;
-char attribs, textWidth, textHeight;
+unsigned char attribs, textWidth, textHeight;
 
 //Kill our printf define for __attribute's sake
 #ifdef printf

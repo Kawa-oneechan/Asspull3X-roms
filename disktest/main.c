@@ -95,7 +95,8 @@ void Populate(const char* path, const char* pattern)
 	}
 }
 
-#define FILESSHOWN 20
+#define FILESSHOWN 26
+#define TEXTMAP ((int16_t*)MEM_VRAM)
 
 void SelectFile(const char* path, const char* pattern, char* selection, int32_t(*onSelect)(char*), char* prompt)
 {
@@ -106,27 +107,50 @@ void SelectFile(const char* path, const char* pattern, char* selection, int32_t(
 	strcpy_s(workPath, MAXPATH, path);
 	Populate(workPath, pattern);
 
+	MISC->SetTextMode(SMODE_BOLD | SMODE_240);
 	TEXT->SetTextColor(0, 7);
+	TEXT->ClearScreen();
+
 	for(;;)
 	{
 		REG_INTRMODE |= 0x80;
 		if (redraw)
 		{
-			TEXT->ClearScreen();
-			TEXT->SetCursorPosition(0, 0);
-			printf("%s\n", prompt ? prompt : "Select a file to open:");
-			printf("> %s\n", workPath);
+			TEXTMAP[0] = 0x9387;
+			TEXTMAP[30] = 0x8B87;
+			TEXTMAP[(FILESSHOWN + 1) * 80] = 0x8C87;
+			TEXTMAP[((FILESSHOWN + 1) * 80) + 30] = 0x9287;
+			for (int i = 1; i < 30; i++)
+			{
+				TEXTMAP[i] = 0x9087;
+				TEXTMAP[((FILESSHOWN + 1) * 80) + i] = 0x9087;
+			}
+			for (int i = 1; i <= FILESSHOWN; i++)
+			{
+				TEXTMAP[(i * 80)] = 0x8987;
+				TEXTMAP[(i * 80)+30] = 0x8987;
+			}
+			if (fileCt < FILESSHOWN)
+			{
+				for (int i = fileCt; i <= FILESSHOWN; i++)
+					for (int j = 1; j < 30; j++)
+						TEXTMAP[(i * 80) + j] = 0x2087;
+			}
+			//printf("%s\n", prompt ? prompt : "Select a file to open:");
+			TEXT->SetTextColor(7, 8);
+			TEXT->SetCursorPosition(15 - (strlen(workPath) / 2) - 1, 0);
+			TEXT->Write(" %s ", workPath);
 
 			for (int32_t i = 0; i < fileCt && i < FILESSHOWN; i++)
 			{
-				TEXT->SetTextColor(0, 7);
+				TEXT->SetCursorPosition(1, i + 1);
+				TEXT->SetTextColor(8, 15);
 				if (index == i + scroll)
-					TEXT->SetTextColor(1, 15);
-				printf(" %-13s ", filenames[i + scroll]);
-				TEXT->SetTextColor(0, 7);
+					TEXT->SetTextColor(9, 15);
+				printf(" %-18s ", filenames[i + scroll]);
 				if (filenames[i + scroll][0] == '.' && filenames[i + scroll][1] == '.')
 				{
-					printf("    <UP>\n");
+					printf("    <UP> ");
 					continue;
 				}
 				strcpy_s(filePath, MAXPATH, workPath);
@@ -134,27 +158,30 @@ void SelectFile(const char* path, const char* pattern, char* selection, int32_t(
 				strcat_s(filePath, MAXPATH, filenames[i + scroll]);
 				DISK->FileStat(filePath, &info);
 				if (info.fattrib & AM_DIRECTORY)
-					printf("   <DIR>\n");
+					printf("   <DIR> ");
 				else
-					printf("%8d\n", info.fsize);
+					printf("%8d ", info.fsize);
 			}
 			TEXT->SetTextColor(0, 7);
 			redraw = 0;
 		}
 		else
 		{
-			TEXT->SetCursorPosition(0, 2 + index - scroll);
-			TEXT->SetTextColor(1, 15);
-			printf(" %-13s \n", filenames[index]);
-			TEXT->SetTextColor(0, 7);
-			if (lastIndex != index)
+			for (int i = 1; i < 30; i++)
 			{
-				TEXT->SetCursorPosition(0, 2 + lastIndex - scroll);
-				printf(" %-13s \n", filenames[lastIndex]);
+				int16_t* here = &TEXTMAP[((1 + index - scroll) * 80)];
+				here[i] &= ~0x00FF;
+				here[i] |= 0x009F;
+				if (lastIndex != index)
+				{
+					here = &TEXTMAP[((1 + lastIndex - scroll) * 80)];
+					here[i] &= ~0x00FF;
+					here[i] |= 0x008F;
+				}
 			}
 		}
-		TEXT->SetCursorPosition(0, FILESSHOWN + 4);
-		printf("=>%s         ", filenames[index]);
+		TEXT->SetCursorPosition(0, FILESSHOWN + 2);
+		printf("%s>%s         ", workPath, filenames[index]);
 		vbl();
 		while(1)
 		{
@@ -188,9 +215,6 @@ void SelectFile(const char* path, const char* pattern, char* selection, int32_t(
 						redraw = 1;
 						break;
 					}
-					//lastIndex = index;
-					//if (index <= 0) index = fileCt;
-					//index--;
 				}
 				else if (key == 0xD0) //down
 				{
@@ -213,9 +237,6 @@ void SelectFile(const char* path, const char* pattern, char* selection, int32_t(
 						redraw = 1;
 						break;
 					}
-					//lastIndex = index;
-					//index++;
-					//if (index >= fileCt) index = 0;
 				}
 				else if (key == 0xC9) //page up
 				{
@@ -242,6 +263,7 @@ void SelectFile(const char* path, const char* pattern, char* selection, int32_t(
 						char *lastSlash = strrchr(workPath, '/');
 						int32_t lsPos = lastSlash - workPath;
 						workPath[lsPos] = 0;
+						if (workPath[0] == 0) strcpy_s(workPath, MAXPATH, "/");
 						Populate(workPath, pattern);
 						redraw = 1;
 						index = 0;
@@ -270,6 +292,11 @@ void SelectFile(const char* path, const char* pattern, char* selection, int32_t(
 									return;
 								}
 								redraw = (ret == 2);
+								if (redraw)
+								{
+									TEXT->SetTextColor(0, 7);
+									TEXT->ClearScreen();
+								}
 							}
 							else if (selection)
 							{
@@ -285,10 +312,9 @@ void SelectFile(const char* path, const char* pattern, char* selection, int32_t(
 	}
 }
 
-int32_t startapp(char* filePath)
+int32_t StartApp(char* filePath)
 {
 	void(*entry)(void) = (void*)0x01002020;
-	//char* cartName = (char*)0x01002008;
 	FILEINFO nfo;
 	DISK->FileStat(filePath, &nfo);
 	int32_t size = nfo.fsize;
@@ -298,7 +324,7 @@ int32_t startapp(char* filePath)
 	return 2;
 }
 
-int32_t showpic(char* filePath)
+int32_t ShowPic(char* filePath)
 {
 	FILEINFO nfo;
 	DISK->FileStat(filePath, &nfo);
@@ -331,7 +357,7 @@ int32_t showpic(char* filePath)
 #define MAXLINESSHOWN 29
 #define SCROLLBY 1
 
-int32_t showtext(char* filePath)
+int32_t ShowText(char* filePath)
 {
 	int i, j, cur, scroll = 0, lineCt = 0, redraw = 1;
 	char c;
@@ -352,9 +378,9 @@ int32_t showtext(char* filePath)
 		{
 			TEXT->SetTextColor(0, 7);
 			TEXT->ClearScreen();
-			TEXT->SetTextColor(7, 0);
+			TEXT->SetTextColor(1, 11);
 			for (j = 0; j < 80; j++)
-				((int16_t*)MEM_VRAM)[j] = 0x70;
+				TEXTMAP[j] = 0x1B;
 			printf(" %s \t%d/%d ", filePath, scroll, lineCt);
 			REG_INTRMODE |= 0x80;
 			for (i = 0; i < MAXLINESSHOWN; i++)
@@ -369,7 +395,7 @@ int32_t showtext(char* filePath)
 						if (c == '\n') break;
 						if (c == '\r') continue;
 						if (c == '\t') c = ' ';
-						((int16_t*)MEM_VRAM)[cur++] = (c << 8) | 0x07;
+						TEXTMAP[cur++] = (c << 8) | 0x07;
 					}
 				}
 			}
@@ -428,16 +454,15 @@ int32_t showtext(char* filePath)
 	return 2;
 }
 
-int32_t showfile(char* filePath)
+int32_t ShowFile(char* filePath)
 {
 	char* ext = strrchr(filePath, '.') + 1;
-	//printf("showfile: \"%s\"\n", ext);
 	if (!strcmp(ext, "TXT"))
-		showtext(filePath);
+		ShowText(filePath);
 	else if (!strcmp(ext, "API"))
-		showpic(filePath);
+		ShowPic(filePath);
 	else if (!strcmp(ext, "APP"))
-		startapp(filePath);
+		StartApp(filePath);
 	else
 	{
 		TEXT->SetCursorPosition(0, 0);
@@ -446,7 +471,7 @@ int32_t showfile(char* filePath)
 	}
 	REG_INTRMODE |= 0x80;
 	TEXT->SetTextColor(0, 7);
-	MISC->SetTextMode(SMODE_240);
+	MISC->SetTextMode(SMODE_240 | SMODE_BOLD);
 	DRAW->ResetPalette();
 	return 2;
 }
@@ -456,11 +481,10 @@ int32_t main(void)
 	interface = (IBios*)(0x01000000);
 	char path[MAXPATH];
 	REG_INTRMODE |= 0x80;
-	MISC->SetTextMode(SMODE_240);
+	MISC->SetTextMode(SMODE_240 | SMODE_BOLD);
 	DRAW->ResetPalette();
 	while(1)
 	{
-		TEXT->ClearScreen();
-		SelectFile("/", "*.*", path, showfile, NULL);
+		SelectFile("/", "*.*", path, ShowFile, NULL);
 	}
 }
