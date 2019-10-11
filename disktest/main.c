@@ -172,7 +172,8 @@ void SelectFile(const char* path, const char* pattern, char* selection, int32_t(
 						index--;
 						if (index < scroll)
 						{
-							scroll--;
+							scroll -= FILESSHOWN;
+							if (scroll < 0) scroll = 0;
 							redraw = 1;
 							break;
 						}
@@ -180,7 +181,10 @@ void SelectFile(const char* path, const char* pattern, char* selection, int32_t(
 					else
 					{
 						index = fileCt - 1;
-						scroll = fileCt - FILESSHOWN;
+						if (fileCt > FILESSHOWN)
+							scroll = fileCt - FILESSHOWN;
+						else
+							scroll = 0;
 						redraw = 1;
 						break;
 					}
@@ -196,7 +200,8 @@ void SelectFile(const char* path, const char* pattern, char* selection, int32_t(
 						index++;
 						if (index - scroll >= FILESSHOWN)
 						{
-							scroll++;
+							scroll += FILESSHOWN;
+							if (scroll + FILESSHOWN > fileCt) scroll = fileCt - FILESSHOWN;
 							redraw = 1;
 							break;
 						}
@@ -211,6 +216,24 @@ void SelectFile(const char* path, const char* pattern, char* selection, int32_t(
 					//lastIndex = index;
 					//index++;
 					//if (index >= fileCt) index = 0;
+				}
+				else if (key == 0xC9) //page up
+				{
+					index -= FILESSHOWN;
+					scroll -= FILESSHOWN;
+					if (index < 0) index = 0;
+					if (scroll < 0) scroll = 0;
+					redraw = 1;
+					break;
+				}
+				else if (key == 0xD1) //page down
+				{
+					index += FILESSHOWN;
+					scroll += FILESSHOWN;
+					if (index + FILESSHOWN > fileCt) index = fileCt - FILESSHOWN;
+					if (scroll + FILESSHOWN > fileCt) scroll = fileCt - FILESSHOWN;
+					redraw = 1;
+					break;
 				}
 				else if (key == 0x1C) //enter
 				{
