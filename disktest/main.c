@@ -209,10 +209,12 @@ void SelectFile(const char* path, const char* pattern, char* selection, int32_t(
 					{
 						index = fileCt - 1;
 						if (fileCt > FILESSHOWN)
+						{
 							scroll = fileCt - FILESSHOWN;
+							redraw = 1;
+						}
 						else
 							scroll = 0;
-						redraw = 1;
 						break;
 					}
 				}
@@ -234,7 +236,7 @@ void SelectFile(const char* path, const char* pattern, char* selection, int32_t(
 					{
 						index = 0;
 						scroll = 0;
-						redraw = 1;
+						if (fileCt < FILESSHOWN) redraw = 1;
 						break;
 					}
 				}
