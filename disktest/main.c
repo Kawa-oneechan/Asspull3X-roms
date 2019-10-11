@@ -7,138 +7,6 @@ extern char *strrchr(const char *, int32_t);
 #define MAXPATH 256
 #define MAXFILES 512
 
-/*void WriteFileTime(FILINFO fno)
-{
-	short date = fno.fdate;
-	short time = fno.ftime;
-	printf("%04d\\-%02d%\\-%02d %02d:%02d:%02d",
-		((date >>  9) & 0x7F) + 1980,
-		 (date >>  5) & 0x0F,
-		 (date >>  0) & 0x1F,
-		 (time >> 11) & 0x1F,
-		 (time >>  5) & 0x3F,
-		 (time >>  0) & 0x0F
-	);
-}*/
-
-void ListFiles(const char* path, int32_t mode)
-{
-	int32_t ret;
-	DIR dir;
-	FILEINFO fno;
-	uint32_t files = 0, dirs = 0, size = 0;
-	char buff[MAXPATH];
-	if (!HaveDisk())
-	{
-		printf("No disk.");
-		return;
-	}
-	ret = DISK->GetLabel(buff);
-	printf(" Volume name: %s\n", (buff[0] ? buff : "none"));
-	if (path == 0)
-	{
-		path = buff;
-		strcpy_s(buff, MAXPATH, "/");
-	}
-	printf(" Directory of %s:\n\n", path);
-	ret = DISK->OpenDir(&dir, path);
-	if (ret == 0)
-	{
-		for (;;)
-		{
-			ret = DISK->ReadDir(&dir, &fno);
-			if (ret != 0 || fno.fname[0] == 0)
-				break;
-
-			if (mode == 0)
-			{
-				printf("  %04d\\-%02d%\\-%02d %02d:%02d:%02d",
-					((fno.fdate >>  9) & 0x7F) + 1980,
-					 (fno.fdate >>  5) & 0x0F,
-					 (fno.fdate >>  0) & 0x1F,
-					 (fno.ftime >> 11) & 0x1F,
-					 (fno.ftime >>  5) & 0x3F,
-					 (fno.ftime >>  0) & 0x0F
-				);
-
-				if (fno.fattrib & AM_DIRECTORY)
-				{
-					dirs++;
-					printf("  %-14s (dir)\n", fno.fname);
-				}
-				else
-				{
-					size += fno.fsize;
-					if (fno.fattrib & AM_HIDDEN)
-						continue;
-					files++;
-					printf("  %-14s %i\n", fno.fname, fno.fsize);
-				}
-			}
-			else if (mode == 1)
-			{
-				if (fno.fattrib & AM_DIRECTORY)
-				{
-					dirs++;
-					TEXT->Format(buff, "[%s]", fno.fname);
-					printf("%-14s\t", buff);
-				}
-				else
-				{
-					size += fno.fsize;
-					if (fno.fattrib & AM_HIDDEN)
-						continue;
-					files++;
-					printf("%-14s\t", fno.fname);
-				}
-			}
-		}
-	}
-	ret = DISK->CloseDir(&dir);
-	printf("\n\t\t%8i bytes used", size);
-	printf("\n\t\t%8i bytes free\n\n", 1474560 - size); //assuming a formatted 3½' HD diskette.
-}
-/*
-void PrintTextFile(const char* path)
-{
-	FILE file;
-	char line[256];
-	int32_t ret = DISK->OpenFile(&file, path, FA_READ);
-	if (ret > 0)
-	{
-		printf("Error %i opening \"%s\": %s\n\n", ret, path, DISK->FileErrStr(ret));
-		return;
-	}
-	while (!DISK->FileEnd(&file))
-	{
-		DISK->FileReadLine(&file, line, sizeof line);
-		ws(line);
-	}
-	DISK->CloseFile(&file);
-	ws("\n\n");
-}*/
-
-/*
-int32_t LoadFile(const char* path, void* target)
-{
-	FIL file;
-	int32_t ret = f_open(&file, path, FA_READ);
-	uint32_t bytesRead, totalRead = 0;
-	if (ret > 0) return ret;
-	for(;;)
-	{
-		ret = f_read(&file, target, 1024, &bytesRead);
-		if (ret > 0) return ret;
-		target += bytesRead;
-		totalRead += bytesRead;
-		if (bytesRead < 1024)
-			break;
-	}
-	//printf("%d", totalRead);
-	f_close(&file);
-	return 0;
-}*/
-
 void* LoadFile(const char* path, void* buffer, int32_t len)
 {
 	FILE file;
@@ -174,36 +42,9 @@ void* LoadFile(const char* path, void* buffer, int32_t len)
 	return buffer;
 }
 
-
-//TImageFile img;
-
-/*void EnumerateFiles(const char* path, const char* pattern, int32_t(*enumerator)(TFileInfo*))
-{
-	int32_t ret;
-	DIR dir;
-	FILEINFO info;
-	ret = DISK->FindFirst(&dir, &info, "", "*.api");
-	while (ret == 0 && info.fname[0])
-	{
-		if (enumerator(&info))
-			break;
-		ret = DISK->FindNext(&dir, &info);
-	}
-}
-
-int32_t apiEnumerator(TFileInfo* info)
-{
-	printf("%s\n", info->fname);
-	if (info->fname[0] == 'P')
-	{
-		ws("(Hold up, that's our cue to stop enumerating! Returning a 1...)\n");
-		return 1;
-	}
-	return 0;
-}*/
-
 void WaitForKey()
 {
+	while (REG_KEYIN != 0) { vbl(); }
 	while (REG_KEYIN == 0) { vbl(); }
 	while (REG_KEYIN != 0) { vbl(); }
 }
@@ -308,7 +149,8 @@ void SelectFile(const char* path, const char* pattern, char* selection, int32_t(
 		while(1)
 		{
 			unsigned short key = REG_KEYIN;
-			vbl();
+			//vbl();
+			REG_INTRMODE |= 0x80;
 			if ((key & 0xFF) > 0)
 			{
 				while(1) { if (REG_KEYIN == 0) break; }
@@ -519,61 +361,34 @@ int32_t showfile(char* filePath)
 	char* ext = strrchr(filePath, '.') + 1;
 	//printf("showfile: \"%s\"\n", ext);
 	if (!strcmp(ext, "TXT"))
-		return showtext(filePath);
+		showtext(filePath);
 	else if (!strcmp(ext, "API"))
-		return showpic(filePath);
+		showpic(filePath);
 	else
 	{
 		TEXT->SetCursorPosition(0, 0);
 		printf("Unknown file type \"%s\".         ", ext);
 		WaitForKey();
 	}
+	REG_INTRMODE |= 0x80;
+	TEXT->SetTextColor(0, 7);
+	MISC->SetTextMode(SMODE_240);
+	DRAW->ResetPalette();
 	return 2;
-}
-
-void ScanFiles(char* path)
-{
-	int res;
-	DIR dir;
-	unsigned int i;
-	static FILEINFO fno;
-	res = DISK->OpenDir(&dir, path);
-	if (res == 0)
-	{
-		for (;;)
-		{
-			res = DISK->ReadDir(&dir, &fno);
-			if (res != 0 || fno.fname[0] == 0)
-				break;
-			if (fno.fattrib & AM_DIRECTORY)
-			{
-				continue;
-				i = strlen(path);
-				sprintf(&path[i], "/%s", fno.fname);
-				ScanFiles(path);
-				path[i] = 0;
-			}
-			else
-			{
-				printf("%s/%s\n", path, fno.fname);
-			}
-		}
-		DISK->CloseDir(&dir);
-	}
 }
 
 int32_t main(void)
 {
 	interface = (IBios*)(0x01000000);
 	char path[MAXPATH];
+	REG_INTRMODE |= 0x80;
+	MISC->SetTextMode(SMODE_240);
+	DRAW->ResetPalette();
 	while(1)
 	{
-		REG_INTRMODE |= 0x80;
-		MISC->SetTextMode(SMODE_240);
-		DRAW->ResetPalette();
 		TEXT->ClearScreen();
-		SelectFile("/", "*.*", path, NULL, NULL);
+		SelectFile("/", "*.*", path, showfile, NULL);
 		//printf("\n\n(You chose \"%s\".)", path); WaitForKey();
-		showfile(path);
+		//showfile(path);
 	}
 }
