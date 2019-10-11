@@ -58,9 +58,16 @@ void Populate(const char* path, const char* pattern)
 	DIR dir;
 	FILEINFO info;
 	fileCt = 0;
-	//printf("(Populating %s)\n", path); WaitForKey();
+
+	while (!HaveDisk())
+	{
+		TEXT->SetCursorPosition(0, 0);
+		TEXT->SetTextColor(4, 15);
+		printf("Please insert a disk.");
+		WaitForKey();
+	}
+
 	ret = DISK->OpenDir(&dir, path);
-	//printf("(Populate: OpenDir(\"%s\") %d -- %s)\n", path, ret, DISK->FileErrStr(ret));
 	if (strnlen_s(path, MAXPATH) > 1)
 	{
 		strcpy_s(filenames[0], MAXPATH, "..");
@@ -70,28 +77,22 @@ void Populate(const char* path, const char* pattern)
 	for (;;)
 	{
 		ret = DISK->ReadDir(&dir, &info);
-		//printf("(Populate: ReadDir %d -- %s)\n", ret, DISK->FileErrStr(ret));
 		if (ret != 0 || info.fname[0] == 0) break;
 		if (info.fattrib & AM_DIRECTORY)
 		{
 			strncpy(filenames[fileCt], info.fname, 13);
-			//printf("(Populate: #%d = %s (dir))\n", fileCt, filenames[fileCt]);
 			fileCt++;
 		}
 	}
 #endif
 	ret = DISK->FindFirst(&dir, &info, path, pattern);
-	//printf("(Populate: FindFirst %d -- %s)\n", ret, DISK->FileErrStr(ret));
 	while(ret == 0 && info.fname[0])
 	{
 		if (info.fattrib & AM_HIDDEN) continue;
 		strncpy(filenames[fileCt], info.fname, 13);
-		//printf("(Populate: #%d = %s)\n", fileCt, filenames[fileCt]);
 		fileCt++;
 		ret = DISK->FindNext(&dir, &info);
-		//printf("(Populate: FindNext %d -- %s)\n", ret, DISK->FileErrStr(ret));
 	}
-	//WaitForKey();
 }
 
 void SelectFile(const char* path, const char* pattern, char* selection, int32_t(*onSelect)(char*), char* prompt)
@@ -142,14 +143,17 @@ void SelectFile(const char* path, const char* pattern, char* selection, int32_t(
 			TEXT->SetCursorPosition(0, 2+index);
 			TEXT->SetTextColor(1, 15);
 			printf(" %-13s \n", filenames[index]);
-			TEXT->SetCursorPosition(0, 2+lastIndex);
 			TEXT->SetTextColor(0, 7);
-			printf(" %-13s \n", filenames[lastIndex]);
+			if (lastIndex != index)
+			{
+				TEXT->SetCursorPosition(0, 2+lastIndex);
+				printf(" %-13s \n", filenames[lastIndex]);
+			}
 		}
+		vbl();
 		while(1)
 		{
 			unsigned short key = REG_KEYIN;
-			//vbl();
 			REG_INTRMODE |= 0x80;
 			if ((key & 0xFF) > 0)
 			{
@@ -159,12 +163,12 @@ void SelectFile(const char* path, const char* pattern, char* selection, int32_t(
 				{
 					lastIndex = index;
 					index++;
-					if (index == fileCt) index = 0;
+					if (index >= fileCt) index = 0;
 				}
 				else if (key == 0xC8) //down
 				{
 					lastIndex = index;
-					if (index == 0) index = fileCt;
+					if (index <= 0) index = fileCt;
 					index--;
 				}
 				else if (key == 0x1C) //enter
@@ -211,11 +215,23 @@ void SelectFile(const char* path, const char* pattern, char* selection, int32_t(
 						}
 					}
 				}
-				//25-28 -> left up right down
 				break;
 			}
 		}
 	}
+}
+
+int32_t startapp(char* filePath)
+{
+	void(*entry)(void) = (void*)0x01002020;
+	//char* cartName = (char*)0x01002008;
+	FILEINFO nfo;
+	DISK->FileStat(filePath, &nfo);
+	int32_t size = nfo.fsize;
+	LoadFile((const char*)filePath, (void*)0x01002000, size);
+	TEXT->ClearScreen();
+	entry();
+	return 2;
 }
 
 int32_t showpic(char* filePath)
@@ -261,17 +277,10 @@ int32_t showtext(char* filePath)
 	fd = fopen(filePath, "r");
 	TEXT->ClearScreen();
 	printf("Loading %s...\n", filePath);
-	//printf("Loading lines...\n");
 	i = 0;
-	while (fgets(lines[i], MAXVIEWERLINELENGTH, fd))
-	{
-		//printf("%i. %s\n", i, lines[i]);
-		i++;
-	}
+	while (fgets(lines[i++], MAXVIEWERLINELENGTH, fd));
 	lineCt = i;
 	fclose(fd);
-	//printf("Done.");
-	//WaitForKey();
 	while(1)
 	{
 		REG_INTRMODE |= 0x80;
@@ -298,7 +307,6 @@ int32_t showtext(char* filePath)
 						if (c == '\t') c = ' ';
 						((int16_t*)MEM_VRAM)[cur++] = (c << 8) | 0x07;
 					}
-					//printf("%s\n", lines[i + scroll]);
 				}
 			}
 			redraw = 0;
@@ -364,6 +372,8 @@ int32_t showfile(char* filePath)
 		showtext(filePath);
 	else if (!strcmp(ext, "API"))
 		showpic(filePath);
+	else if (!strcmp(ext, "APP"))
+		startapp(filePath);
 	else
 	{
 		TEXT->SetCursorPosition(0, 0);
@@ -388,7 +398,5 @@ int32_t main(void)
 	{
 		TEXT->ClearScreen();
 		SelectFile("/", "*.*", path, showfile, NULL);
-		//printf("\n\n(You chose \"%s\".)", path); WaitForKey();
-		//showfile(path);
 	}
 }
