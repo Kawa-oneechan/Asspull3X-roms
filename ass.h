@@ -1,5 +1,7 @@
-#if !defined ASS_MAIN
-#define ASS_MAIN
+#pragma once
+
+#define likely(x)	__builtin_expect((x),1)
+#define unlikely(x)	__builtin_expect((x),0)
 
 #define DEBUG
 
@@ -302,6 +304,8 @@ typedef struct IBios
 #define DRAW interface->drawingLibrary
 #define MISC interface->miscLibrary
 #define DISK interface->diskLibrary
+
+extern IBios* interface;
 
 //#define DrawChar(g,x,y,c) interface->DrawChar(g,x,y,c)
 
@@ -619,4 +623,3 @@ typedef struct IBios
 #define MIDI_MUTETRIANGLE 80
 #define MIDI_OPENTRIANGLE 81
 
-#endif
