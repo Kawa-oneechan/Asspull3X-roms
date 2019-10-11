@@ -10,7 +10,7 @@
 #define getchar() fgetc(STDIN)
 #define getline(l,n,f) getdelim(l,n,'\n',f)
 #define gets_s(s,n) fgets(s,n,STDIN)
-#define sprintf(b,f,res...) TEXT->Format(b,f, ## rest)
+#define sprintf(b,f,rest...) TEXT->Format(b,f, ## rest)
 #define feof(f) DISK->FileEnd(f)
 #define ftell(f) DISK->FilePosition(f)
 #define fseek(f,o,w) DISK->SeekFile(f,o,w)

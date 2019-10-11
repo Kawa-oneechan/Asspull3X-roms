@@ -158,11 +158,13 @@ char* fgets(char* s, int n, FILE* file)
 			}
 			continue;
 		}
-		putchar((char)c);
+		if (file == STDIN) putchar((char)c);
 		*_s++ = (char)c;
 	}
+	if (c == EOF && _s == s)
+		return 0;
 	*_s = 0;
-	putchar('\n');
+	if (file == STDIN) putchar('\n');
 	__fgetc_echo = echo;
 	return s;
 }
