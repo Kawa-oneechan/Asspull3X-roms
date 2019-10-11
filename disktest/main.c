@@ -95,9 +95,11 @@ void Populate(const char* path, const char* pattern)
 	}
 }
 
+#define FILESSHOWN 20
+
 void SelectFile(const char* path, const char* pattern, char* selection, int32_t(*onSelect)(char*), char* prompt)
 {
-	int32_t index = 0, lastIndex = 0, redraw = 1;
+	int32_t index = 0, lastIndex = 0, redraw = 1, scroll = 0;
 	FILEINFO info;
 	char filePath[MAXPATH], workPath[MAXPATH];
 
@@ -107,6 +109,7 @@ void SelectFile(const char* path, const char* pattern, char* selection, int32_t(
 	TEXT->SetTextColor(0, 7);
 	for(;;)
 	{
+		REG_INTRMODE |= 0x80;
 		if (redraw)
 		{
 			TEXT->ClearScreen();
@@ -114,21 +117,21 @@ void SelectFile(const char* path, const char* pattern, char* selection, int32_t(
 			printf("%s\n", prompt ? prompt : "Select a file to open:");
 			printf("> %s\n", workPath);
 
-			for (int32_t i = 0; i < fileCt; i++)
+			for (int32_t i = 0; i < fileCt && i < FILESSHOWN; i++)
 			{
 				TEXT->SetTextColor(0, 7);
-				if (index == i)
+				if (index == i + scroll)
 					TEXT->SetTextColor(1, 15);
-				printf(" %-13s ", filenames[i]);
+				printf(" %-13s ", filenames[i + scroll]);
 				TEXT->SetTextColor(0, 7);
-				if (filenames[i][0] == '.' && filenames[i][1] == '.')
+				if (filenames[i + scroll][0] == '.' && filenames[i + scroll][1] == '.')
 				{
 					printf("    <UP>\n");
 					continue;
 				}
 				strcpy_s(filePath, MAXPATH, workPath);
-				if (filePath[strnlen_s(filePath, MAXPATH)-1] != '/') strkitten_s(filePath, MAXPATH, '/');
-				strcat_s(filePath, MAXPATH, filenames[i]);
+				if (filePath[strnlen_s(filePath, MAXPATH) - 1] != '/') strkitten_s(filePath, MAXPATH, '/');
+				strcat_s(filePath, MAXPATH, filenames[i + scroll]);
 				DISK->FileStat(filePath, &info);
 				if (info.fattrib & AM_DIRECTORY)
 					printf("   <DIR>\n");
@@ -140,16 +143,18 @@ void SelectFile(const char* path, const char* pattern, char* selection, int32_t(
 		}
 		else
 		{
-			TEXT->SetCursorPosition(0, 2+index);
+			TEXT->SetCursorPosition(0, 2 + index - scroll);
 			TEXT->SetTextColor(1, 15);
 			printf(" %-13s \n", filenames[index]);
 			TEXT->SetTextColor(0, 7);
 			if (lastIndex != index)
 			{
-				TEXT->SetCursorPosition(0, 2+lastIndex);
+				TEXT->SetCursorPosition(0, 2 + lastIndex - scroll);
 				printf(" %-13s \n", filenames[lastIndex]);
 			}
 		}
+		TEXT->SetCursorPosition(0, FILESSHOWN + 4);
+		printf("=>%s         ", filenames[index]);
 		vbl();
 		while(1)
 		{
@@ -159,17 +164,53 @@ void SelectFile(const char* path, const char* pattern, char* selection, int32_t(
 			{
 				while(1) { if (REG_KEYIN == 0) break; }
 
-				if (key == 0xD0) //up
+				if (key == 0xC8) //up
 				{
 					lastIndex = index;
-					index++;
-					if (index >= fileCt) index = 0;
+					if (index > 0)
+					{
+						index--;
+						if (index < scroll)
+						{
+							scroll--;
+							redraw = 1;
+							break;
+						}
+					}
+					else
+					{
+						index = fileCt - 1;
+						scroll = fileCt - FILESSHOWN;
+						redraw = 1;
+						break;
+					}
+					//lastIndex = index;
+					//if (index <= 0) index = fileCt;
+					//index--;
 				}
-				else if (key == 0xC8) //down
+				else if (key == 0xD0) //down
 				{
 					lastIndex = index;
-					if (index <= 0) index = fileCt;
-					index--;
+					if (index < fileCt - 1)
+					{
+						index++;
+						if (index - scroll >= FILESSHOWN)
+						{
+							scroll++;
+							redraw = 1;
+							break;
+						}
+					}
+					else
+					{
+						index = 0;
+						scroll = 0;
+						redraw = 1;
+						break;
+					}
+					//lastIndex = index;
+					//index++;
+					//if (index >= fileCt) index = 0;
 				}
 				else if (key == 0x1C) //enter
 				{
