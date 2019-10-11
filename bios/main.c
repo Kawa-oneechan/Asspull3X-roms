@@ -24,41 +24,6 @@ extern const uint16_t hdma1[], hdma2[];
 extern const uint16_t fontTiles[];
 extern const TImageFile splashData;
 
-void* LoadFile(const char* path, void* buffer, int32_t len)
-{
-	FILE file;
-	FILEINFO nfo;
-	int regs = REG_INTRMODE;
-	REG_INTRMODE |= 0x80;
-	int32_t ret = DISK->FileStat(path, &nfo);
-
-	ret = DISK->OpenFile(&file, path, FA_READ);
-	if (ret > 0)
-	{
-		REG_INTRMODE = regs;
-		return (void*)ret;
-	}
-
-	void *target = buffer;
-	for(;;)
-	{
-		ret = DISK->ReadFile(&file, target, 1024);
-		if (ret < 0)
-		{
-			REG_INTRMODE = regs;
-			return (void*)ret;
-		}
-
-		target += ret;
-		if (ret < 1024)
-			break;
-	}
-
-	DISK->CloseFile(&file);
-	REG_INTRMODE = regs;
-	return buffer;
-}
-
 void Display(char* what)
 {
 	//for (int y = 76; y < 84; y++)
