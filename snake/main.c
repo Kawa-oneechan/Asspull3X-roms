@@ -254,7 +254,7 @@ int main(void)
 	interface = (IBios*)(0x01000000);
 	MISC->SetTextMode(SMODE_TILE | SMODE_320 | SMODE_240);
 	MISC->DmaCopy(PALETTE, (int8_t*)&tilesPal, 16, DMA_INT);
-	MISC->DmaCopy((int8_t*)0x0E080000, (int8_t*)&tilesTiles, 1024, DMA_INT);
+	MISC->DmaCopy(TILESET, (int8_t*)&tilesTiles, 1024, DMA_INT);
 	MISC->DmaClear(MAP1, 0, WIDTH * HEIGHT, 2);
 	REG_HDMASOURCE[0] = (int32_t)hdma1;
 	REG_HDMATARGET[0] = (int32_t)PALETTE;

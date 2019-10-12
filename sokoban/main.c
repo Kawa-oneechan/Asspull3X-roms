@@ -71,9 +71,8 @@ void drawPlayer()
 	if (REG_TICKCOUNT % ANIMSPEED > (ANIMSPEED / 2))
 		tile += 8;
 
-	//these really need to be defined...
-	*(uint16_t*)0xE108000 = SPRITEA_BUILD(tile + 256, 1, 0);
-	*(uint32_t*)0xE108200 = SPRITEB_BUILD((playerX * 16) + 8, (playerY * 16) - 24, 0, 1, flip, 0, 1, 1);
+	SPRITES_A[0] = SPRITEA_BUILD(tile + 256, 1, 0);
+	SPRITES_B[0] = SPRITEB_BUILD((playerX * 16) + 8, (playerY * 16) - 24, 0, 1, flip, 0, 1, 1);
 }
 
 void drawTile(int i, int j, int tile)
@@ -332,8 +331,8 @@ int main(void)
 	DRAW->FadeToWhite();
 
 	MISC->SetTextMode(SMODE_TILE | SMODE_SPRITES);
-	MISC->DmaCopy((int8_t*)0x0E080000, (int8_t*)&tilesTiles, 1024, DMA_INT);
-	MISC->DmaCopy((int8_t*)0x0E082000, (int8_t*)&playerTiles, 1024, DMA_INT);
+	MISC->DmaCopy(TILESET, (int8_t*)&tilesTiles, 1024, DMA_INT);
+	MISC->DmaCopy(TILESET + 0x2000, (int8_t*)&playerTiles, 1024, DMA_INT);
 	MISC->DmaCopy(PALETTE, (int16_t*)&tilesPal, 16, DMA_INT);
 	MISC->DmaCopy(PALETTE + 32, (int16_t*)&playerPal, 16, DMA_INT);
 	MISC->DmaClear(MAP1, 0, WIDTH * HEIGHT, 2);

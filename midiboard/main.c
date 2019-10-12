@@ -60,7 +60,6 @@ int main(void)
 
 	DRAW->FadeFromBlack();
 
-	short lastKey = 0;
 	int pitoff = 48;
 	int lastPit = -1;
 	int lastPitOffed = -1;
@@ -72,7 +71,6 @@ int main(void)
 
 		if ((key & 0xFF) > 0)
 		{
-			lastKey = key;
 			if (sctopit[key] > 0 && lastPit != pit)
 			{
 				lastPit = pit;
@@ -95,7 +93,6 @@ int main(void)
 			PALETTE[KEYPALSTART - 12 + lastPit] = colors[lastPit] ? EBONY : IVORY;
 			MIDI_KEYOFF(1, lastPitOffed, 80);
 			lastPit = -1;
-			lastKey = 0;
 		}
 		vbl();
 	}

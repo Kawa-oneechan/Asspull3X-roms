@@ -51,9 +51,12 @@ extern void free(void*);
 //-----------------
 #define MEM_VRAM	0x0E000000
 #define MEM_IO		0x0D800000
-#define PALETTE		((uint16_t*)0x0E100000)
 #define MAP1		((uint16_t*)0x0E000000)
 #define MAP2		((uint16_t*)0x0E008000)
+#define TILESET		 ((uint8_t*)0x0E010000)
+#define PALETTE		((uint16_t*)0x0E040000)
+#define SPRITES_A	((uint16_t*)0x0E044000)
+#define SPRITES_B	((uint32_t*)0x0E044200)
 
 #define REG_LINE		*(volatile uint16_t*)(MEM_IO+0x0000)
 #define REG_SCREENMODE	*(int8_t*)(MEM_IO+0x0004)

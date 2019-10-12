@@ -28,8 +28,8 @@ int main(void)
 	REG_SCREENFADE = 31;
 	DRAW->DisplayPicture((TImageFile*)&picData);
 
-	//*(uint16_t*)0xE108000 = SPRITEA_BUILD(0 * 16,1,0);
-	//*(uint32_t*)0xE108200 = SPRITEB_BUILD(8, 8, 1,1, 0,0, 1, 0);
+	//SPRITES_A[0] = SPRITEA_BUILD(0 * 16,1,0);
+	//SPRITES_B[0] = SPRITEB_BUILD(8, 8, 1,1, 0,0, 1, 0);
 
 	DRAW->FadeFromBlack();
 	while(1);

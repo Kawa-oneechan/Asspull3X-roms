@@ -53,7 +53,7 @@ int32_t main(void)
 	sprintf(biosVer, "BIOS v%d.%d", (interface->biosVersion >> 8) & 0xFF, (interface->biosVersion >> 0) & 0xFF);
 	dpf(biosVer);
 
-	DmaCopy((int8_t*)0x0E100200, (int8_t*)&fontTiles, 12288, DMA_INT);
+	DmaCopy((int8_t*)0x0E040200, (int8_t*)&fontTiles, 12288, DMA_INT);
 
 	while(1)
 	{
