@@ -93,7 +93,7 @@ void drawTile(int i, int j, int tile)
 void draw()
 {
 	char* here = map;
-	REG_INTRMODE |= 0x80;
+	//REG_INTRMODE |= 0x80;
 	REG_SCROLLX1 = -8;
 	REG_SCROLLY1 = 8;
 	for (int j = 0; j < BOUNDS; j++)
@@ -342,20 +342,26 @@ int main(void)
 	REG_HDMACONTROL[0] = DMA_ENABLE | HDMA_DOUBLE | (DMA_SHORT << 4) | (0 << 8) | (480 << 20);
 	REG_SCREENFADE = 31;
 	REG_MAPSET1 = 0x80;
-	REG_INTRMODE |= 0x80;
+	interface->VBlank = music;
+	REG_INTRMODE = 0;
 	musicNumTracks = -1;
 
 	levelNum = -1;
 	nextLevel();
 
+	int in;
 	for(;;)
 	{
-		int in = REG_KEYIN;
+
 		drawPlayer(lastDir);
-		vbl();
-		music();
-		if (REG_TICKCOUNT % 4 < 3)
-			continue;
+		for (int delay = 0; delay < 8; delay++)
+		{
+			vbl();
+			in = REG_KEYIN;
+		}
+		//music();
+		//if (REG_TICKCOUNT % 8 < 7)
+		//	continue;
 		switch (in)
 		{
 			case KEY_LEFT: move(-1, 0); break;

@@ -198,12 +198,12 @@ void NMIHandler()
 	if (interrupts & 4)
 	{
 		if (interface->VBlank != 0) interface->VBlank();
-		interrupts &= ~4;
+		REG_INTRMODE &= ~4;
 	}
 	else if (interrupts & 2)
 	{
 		if (interface->HBlank != 0) interface->HBlank();
-		interrupts &= ~2;
+		REG_INTRMODE &= ~2;
 	}
 	asm("rte");
 }
