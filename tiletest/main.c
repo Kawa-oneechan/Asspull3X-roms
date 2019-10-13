@@ -46,25 +46,27 @@ void DrawStripe(int source, int target)
 
 typedef struct TSpriteA
 {
-	char palette:4;
-	char enabled:1;
-	char _waste:2;
-	short tile:9;
+	uint16_t palette:4;
+	uint16_t enabled:1;
+	uint16_t _waste:2;
+	uint16_t tile:9;
 } TSpriteA;
 #define spritesA ((TSpriteA*)0x0E044000)
 typedef struct TSpriteB
 {
-	char priority:2;
-	char _waste1:1;
-	char large:1;
-	char flipV:1;
-	char flipH:1;
-	char tall:1;
-	char wide:1;
-	short _waste2:3;
-	short y:9;
-	short _waste3:2;
-	short x:10;
+	uint32_t priority:2;
+	uint32_t _waste1:1;
+	uint32_t large:1;
+
+	uint32_t flipV:1;
+	uint32_t flipH:1;
+	uint32_t tall:1;
+	uint32_t wide:1;
+
+	uint32_t _waste2:3;
+	uint32_t y:9;
+	uint32_t _waste3:2;
+	uint32_t x:10;
 } TSpriteB;
 #define spritesB ((TSpriteB*)0x0E044200)
 
@@ -86,7 +88,7 @@ int main(void)
 	MISC->DmaCopy(TILESET + 0x2000, (int8_t*)&farahTiles, 64, DMA_INT);
 	MISC->DmaCopy(PALETTE + 32, (int8_t*)&farahPal, 32, DMA_SHORT);
 	SPRITES_A[0] = SPRITEA_BUILD(256, 1, 2);
-	SPRITES_B[0] = SPRITEB_BUILD(152, 176, 0, 1, 0, 0, 1, 1);
+	SPRITES_B[0] = SPRITEB_BUILD(0, 176, 0, 1, 0, 0, 1, 1);
 
 	REG_MAPSET = 0xC0; //just enable it, don't worry about tile offsets.
 
@@ -107,10 +109,10 @@ int main(void)
 			spritesA[0].palette++;
 		else if (REG_KEYIN == 0xD0)
 			spritesA[0].palette--;
-		else if (REG_KEYIN == 0xCD)
-			spritesB[0].y++;
 		else if (REG_KEYIN == 0xCB)
-			spritesB[0].y--;
+			spritesB[0].x--;
+		else if (REG_KEYIN == 0xCD)
+			spritesB[0].x++;
 		while (REG_KEYIN)
 			vbl();
 
