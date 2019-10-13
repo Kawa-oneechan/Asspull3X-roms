@@ -88,7 +88,7 @@ int main(void)
 	MISC->DmaCopy(TILESET + 0x2000, (int8_t*)&farahTiles, 64, DMA_INT);
 	MISC->DmaCopy(PALETTE + 32, (int8_t*)&farahPal, 32, DMA_SHORT);
 	SPRITES_A[0] = SPRITEA_BUILD(256, 1, 2);
-	SPRITES_B[0] = SPRITEB_BUILD(0, 176, 0, 1, 0, 0, 1, 1);
+	SPRITES_B[0] = SPRITEB_BUILD(152, 176, 0, 1, 0, 0, 1, 0);
 
 	REG_MAPSET = 0xC0; //just enable it, don't worry about tile offsets.
 
@@ -105,16 +105,12 @@ int main(void)
 	for(;;)
 	{
 		vbl();
-		if (REG_KEYIN == 0xC8)
-			spritesA[0].palette++;
-		else if (REG_KEYIN == 0xD0)
-			spritesA[0].palette--;
-		else if (REG_KEYIN == 0xCB)
-			spritesB[0].x--;
-		else if (REG_KEYIN == 0xCD)
-			spritesB[0].x++;
-		while (REG_KEYIN)
-			vbl();
+
+		//Something to test the sprite structs with...
+		if (REG_KEYIN == 0xC8) spritesB[0].y++;
+		else if (REG_KEYIN == 0xD0) spritesB[0].y--;
+		else if (REG_KEYIN == 0xCB) spritesB[0].x--;
+		else if (REG_KEYIN == 0xCD) spritesB[0].x++;
 
 		REG_SCROLLX1 = scroll;
 		REG_SCROLLX2 = scroll;
