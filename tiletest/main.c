@@ -44,6 +44,30 @@ void DrawStripe(int source, int target)
 	(((hp) & 0x7FF) << 0)						\
 )
 
+typedef struct TSpriteA
+{
+	char palette:4;
+	char enabled:1;
+	char _waste:2;
+	short tile:9;
+} TSpriteA;
+#define spritesA ((TSpriteA*)0x0E044000)
+typedef struct TSpriteB
+{
+	char priority:2;
+	char _waste1:1;
+	char large:1;
+	char flipV:1;
+	char flipH:1;
+	char tall:1;
+	char wide:1;
+	short _waste2:3;
+	short y:9;
+	short _waste3:2;
+	short x:10;
+} TSpriteB;
+#define spritesB ((TSpriteB*)0x0E044200)
+
 int main(void)
 {
 	interface = (IBios*)(0x01000000);
@@ -79,6 +103,17 @@ int main(void)
 	for(;;)
 	{
 		vbl();
+		if (REG_KEYIN == 0xC8)
+			spritesA[0].palette++;
+		else if (REG_KEYIN == 0xD0)
+			spritesA[0].palette--;
+		else if (REG_KEYIN == 0xCD)
+			spritesB[0].y++;
+		else if (REG_KEYIN == 0xCB)
+			spritesB[0].y--;
+		while (REG_KEYIN)
+			vbl();
+
 		REG_SCROLLX1 = scroll;
 		REG_SCROLLX2 = scroll;
 		scroll += 1;
