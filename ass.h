@@ -29,6 +29,8 @@ typedef int8_t* va_list;
 
 #define printf interface->textLibrary->Write
 #define vbl interface->miscLibrary->WaitForVBlank
+#define intoff() REG_INTRMODE |= IMODE_DISABLE
+#define inton() REG_INTRMODE &= ~IMODE_DISABLE
 
 #define HaveDisk()		(*(volatile int8_t*)(0x0D800032) & 1)
 
@@ -65,8 +67,8 @@ extern void free(void*);
 #define REG_TICKCOUNT	*(volatile uint32_t*)(MEM_IO+0x0008)
 #define REG_SCREENFADE	*(int8_t*)(MEM_IO+0x000C)
 #define REG_DEBUGOUT	*(char*)(MEM_IO+0x000E)
-#define REG_MAPSET1		*(uint8_t*)(MEM_IO+0x0010)
-#define REG_MAPSET2		*(uint8_t*)(MEM_IO+0x0011)
+#define REG_JOYPAD		*(volatile uint8_t*)(MEM_IO+0x000F)
+#define REG_MAPSET		*(uint8_t*)(MEM_IO+0x0010)
 #define REG_SCROLLX1	*(uint16_t*)(MEM_IO+0x0012)
 #define REG_SCROLLX2	*(uint16_t*)(MEM_IO+0x0014)
 #define REG_SCROLLY1	*(uint16_t*)(MEM_IO+0x0016)
@@ -95,14 +97,13 @@ extern void free(void*);
 #define SMODE_BMP1 1		// Specifies a linear-addressed 16-color four bits per pixel bitmap mode.
 #define SMODE_BMP2 2		// Specifies a linear-addressed 256-color eight bits per pixel bitmap mode.
 #define SMODE_TILE 0x63		// Specifies a dual-tilemap system. Forces 320x240 resolution.
-#define SMODE_SPRITES 0x10	// Specifies that sprites should be displayed.
 #define SMODE_240 0x20		// Specifies that instead of 480 lines, the screen height should be halved to 240.
 #define SMODE_320 0x40		// Specifies that the screen width should be halved from 640 to 320.
 #define SMODE_BOLD 0x80		// Specifies that text mode should use a bold font.
 
-#define IMODE_VBLANK 1		// Enable VBlank.
-#define IMODE_TRIGGER 2		// Enable TriggerLine.
-#define IMODE_INVBLANK 4	// VBlank is triggered.
+#define IMODE_DISABLE	0x80	// Enable interrupts.
+#define IMODE_INVBLANK	0x04	// VBlank is triggered.
+#define IMODE_INHBLANK	0x02	// HBlank is triggered.
 
 #define BLIT_COPY				(1 << 0)
 #define BLIT_SET				(2 << 0)

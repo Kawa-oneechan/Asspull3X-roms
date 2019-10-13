@@ -12,7 +12,7 @@ void* LoadFile(const char* path, void* buffer, int32_t len)
 	FILE file;
 	FILEINFO nfo;
 	int regs = REG_INTRMODE;
-	REG_INTRMODE |= 0x80;
+	intoff();
 	int32_t ret = DISK->FileStat(path, &nfo);
 
 	ret = DISK->OpenFile(&file, path, FA_READ);
@@ -113,7 +113,7 @@ void SelectFile(const char* path, const char* pattern, char* selection, int32_t(
 
 	for(;;)
 	{
-		REG_INTRMODE |= 0x80;
+		intoff();
 		if (redraw)
 		{
 			TEXTMAP[0] = 0x9387;
@@ -186,7 +186,7 @@ void SelectFile(const char* path, const char* pattern, char* selection, int32_t(
 		while(1)
 		{
 			unsigned short key = REG_KEYIN;
-			REG_INTRMODE |= 0x80;
+			intoff();
 			if ((key & 0xFF) > 0)
 			{
 				while(1) { if (REG_KEYIN == 0) break; }
@@ -365,7 +365,7 @@ int32_t ShowText(char* filePath)
 	char c;
 	FILE* fd;
 	char lines[MAXVIEWERLINES][MAXVIEWERLINELENGTH] = {0};
-	REG_INTRMODE |= 0x80;
+	intoff();
 	fd = fopen(filePath, "r");
 	TEXT->ClearScreen();
 	printf("Loading %s...\n", filePath);
@@ -375,7 +375,7 @@ int32_t ShowText(char* filePath)
 	fclose(fd);
 	while(1)
 	{
-		REG_INTRMODE |= 0x80;
+		intoff();
 		if (redraw)
 		{
 			TEXT->SetTextColor(0, 7);
@@ -384,7 +384,7 @@ int32_t ShowText(char* filePath)
 			for (j = 0; j < 80; j++)
 				TEXTMAP[j] = 0x1B;
 			printf(" %s \t%d/%d ", filePath, scroll, lineCt);
-			REG_INTRMODE |= 0x80;
+			intoff();
 			for (i = 0; i < MAXLINESSHOWN; i++)
 			{
 				if (i + scroll < lineCt)
@@ -471,7 +471,7 @@ int32_t ShowFile(char* filePath)
 		printf("Unknown file type \"%s\".         ", ext);
 		WaitForKey();
 	}
-	REG_INTRMODE |= 0x80;
+	intoff();
 	TEXT->SetTextColor(0, 7);
 	MISC->SetTextMode(SMODE_240 | SMODE_BOLD);
 	DRAW->ResetPalette();
@@ -482,7 +482,7 @@ int32_t main(void)
 {
 	interface = (IBios*)(0x01000000);
 	char path[MAXPATH];
-	REG_INTRMODE |= 0x80;
+	intoff();
 	MISC->SetTextMode(SMODE_240 | SMODE_BOLD);
 	DRAW->ResetPalette();
 	while(1)

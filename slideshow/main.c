@@ -6,7 +6,7 @@ void* LoadFile(const char* path, void* buffer, int32_t len)
 	FILE file;
 	FILEINFO nfo;
 	int regs = REG_INTRMODE;
-	REG_INTRMODE |= 0x80;
+	intoff();
 	int32_t ret = DISK->FileStat(path, &nfo);
 
 	ret = DISK->OpenFile(&file, path, FA_READ);
@@ -49,7 +49,7 @@ int32_t main(void)
 	int ret;
 	DIR dir;
 	FILEINFO info;
-	REG_INTRMODE |= 0x80;
+	intoff();
 
 	TImageFile* image = NULL;
 	ret = DISK->FindFirst(&dir, &info, "0:", "*.api");

@@ -31,7 +31,7 @@ __attribute((format (printf, 1, 2)))
 void dpf(const char* format, ...)
 {
 	char buffer[1024] = "[DEBUG] ";
-	REG_INTRMODE |= 0x80;
+	intoff();
 	va_list args;
 	va_start(args, format);
 	vsprintf(buffer + 8, format, args);
@@ -40,7 +40,7 @@ void dpf(const char* format, ...)
 		*(unsigned char*)(MEM_IO+0x000E) = *b++;
 	*(unsigned char*)(MEM_IO+0x000E) = '\n';
 	va_end(args);
-	REG_INTRMODE &= ~0x80;
+	inton();
 }
 #endif
 
@@ -87,7 +87,7 @@ __attribute((format (printf, 1, 2)))
 int Write(const char* format, ...)
 {
 	char buffer[1024];
-	REG_INTRMODE |= 0x80;
+	intoff();
 	va_list args;
 	va_start(args, format);
 	vsprintf(buffer, format, args);
@@ -95,7 +95,7 @@ int Write(const char* format, ...)
 	char *b = buffer;
 	while (*b) WriteChar(*b++);
 	va_end(args);
-	REG_INTRMODE &= ~0x80;
+	inton();
 	return buffer - b;
 }
 

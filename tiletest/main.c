@@ -47,10 +47,10 @@ void DrawStripe(int source, int target)
 int main(void)
 {
 	interface = (IBios*)(0x01000000);
-	REG_SCREENMODE = SMODE_TILE | SMODE_SPRITES;
+	REG_SCREENMODE = SMODE_TILE;
 	REG_SCREENFADE = 0;
 
-	REG_INTRMODE |= 0x80;
+	intoff();
 
 	REG_HDMASOURCE[0] = (int32_t)hdma1;
 	REG_HDMATARGET[0] = (int32_t)PALETTE;
@@ -64,13 +64,12 @@ int main(void)
 	SPRITES_A[0] = SPRITEA_BUILD(256, 1, 2);
 	SPRITES_B[0] = SPRITEB_BUILD(152, 176, 0, 1, 0, 0, 1, 1);
 
-	REG_MAPSET1 = 0x80; //just enable it, don't worry about tile offsets.
-	REG_MAPSET2 = 0x80;
+	REG_MAPSET = 0xC0; //just enable it, don't worry about tile offsets.
 
 	for (int i = 0; i < SCREENWIDTH; i++)
 		DrawStripe(i, i);
 
-	REG_INTRMODE &= ~0x80;
+	inton();
 
 	REG_SCROLLY1 = 32;
 	REG_SCROLLY2 = 16;

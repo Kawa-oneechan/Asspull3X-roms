@@ -78,7 +78,7 @@ void DisplayPicture(TImageFile* picData)
 		//mode |= (picData->BitDepth == 8) ? SMODE_BMP2 : SMODE_BMP1;
 		//REG_SCREENMODE = (uint8_t)mode;
 		if (picData->BitDepth == 8)
-			SetBitmapMode256(mode | SMODE_SPRITES);
+			SetBitmapMode256(mode);
 		else
 			SetBitmapMode16(mode);
 	}
@@ -137,19 +137,19 @@ void FadeFromWhite()
 void DrawString(const char* str, int32_t x, int32_t y, int32_t color)
 {
 	if (interface->DrawChar == NULL) return;
-	REG_INTRMODE |= 0x80;
+	intoff();
 	while(*str)
 	{
 		DrawChar(*str++, x, y, color);
 		x += 8;
 	}
-	REG_INTRMODE &= ~0x80;
+	inton();
 }
 
 void DrawFormat(const char* format, int32_t x, int32_t y, int32_t color, ...)
 {
 	if (interface->DrawChar == NULL) return;
-	REG_INTRMODE |= 0x80;
+	intoff();
 	char buffer[1024];
 	va_list args;
 	va_start(args, format);
@@ -162,7 +162,7 @@ void DrawFormat(const char* format, int32_t x, int32_t y, int32_t color, ...)
 		x += 8;
 	}
 	va_end(args);
-	REG_INTRMODE &= ~0x80;
+	inton();
 }
 
 void DrawChar(char c, int32_t x, int32_t y, int32_t color)

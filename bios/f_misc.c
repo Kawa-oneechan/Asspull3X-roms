@@ -44,17 +44,15 @@ void SetBitmapMode256(int flags)
 
 void EnableSprites(int enabled)
 {
-	if (enabled)
-		REG_SCREENMODE |= SMODE_SPRITES;
-	else
-		REG_SCREENMODE &= ~SMODE_SPRITES;
+	//To be replaced with RemoveSprites
+	enabled = 0;
 }
 
 void WaitForVBlank()
 {
 	long tickCount = REG_TICKCOUNT;
 	while (REG_TICKCOUNT == tickCount) { ; }
-//	REG_INTRMODE |= 0x80;
+//	intoff();
 //	while(REG_LINE >= 480);
 //	while(REG_LINE < 480);
 //	if (interface->VBlank)
@@ -175,7 +173,7 @@ void RleUnpack(int8_t* dst, int8_t* src, uint32_t size)
 	REG_BLITLENGTH = (int32_t)size * 3; //TODO: uncertain
 	REG_BLITCONTROL= BLIT_UNRLE;
 /*
-	REG_INTRMODE |= 0x80;
+	intoff();
 	int8_t data;
 	uint8_t rle;
 	src++;
@@ -196,7 +194,7 @@ void RleUnpack(int8_t* dst, int8_t* src, uint32_t size)
 				len--;
 				if(len == 0)
 				{
-					REG_INTRMODE &= ~0x80;
+					inton();
 					return;
 				}
 			}
@@ -210,12 +208,12 @@ void RleUnpack(int8_t* dst, int8_t* src, uint32_t size)
 				len--;
 				if(len == 0)
 				{
-					REG_INTRMODE &= ~0x80;
+					inton();
 					return;
 				}
 			}
 		}
 	}
-	REG_INTRMODE &= ~0x80;
+	inton();
 */
 }

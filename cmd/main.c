@@ -101,7 +101,7 @@ int32_t ShowFile(int argc, char **args)
 		printf("Unknown file type \"%s\".\n", ext);
 		WaitForKey();
 	}
-	REG_INTRMODE |= 0x80;
+	intoff();
 	return 2;
 }
 

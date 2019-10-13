@@ -1,8 +1,6 @@
 #include "../ass.h"
 IBios* interface;
 
-#define REG_JOYPAD *(volatile uint16_t*)(MEM_IO+0x0044)
-
 #define KEY_UP 0xC8
 #define KEY_LEFT 0xCB
 #define KEY_RIGHT 0xCD
@@ -259,7 +257,7 @@ int main(void)
 	REG_HDMASOURCE[0] = (int32_t)hdma1;
 	REG_HDMATARGET[0] = (int32_t)PALETTE;
 	REG_HDMACONTROL[0] = DMA_ENABLE | HDMA_DOUBLE | (DMA_SHORT << 4) | (0 << 8) | (480 << 20);
-	REG_MAPSET1 = 0x80;
+	REG_MAPSET = 0x80;
 
 	int key = KEY_RIGHT;
 

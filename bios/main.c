@@ -145,7 +145,7 @@ int32_t main(void)
 	}
 	if (entry == (void*)0x00020004)
 		DmaClear((int8_t*)0x01001000, 0, 0x003F0000, DMA_INT); //Reset cart's workram
-	REG_SCREENMODE = REG_SCREENFADE = REG_MAPSET1 = REG_MAPSET2 = 0x0;
+	REG_SCREENMODE = REG_SCREENFADE = REG_MAPSET = 0;
 	REG_SCROLLX1 = REG_SCROLLX2 = REG_SCROLLY1 = REG_SCROLLY2 = 0;
 	REG_HDMACONTROL[0] = 0;
 	interface->VBlank = 0;
@@ -195,15 +195,15 @@ void ZeroHandler()
 void NMIHandler()
 {
 	int interrupts = REG_INTRMODE;
-	if (interrupts & 4)
+	if (interrupts & IMODE_INVBLANK)
 	{
 		if (interface->VBlank != 0) interface->VBlank();
-		REG_INTRMODE &= ~4;
+		REG_INTRMODE &= ~IMODE_INVBLANK;
 	}
-	else if (interrupts & 2)
+	else if (interrupts & IMODE_INHBLANK)
 	{
 		if (interface->HBlank != 0) interface->HBlank();
-		REG_INTRMODE &= ~2;
+		REG_INTRMODE &= ~IMODE_INHBLANK;
 	}
 	asm("rte");
 }

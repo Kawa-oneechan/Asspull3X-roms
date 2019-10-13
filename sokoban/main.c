@@ -92,7 +92,7 @@ void drawTile(int i, int j, int tile)
 void draw()
 {
 	char* here = map;
-	//REG_INTRMODE |= 0x80;
+	//intoff();
 	REG_SCROLLX1 = -8;
 	REG_SCROLLY1 = 8;
 	for (int j = 0; j < BOUNDS; j++)
@@ -330,7 +330,7 @@ int main(void)
 	WaitForKey();
 	DRAW->FadeToWhite();
 
-	MISC->SetTextMode(SMODE_TILE | SMODE_SPRITES);
+	MISC->SetTextMode(SMODE_TILE);
 	MISC->DmaCopy(TILESET, (int8_t*)&tilesTiles, 1024, DMA_INT);
 	MISC->DmaCopy(TILESET + 0x2000, (int8_t*)&playerTiles, 1024, DMA_INT);
 	MISC->DmaCopy(PALETTE, (int16_t*)&tilesPal, 16, DMA_INT);
@@ -340,9 +340,9 @@ int main(void)
 	REG_HDMATARGET[0] = (int32_t)PALETTE;
 	REG_HDMACONTROL[0] = DMA_ENABLE | HDMA_DOUBLE | (DMA_SHORT << 4) | (0 << 8) | (480 << 20);
 	REG_SCREENFADE = 31;
-	REG_MAPSET1 = 0x80;
+	REG_MAPSET = 0x80;
 	interface->VBlank = music;
-	REG_INTRMODE = 0;
+	inton();
 	musicNumTracks = -1;
 
 	levelNum = -1;
