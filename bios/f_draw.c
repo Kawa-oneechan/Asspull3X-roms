@@ -12,7 +12,7 @@ const IDrawingLibrary drawingLibrary =
 };
 
 #define DRAWCHAR4(WIDTH) \
-	char* glyph = (char*)0x0E040200 + (c * 8); \
+	char* glyph = (char*)0x0E050200 + (c * 8); \
 	char* target = (char*)0x0E000000 + (y * (WIDTH/2)) + (x / 2); \
 	if (x % 2 == 0) { for (int32_t line = 0; line < 8; line++) { \
 			char g = *glyph++; for (int32_t bit = 0; bit < 8; bit += 2) { \
@@ -28,7 +28,7 @@ const IDrawingLibrary drawingLibrary =
 			} target++; if ((g >> 7) & 1) *target = (*target & 0x0F) | (color << 4); \
 			target += (WIDTH/2) - 4; } }
 #define DRAWCHAR8(WIDTH) \
-	char* glyph = (char*)0x0E040200 + (c * 8); \
+	char* glyph = (char*)0x0E050200 + (c * 8); \
 	char* target = (char*)0x0E000000 + (y * (WIDTH)) + x; \
 	for (int32_t line = 0; line < 8; line++) { for (int32_t bit = 0; bit < 8; bit++) { \
 			int32_t pixel = (*glyph >> bit) & 1; if (pixel == 0) continue; \
@@ -86,7 +86,7 @@ void DisplayPicture(TImageFile* picData)
 	int8_t* source = (int8_t*)picData;
 	source += picData->ImageOffset;
 	if (picData->Flags & 1)
-		RleUnpack((void*)0x0E000000, source, picData->ByteSize);
+		RleUnpack((void*)0x0E000000, source, picData->Stride * picData->Height);
 	else
 		DmaCopy((void*)0x0E000000, source, picData->ByteSize, DMA_INT);
 	DmaCopy((void*)PALETTE, (int8_t*)((int32_t)picData + picData->ColorOffset), colors * 1, DMA_SHORT);

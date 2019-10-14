@@ -51,7 +51,7 @@ typedef struct TSpriteA
 	uint16_t _waste:2;
 	uint16_t tile:9;
 } TSpriteA;
-#define spritesA ((TSpriteA*)0x0E044000)
+#define spritesA ((TSpriteA*)SPRITES_A)
 typedef struct TSpriteB
 {
 	uint32_t priority:2;
@@ -68,7 +68,7 @@ typedef struct TSpriteB
 	uint32_t _waste3:2;
 	uint32_t x:10;
 } TSpriteB;
-#define spritesB ((TSpriteB*)0x0E044200)
+#define spritesB ((TSpriteB*)SPRITES_B)
 
 int main(void)
 {
