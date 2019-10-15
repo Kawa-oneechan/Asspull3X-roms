@@ -52,8 +52,9 @@ extern int32_t f_mount (FATFS* fs, const char* path, char opt);
 
 void MountIfNeeded()
 {
+	REG_DEBUGOUT = 'M';
 	if (FatFs.fs_type == 0)
-		f_mount(&FatFs, "", 1);
+		REG_DEBUGOUT = '0' + f_mount(&FatFs, "", 1);
 }
 
 int32_t OpenFile(TFileHandle* handle, const char* path, char mode)

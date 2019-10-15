@@ -59,7 +59,7 @@ int32_t main(void)
 	{
 		if (*cartCode != 0x41535321) //ASS!
 		{
-			haveDisk = *(volatile uint8_t*)(0x0D800032) & 1;
+			haveDisk = *(volatile uint8_t*)(0x02000004) & 1;
 			if (haveDisk && !hadDisk)
 			{
 				hadDisk = 1;
