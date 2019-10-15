@@ -144,7 +144,8 @@ int32_t main(void)
 		FadeToBlack();
 	}
 	if (entry == (void*)0x00020004)
-		DmaClear((int8_t*)0x01001000, 0, 0x003F0000, DMA_INT); //Reset cart's workram
+		DmaClear((int8_t*)0x01001000, 0, 0x00200000, DMA_INT); //Reset cart's workram
+	MidiReset();
 	REG_SCREENMODE = REG_SCREENFADE = REG_MAPSET = 0;
 	REG_SCROLLX1 = REG_SCROLLX2 = REG_SCROLLY1 = REG_SCROLLY2 = 0;
 	REG_HDMACONTROL[0] = 0;

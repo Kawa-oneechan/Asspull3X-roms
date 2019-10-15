@@ -38,7 +38,7 @@ MEMORY
  * grows down
  */
 
-PROVIDE (__stack = 96M);
+PROVIDE (__stack = 0x013F0000);
 
 SECTIONS
 {
@@ -101,7 +101,7 @@ SECTIONS
     end = _end;
   } > ram
 
-  PROVIDE(__HEAP_START = 0x03000000 );
+  PROVIDE(__HEAP_START = 0x01100000 );
 
   .stab 0 (NOLOAD) :
   {

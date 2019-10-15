@@ -83,7 +83,7 @@ initialize:
 	move.w  (%a0)+,(%a1)+
 	dbra    %d0,2b
 
-	lea     0x01FF0000,%a0
+	lea     0x013F0000,%a0
 	movea.l %a0,%sp			| set stack pointer to top of Work RAM
 	link.w  %a6,#-8			| set up initial stack frame
 

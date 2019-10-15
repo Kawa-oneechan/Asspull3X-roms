@@ -30,8 +30,8 @@ __DYNAMIC  =  0;
 
 MEMORY
 {
-    rom (rx) : ORIGIN = 0x00000000, LENGTH = 0x00020000
-    ram (wx) : ORIGIN = 0x01000000, LENGTH = 0x00001000
+    rom (rx) : ORIGIN = 0x00000000, LENGTH = 0x0000FFFF
+    ram (wx) : ORIGIN = 0x01000000, LENGTH = 0x00400000
 }
 
 /*
@@ -39,7 +39,7 @@ MEMORY
  * grows down
  */
 
-PROVIDE (__stack = 96M);
+PROVIDE (__stack = 0x013F0000);
 
 SECTIONS
 {
@@ -90,7 +90,7 @@ SECTIONS
     end = _end;
   } > ram
 
-  PROVIDE(__HEAP_START = 0x02000000 );
+  PROVIDE(__HEAP_START = 0x01100000 );
 
   .stab 0 (NOLOAD) :
   {
