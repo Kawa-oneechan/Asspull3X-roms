@@ -32,7 +32,7 @@ typedef int8_t* va_list;
 #define intoff() REG_INTRMODE |= IMODE_DISABLE
 #define inton() REG_INTRMODE &= ~IMODE_DISABLE
 
-#define HaveDisk()		(*(volatile int8_t*)(0x0D800032) & 1)
+#define HaveDisk()		(*(volatile int8_t*)(0x02000004) & 1)
 
 //--------------
 //ASS-RT SUPPORT

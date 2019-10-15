@@ -2,9 +2,9 @@
 #include "ff.h"
 
 //Keeping this separate from ass.h because you REALLY have no business here!
-#define DISKRAM			((unsigned char*)0x0D7FFE00)
-#define REG_DISKSECTOR	*(unsigned short*)(0x0D800030)
-#define REG_DISKCONTROL	*(volatile unsigned char*)(0x0D800032)
+#define DISKRAM			((unsigned char*)0x02000200)
+#define REG_DISKSECTOR	*(unsigned short*)(0x02000002)
+#define REG_DISKCONTROL	*(volatile unsigned char*)(0x02000004)
 #define DCTL_PRESENT	1
 #define DCTL_ERROR		2
 #define DCTL_READNOW	4

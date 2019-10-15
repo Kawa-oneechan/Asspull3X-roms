@@ -53,13 +53,13 @@ int32_t main(void)
 	sprintf(biosVer, "BIOS v%d.%d", (interface->biosVersion >> 8) & 0xFF, (interface->biosVersion >> 0) & 0xFF);
 	dpf(biosVer);
 
-	DmaCopy((int8_t*)0x0E040200, (int8_t*)&fontTiles, 12288, DMA_INT);
+	DmaCopy((int8_t*)0x0E050200, (int8_t*)&fontTiles, 12288, DMA_INT);
 
 	while(1)
 	{
 		if (*cartCode != 0x41535321) //ASS!
 		{
-			haveDisk = *(volatile uint8_t*)(0x0D800032) & 1;
+			haveDisk = *(volatile uint8_t*)(0x02000004) & 1;
 			if (haveDisk && !hadDisk)
 			{
 				hadDisk = 1;
