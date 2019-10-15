@@ -23,7 +23,7 @@
 #include "diskio.h"		/* Declarations of device I/O functions */
 
 //KAWA
-#define REG_DISKCONTROL	*(volatile unsigned char*)(0x0D800032)
+#define REG_DISKCONTROL	*(volatile unsigned char*)(0x02000004)
 #define DCTL_PRESENT	1
 
 /*--------------------------------------------------------------------------

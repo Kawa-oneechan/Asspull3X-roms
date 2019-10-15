@@ -131,18 +131,18 @@ void* calloc(int number, int size) { return interface->calloc(number, size); }
 #define ALIGN4(x) (((((x)-1)>>2)<<2)+4)
 extern int  __HEAP_START; //0x03000000 presumed.
 
-void* heap = (void*)0x03000000; //0;
+void* heap = (void*)0x01100000; //0;
 void* sbrk(int incr)
 {
 	if (incr == 0) return heap;
 	void *prev_heap;
 	if (heap == 0)
 	{
-		heap = (void*)0x03000000; //(char*)&__HEAP_START;
+		heap = (void*)0x01100000; //(char*)&__HEAP_START;
 	}
 	prev_heap = heap;
 
-	if (((unsigned int)heap + incr) >= 0x04000000)
+	if (((unsigned int)heap + incr) >= 0x01400000)
 	{
 		return prev_heap;
 	}
@@ -199,7 +199,7 @@ void* malloc(unsigned int size)
 	if (size <= 0) return NULL;
 	if (malloc_global_base == 0) //First call.
 	{
-		malloc_global_base = (void*)0x03000000;
+		malloc_global_base = (void*)0x01100000;
 		heap = malloc_global_base;
 		block = malloc_request_space(NULL, size);
 		if (!block) return NULL;
