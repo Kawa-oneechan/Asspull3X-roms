@@ -340,6 +340,8 @@ int main(void)
 		if (!InBounds(head))
 		{
 			MIDI_KEYON(3, MIDI_C2, 80);
+			MIDI_KEYOFF(2, MIDI_A5, 80);
+			MIDI_KEYOFF(2, MIDI_D6, 80);
 			GameOver();
 		}
 		else

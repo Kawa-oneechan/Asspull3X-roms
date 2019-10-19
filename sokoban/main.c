@@ -354,7 +354,7 @@ int main(void)
 	{
 
 		drawPlayer(lastDir);
-		for (int delay = 0; delay < 8; delay++)
+		for (int delay = 0; delay < 6; delay++)
 		{
 			vbl();
 			in = REG_KEYIN;
