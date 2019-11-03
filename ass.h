@@ -110,9 +110,10 @@ extern void free(void*);
 #define BLIT_INVERT				(3 << 0)
 #define BLIT_UNRLE				(4 << 0)
 #define BLIT_STRIDESKIP			(1 << 4)
-#define BLIT_BYTE				(0 << 5)
-#define BLIT_SHORT				(1 << 5)
-#define BLIT_INT				(2 << 5)
+#define BLIT_COLORKEY			(1 << 5)
+#define BLIT_BYTE				(0 << 6)
+#define BLIT_SHORT				(1 << 6)
+#define BLIT_INT				(2 << 6)
 #define BLIT_SOURCESTRIDE(x)	((x) << 8)
 #define BLIT_TARGETSTRIDE(x)	((x) << 20)
 

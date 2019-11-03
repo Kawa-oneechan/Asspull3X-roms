@@ -32,7 +32,6 @@ void Display(char* what)
 	REG_BLITTARGET = 0x0E000000 + (76 * 320) + 170;
 	REG_BLITLENGTH = 280;
 	REG_BLITCONTROL = BLIT_SET | BLIT_INT | BLIT_STRIDESKIP | BLIT_SOURCESTRIDE(35) | BLIT_TARGETSTRIDE(80);
-	//(80 << 20) | (35 << 8) | (2 << 5) | (1 << 4) | (2 << 0);
 
 	int pos = 240 - (strnlen_s(what, 16) * 4); //len * 8, but halved.
 	DrawString(what, pos + 1, 77, 50);
