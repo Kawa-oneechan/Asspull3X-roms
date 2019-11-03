@@ -123,8 +123,13 @@ void TitleScreen()
 	WaitForKey();
 
 	delay = 10;
-	for (int i = 12; i < 32; i++)
+	for (int i = 14; i < 28; i++)
 		Tile(14, i, 0);
+	Tile(14, 15, 59); //S
+	Tile(14, 16, 56); //P
+	Tile(14, 17, 58); //E
+	Tile(14, 18, 58); //E
+	Tile(14, 19,  7); //D
 	while (1)
 	{
 		vbl();
@@ -142,8 +147,8 @@ void TitleScreen()
 			break;
 		char buffer[25];
 		ultoa(delay, buffer);
-		Tile(14, 19, 0);
-		Write(14, 18, buffer);
+		Tile(14, 22, 0);
+		Write(14, 21, buffer);
 	}
 
 	//interface->VBlank = 0;
