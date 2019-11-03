@@ -307,7 +307,7 @@ void music()
 			}
 			length &= ~0x80;
 			musicLastNote[i] = newNote;
-			musicTimer[i] = (128 / length) / 2;
+			musicTimer[i] = (128 / length);
 		}
 		else
 			musicTimer[i]--;
@@ -354,7 +354,7 @@ int main(void)
 	{
 
 		drawPlayer(lastDir);
-		for (int delay = 0; delay < 6; delay++)
+		for (int delay = 0; delay < 12; delay++)
 		{
 			vbl();
 			in = REG_KEYIN;

@@ -15,6 +15,7 @@ extern const uint16_t tilesPal[16];
 
 unsigned long score = 0;
 int fruitTimer = 0;
+int delay = 16;
 
 typedef struct
 {
@@ -103,6 +104,8 @@ void TitleMusic()
 	//MIDI_KEYON(1, (MIDI_C2 + (rand() % 3)), (40 + (rand() % 10)));
 }
 
+void Tile(int, int, uint16_t);
+void Write(int, int, char*);
 void TitleScreen()
 {
 	uint16_t* dst = MAP1;
@@ -118,7 +121,32 @@ void TitleScreen()
 	interface->VBlank = TitleMusic;
 
 	WaitForKey();
-	interface->VBlank = 0;
+
+	delay = 10;
+	for (int i = 12; i < 32; i++)
+		Tile(14, i, 0);
+	while (1)
+	{
+		vbl();
+		if (REG_KEYIN == KEY_UP && delay < 16)
+		{
+			delay++;
+			while (REG_KEYIN != 0) { vbl(); }
+		}
+		else if (REG_KEYIN == KEY_DOWN && delay > 1)
+		{
+			delay--;
+			while (REG_KEYIN != 0) { vbl(); }
+		}
+		else if (REG_KEYIN == 0x1C)
+			break;
+		char buffer[25];
+		ultoa(delay, buffer);
+		Tile(14, 19, 0);
+		Write(14, 18, buffer);
+	}
+
+	//interface->VBlank = 0;
 	DRAW->FadeToBlack();
 	rndseed = REG_TICKCOUNT;
 }
@@ -137,7 +165,7 @@ void Write(int y, int x, char* str)
 	char *b = str;
 	while (*b)
 	{
-		if (*b >= '0' && *b < '9')
+		if (*b >= '0' && *b <= '9')
 			Tile(y, x++, *b - '0' + 8);
 		//((int16_t*)MEM_VRAM)[pos] = (*b << 8) | attribs;
 		b++;
@@ -174,7 +202,9 @@ void DrawBoard()
 void GameOver()
 {
 	DRAW->FadeToWhite();
-	while(1);
+	//while(1);
+	WaitForKey();
+
 }
 
 int InBounds(pos position)
@@ -247,6 +277,14 @@ void MovePlayer(pos head)
 	Write(HEIGHT - 1, 7, buffer);
 }
 
+void ClearBoard()
+{
+	for (int i = 0; i < WIDTH * HEIGHT; i++)
+		spaces[i] = 0;
+	for (int i = 0; i < 64 * 32; i++)
+		MAP1[i] = 0;
+}
+
 int main(void)
 {
 	interface = (IBios*)(0x01000000);
@@ -259,95 +297,97 @@ int main(void)
 	REG_HDMACONTROL[0] = DMA_ENABLE | HDMA_DOUBLE | (DMA_SHORT << 4) | (0 << 8) | (480 << 20);
 	REG_MAPSET = 0x80;
 
-	int key = KEY_RIGHT;
-
 	MIDI_PROGRAM(1, MIDI_ACOUSTICBASS);
 	MIDI_PROGRAM(2, MIDI_FX4ATMOSPHERE);
 	MIDI_PROGRAM(3, MIDI_GUNSHOT);
 
 	TitleScreen();
 
-	DrawBoard();
-	PlaceAndDrawFruit();
-	pos head = { 5, 5 };
-	snakeBits[headCursor].x = head.x;
-	snakeBits[headCursor].y = head.y;
-	headCursor++;
-	if (headCursor == MAXSNAKEBITS) headCursor = 0;
-
-	DRAW->FadeFromBlack();
-
 	while(1)
 	{
-		vbl();
-		vbl();
-		vbl();
-		vbl();
-		vbl();
-		vbl();
+		ClearBoard();
+		int key = KEY_RIGHT;
+		headCursor = 0;
+		tailCursor = 0;
+		DrawBoard();
+		PlaceAndDrawFruit();
+		pos head = { 5, 5 };
+		snakeBits[headCursor].x = head.x;
+		snakeBits[headCursor].y = head.y;
+		headCursor++;
+		if (headCursor == MAXSNAKEBITS) headCursor = 0;
 
-		if (fruitTimer)
+		DRAW->FadeFromBlack();
+
+		while(1)
 		{
-			fruitTimer--;
-			if (fruitTimer == 1)
+			for (int i = 0; i < delay; i++)
+				vbl();
+
+			if (fruitTimer)
 			{
+				fruitTimer--;
+				if (fruitTimer == 1)
+				{
+					MIDI_KEYOFF(2, MIDI_A5, 80);
+					MIDI_KEYON(2, MIDI_D6, 80);
+				}
+				if (fruitTimer == 0)
+				{
+					MIDI_KEYOFF(2, MIDI_D6, 80);
+				}
+			}
+
+			int in = REG_KEYIN;
+			if (REG_JOYPAD & 1) in = KEY_UP;
+			else if (REG_JOYPAD & 2) in = KEY_RIGHT;
+			else if (REG_JOYPAD & 4) in = KEY_DOWN;
+			else if (REG_JOYPAD & 8) in = KEY_LEFT;
+			rndseed += in;
+
+			switch (in)
+			{
+				case KEY_DOWN:
+					if (key != KEY_UP) key = in;
+					break;
+				case KEY_RIGHT:
+					if (key != KEY_LEFT) key = in;
+					break;
+				case KEY_UP:
+					if (key != KEY_DOWN) key = in;
+					break;
+				case KEY_LEFT:
+					if (key != KEY_RIGHT) key = in;
+					break;
+			}
+			switch(key)
+			{
+				case KEY_DOWN:
+					head.y++;
+					break;
+				case KEY_RIGHT:
+					head.x++;
+					break;
+				case KEY_UP:
+					head.y--;
+					break;
+				case KEY_LEFT:
+					head.x--;
+					break;
+			}
+			if (!InBounds(head))
+			{
+				MIDI_KEYON(3, MIDI_C2, 80);
 				MIDI_KEYOFF(2, MIDI_A5, 80);
-				MIDI_KEYON(2, MIDI_D6, 80);
-			}
-			if (fruitTimer == 0)
-			{
 				MIDI_KEYOFF(2, MIDI_D6, 80);
+				GameOver();
+				break;
 			}
-		}
-
-		int in = REG_KEYIN;
-		if (REG_JOYPAD & 1) in = KEY_UP;
-		else if (REG_JOYPAD & 2) in = KEY_RIGHT;
-		else if (REG_JOYPAD & 4) in = KEY_DOWN;
-		else if (REG_JOYPAD & 8) in = KEY_LEFT;
-		rndseed += in;
-
-		switch (in)
-		{
-			case KEY_DOWN:
-				if (key != KEY_UP) key = in;
-				break;
-			case KEY_RIGHT:
-				if (key != KEY_LEFT) key = in;
-				break;
-			case KEY_UP:
-				if (key != KEY_DOWN) key = in;
-				break;
-			case KEY_LEFT:
-				if (key != KEY_RIGHT) key = in;
-				break;
-		}
-		switch(key)
-		{
-			case KEY_DOWN:
-				head.y++;
-				break;
-			case KEY_RIGHT:
-				head.x++;
-				break;
-			case KEY_UP:
-				head.y--;
-				break;
-			case KEY_LEFT:
-				head.x--;
-				break;
-		}
-		if (!InBounds(head))
-		{
-			MIDI_KEYON(3, MIDI_C2, 80);
-			MIDI_KEYOFF(2, MIDI_A5, 80);
-			MIDI_KEYOFF(2, MIDI_D6, 80);
-			GameOver();
-		}
-		else
-		{
-			MIDI_KEYON(1, (MIDI_C2 + (rand() % 3)), (40 + (rand() % 10)));
-			MovePlayer(head);
+			else
+			{
+				MIDI_KEYON(1, (MIDI_C2 + (rand() % 3)), (40 + (rand() % 10)));
+				MovePlayer(head);
+			}
 		}
 	}
 	GameOver();
