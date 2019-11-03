@@ -261,13 +261,14 @@ void nextLevel()
 	if (*thisLevel == 0)
 	{
 		//Reached a blank level? Must be the end. Cool beans.
-		REG_HDMACONTROL[0] = 0; //disable gradient
-		MISC->SetTextMode(SMODE_240 | SMODE_BOLD);
-		TEXT->SetTextColor(1, 3);
-		TEXT->ClearScreen();
-		printf(
+		//TODO: make this a nice bitmap image instead.
+		MISC->SetBitmapMode256(SMODE_240);
+		MISC->DmaClear((void*)MEM_VRAM, 0, 640*240/4, DMA_INT);
+		DRAW->ResetPalette();
+		DRAW->DrawString(
 			"Congratulations, you beat every single level in this pack.\n"
-			"Reminder to self: make a nice win screen."
+			"Reminder to self: make a nice win screen.",
+			8, 8, 15
 		);
 		//remove the sprite
 		SPRITES_B[0] = SPRITEB_BUILD(-16, -24, 0, 1, 0, 0, 1, 1);
@@ -342,51 +343,51 @@ void WaitForKey()
 	while (REG_KEYIN != 0) { vbl(); }
 }
 
-void* LoadFile(const char* path, void* buffer, int32_t len)
+int getc()
 {
-	FILE file;
-	FILEINFO nfo;
-	int regs = REG_INTRMODE;
-	intoff();
-	int32_t ret = DISK->FileStat(path, &nfo);
-	ret = DISK->OpenFile(&file, path, FA_READ);
-	if (ret > 0)
+	unsigned short key = 0;
+	while (1)
 	{
-		REG_INTRMODE = regs;
-		return (void*)ret;
+		key = REG_KEYIN;
+		if (key & 0xFF) break;
+		vbl();
 	}
-	void *target = buffer;
-	for(;;)
-	{
-		ret = DISK->ReadFile(&file, target, 1024);
-		if (ret < 0)
-		{
-			REG_INTRMODE = regs;
-			return (void*)ret;
-		}
-		target += ret;
-		if (ret < 1024)
-			break;
-	}
-	DISK->CloseFile(&file);
-	REG_INTRMODE = regs;
-	return buffer;
+	while (REG_KEYIN != 0) { vbl(); }
+	return key;
 }
 
 void CheckForDisk()
 {
+	const char* msg =
+		"A diskette has been inserted with a level pack file on it.\n"
+		"Would you like to play that instead of the built-in pack? [Y/n]";
 	FILEINFO nfo;
 	DIR dir;
 	FILE file;
 	int ret = DISK->FindFirst(&dir, &nfo, "0:/", "sokoban.txt");
-	REG_DEBUGOUT = '0' + ret;
-	if (ret != 0)
-		return;
-	if (nfo.fname[0] == 0)
-		return;
-	REG_DEBUGOUT = 'D';
+	if (ret != 0) return;
+	if (nfo.fname[0] == 0) return;
+
+	MISC->SetBitmapMode256(SMODE_240);
+	MISC->DmaClear((void*)MEM_VRAM, 0, 640*240/4, DMA_INT);
+	DRAW->ResetPalette();
+	PALETTE[1] = 0;
+	DRAW->DrawString(msg, 17, 97, 1);
+	DRAW->DrawString(msg, 16, 96, 15);
+	DRAW->FadeFromWhite();
+	while (1)
+	{
+		int key = getc();
+		if (key == 0x15 || key == 0x1C) //y or enter
+			break;
+		else if (key == 0x31) //n
+		{
+			DRAW->FadeToWhite();
+			return;
+		}
+	}
+
 	levelPack = (char*)malloc(nfo.fsize);
-	//LoadFile(filePath, (void*)levelPack, nfo.fsize);
 	ret = DISK->OpenFile(&file, "0:/sokoban.txt", FA_READ);
 	ret = DISK->ReadFile(&file, (void*)levelPack, nfo.fsize);
 	ret = DISK->CloseFile(&file);
@@ -397,6 +398,7 @@ void CheckForDisk()
 			*c = 0;
 		c++;
 	}
+	DRAW->FadeToWhite();
 }
 
 int main(void)
@@ -409,12 +411,6 @@ int main(void)
 	WaitForKey();
 	DRAW->FadeToWhite();
 
-	levelPack = (char*)levels[0];
-	CheckForDisk();
-	//levelPack = (char**)diskLevels;
-	thisLevel = levelPack;
-
-	MISC->SetTextMode(SMODE_TILE);
 	MISC->DmaCopy(TILESET, (int8_t*)&tilesTiles, 1024, DMA_INT);
 	MISC->DmaCopy(TILESET + 0x2000, (int8_t*)&playerTiles, 1024, DMA_INT);
 	MISC->DmaCopy(PALETTE, (int16_t*)&tilesPal, 16, DMA_INT);
@@ -425,6 +421,14 @@ int main(void)
 	REG_HDMACONTROL[0] = DMA_ENABLE | HDMA_DOUBLE | (DMA_SHORT << 4) | (0 << 8) | (480 << 20);
 	REG_SCREENFADE = 31;
 	REG_MAPSET = 0x80;
+
+	levelPack = (char*)levels[0];
+	CheckForDisk();
+	//levelPack = (char**)diskLevels;
+	thisLevel = levelPack;
+
+	MISC->SetTextMode(SMODE_TILE);
+
 	interface->VBlank = music;
 	inton();
 	musicNumTracks = -1;
