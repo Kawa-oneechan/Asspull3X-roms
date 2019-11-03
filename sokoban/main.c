@@ -7,6 +7,9 @@ extern const uint16_t playerTiles[], playerPal[];
 extern const uint16_t hdma1[];
 extern const char * const levels[];
 
+char *levelPack;
+char *thisLevel;
+
 #define WIDTH 40
 #define HEIGHT 30
 
@@ -255,10 +258,28 @@ int checkWin()
 
 void nextLevel()
 {
+	if (*thisLevel == 0)
+	{
+		//Reached a blank level? Must be the end. Cool beans.
+		REG_HDMACONTROL[0] = 0; //disable gradient
+		MISC->SetTextMode(SMODE_240 | SMODE_BOLD);
+		TEXT->SetTextColor(1, 3);
+		TEXT->ClearScreen();
+		printf(
+			"Congratulations, you beat every single level in this pack.\n"
+			"Reminder to self: make a nice win screen."
+		);
+		//remove the sprite
+		SPRITES_B[0] = SPRITEB_BUILD(-16, -24, 0, 1, 0, 0, 1, 1);
+		DRAW->FadeFromWhite();
+		while(1);
+	}
+
 	levelNum++;
 	if (levelNum > 0)
 		DRAW->FadeToWhite();
-	loadFromCode(levels[levelNum]);
+	loadFromCode(thisLevel);
+	while(*thisLevel++) ;
 	lastDir = 2;
 	draw();
 	DRAW->FadeFromWhite();
@@ -321,6 +342,63 @@ void WaitForKey()
 	while (REG_KEYIN != 0) { vbl(); }
 }
 
+void* LoadFile(const char* path, void* buffer, int32_t len)
+{
+	FILE file;
+	FILEINFO nfo;
+	int regs = REG_INTRMODE;
+	intoff();
+	int32_t ret = DISK->FileStat(path, &nfo);
+	ret = DISK->OpenFile(&file, path, FA_READ);
+	if (ret > 0)
+	{
+		REG_INTRMODE = regs;
+		return (void*)ret;
+	}
+	void *target = buffer;
+	for(;;)
+	{
+		ret = DISK->ReadFile(&file, target, 1024);
+		if (ret < 0)
+		{
+			REG_INTRMODE = regs;
+			return (void*)ret;
+		}
+		target += ret;
+		if (ret < 1024)
+			break;
+	}
+	DISK->CloseFile(&file);
+	REG_INTRMODE = regs;
+	return buffer;
+}
+
+void CheckForDisk()
+{
+	FILEINFO nfo;
+	DIR dir;
+	FILE file;
+	int ret = DISK->FindFirst(&dir, &nfo, "0:/", "sokoban.txt");
+	REG_DEBUGOUT = '0' + ret;
+	if (ret != 0)
+		return;
+	if (nfo.fname[0] == 0)
+		return;
+	REG_DEBUGOUT = 'D';
+	levelPack = (char*)malloc(nfo.fsize);
+	//LoadFile(filePath, (void*)levelPack, nfo.fsize);
+	ret = DISK->OpenFile(&file, "0:/sokoban.txt", FA_READ);
+	ret = DISK->ReadFile(&file, (void*)levelPack, nfo.fsize);
+	ret = DISK->CloseFile(&file);
+	char* c = levelPack;
+	while (*c)
+	{
+		if (*c == '\n')
+			*c = 0;
+		c++;
+	}
+}
+
 int main(void)
 {
 	interface = (IBios*)(0x01000000);
@@ -330,6 +408,11 @@ int main(void)
 	DRAW->FadeFromBlack();
 	WaitForKey();
 	DRAW->FadeToWhite();
+
+	levelPack = (char*)levels[0];
+	CheckForDisk();
+	//levelPack = (char**)diskLevels;
+	thisLevel = levelPack;
 
 	MISC->SetTextMode(SMODE_TILE);
 	MISC->DmaCopy(TILESET, (int8_t*)&tilesTiles, 1024, DMA_INT);
