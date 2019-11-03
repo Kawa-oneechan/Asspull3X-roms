@@ -4,6 +4,8 @@ IBios* interface;
 extern const TImageFile titlePic;
 extern const uint16_t tilesTiles[], tilesPal[];
 extern const uint16_t playerTiles[], playerPal[];
+extern const uint8_t diskettePic[];
+extern const uint16_t diskettePal[];
 extern const uint16_t hdma1[];
 extern const char * const levels[];
 
@@ -356,11 +358,28 @@ int getc()
 	return key;
 }
 
+void RotateTheFloppy()
+{
+	static int frame = 0, timer = 0;
+	if (timer == 0)
+	{
+		//Technically we could use the Blitter to handle source and target strides.
+		//But let's keep it simple for now.
+		for (int i = 0; i < 32; i++)
+			MISC->DmaCopy((void*)MEM_VRAM + ((96 + i) * 320) + 24, (int8_t*)&diskettePic + (frame * 0x200) + (i * 16), 16, DMA_BYTE);
+		frame++;
+		if (frame == 8) frame = 0;
+		timer = 8;
+	}
+	else
+		timer--;
+}
+
 void CheckForDisk()
 {
 	const char* msg =
 		"A diskette has been inserted with a level pack file on it.\n"
-		"Would you like to play that instead of the built-in pack? [Y/n]";
+		"Would you like to play that instead of the built-in pack?\n\n[Y/n]";
 	FILEINFO nfo;
 	DIR dir;
 	FILE file;
@@ -368,12 +387,14 @@ void CheckForDisk()
 	if (ret != 0) return;
 	if (nfo.fname[0] == 0) return;
 
-	MISC->SetBitmapMode256(SMODE_240);
+	MISC->SetBitmapMode16(SMODE_240);
 	MISC->DmaClear((void*)MEM_VRAM, 0, 640*240/4, DMA_INT);
-	DRAW->ResetPalette();
-	PALETTE[1] = 0;
-	DRAW->DrawString(msg, 17, 97, 1);
-	DRAW->DrawString(msg, 16, 96, 15);
+
+	MISC->DmaCopy(PALETTE, (int16_t*)&diskettePal, 16, DMA_INT);
+	interface->VBlank = RotateTheFloppy;
+
+	DRAW->DrawString(msg, 121, 97, 9);
+	DRAW->DrawString(msg, 120, 96, 5);
 	DRAW->FadeFromWhite();
 	while (1)
 	{
@@ -411,11 +432,6 @@ int main(void)
 	WaitForKey();
 	DRAW->FadeToWhite();
 
-	MISC->DmaCopy(TILESET, (int8_t*)&tilesTiles, 1024, DMA_INT);
-	MISC->DmaCopy(TILESET + 0x2000, (int8_t*)&playerTiles, 1024, DMA_INT);
-	MISC->DmaCopy(PALETTE, (int16_t*)&tilesPal, 16, DMA_INT);
-	MISC->DmaCopy(PALETTE + 32, (int16_t*)&playerPal, 16, DMA_INT);
-	MISC->DmaClear(MAP1, 0, WIDTH * HEIGHT, 2);
 	REG_HDMASOURCE[0] = (int32_t)hdma1;
 	REG_HDMATARGET[0] = (int32_t)PALETTE;
 	REG_HDMACONTROL[0] = DMA_ENABLE | HDMA_DOUBLE | (DMA_SHORT << 4) | (0 << 8) | (480 << 20);
@@ -428,6 +444,11 @@ int main(void)
 	thisLevel = levelPack;
 
 	MISC->SetTextMode(SMODE_TILE);
+	MISC->DmaCopy(TILESET, (int8_t*)&tilesTiles, 1024, DMA_INT);
+	MISC->DmaCopy(TILESET + 0x2000, (int8_t*)&playerTiles, 1024, DMA_INT);
+	MISC->DmaCopy(PALETTE, (int16_t*)&tilesPal, 16, DMA_INT);
+	MISC->DmaCopy(PALETTE + 32, (int16_t*)&playerPal, 16, DMA_INT);
+	MISC->DmaClear(MAP1, 0, WIDTH * HEIGHT, 2);
 
 	interface->VBlank = music;
 	inton();
