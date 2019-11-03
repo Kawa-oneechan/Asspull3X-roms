@@ -363,10 +363,11 @@ void RotateTheFloppy()
 	static int frame = 0, timer = 0;
 	if (timer == 0)
 	{
-		//Technically we could use the Blitter to handle source and target strides.
-		//But let's keep it simple for now.
-		for (int i = 0; i < 32; i++)
-			MISC->DmaCopy((void*)MEM_VRAM + ((96 + i) * 320) + 24, (int8_t*)&diskettePic + (frame * 0x200) + (i * 16), 16, DMA_BYTE);
+		REG_BLITSOURCE = (uint32_t)&diskettePic[frame * 0x200];
+		REG_BLITTARGET = MEM_VRAM + (96 * 320) + 24;
+		REG_BLITLENGTH = 0x200;
+		REG_BLITCONTROL = BLIT_COPY | BLIT_BYTE | BLIT_STRIDESKIP | BLIT_SOURCESTRIDE(16) | BLIT_TARGETSTRIDE(320);
+
 		frame++;
 		if (frame == 8) frame = 0;
 		timer = 8;
