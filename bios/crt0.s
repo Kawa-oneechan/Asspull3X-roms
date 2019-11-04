@@ -113,6 +113,8 @@ typedef struct IBios
 	IDrawingLibrary* drawingLibrary;
 	IMiscLibrary* miscLibrary;
 	IDiskLibrary* diskLibrary;
+	char* DrawCharFont;
+	uint16_t DrawCharHeight;
 }
 */
 interface:
@@ -126,5 +128,7 @@ interface:
 	.long drawingLibrary
 	.long miscLibrary
 	.long diskLibrary
+	.long 0x0E050A00	| Bold
+	.short 0x0808		| 8x8, line height 8
 
 	.text

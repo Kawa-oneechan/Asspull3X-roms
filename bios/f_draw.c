@@ -12,15 +12,15 @@ const IDrawingLibrary drawingLibrary =
 };
 
 #define DRAWCHAR4(WIDTH) \
-	char* glyph = (char*)0x0E050A00 + (c * 8); \
+	char* glyph = interface->DrawCharFont + (c * (interface->DrawCharHeight & 0x00FF)); \
 	char* target = (char*)0x0E000000 + (y * (WIDTH/2)) + (x / 2); \
-	if (x % 2 == 0) { for (int32_t line = 0; line < 8; line++) { \
+	if (x % 2 == 0) { for (int32_t line = 0; line < (interface->DrawCharHeight & 0x00FF); line++) { \
 			char g = *glyph++; for (int32_t bit = 0; bit < 8; bit += 2) { \
 				int32_t p = g >> bit; \
 				if (p & 1) *target = (*target & 0x0F) | (color << 4); \
 				if (p & 2) *target = (*target & 0xF0) | color; \
 				target++; } target += (WIDTH/2) - 4; \
-		} }	else { for (int32_t line = 0; line < 8; line++) { \
+		} }	else { for (int32_t line = 0; line < (interface->DrawCharHeight & 0x00FF); line++) { \
 			char g = *glyph++; if (g & 1) *target = (*target & 0xF0) | color; \
 			for (int32_t bit = 1; bit < 7; bit += 2) { target++; int32_t p = g >> bit; \
 				if (p & 1) *target = (*target & 0x0F) | (color << 4); \
@@ -28,9 +28,9 @@ const IDrawingLibrary drawingLibrary =
 			} target++; if ((g >> 7) & 1) *target = (*target & 0x0F) | (color << 4); \
 			target += (WIDTH/2) - 4; } }
 #define DRAWCHAR8(WIDTH) \
-	char* glyph = (char*)0x0E050A00 + (c * 8); \
+	char* glyph = interface->DrawCharFont + (c * (interface->DrawCharHeight & 0x00FF)); \
 	char* target = (char*)0x0E000000 + (y * (WIDTH)) + x; \
-	for (int32_t line = 0; line < 8; line++) { for (int32_t bit = 0; bit < 8; bit++) { \
+	for (int32_t line = 0; line < (interface->DrawCharHeight & 0x00FF); line++) { for (int32_t bit = 0; bit < 8; bit++) { \
 			int32_t pixel = (*glyph >> bit) & 1; if (pixel == 0) continue; \
 			target[bit] = color; \
 		}  glyph++; target += (WIDTH); }
@@ -145,7 +145,7 @@ void DrawString(const char* str, int32_t x, int32_t y, int32_t color)
 		{
 			str++;
 			x = sx;
-			y += 8;
+			y += (int)(interface->DrawCharHeight & 0xFF00) >> 8;
 			continue;
 		}
 		DrawChar(*str++, x, y, color);

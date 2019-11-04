@@ -30,7 +30,7 @@ void Display(char* what)
 	//	DmaClear((void*)0x0E000000 + (y * 320) + 170, 0, 70, DMA_SHORT);
 	REG_BLITSOURCE = 0;
 	REG_BLITTARGET = 0x0E000000 + (76 * 320) + 170;
-	REG_BLITLENGTH = 280;
+	REG_BLITLENGTH = 280 * 2;
 	REG_BLITCONTROL = BLIT_SET | BLIT_INT | BLIT_STRIDESKIP | BLIT_SOURCESTRIDE(35) | BLIT_TARGETSTRIDE(80);
 
 	int pos = 240 - (strnlen_s(what, 16) * 4); //len * 8, but halved.
@@ -47,7 +47,7 @@ int32_t main(void)
 	char* cartName = (char*)0x00020008;
 	int32_t haveDisk = 0, hadDisk = 0;
 	int32_t showSplash = 0;
-	char message[32] = "* INSERT CART *";
+	char message[32] = "\x14 INSERT CART \x15";
 
 	sprintf(biosVer, "BIOS v%d.%d", (interface->biosVersion >> 8) & 0xFF, (interface->biosVersion >> 0) & 0xFF);
 	dpf(biosVer);
@@ -100,7 +100,7 @@ int32_t main(void)
 			{
 				hadDisk = 0;
 				dpf("lost disk");
-				strcpy_s(message, 32, "* INSERT CART *");
+				strcpy_s(message, 32, "\x14 INSERT CART \x15");
 				if (showSplash) Display(message);
 				continue;
 			}
@@ -124,6 +124,8 @@ int32_t main(void)
 			DrawString(biosVer, 1, 1, 1);
 			MIDI_PROGRAM(1, MIDI_SEASHORE);
 			MIDI_KEYON(1, MIDI_C4, 80);
+			interface->DrawCharFont = (char*)0x0E052200;
+			interface->DrawCharHeight = 0x1010;
 			Display(message);
 			FadeFromBlack();
 		}
@@ -150,6 +152,8 @@ int32_t main(void)
 	REG_HDMACONTROL[0] = 0;
 	interface->VBlank = 0;
 	interface->HBlank = 0;
+	interface->DrawCharFont = (char*)0x0E050A00;
+	interface->DrawCharHeight = 0x0808;
 	attribs = 0x0F;
 	ClearScreen();
 	ResetPalette();

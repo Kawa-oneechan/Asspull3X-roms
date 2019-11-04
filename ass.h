@@ -303,6 +303,8 @@ typedef struct IBios
 	IDrawingLibrary* drawingLibrary;
 	IMiscLibrary* miscLibrary;
 	IDiskLibrary* diskLibrary;
+	char* DrawCharFont;
+	uint16_t DrawCharHeight;
 } IBios;
 
 #define TEXT interface->textLibrary
