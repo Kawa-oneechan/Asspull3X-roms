@@ -54,7 +54,7 @@ extern void free(void*);
 #define MEM_VRAM	0x0E000000
 #define MEM_IO		0x0D800000
 #define MAP1		((uint16_t*)0x0E000000)
-#define MAP2		((uint16_t*)0x0E008000)
+#define MAP2		((uint16_t*)0x0E002000)
 #define TILESET		 ((uint8_t*)0x0E010000)
 #define PALETTE		((uint16_t*)0x0E050000)
 #define SPRITES_A	((uint16_t*)0x0E054000)
