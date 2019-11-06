@@ -208,8 +208,8 @@ void GameOver()
 {
 	DRAW->FadeToWhite();
 	//while(1);
+	score = 0;
 	WaitForKey();
-
 }
 
 int InBounds(pos position)
