@@ -82,10 +82,12 @@ int main(void)
 			else if(key == 0xD0)
 			{
 				if (pitoff > 0) pitoff -= 12;
+				while (REG_KEYIN == key) { vbl(); }
 			}
 			else if(key == 0xC8)
 			{
 				if (pitoff < 108) pitoff += 12;
+				while (REG_KEYIN == key) { vbl(); }
 			}
 		}
 		else if (lastPit > -1)
