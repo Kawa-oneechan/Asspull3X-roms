@@ -79,7 +79,7 @@ SECTIONS
   } > ram
   _stext = SIZEOF (.text);
 
-  .data 0x01200000 :
+  .data 0x01040000 :
   AT ( ADDR (.text) + SIZEOF (.text) )
   {
     *(.got.plt) *(.got)
@@ -89,7 +89,7 @@ SECTIONS
   } > ram
   _sdata = SIZEOF (.data);
 
-  .bss 0x01200000 + SIZEOF (.data) :
+  .bss 0x01040000 + SIZEOF (.data) :
   {
     . = ALIGN(0x4);
     __bss_start = . ;

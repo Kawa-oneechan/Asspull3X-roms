@@ -3,4 +3,4 @@
 	jmp	initialize
 	.asciz	"Boot from Disk"
 	.align	32
-	#include "../crt0.s"
+	#include "../crt0_disk.s"

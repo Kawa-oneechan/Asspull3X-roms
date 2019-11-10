@@ -7,41 +7,6 @@ extern char *strrchr(const char *, int32_t);
 #define MAXPATH 256
 #define MAXFILES 512
 
-void* LoadFile(const char* path, void* buffer, int32_t len)
-{
-	FILE file;
-	FILEINFO nfo;
-	int regs = REG_INTRMODE;
-	intoff();
-	int32_t ret = DISK->FileStat(path, &nfo);
-
-	ret = DISK->OpenFile(&file, path, FA_READ);
-	if (ret > 0)
-	{
-		REG_INTRMODE = regs;
-		return (void*)ret;
-	}
-
-	void *target = buffer;
-	for(;;)
-	{
-		ret = DISK->ReadFile(&file, target, 1024);
-		if (ret < 0)
-		{
-			REG_INTRMODE = regs;
-			return (void*)ret;
-		}
-
-		target += ret;
-		if (ret < 1024)
-			break;
-	}
-
-	DISK->CloseFile(&file);
-	REG_INTRMODE = regs;
-	return buffer;
-}
-
 void WaitForKey()
 {
 	while (REG_KEYIN != 0) { vbl(); }
@@ -319,8 +284,9 @@ int32_t StartApp(char* filePath)
 	void(*entry)(void) = (void*)0x01002020;
 	FILEINFO nfo;
 	DISK->FileStat(filePath, &nfo);
-	int32_t size = nfo.fsize;
-	LoadFile((const char*)filePath, (void*)0x01002000, size);
+	FILE file;
+	DISK->OpenFile(&file, filePath, FA_READ);
+	DISK->ReadFile(&file, (void*)0x01002000, nfo.fsize);
 	TEXT->ClearScreen();
 	entry();
 	return 2;
@@ -341,7 +307,10 @@ int32_t ShowPic(char* filePath)
 		WaitForKey();
 		return 2;
 	}
-	LoadFile((const char*)filePath, (void*)image, size);
+	FILE file;
+	DISK->OpenFile(&file, filePath, FA_READ);
+	DISK->ReadFile(&file, (void*)image, nfo.fsize);
+	DISK->CloseFile(&file);
 	if (image->BitDepth != 4 && image->BitDepth != 8)
 	{
 		printf("...yeah no.");
