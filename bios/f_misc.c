@@ -64,9 +64,9 @@ void WaitForVBlanks(int i)
 	while(i--) WaitForVBlank();
 }
 
+//CONSIDER: Replace these with #define macros in ass.h.
 void DmaCopy(void* dst, const void* src, uint32_t size, int step)
 {
-	//MIDI_KEYON(4, 32, 100);
 	REG_DMASOURCE = (int)src;
 	REG_DMATARGET = (int)dst;
 	REG_DMALENGTH = size;
@@ -74,7 +74,6 @@ void DmaCopy(void* dst, const void* src, uint32_t size, int step)
 }
 void DmaClear(void* dst, int src, uint32_t size, int step)
 {
-	//MIDI_KEYON(4, 64, 100);
 	REG_DMASOURCE = (int)src;
 	REG_DMATARGET = (int)dst;
 	REG_DMALENGTH = size;

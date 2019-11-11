@@ -11,9 +11,15 @@ const IDrawingLibrary drawingLibrary =
 	DrawString, DrawFormat, DrawChar
 };
 
+/* CONSIDER: We have four different copies of this routine after preprocessing.
+ * The only difference between them is that two of them work on 4bpp data.
+ * One idea might be to have two actual DrawChar functions, one for each bitdepth,
+ * and a quick check on what the current screen mode is to decide on the width.
+ */
+
 #define DRAWCHAR4(WIDTH) \
 	char* glyph = interface->DrawCharFont + (c * (interface->DrawCharHeight & 0x00FF)); \
-	char* target = (char*)0x0E000000 + (y * (WIDTH/2)) + (x / 2); \
+	char* target = (char*)MEM_VRAM + (y * (WIDTH/2)) + (x / 2); \
 	if (x % 2 == 0) { for (int32_t line = 0; line < (interface->DrawCharHeight & 0x00FF); line++) { \
 			char g = *glyph++; for (int32_t bit = 0; bit < 8; bit += 2) { \
 				int32_t p = g >> bit; \
@@ -29,7 +35,7 @@ const IDrawingLibrary drawingLibrary =
 			target += (WIDTH/2) - 4; } }
 #define DRAWCHAR8(WIDTH) \
 	char* glyph = interface->DrawCharFont + (c * (interface->DrawCharHeight & 0x00FF)); \
-	char* target = (char*)0x0E000000 + (y * (WIDTH)) + x; \
+	char* target = (char*)MEM_VRAM + (y * (WIDTH)) + x; \
 	for (int32_t line = 0; line < (interface->DrawCharHeight & 0x00FF); line++) { for (int32_t bit = 0; bit < 8; bit++) { \
 			int32_t pixel = (*glyph >> bit) & 1; if (pixel == 0) continue; \
 			target[bit] = color; \
@@ -86,13 +92,13 @@ void DisplayPicture(TImageFile* picData)
 	int8_t* source = (int8_t*)picData;
 	source += picData->ImageOffset;
 	if (picData->Flags & 1)
-		RleUnpack((void*)0x0E000000, source, picData->Stride * picData->Height);
+		RleUnpack((void*)MEM_VRAM, source, picData->Stride * picData->Height);
 	else
-		DmaCopy((void*)0x0E000000, source, picData->ByteSize, DMA_INT);
+		DmaCopy((void*)MEM_VRAM, source, picData->ByteSize, DMA_INT);
 	DmaCopy((void*)PALETTE, (int8_t*)((int32_t)picData + picData->ColorOffset), colors * 1, DMA_SHORT);
 }
 
-#define FADESPEED 2
+#define FADESPEED 1
 
 void FadeToBlack()
 {
@@ -148,6 +154,7 @@ void DrawString(const char* str, int32_t x, int32_t y, int32_t color)
 			y += (int)(interface->DrawCharHeight & 0xFF00) >> 8;
 			continue;
 		}
+		//TODO: support \t?
 		DrawChar(*str++, x, y, color);
 		x += 8;
 	}
@@ -162,7 +169,6 @@ void DrawFormat(const char* format, int32_t x, int32_t y, int32_t color, ...)
 	va_list args;
 	va_start(args, format);
 	vsprintf(buffer, format, args);
-	//WriteString(buffer);
 	char *b = buffer;
 	while(*b)
 	{

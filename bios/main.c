@@ -9,16 +9,11 @@ extern int sprintf(char *buf, const char *fmt, ...);
 
 #include "funcs.h"
 
-int inVblank;
-
 //from crt0.s
 IBios* interface;
 
 extern int32_t cursorPos;
 extern int8_t attribs;
-extern int8_t textWidth, textHeight;
-
-extern void cartStart();
 
 extern const uint16_t hdma1[], hdma2[];
 extern const uint16_t fontTiles[];
@@ -26,8 +21,7 @@ extern const TImageFile splashData;
 
 void Display(char* what)
 {
-	//for (int y = 76; y < 84; y++)
-	//	DmaClear((void*)0x0E000000 + (y * 320) + 170, 0, 70, DMA_SHORT);
+	//TODO: Make some nice #define macros for the blitter, in ass.h.
 	REG_BLITSOURCE = 0;
 	REG_BLITTARGET = 0x0E000000 + (76 * 320) + 170;
 	REG_BLITLENGTH = 280 * 2;
@@ -64,36 +58,27 @@ int32_t main(void)
 				hadDisk = 1;
 				dpf("got disk");
 				//We got a disk!
-				DIR dir;
-				FILEINFO info;
 				FILE file;
-				int32_t ret = FindFirst(&dir, &info, "0:/", "start.app");
-				CloseDir(&dir);
-				if (ret == 0)
+				if (OpenFile(&file, "0:/start.app", FA_READ) == 0)
 				{
-					if (info.fname[0])
+					dpf("got start.app");
+					if (ReadFile(&file, (void*)0x01002000, 0) < 0)
 					{
-						dpf("got start.app");
-						ret = OpenFile(&file, "0:/start.app", FA_READ);
-						ret = ReadFile(&file, (void*)0x01002000, info.fsize);
-						if (ret < 0)
-						{
-							strcpy_s(message, 32, "Couldn't read.");
-							if (showSplash) Display(message);
-							continue;
-						}
-						ret = CloseFile(&file);
-						entry = (void*)0x01002020;
-						cartName = (char*)0x01002008;
-						break;
-					}
-					else
-					{
-						dpf("not good");
-						strcpy_s(message, 32, "Not a boot disk.");
+						strcpy_s(message, 32, "Couldn't read.");
 						if (showSplash) Display(message);
 						continue;
 					}
+					CloseFile(&file);
+					entry = (void*)0x01002020;
+					cartName = (char*)0x01002008;
+					break;
+				}
+				else
+				{
+					dpf("not good");
+					strcpy_s(message, 32, "Not a boot disk.");
+					if (showSplash) Display(message);
+					continue;
 				}
 			}
 			else if (!haveDisk && hadDisk)

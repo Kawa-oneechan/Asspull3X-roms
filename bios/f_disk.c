@@ -50,6 +50,7 @@ extern int32_t f_mount (FATFS* fs, const char* path, char opt);
 //extern int32_t f_printf (FILE* fp, const char* str, ...);
 //extern char* f_gets (char* buff, int32_t len, FILE* fp);
 
+//CONSIDER: Is it really?
 void MountIfNeeded()
 {
 	if (FatFs.fs_type == 0)
@@ -62,11 +63,16 @@ int32_t OpenFile(TFileHandle* handle, const char* path, char mode)
 	return f_open(handle, path, mode);
 }
 
-int32_t CloseFile(TFileHandle* handle) { return f_close(handle); }
+int32_t CloseFile(TFileHandle* handle)
+{
+	return f_close(handle);
+}
 
 int32_t ReadFile(TFileHandle* handle, void* target, uint32_t length)
 {
 	uint32_t read;
+	if (length == 0)
+		length = FileSize(handle);
 	int32_t r = f_read(handle, target, length, &read);
 	if (r)
 		return -r;
@@ -86,7 +92,6 @@ int32_t WriteFile(TFileHandle* handle, void* source, uint32_t length)
 
 int32_t SeekFile(TFileHandle* handle, uint32_t offset, int32_t origin)
 {
-	//Write("[SEEKFILE: fptr %#x, objsize %#x, offset %d, origin %d]\n", handle->fptr, handle->obj.objsize, offset, origin);
 	if (origin == SEEK_CUR)
 		f_lseek(handle, handle->fptr + offset);
 	else if (origin == SEEK_END)
@@ -96,52 +101,131 @@ int32_t SeekFile(TFileHandle* handle, uint32_t offset, int32_t origin)
 	return handle->fptr;
 }
 
-int32_t TruncateFile(TFileHandle* handle) { return f_truncate(handle); }
-int32_t FlushFile(TFileHandle* handle) { return f_sync(handle); }
+int32_t TruncateFile(TFileHandle* handle)
+{
+	return f_truncate(handle);
+}
+int32_t FlushFile(TFileHandle* handle)
+{
+	return f_sync(handle);
+}
 
-/*char* FileReadLine(TFileHandle* handle, char* buffer, uint32_t len)
+/*
+char* FileReadLine(TFileHandle* handle, char* buffer, uint32_t len)
 {
 	f_gets(buffer, sizeof buffer, handle);
 	return buffer;
 }
 
-int32_t FilePutChar(TFileHandle* handle, char c) { return f_putc(c, handle); }
-int32_t FileWriteLine(TFileHandle* handle, const char* s) { return f_puts(s, handle); }*/
-uint32_t FilePosition(TFileHandle* handle) { return handle->fptr; }
-int32_t FileEnd(TFileHandle* handle) { return (int32_t)(handle->fptr >= handle->obj.objsize); }
-uint32_t FileSize(TFileHandle* handle) { return handle->obj.objsize; }
+int32_t FilePutChar(TFileHandle* handle, char c)
+{
+	return f_putc(c, handle);
+}
 
-int32_t OpenDir(TDirHandle* handle, const char* path) { MountIfNeeded(); return f_opendir(handle, path); }
+int32_t FileWriteLine(TFileHandle* handle, const char* s)
+{
+	return f_puts(s, handle);
+}
+*/
 
-int32_t CloseDir(TDirHandle* handle) { return f_closedir(handle); }
-int32_t ReadDir(TDirHandle* handle, TFileInfo* info) { return f_readdir(handle, info); }
+uint32_t FilePosition(TFileHandle* handle)
+{
+	return handle->fptr;
+}
+
+int32_t FileEnd(TFileHandle* handle)
+{
+	return (int32_t)(handle->fptr >= handle->obj.objsize);
+}
+
+uint32_t FileSize(TFileHandle* handle)
+{
+	return handle->obj.objsize;
+}
+
+int32_t OpenDir(TDirHandle* handle, const char* path)
+{
+	MountIfNeeded();
+	return f_opendir(handle, path);
+}
+
+int32_t CloseDir(TDirHandle* handle)
+{
+	return f_closedir(handle);
+}
+
+int32_t ReadDir(TDirHandle* handle, TFileInfo* info)
+{
+	return f_readdir(handle, info);
+}
+
 int32_t FindFirst(TDirHandle* handle, TFileInfo* info, const char* path, const char* pattern)
 {
 	MountIfNeeded();
 	return f_findfirst(handle, info, path, pattern);
 }
-int32_t FindNext(TDirHandle* handle, TFileInfo* info) { return f_findnext(handle, info); }
-int32_t FileStat(const char* path, TFileInfo* info) { MountIfNeeded(); return f_stat(path, info); }
 
-int32_t UnlinkFile(const char* path) { MountIfNeeded(); return f_unlink(path); }
-int32_t RenameFile(const char* from, const char* to) { MountIfNeeded(); return f_rename(from, to); }
+int32_t FindNext(TDirHandle* handle, TFileInfo* info)
+{
+	return f_findnext(handle, info);
+}
+
+int32_t FileStat(const char* path, TFileInfo* info)
+{
+	MountIfNeeded();
+	return f_stat(path, info);
+}
+
+int32_t UnlinkFile(const char* path)
+{
+	MountIfNeeded();
+	return f_unlink(path);
+}
+
+int32_t RenameFile(const char* from, const char* to)
+{
+	MountIfNeeded();
+	return f_rename(from, to);
+}
+
 #ifdef ALLOW_TOUCH
-int32_t FileTouch(const char* path, TFileInfo* dt) { MountIfNeeded(); return f_utime(path, dt); }
+int32_t FileTouch(const char* path, TFileInfo* dt)
+{
+	MountIfNeeded();
+	return f_utime(path, dt);
+}
 #else
-int32_t FileTouch(const char* path, TFileInfo* dt) { return 0; }
+int32_t FileTouch(const char* path, TFileInfo* dt)
+{
+	return 0;
+}
 #endif
-#ifdef ALLOW_DIRECTORIES
-int32_t MakeDir(const char* path) { MountIfNeeded(); return f_mkdir(path); }
-int32_t ChangeDir(const char* path) { MountIfNeeded(); return f_chdir(path); }
-int32_t GetCurrentDir(char* buffer, int32_t buflen) { MountIfNeeded(); return f_getcwd(buffer, buflen); }
-#else
-int32_t MakeDir(const char* path) { return 0; }
-int32_t ChangeDir(const char* path) { return 0; }
-int32_t GetCurrentDir(char* buffer, int32_t buflen) { strcpy(buffer, ""); return 0; }
-#endif
-int32_t GetLabel(char* buffer) { return f_getlabel("", buffer, 0); }
 
-static const char* const FSErrors[20] =
+int32_t MakeDir(const char* path)
+{
+	MountIfNeeded();
+	return f_mkdir(path);
+}
+
+int32_t ChangeDir(const char* path)
+{
+	MountIfNeeded();
+	return f_chdir(path);
+}
+
+int32_t GetCurrentDir(char* buffer, int32_t buflen)
+{
+	MountIfNeeded();
+	return f_getcwd(buffer, buflen);
+}
+
+int32_t GetLabel(char* buffer)
+{
+	return f_getlabel("", buffer, 0);
+}
+
+//TODO: Improve these a bit.
+static const char* const FSErrors[21] =
 {
 	"Succeeded.",
 	"A hard error occurred in the low-level disk I/O layer.",
@@ -156,14 +240,17 @@ static const char* const FSErrors[20] =
 	"The drive is write-protected.",
 	"The logical drive number is invalid.",
 	"The volume has no work area.",
-	"<FR_MKFS_ABORTED>",
-	"<FR_TIMEOUT>",
-	"<FR_LOCKED>",
-	"<FR_NOT_ENOUGH_CORE>",
+	"There is no valid FAT volume.",
+	"The f_mkfs() aborted due to any problem.",
+	//We don't even *use* these. They're impossible to *get*.
+	"", //"Could not get a grant to access the volume within defined period.",
+	"", //"The operation is rejected according to the file sharing policy.",
+	"", //"LFN working buffer could not be allocated.",
 	"Too many open files.",
 	"Parameter is invalid.",
-	"<Invalid err #>"
+	"<Invalid error number>"
 };
+
 const char* FileErrStr(int32_t error)
 {
 	if (error > 19) error = 20;

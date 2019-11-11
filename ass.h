@@ -15,8 +15,6 @@
 extern void dpf(const char* format, ...);
 #endif
 
-#define ALLOW_DIRECTORIES
-
 #include "ass-types.h"
 
 #if !defined va_start
