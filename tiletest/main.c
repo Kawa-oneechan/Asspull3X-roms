@@ -7,22 +7,27 @@ IBios* interface;
 extern const uint16_t tilesetPal[], tilesetTiles[], hdma1[];
 extern const uint16_t farahPal[], farahTiles[];
 extern const uint16_t grassTiles[], questionTiles[];
-extern const uint16_t bg1Map[], levelMap[];
+extern const uint16_t bg1Map[], bg2Map[], levelMap[];
 
 void DrawStripe(int source, int target)
 {
-	uint16_t *s1 = (uint16_t*)&bg1Map[source];
+	uint16_t *s1 = (uint16_t*)&bg2Map[source];
 	uint16_t *d1 = &(MAP1[target]);
-	uint16_t *s2 = (uint16_t*)&levelMap[source];
+	uint16_t *s2 = (uint16_t*)&bg1Map[source];
 	uint16_t *d2 = &(MAP2[target]);
+	uint16_t *s3 = (uint16_t*)&levelMap[source];
+	uint16_t *d3 = &(MAP3[target]);
 	for (int i = 0; i < 34; i++)
 	{
 		*d1 = *s1;
 		*d2 = *s2;
+		*d3 = *s3;
 		s1 += MAPWIDTH;
 		s2 += MAPWIDTH;
+		s3 += MAPWIDTH;
 		d1 += SCREENWIDTH;
 		d2 += SCREENWIDTH;
+		d3 += SCREENWIDTH;
 	}
 }
 
@@ -54,8 +59,7 @@ typedef struct TSpriteA
 #define spritesA ((TSpriteA*)SPRITES_A)
 typedef struct TSpriteB
 {
-	uint32_t priority:2;
-	uint32_t _waste1:1;
+	uint32_t priority:3;
 	uint32_t large:1;
 
 	uint32_t flipV:1;
@@ -90,7 +94,7 @@ int main(void)
 	SPRITES_A[0] = SPRITEA_BUILD(256, 1, 2);
 	SPRITES_B[0] = SPRITEB_BUILD(152, 176, 0, 1, 0, 0, 1, 0);
 
-	REG_MAPSET = 0xC0; //just enable it, don't worry about tile offsets.
+	REG_MAPSET = 0x70; //just enable it, don't worry about tile offsets.
 
 	for (int i = 0; i < SCREENWIDTH; i++)
 		DrawStripe(i, i);
@@ -98,7 +102,8 @@ int main(void)
 	inton();
 
 	REG_SCROLLY1 = 32;
-	REG_SCROLLY2 = 16;
+	REG_SCROLLY2 = 32;
+	REG_SCROLLY3 = 16;
 	int scroll = 0;
 	int col = 40;
 	int animation = 0;
@@ -114,6 +119,7 @@ int main(void)
 
 		REG_SCROLLX1 = scroll;
 		REG_SCROLLX2 = scroll;
+		REG_SCROLLX3 = scroll;
 		scroll += 1;
 		if (REG_TICKCOUNT % 4 == 0)
 		{

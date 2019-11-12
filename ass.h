@@ -52,9 +52,9 @@ extern void free(void*);
 #define MEM_VRAM	0x0E000000
 #define MEM_IO		0x0D800000
 #define MAP1		((uint16_t*)(MEM_VRAM))
-#define MAP2		((uint16_t*)(MEM_VRAM + 0x2000))
-#define MAP3		((uint16_t*)(MEM_VRAM + 0x4000))
-#define MAP4		((uint16_t*)(MEM_VRAM + 0x6000))
+#define MAP2		((uint16_t*)(MEM_VRAM + 0x4000))
+#define MAP3		((uint16_t*)(MEM_VRAM + 0x8000))
+#define MAP4		((uint16_t*)(MEM_VRAM + 0xC000))
 #define TILESET		((uint8_t*)(MEM_VRAM + 0x10000))
 #define PALETTE		((uint16_t*)(MEM_VRAM + 0x50000))
 #define SPRITES_A	((uint16_t*)(MEM_VRAM + 0x54000))

@@ -439,7 +439,7 @@ int main(void)
 	REG_HDMATARGET[0] = (int32_t)PALETTE;
 	REG_HDMACONTROL[0] = DMA_ENABLE | HDMA_DOUBLE | (DMA_SHORT << 4) | (0 << 8) | (480 << 20);
 	REG_SCREENFADE = 31;
-	REG_MAPSET = 0x80;
+	REG_MAPSET = 0x10;
 
 	levelPack = (char*)levels[0];
 	CheckForDisk();
