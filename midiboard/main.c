@@ -2,6 +2,7 @@
 IBios* interface;
 
 extern const TImageFile pianoData;
+extern const unsigned char tinyFont[576];
 
 static const char sctopit[] = {
 //   0   1   2   3   4   5   6   7   8   9   a   b   c   d   e   f
@@ -46,6 +47,155 @@ static const char* const pits[] = {
 //1 means that key is black.
 static const char colors[] = { 0,1,0,1,0,0,1,0,1,0,1,0,0,1,0,1,0,0,1,0,1,0,1,0,0,1,0,1,0,0,1,0,1,0,1,0,0,1,0,1,0,0,1,0,1,0,1,0 };
 
+static const char* const programNames[] =
+{
+	"Acou.Piano",
+	"BritePiano",
+	"Elec.Piano",
+	"Honky Tonk",
+	"ElecPiano1",
+	"ElecPiano2",
+	"Harpsicord",
+	"Clavinet",
+	"Celesta",
+	"Glockenspl",
+	"Music Box",
+	"Vibraphone",
+	"Marimba",
+	"Xylophone",
+	"Tube Bells",
+	"Dulcimer",
+	"Draw Organ",
+	"Perc.Organ",
+	"Rock Organ",
+	"ChrchOrgan",
+	"Reed Organ",
+	"Accordion",
+	"Harmonica",
+	"Tango Acc.",
+	"NylonGuitr",
+	"SteelGuitr",
+	"JazzGuitar",
+	"CleanGuitr",
+	"MutedGuitr",
+	"Overdriven",
+	"Distortion",
+	"GHarmonics",
+	"Acou. Bass",
+	"FingerBass",
+	"PickedBass",
+	"FretlsBass",
+	"SlapBass 1",
+	"SlapBass 2",
+	"SynthBass1",
+	"SynthBass2",
+	"Violin",
+	"Viola",
+	"Cello",
+	"Contrabass",
+	"TremoloStr",
+	"PizzicatoS",
+	"Orch. Harp",
+	"Timpani",
+	"StringEns1",
+	"StringEns2",
+	"SynthStr 1",
+	"SynthStr 2",
+	"Choir Aahs",
+	"Voice Oohs",
+	"SynthVoice",
+	"Orch. Hit",
+	"Trumpet",
+	"Trombone",
+	"Tuba",
+	"MutedTrump",
+	"FrenchHorn",
+	"BrassSect",
+	"SynthBrs 1",
+	"SynthBrs 2",
+	"SopranoSax",
+	"Alto Sax",
+	"Tenor Sax",
+	"BaritonSax",
+	"Oboe",
+	"Engl. Horn",
+	"Bassoon",
+	"Clarinet",
+	"Piccolo",
+	"Flute",
+	"Recorder",
+	"Pan Flute",
+	"BottleBlow",
+	"Shakuhachi",
+	"Whistle",
+	"Ocarina",
+	"SquareLead",
+	"Saw Lead",
+	"Calliope",
+	"Chiff",
+	"Charang",
+	"Voice",
+	"Fifths",
+	"Bass+Lead",
+	"NewAge Pad",
+	"Warm Pad",
+	"Poly Pad",
+	"Choir Pad",
+	"Bowed Pad",
+	"Metal Pad",
+	"Halo",
+	"Sweep",
+	"Rain",
+	"Soundtrack",
+	"Crystal",
+	"Atmosphere",
+	"Brightness",
+	"Goblins",
+	"Echoes",
+	"SciFi",
+	"Sitar",
+	"Banjo",
+	"Shamisen",
+	"Koto",
+	"Kalimba",
+	"Bagpipe",
+	"Fiddle",
+	"Shanai",
+	"TinkleBell",
+	"Agogo",
+	"SteelDrums",
+	"Woodblock",
+	"Taiko Drum",
+	"Melo. Tom",
+	"Synth Drum",
+	"Rev Cymbal",
+	"GFretNoise",
+	"BrethNoise",
+	"Seashore",
+	"Bird Tweet",
+	"Telephone",
+	"Helicopter",
+	"Applause",
+	"Gunshot",
+};
+
+void Write(const char* str)
+{
+	int x = 19, y = 184;
+
+	//TODO: Make some nice #define macros for the blitter, in ass.h.
+	REG_BLITSOURCE = 11;
+	REG_BLITTARGET = 0x0E000000 + (y * 320) + x;
+	REG_BLITLENGTH = 252;
+	REG_BLITCONTROL = BLIT_SET | BLIT_BYTE | BLIT_STRIDESKIP | BLIT_SOURCESTRIDE(42) | BLIT_TARGETSTRIDE(320);
+
+	while(*str)
+	{
+		interface->DrawChar((*str++) - ' ', x, y, 12);
+		x += 4;
+	}
+}
+
 int main(void)
 {
 	interface = (IBios*)(0x01000000);
@@ -58,13 +208,18 @@ int main(void)
 		PALETTE[KEYPALSTART + i] = colors[i] ? EBONY : IVORY; //live together in perfect harmony...
 	}
 
+	interface->DrawCharFont = (char*)tinyFont;
+	interface->DrawCharHeight = 6;
+	Write(programNames[0]);
+
 	DRAW->FadeFromBlack();
 
 	int pitoff = 48;
 	int lastPit = -1;
 	int lastPitOffed = -1;
 	int pit = 0;
-	MIDI_PROGRAM(1, MIDI_ACOUSTICGRANDPIANO);
+	int program = MIDI_ACOUSTICGRANDPIANO;
+	MIDI_PROGRAM(1, program);
 	while(1)
 	{
 		unsigned short key = REG_KEYIN;
@@ -87,6 +242,20 @@ int main(void)
 			else if(key == 0xC8)
 			{
 				if (pitoff < 108) pitoff += 12;
+				while (REG_KEYIN == key) { vbl(); }
+			}
+			else if(key == 0xCB)
+			{
+				if (program > 0) program--;
+				MIDI_PROGRAM(1, program);
+				Write(programNames[program]);
+				while (REG_KEYIN == key) { vbl(); }
+			}
+			else if(key == 0xCD)
+			{
+				if (program < 128) program++;
+				MIDI_PROGRAM(1, program);
+				Write(programNames[program]);
 				while (REG_KEYIN == key) { vbl(); }
 			}
 		}
