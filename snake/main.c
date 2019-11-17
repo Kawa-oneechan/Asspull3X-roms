@@ -125,11 +125,7 @@ void TitleScreen()
 	delay = 10;
 	for (int i = 14; i < 28; i++)
 		Tile(14, i, 0);
-	Tile(14, 15, 59); //S
-	Tile(14, 16, 56); //P
-	Tile(14, 17, 58); //E
-	Tile(14, 18, 58); //E
-	Tile(14, 19,  7); //D
+	Write(14, 15, "SPEED");
 	while (1)
 	{
 		vbl();
@@ -147,8 +143,8 @@ void TitleScreen()
 			break;
 		char buffer[25];
 		ultoa(delay, buffer);
-		Tile(14, 22, 0);
-		Write(14, 21, buffer);
+		Tile(14, 23, 0);
+		Write(14, 22, buffer);
 	}
 
 	//interface->VBlank = 0;
@@ -170,9 +166,7 @@ void Write(int y, int x, char* str)
 	char *b = str;
 	while (*b)
 	{
-		if (*b >= '0' && *b <= '9')
-			Tile(y, x++, *b - '0' + 8);
-		//((int16_t*)MEM_VRAM)[pos] = (*b << 8) | attribs;
+		Tile(y, x++, *b);
 		b++;
 	}
 }
@@ -184,24 +178,24 @@ void DrawBoard()
 	for (i = 0; i < WIDTH * HEIGHT; i++)
 		MAP1[i] = 0;
 
-	Tile(0, 0, 18);
-	Tile(0, WIDTH - 1, 19);
-	Tile(HEIGHT - 1, 0, 20);
-	Tile(HEIGHT - 1, WIDTH - 1, 21);
+	Tile(0, 0, 16);
+	Tile(0, WIDTH - 1, 17);
+	Tile(HEIGHT - 1, 0, 18);
+	Tile(HEIGHT - 1, WIDTH - 1, 19);
 	for (i = 1; i < HEIGHT - 1; i++)
 	{
-		Tile(i, 0, 23);
-		Tile(i, WIDTH - 1, 23);
+		Tile(i, 0, 21);
+		Tile(i, WIDTH - 1, 21);
 	}
 	for (i = 1; i < WIDTH - 1; i++)
 	{
-		Tile(0, i, 22);
-		Tile(HEIGHT - 1, i, 22);
+		Tile(0, i, 20);
+		Tile(HEIGHT - 1, i, 20);
 	}
 
 	for (i = 3; i < 7; i++)
-		Tile(HEIGHT -1, i, i);
-	Tile(HEIGHT -1, 7, 8);
+		Tile(HEIGHT - 1, i, i - 3 + 97);
+	Tile(HEIGHT -1, 7, '0');
 }
 
 void GameOver()
@@ -275,7 +269,7 @@ void MovePlayer(pos head)
 	}
 
 	//Draw the new head
-	Tile(head.y, head.x, 2);
+	Tile(head.y, head.x, 96);
 
 	char buffer[25];
 	ultoa(score, buffer);
