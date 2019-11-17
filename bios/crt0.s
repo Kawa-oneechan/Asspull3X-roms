@@ -33,9 +33,9 @@
 	.long	nullHandler		| 25. Level 1 autovector
 	.long	nullHandler		| 26. Level 2 autovector
 	.long	nullHandler		| 27. Level 3 autovector
-	.long	nullHandler		| 28. Level 4 autovector
+	.long	HBlankHandler		| 28. Level 4 autovector
 	.long	nullHandler		| 29. Level 5 autovector
-	.long	nullHandler		| 30. Level 6 autovector
+	.long	VBlankHandler		| 30. Level 6 autovector
 	.long	NMIHandler		| 31. Level 7 autovector
 	.long	nullHandler		| 32. TRAP0
 	.long	nullHandler		| 33. TRAP1
@@ -71,7 +71,7 @@
 	.long	nullHandler		| 63. Reserved by Motorola
 
 initialize:
-	move    #0x2700,%sr		| disable interrupts
+	move    #0x2000,%sr
 
 | Copy initialized variables from ROM to Work RAM
 	lea     _stext,%a0

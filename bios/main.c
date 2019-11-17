@@ -196,3 +196,19 @@ void NMIHandler()
 	}
 	asm("rte");
 }
+
+void VBlankHandler()
+{
+	//REG_DEBUGOUT = 'v';
+	if (interface->VBlank != 0) interface->VBlank();
+	REG_INTRMODE &= ~IMODE_INVBLANK;
+	asm("rte");
+}
+
+void HBlankHandler()
+{
+	REG_DEBUGOUT = 'h';
+	if (interface->HBlank != 0) interface->HBlank();
+	REG_INTRMODE &= ~IMODE_INHBLANK;
+	asm("rte");
+}

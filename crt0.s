@@ -1,7 +1,7 @@
 //Include this from your project's crt0.s.
 
 initialize:
-	move    #0x2700,%sr
+	move    #0x2000,%sr
 
 	lea     _stext,%a0
 	lea     0x01001000,%a1
