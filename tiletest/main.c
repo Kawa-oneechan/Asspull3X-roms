@@ -74,6 +74,8 @@ typedef struct TSpriteB
 } TSpriteB;
 #define spritesB ((TSpriteB*)SPRITES_B)
 
+int16_t scrollTrick[] = { 0 };
+
 int main(void)
 {
 	interface = (IBios*)(0x01000000);
@@ -101,6 +103,10 @@ int main(void)
 
 	inton();
 
+	REG_HDMASOURCE[1] = (int32_t)scrollTrick;
+	REG_HDMATARGET[1] = (int32_t)&REG_SCROLLX3;
+	REG_HDMACONTROL[1] = DMA_ENABLE | HDMA_DOUBLE | (DMA_SHORT << 4) | (426 << 8) | (1 << 20);
+
 	REG_SCROLLY1 = 32;
 	REG_SCROLLY2 = 32;
 	REG_SCROLLY3 = 16;
@@ -110,6 +116,7 @@ int main(void)
 	for(;;)
 	{
 		vbl();
+		REG_SCROLLX3 = 0; //reset scroll at start
 
 		//Something to test the sprite structs with...
 		if (REG_KEYIN == 0xC8) spritesB[0].y++;
@@ -119,8 +126,8 @@ int main(void)
 
 		REG_SCROLLX1 = scroll;
 		REG_SCROLLX2 = scroll;
-		REG_SCROLLX3 = scroll;
 		scroll += 1;
+		scrollTrick[0] = scroll;
 		if (REG_TICKCOUNT % 4 == 0)
 		{
 			animation++;
