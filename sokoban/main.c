@@ -55,6 +55,8 @@ char map[BOUNDS*BOUNDS] = {0};
 int playerX = 0, playerY = 0;
 int lastDir;
 
+void PlaySound(int);
+
 void drawPlayer()
 {
 	int tile = 0;
@@ -122,6 +124,7 @@ void move(char byX, char byY)
 		char *further = &map[((playerY + byY + byY) * BOUNDS) + playerX + byX + byX];
 		if ((*further != WALL) && !(*further & BOX))
 		{
+			PlaySound(2);
 			*further |= BOX;
 			//*here &= ~BOX;
 			if (*here == BOX) *here = SPACE;
@@ -135,6 +138,7 @@ void move(char byX, char byY)
 	}
 	else
 	{
+		PlaySound(3);
 		playerX += byX;
 		playerY += byY;
 		drawPlayer();
@@ -296,8 +300,29 @@ static int musicNumTracks;
 extern const char* const musicTracks[];
 extern const char musicSettings[];
 
+extern const char jingleSound[];
+extern const char slideSound[];
+extern const char stepSound[];
+extern const int jingleLength;
+extern const int slideLength;
+extern const int stepLength;
+const char* currentSound;
+int currentSoundLength;
+
 void music()
 {
+	if (currentSound != 0)
+	{
+		for (int i = 0; i < 256 && currentSoundLength > 0; i++)
+		{
+			REG_AUDIOOUT = *currentSound;
+			currentSound++;
+			currentSoundLength--;
+			if (currentSoundLength == 0)
+				currentSound = 0;
+		}
+	}
+
 	if (musicNumTracks == -1)
 	{
 		musicNumTracks = musicSettings[0];
@@ -335,6 +360,29 @@ void music()
 		}
 		else
 			musicTimer[i]--;
+	}
+}
+
+void PlaySound(int id)
+{
+	switch (id)
+	{
+		case 1:
+			currentSound = jingleSound;
+			currentSoundLength = jingleLength;
+			return;
+		case 2:
+			currentSound = slideSound;
+			currentSoundLength = slideLength;
+			return;
+		case 3:
+			currentSound = stepSound;
+			currentSoundLength = stepLength;
+			return;
+		default:
+			currentSound = 0;
+			currentSoundLength = 0;
+			return;
 	}
 }
 
@@ -458,6 +506,7 @@ int main(void)
 	musicNumTracks = -1;
 
 	levelNum = -1;
+	PlaySound(1);
 	nextLevel();
 
 	int in;

@@ -83,6 +83,7 @@ extern void free(void*);
 #define REG_DMALENGTH	*(volatile uint32_t*)(MEM_IO + 0x0028)
 #define REG_DMACONTROL	*(volatile uint8_t*)(MEM_IO + 0x002A)
 #define REG_MIDIOUT		*(volatile int32_t*)(MEM_IO + 0x0040)
+#define REG_AUDIOOUT	*(int8_t*)(MEM_IO + 0x0044)
 #define REG_HDMACONTROL	((uint32_t*)(MEM_IO + 0x0080))
 #define REG_HDMASOURCE	((uint32_t*)(MEM_IO + 0x00A0))
 #define REG_HDMATARGET	((uint32_t*)(MEM_IO + 0x00C0))
