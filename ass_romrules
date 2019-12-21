@@ -22,7 +22,7 @@ SPECS   := -specs=asspull.specs
 INCLUDE		:= -I toolinclude
 LIBPATHS	:=
 
-CBASE   := $(INCLUDE) -Wall -fno-strict-aliasing -fomit-frame-pointer
+CBASE   := $(INCLUDE) -Wall -Wextra -fno-strict-aliasing -fomit-frame-pointer
 RCFLAGS := $(CBASE) $(RARCH)
 CFLAGS  := $(RCFLAGS)
 

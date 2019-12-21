@@ -1,7 +1,7 @@
 #include "../ass.h"
 IBios* interface;
 
-void* LoadFile(const char* path, void* buffer, int32_t len)
+void* LoadFile(const char* path, void* buffer)
 {
 	FILE file;
 	FILEINFO nfo;
@@ -60,7 +60,7 @@ int32_t main(void)
 		if (image == NULL)
 			continue;
 
-		LoadFile((const char*)info.fname, (void*)image, info.fsize);
+		LoadFile((const char*)info.fname, (void*)image);
 		if (image->BitDepth != 4 && image->BitDepth != 8)
 			continue;
 		DRAW->DisplayPicture(image);

@@ -122,7 +122,6 @@ int32_t main()
 	const char del[] = " \t\n";
 	char* trimmed = NULL;
 	char* token, *ptr = NULL;
-	char path[MAXPATH];
 
 	//printf("What's your name?\n");
 	//gets(cwd, MAX_CWD);

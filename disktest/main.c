@@ -63,7 +63,7 @@ void Populate(const char* path, const char* pattern)
 #define FILESSHOWN 26
 #define TEXTMAP ((int16_t*)MEM_VRAM)
 
-void SelectFile(const char* path, const char* pattern, char* selection, int32_t(*onSelect)(char*), char* prompt)
+void SelectFile(const char* path, const char* pattern, char* selection, int32_t(*onSelect)(char*))
 {
 	int32_t index = 0, lastIndex = 0, redraw = 1, scroll = 0;
 	FILEINFO info;
@@ -101,7 +101,6 @@ void SelectFile(const char* path, const char* pattern, char* selection, int32_t(
 					for (int j = 1; j < 30; j++)
 						TEXTMAP[(i * 80) + j] = 0x2087;
 			}
-			//printf("%s\n", prompt ? prompt : "Select a file to open:");
 			TEXT->SetTextColor(7, 8);
 			TEXT->SetCursorPosition(15 - (strlen(workPath) / 2) - 1, 0);
 			TEXT->Write(" %s ", workPath);
@@ -456,6 +455,6 @@ int32_t main(void)
 	DRAW->ResetPalette();
 	while(1)
 	{
-		SelectFile("/", "*.*", path, ShowFile, NULL);
+		SelectFile("/", "*.*", path, ShowFile);
 	}
 }

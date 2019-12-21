@@ -105,7 +105,7 @@ int32_t ShowFile(int argc, char **args)
 	return 2;
 }
 
-int32_t ListFiles(int argc, char **args)
+int32_t ListFiles(int argc __attribute__((unused)), char **args __attribute__((unused)))
 {
 	int32_t ret;
 	DIR dir;
@@ -210,7 +210,7 @@ int32_t ChangeDirectory(int argc, char **args)
 	return 2;
 }
 
-int32_t ChangeDirUp(int argc, char **args)
+int32_t ChangeDirUp(int argc __attribute__((unused)), char **args __attribute__((unused)))
 {
 	char* newArgs = "..";
 	return ChangeDirectory(1, &newArgs);
@@ -240,7 +240,6 @@ int32_t main()
 	const char del[] = " \t\n";
 	char* trimmed = NULL;
 	char* token, *ptr = NULL;
-	char path[MAXPATH];
 
 	while(1)
 	{
