@@ -1,10 +1,15 @@
 #include "diskio.h"
 #include "ff.h"
 
+//TODO: allow multiple drives
+
 //Keeping this separate from ass.h because you REALLY have no business here!
 #define DISKRAM			((unsigned char*)0x02000200)
 #define REG_DISKSECTOR	*(unsigned short*)(0x02000002)
 #define REG_DISKCONTROL	*(volatile unsigned char*)(0x02000004)
+#define REG_DISKTRACKS	*(unsigned short*)(0x02000010)
+#define REG_DISKHEADS	*(unsigned short*)(0x02000012)
+#define REG_DISKSECTORS	*(unsigned short*)(0x02000014)
 #define DCTL_PRESENT	1
 #define DCTL_ERROR		2
 #define DCTL_READNOW	4
@@ -71,7 +76,7 @@ DRESULT disk_ioctl(BYTE driveNo, BYTE ctrl, void *buff)
 	switch (ctrl)
 	{
 		case CTRL_SYNC: break;
-		case GET_SECTOR_COUNT: *(DWORD*)buff = 2880; break;
+		case GET_SECTOR_COUNT: *(DWORD*)buff = (REG_DISKTRACKS * REG_DISKHEADS) * REG_DISKSECTORS; break;
 		case GET_SECTOR_SIZE: *(WORD*)buff = 512; break;
 		case GET_BLOCK_SIZE: *(DWORD*)buff = 1; break;
 	}
