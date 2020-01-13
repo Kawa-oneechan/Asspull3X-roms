@@ -37,8 +37,8 @@ void dpf(const char* format, ...)
 	vsprintf(buffer + 8, format, args);
 	char* b = buffer;
 	while(*b)
-		*(unsigned char*)(MEM_IO+0x000E) = *b++;
-	*(unsigned char*)(MEM_IO+0x000E) = '\n';
+		REG_DEBUGOUT = *b++;
+	REG_DEBUGOUT = '\n';
 	va_end(args);
 	inton();
 }
