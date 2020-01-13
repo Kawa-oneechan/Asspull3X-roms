@@ -46,7 +46,7 @@ int32_t main(void)
 	sprintf(biosVer, "BIOS v%d.%d", (interface->biosVersion >> 8) & 0xFF, (interface->biosVersion >> 0) & 0xFF);
 	dpf(biosVer);
 
-	DmaCopy((int8_t*)0x0E050200, (int8_t*)&fontTiles, 12288, DMA_INT);
+	DmaCopy(TEXTFONT, (int8_t*)&fontTiles, 12288, DMA_INT);
 
 	while(1)
 	{
@@ -105,11 +105,13 @@ int32_t main(void)
 			REG_HDMASOURCE[0] = (int32_t)hdma1;
 			REG_HDMATARGET[0] = (int32_t)PALETTE;
 			REG_HDMACONTROL[0] = DMA_ENABLE | HDMA_DOUBLE | (DMA_SHORT << 4) | (0 << 8) | (480 << 20);
+			interface->DrawCharFont = (char*)0x0E060A00;
+			interface->DrawCharHeight = 0x0808;
 			DrawString(biosVer, 2, 2, 50);
 			DrawString(biosVer, 1, 1, 1);
 			MIDI_PROGRAM(1, MIDI_SEASHORE);
 			MIDI_KEYON(1, MIDI_C4, 80);
-			interface->DrawCharFont = (char*)0x0E052200;
+			interface->DrawCharFont = (char*)0x0E062200;
 			interface->DrawCharHeight = 0x1010;
 			Display(message);
 			FadeFromBlack();
@@ -137,7 +139,7 @@ int32_t main(void)
 	REG_HDMACONTROL[0] = 0;
 	interface->VBlank = 0;
 	interface->HBlank = 0;
-	interface->DrawCharFont = (char*)0x0E050A00;
+	interface->DrawCharFont = (char*)0x0E060A00;
 	interface->DrawCharHeight = 0x0808;
 	attribs = 0x0F;
 	ClearScreen();

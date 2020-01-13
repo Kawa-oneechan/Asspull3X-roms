@@ -14,10 +14,10 @@
 #define DCTL_ERROR		2
 #define DCTL_READNOW	4
 #define DCTL_WRITENOW	8
-#define REG_DMASOURCE	*(volatile unsigned long*)(0x0D800020)
-#define REG_DMATARGET	*(volatile unsigned long*)(0x0D800024)
-#define REG_DMALENGTH	*(volatile unsigned long*)(0x0D800028)
-#define REG_DMACONTROL	*(volatile unsigned char*)(0x0D80002A)
+#define REG_DMASOURCE	*(volatile unsigned long*)(0x0D000100)
+#define REG_DMATARGET	*(volatile unsigned long*)(0x0D000104)
+#define REG_DMALENGTH	*(volatile unsigned long*)(0x0D000108)
+#define REG_DMACONTROL	*(volatile unsigned char*)(0x0D00010A)
 
 /*
 DSTATUS disk_initialize(BYTE driveNo)

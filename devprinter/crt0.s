@@ -3,4 +3,8 @@
 	jmp	initialize
 	.asciz	"Line Printer test"
 	.align	32
+	.long	0	//let ASSFIX set this.
+	.short	1	//Kawa made this
+	.byte	0	//Worldwide
+	.byte	0	//No SRAM
 	#include "../crt0.s"

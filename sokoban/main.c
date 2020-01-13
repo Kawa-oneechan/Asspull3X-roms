@@ -441,7 +441,7 @@ void CheckForDisk()
 
 	MISC->DmaCopy(PALETTE, (int16_t*)&diskettePal, 16, DMA_INT);
 	interface->VBlank = RotateTheFloppy;
-	interface->DrawCharFont = (char*)0x0E052200;
+	interface->DrawCharFont = (char*)0x0E062200;
 	interface->DrawCharHeight = 0x0B10;
 
 	DRAW->DrawString(msg, 121, 97, 9);
