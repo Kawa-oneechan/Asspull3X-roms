@@ -1,5 +1,5 @@
 //Include this from your project's crt0.s.
-
+	.align	2
 initialize:
 	move    #0x2700,%sr
 
