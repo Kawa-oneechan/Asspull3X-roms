@@ -5,16 +5,16 @@
 	.extern ZeroHandler
 	.extern nullHandler
 
-	.long   0x01000000		|  0. Initial SSP
-	.long	initialize		|  1. Initial PC
-	.long	ExHandler		|  2. Bus error
-	.long	AddressHandler		|  3. Address error
-	.long	InstructionHandler	|  4. Illegal instruction
-	.long	ZeroHandler		|  5. Division by zero
-	.long	nullHandler		|  6. CHK instruction
-	.long	nullHandler		|  7. TRAPV instruction
-	.long	nullHandler		|  8. Check your privilege, scrublord.
-	.long	nullHandler		|  9. Trace
+	.long	0x01000000		|	0. Initial SSP
+	.long	initialize		|	1. Initial PC
+	.long	ExHandler		|	2. Bus error
+	.long	AddressHandler		|	3. Address error
+	.long	InstructionHandler	|	4. Illegal instruction
+	.long	ZeroHandler		|	5. Division by zero
+	.long	nullHandler		|	6. CHK instruction
+	.long	nullHandler		|	7. TRAPV instruction
+	.long	nullHandler		|	8. Check your privilege, scrublord.
+	.long	nullHandler		|	9. Trace
 	.long	nullHandler		| 10. Unimplemented instruction
 	.long	nullHandler		| 11. Unimplemented instruction
 	.long	nullHandler		| 12. 
@@ -71,25 +71,25 @@
 	.long	nullHandler		| 63. Reserved by Motorola
 
 initialize:
-	move    #0x2700,%sr		| disable interrupts
+	move	#0x2700,%sr		| disable interrupts
 
 | Copy initialized variables from ROM to Work RAM
-	lea     _stext,%a0
-	lea     0x01000000,%a1
-	move.l  #_sdata,%d0
-	lsr.l   #1,%d0
-	subq.w  #1,%d0
+	lea	_stext,%a0
+	lea	0x01000000,%a1
+	move.l	#_sdata,%d0
+	lsr.l	#1,%d0
+	subq.w	#1,%d0
 2:
-	move.w  (%a0)+,(%a1)+
-	dbra    %d0,2b
+	move.w	(%a0)+,(%a1)+
+	dbra	%d0,2b
 
-	lea     0x013F0000,%a0
+	lea	0x013F0000,%a0
 	movea.l %a0,%sp			| set stack pointer to top of Work RAM
-	link.w  %a6,#-8			| set up initial stack frame
+	link.w	%a6,#-8			| set up initial stack frame
 
-	jsr     main			| GO!
+	jsr	main			| GO!
 3:
-	bra.b   3b
+	bra.b	3b
 
 nullHandler:	rte			| Empty exception handler does nothing
 

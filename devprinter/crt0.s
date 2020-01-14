@@ -1,4 +1,4 @@
-        .text
+	.text
 	.long   0x41535321
 	jmp	initialize
 	.asciz	"Line Printer test"
