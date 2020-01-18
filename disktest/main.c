@@ -38,7 +38,7 @@ void Populate(const char* path, const char* pattern)
 		strcpy_s(filenames[0], MAXPATH, "..");
 		fileCt++;
 	}
-#ifdef ALLOW_DIRECTORIES
+
 	for (;;)
 	{
 		ret = DISK->ReadDir(&dir, &info);
@@ -49,7 +49,7 @@ void Populate(const char* path, const char* pattern)
 			fileCt++;
 		}
 	}
-#endif
+
 	ret = DISK->FindFirst(&dir, &info, path, pattern);
 	while(ret == 0 && info.fname[0])
 	{
