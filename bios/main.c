@@ -96,6 +96,39 @@ int32_t main(void)
 			break;
 		}
 
+		if (REG_KEYIN == 59 && showSplash) //F1
+		{
+			SPRITES_B[0] = SPRITEB_BUILD(-32, -32, 0, 0, 0, 0, 0, 0);
+			char about[256];
+			interface->DrawCharFont = (char*)0x0E060A00;
+			interface->DrawCharHeight = 0x0808;
+			sprintf(about, "  ASSPULL \x96\xD7\n\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\n%s\nCode by Kawa\n" __DATE__, biosVer);
+			for (int i = 2; i <= 6; i++)
+			{
+				DrawString(about, 104, 130, i);
+				WaitForVBlanks(16);
+			}
+			WaitForVBlanks(128);
+			const char blink[] = { 3, 4, 5, 6, 6, 6, 5, 4, 3 };
+			int blinker = 0;
+			while (!REG_KEYIN)
+			{
+				if (blinker % 8 == 0)
+					DrawString("\x03", 208, 202, blink[blinker / 8]);
+				blinker++;
+				if (blinker == 8 * 8)
+					blinker = 0;
+				WaitForVBlank();
+			}
+			DrawString("\x03", 208, 202, 1);
+			for (int i = 5; i >= 1; i--)
+			{
+				DrawString(about, 104, 130, i);
+				WaitForVBlanks(16);
+			}
+			SPRITES_B[0] = SPRITEB_BUILD(144, 152, 1, 1, 0, 0, 1, 0);
+		}
+
 		if (!showSplash)
 		{
 			showSplash = 1;
