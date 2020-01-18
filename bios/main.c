@@ -18,7 +18,28 @@ extern int8_t attribs;
 extern const uint16_t hdma1[], hdma2[];
 extern const uint16_t fontTiles[];
 extern const TImageFile splashData;
+extern const uint16_t iconsTiles[256];
+extern const uint16_t iconsPal[16];
 
+#define SPRITEA_BUILD(t,e,p)	\
+(								\
+	(((p) & 15) << 12) |		\
+	(((e) &  1) << 11) |		\
+	(((t) & 0x1FF) << 0)		\
+)
+#define SPRITEB_BUILD(hp,vp,dw,dh,hf,vf,ds,pr)	\
+(												\
+	(((pr) & 3) << 30) |						\
+	(((ds) & 1) << 28) |						\
+	(((vf) & 1) << 27) |						\
+	(((hf) & 1) << 26) |						\
+	(((dh) & 1) << 25) |						\
+	(((dw) & 1) << 24) |						\
+	(((vp) & 0x7FF) << 12) |					\
+	(((hp) & 0x7FF) << 0)						\
+)
+
+/*
 void Display(char* what)
 {
 	//TODO: Make some nice #define macros for the blitter, in ass.h.
@@ -31,6 +52,7 @@ void Display(char* what)
 	DrawString(what, pos + 1, 77, 50);
 	DrawString(what, pos, 76, 62);
 }
+*/
 
 int32_t main(void)
 {
@@ -38,10 +60,10 @@ int32_t main(void)
 	interface = (IBios*)(0x01000000);
 	int32_t* cartCode = (int32_t*)0x00020000;
 	void(*entry)(void)= (void*)0x00020004;
-	char* cartName = (char*)0x00020008;
+	//char* cartName = (char*)0x00020008;
 	int32_t haveDisk = 0, hadDisk = 0;
 	int32_t showSplash = 0;
-	char message[32] = "\x14 INSERT CART \x15";
+	//char message[32] = "\x14 INSERT CART \x15";
 
 	sprintf(biosVer, "BIOS v%d.%d", (interface->biosVersion >> 8) & 0xFF, (interface->biosVersion >> 0) & 0xFF);
 	dpf(biosVer);
@@ -64,20 +86,23 @@ int32_t main(void)
 					dpf("got start.app");
 					if (ReadFile(&file, (void*)0x01002000, 0) < 0)
 					{
-						strcpy_s(message, 32, "Couldn't read.");
-						if (showSplash) Display(message);
+						//strcpy_s(message, 32, "Couldn't read.");
+						//if (showSplash) Display(message);
+						SPRITES_A[0] = SPRITEA_BUILD(48, 1, 1); //? disk
 						continue;
 					}
 					CloseFile(&file);
+					SPRITES_A[0] = SPRITEA_BUILD(32, 1, 1); //disk
 					entry = (void*)0x01002020;
-					cartName = (char*)0x01002008;
+					//cartName = (char*)0x01002008;
 					break;
 				}
 				else
 				{
 					dpf("not good");
-					strcpy_s(message, 32, "Not a boot disk.");
-					if (showSplash) Display(message);
+					//strcpy_s(message, 32, "Not a boot disk.");
+					//if (showSplash) Display(message);
+					SPRITES_A[0] = SPRITEA_BUILD(48, 1, 1); //? disk
 					continue;
 				}
 			}
@@ -85,14 +110,16 @@ int32_t main(void)
 			{
 				hadDisk = 0;
 				dpf("lost disk");
-				strcpy_s(message, 32, "\x14 INSERT CART \x15");
-				if (showSplash) Display(message);
+				//strcpy_s(message, 32, "\x14 INSERT CART \x15");
+				//if (showSplash) Display(message);
+				SPRITES_A[0] = SPRITEA_BUILD(0, 0, 1); //logo
 				continue;
 			}
 		}
 		else
 		{
 			entry = (void*)0x00020004;
+			SPRITES_A[0] = SPRITEA_BUILD(16, 1, 1); //cart
 			break;
 		}
 
@@ -105,15 +132,22 @@ int32_t main(void)
 			REG_HDMASOURCE[0] = (int32_t)hdma1;
 			REG_HDMATARGET[0] = (int32_t)PALETTE;
 			REG_HDMACONTROL[0] = DMA_ENABLE | HDMA_DOUBLE | (DMA_SHORT << 4) | (0 << 8) | (480 << 20);
-			interface->DrawCharFont = (char*)0x0E060A00;
-			interface->DrawCharHeight = 0x0808;
-			DrawString(biosVer, 2, 2, 50);
-			DrawString(biosVer, 1, 1, 1);
+			REG_HDMASOURCE[1] = (int32_t)hdma2;
+			REG_HDMATARGET[1] = (int32_t)(PALETTE + 1);
+			REG_HDMACONTROL[1] = DMA_ENABLE | HDMA_DOUBLE | (DMA_SHORT << 4) | (254 << 8) | (170 << 20);
+			MISC->DmaCopy(PALETTE + 16, (int8_t*)&iconsPal, 16, DMA_INT);
+			MISC->DmaCopy(TILESET, (int8_t*)&iconsTiles, 384, DMA_INT);
+			SPRITES_A[0] = SPRITEA_BUILD(0, 1, 1);
+			SPRITES_B[0] = SPRITEB_BUILD(144, 152, 1, 1, 0, 0, 1, 0);
+//			interface->DrawCharFont = (char*)0x0E060A00;
+//			interface->DrawCharHeight = 0x0808;
+//			DrawString(biosVer, 2, 2, 50);
+//			DrawString(biosVer, 1, 1, 1);
 			MIDI_PROGRAM(1, MIDI_SEASHORE);
 			MIDI_KEYON(1, MIDI_C4, 80);
-			interface->DrawCharFont = (char*)0x0E062200;
-			interface->DrawCharHeight = 0x1010;
-			Display(message);
+//			interface->DrawCharFont = (char*)0x0E062200;
+//			interface->DrawCharHeight = 0x1010;
+//			Display(message);
 			FadeFromBlack();
 		}
 		else
@@ -128,8 +162,11 @@ int32_t main(void)
 		MidiReset();
 		MIDI_PROGRAM(1, MIDI_GUITARFRETNOISE);
 		MIDI_KEYON(1, MIDI_C4, 80);
-		Display(cartName);
+//		Display(cartName);
+		WaitForVBlanks(256);
 		FadeToBlack();
+		SPRITES_A[0] = 0;
+		SPRITES_B[0] = SPRITEB_BUILD(-16, -16, 0, 0, 0, 0, 0, 0);
 	}
 	if (entry == (void*)0x00020004)
 		DmaClear((int8_t*)0x01001000, 0, 0x00200000, DMA_INT); //Reset cart's workram

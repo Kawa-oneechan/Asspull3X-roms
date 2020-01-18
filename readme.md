@@ -67,6 +67,6 @@ The `png` files can be passed to the included `img2ass` tool to convert them to 
 * Study `ass.h` and any relevant other projects well. The rest is not entirely unlike any other console.
 
 ## Acknowledgements
-* `bios` uses [*FatFS* by ChaN](http://elm-chan.org/fsw/ff/00index_e.html). The splash screen is edited from the copy protection screen from *Ranma ½ Hiryuu Densetsu*.
+* `bios` uses [*FatFS* by ChaN](http://elm-chan.org/fsw/ff/00index_e.html).
 * *Farah Furcett* character named by Screwtape.
 * Snake game ported from [an implementation by Jason Kruse](https://github.com/mnisjk/snake).

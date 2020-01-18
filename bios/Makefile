@@ -7,7 +7,7 @@ OBJCOPY	:= $(CROSS)objcopy
 TARGET	:= ass-bios
 
 # Regular makefile continues here
-SFILES	:=	crt0.s font.s splash.s hdma.s
+SFILES	:=	crt0.s font.s splash.s hdma.s icons.s
 CFILES	:=	main.c f_text.c f_draw.c f_misc.c f_disk.c \
 		../ass-rt.c printf.c ff.c diskio.c 
 
