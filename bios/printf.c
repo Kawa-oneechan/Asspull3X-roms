@@ -126,7 +126,7 @@ static char *number(char *str, long num, int base, int size, int precision,
 int vsprintf(char *buf, const char *fmt, va_list args)
 {
 	int len;
-	unsigned long num;
+	unsigned long long num;
 	int i, base;
 	char *str;
 	char *s;
@@ -137,6 +137,7 @@ int vsprintf(char *buf, const char *fmt, va_list args)
 	int precision;		/* min. # of digits for integers; max
 				   number of chars for from string */
 	int qualifier;		/* 'h', 'l', or 'L' for integer fields */
+	int is64 = 0;
 
 	for (str = buf; *fmt; ++fmt) {
 		if (*fmt != '%') {
@@ -200,6 +201,8 @@ int vsprintf(char *buf, const char *fmt, va_list args)
 		if (*fmt == 'h' || *fmt == 'l' || *fmt == 'L') {
 			qualifier = *fmt;
 			++fmt;
+			is64 = (*fmt == 'l');
+			if (is64) ++fmt;
 		}
 
 		/* default base */
@@ -279,7 +282,12 @@ int vsprintf(char *buf, const char *fmt, va_list args)
 			continue;
 		}
 		if (qualifier == 'l')
-			num = va_arg(args, unsigned long);
+		{
+			if (is64)
+				num = va_arg(args, unsigned long long);
+			else
+				num = va_arg(args, unsigned long);
+		}
 		else if (qualifier == 'h')
 			if (flags & SIGN)
 				num = va_arg(args, int);
