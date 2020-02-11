@@ -1,6 +1,6 @@
 # Asspull IIIx
 ## ROM source archive
-This repository contains the full source for the *Asspull IIIx* ROM files — the BIOS and boot firmware, and a handful of functionality tests. They can be built in [devkitPro](https://devkitpro.org/).
+This repository contains the full source for the *Asspull IIIx* ROM files — the BIOS and boot firmware, and a handful of functionality tests. They can be built in [devkitPro](https://devkitpro.org/)... is what I would *like* to say but I must've misremembered where I got devkit68K from. So grab [this copy](http://helmet.kafuka.org/devkit68k.rar) and unpack it in your devkitPro directory or whatever, and make sure you `set DEVKIT68K=/c/devkitPro/devkit68K` (or wherever you put it). That *should* set you up well enough.
 
 ### `_disk1_` and `_disk2_`
 These two folders are the source for `disk1.img` and `disk2.img`, as built with the included copy of `bfi.exe`.
@@ -10,6 +10,9 @@ This is the complete source of the BIOS and boot firmware. It compiles to `ass-b
 
 ### `cmd`
 This is an attempt to create a DOS prompt, basically, to navigate standard-issue 1.44 MB FAT floppy diskettes. It's very simple, with `cd`, `dir`, `ren`, `del`, and `show` commands. The `show` command should work on `txt` files as well as images in `api` format. `disktest` is better.
+
+### `columns`
+It's *Columns*, and it's in development.
 
 ### `devkit68k`
 Contains the linker scripts and such. Merge it into devkitPro's `devkit68K` folder.
