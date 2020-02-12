@@ -78,6 +78,7 @@ void draw()
 
 void place(int col, int row, int tile)
 {
+	if (row < 0) return;
 	map[(row * WELL_WIDTH) + col] = tile;
 }
 
@@ -93,6 +94,12 @@ void dropNew()
 	currentX = 3;
 	currentY = 2;
 	currentSub = 0;
+
+	if (map[(currentY * WELL_WIDTH) + currentX])
+	{
+		//oh fuck
+		//GameOver();
+	}
 }
 
 int applyGravity()
@@ -244,9 +251,17 @@ void checkLanding()
 
 void movePlayer()
 {
+	static int dropTimer = 0;
+	if (dropTimer != 0)
+	{
+		dropTimer--;
+		if (REG_KEYIN != KEY_DOWN && REG_JOYPAD != 4)
+			return;
+	}
+	dropTimer = 8;
 	checkLanding();
-	currentSub++;
-	if (currentSub == 16)
+	currentSub += 8;
+	if (currentSub >= 16)
 	{
 		currentSub = 0;
 		currentY++;
@@ -278,11 +293,11 @@ void rotate()
 		rotateTimer--;
 		return;
 	}
-	rotateTimer = 2;
-	char t = current[0];
-	current[0] = current[1];
-	current[1] = current[2];
-	current[2] = t;
+	rotateTimer = 6;
+	char t = current[2];
+	current[2] = current[1];
+	current[1] = current[0];
+	current[0] = t;
 }
 
 void drawPlayer()
@@ -335,21 +350,8 @@ void drawEntirity()
 void WaitForKey()
 {
 	while (REG_KEYIN != 0) { vbl(); }
-	while (REG_KEYIN == 0) { vbl(); }
+	while (REG_KEYIN == 0 && REG_JOYPAD == 0) { vbl(); }
 	while (REG_KEYIN != 0) { vbl(); }
-}
-
-int getc()
-{
-	unsigned short key = 0;
-	while (1)
-	{
-		key = REG_KEYIN;
-		if (key & 0xFF) break;
-		vbl();
-	}
-	while (REG_KEYIN != 0) { vbl(); }
-	return key;
 }
 
 int main(void)
@@ -388,10 +390,15 @@ int main(void)
 	{
 		drawPlayer();
 		movePlayer();
-		for (int delay = 0; delay < 4; delay++)
+		for (int delay = 0; delay < 2; delay++)
 		{
 			vbl();
 			in = REG_KEYIN;
+			if (REG_JOYPAD & 1) in = KEY_UP;
+			else if (REG_JOYPAD & 2) in = KEY_RIGHT;
+			else if (REG_JOYPAD & 4) in = KEY_DOWN;
+			else if (REG_JOYPAD & 8) in = KEY_LEFT;
+			else if (REG_JOYPAD & 16) in = KEY_UP;
 			rndseed += in;
 		}
 		switch (in)
