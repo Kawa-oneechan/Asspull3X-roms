@@ -19,7 +19,7 @@ extern const char shapes[TOT_SHAPES][ROTATIONS][TETRAMINO_ROWS][TETRAMINO_COLS];
  * shape    : a multidimensional array storing 1's and 0's maps representing the
  *            shape of the tetramino. There is a map for each rotation.
  * rotation : current rotation, used as first index in shape array.
- * color    : ncurses color of the tetramino.
+ * tile     : A3X tile of the tetramino.
  * on_grid  : true if the tetramino is on the grid, i.e. is not locked down or
  *            its shape has not just changed.
  * row      : row number of the top left corner of tetramino on the grid.

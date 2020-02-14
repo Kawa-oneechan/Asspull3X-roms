@@ -11,8 +11,6 @@
 #define STARTING_DELAY 700
 #define GRID_ROWS      20
 #define GRID_COLS      10
-#define INFOS_COUNT    8
-#define LEN_INFO_LINE  80
 #define HISTORY_SIZE   4
 
 /*
@@ -59,7 +57,6 @@ typedef struct
 
 /*
  * init_game:  allocates space and initialize a game, a grid and a scene.
- *             Allocates an array of strings to store infos for the scene.
  *             Returns a pointer to the new game.
  */
 game *init_game(void);

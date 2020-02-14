@@ -8,22 +8,17 @@
  * scene:  represents the current scene on the screen.
  *
  * grid       : grid to be drawn.
- * infos      : array of informations strings. They will be written after the
- *              grid, on the right.
- * infos_count: number of strings in infos, once set, should remain the same.
  */
 typedef struct
 {
         grid *grid;
-        char **infos;
-        int infos_count;
 } scene;
 
 /*
- * init_scene:  creates a new scene with provided arguments, starts ncurses,
+ * init_scene:  creates a new scene with provided arguments,
  *              returns the pointer to the scene.
  */
-scene *init_scene(grid *grid, char **infos, int infos_count);
+scene *init_scene(grid *grid);
 
 /*
  * refresh_scene:  draw scene in its current state.
@@ -31,8 +26,7 @@ scene *init_scene(grid *grid, char **infos, int infos_count);
 void refresh_scene(const scene *scene);
 
 /*
- * free_scene:  frees memory occupied by scene (not scene->grid, not
- *              scene->infos) and stops ncurses.
+ * free_scene:  frees memory occupied by scene.
  */
 void free_scene(scene *scene);
 
