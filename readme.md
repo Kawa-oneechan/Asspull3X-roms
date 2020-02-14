@@ -50,6 +50,9 @@ Your classic snake game. Not Nibbles — that would require level layouts. Maybe
 ### `sokoban`
 The classic box pushing puzzle.
 
+### `tetris`
+It's *Tetris*, and it's in development.
+
 ### `tiletest`
 Early work to test the games console-style tilemap mode.
 
@@ -73,3 +76,4 @@ The `png` files can be passed to the included `img2ass` tool to convert them to 
 * `bios` uses [*FatFS* by ChaN](http://elm-chan.org/fsw/ff/00index_e.html).
 * *Farah Furcett* character named by Screwtape.
 * Snake game ported from [an implementation by Jason Kruse](https://github.com/mnisjk/snake).
+* Tetris game ported from [an implementation by Marco Lucidi](https://github.com/MarcoLucidi01/tetris_clone).
