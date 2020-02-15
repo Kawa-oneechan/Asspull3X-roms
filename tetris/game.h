@@ -19,7 +19,6 @@
  * grid         : grid of the game.
  * falling      : tetramino which is falling down. It's always the same, but the
  *                shape will be changed when it is locked down.
- * scene        : current game scene.
  * next_shape   : next shape letter.
  * next_shapes  : array of next shapes letters. It will be shuffled
  *                periodically.
@@ -41,7 +40,6 @@ typedef struct
 {
         grid *grid;
         tetramino *falling;
-        scene *scene;
         char next_shape;
         char next_shapes[TOT_SHAPES];
         int next_index;
@@ -56,15 +54,15 @@ typedef struct
 } game;
 
 /*
- * init_game:  allocates space and initialize a game, a grid and a scene.
+ * init_game:  allocates space and initialize a game and a grid.
  *             Returns a pointer to the new game.
  */
 game *init_game(void);
 
 /*
- * run_game:  "plays" game: refresh the scene, gets input from the user,
- *            performs actions, increment score and level, update the infos and
- *            the history of last moves and spawn pieces on top of the grid.
+ * run_game:  "plays" game: gets input from the user, performs actions,
+ *            increment score and level, update the infos and the history
+ *            of last moves and spawn pieces on top of the grid.
  */
 void run_game(game *game);
 

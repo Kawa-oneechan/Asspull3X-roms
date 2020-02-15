@@ -33,8 +33,7 @@ static int spawn_next_on_top(game *game);
 static void update_next_shape(game *game);
 
 /*
- * update_infos:  updates the strings in game->scene->infos to reflect the
- *		informations on the current state of the game.
+ * update_infos:  redraw the stuff outside of the grid.
  */
 static void update_infos(game *game);
 
@@ -93,7 +92,6 @@ game *init_game(void)
 
 	new_game->grid = create_grid(GRID_ROWS, GRID_COLS);
 	new_game->falling = create_tetramino();
-	new_game->scene = init_scene(new_game->grid);
 
 	memcpy(new_game->next_shapes, shapes_letters, TOT_SHAPES);
 
@@ -139,7 +137,7 @@ void run_game(game *game)
 		}
 
 		update_infos(game);
-		refresh_scene(game->scene);
+		refresh_grid(game->grid);
 
 		if (!is_in_array(MOVE_DOWN, game->history_moves, HISTORY_SIZE))
 		{
@@ -325,7 +323,7 @@ static void pause_game(game *game)
 
 	game->is_paused = 1;
 	update_infos(game);
-	refresh_scene(game->scene);
+	refresh_grid(game->grid);
 
 	while ((action = get_action(-1)) != PAUSE && action != END_GAME)
 		vbl();
@@ -398,7 +396,7 @@ action game_over(game *game)
 	game->is_over = 1;
 
 	update_infos(game);
-	refresh_scene(game->scene);
+	refresh_grid(game->grid);
 
 	while ((action = get_action(-1)) != NEW_GAME && action != QUIT)
 		vbl();
@@ -413,6 +411,5 @@ void free_game(game *game)
 {
 	free_grid(game->grid);
 	free(game->falling);
-	free_scene(game->scene);
 	free(game);
 }
