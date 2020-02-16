@@ -75,10 +75,15 @@ $(DEPENDFILE):
 #	$(CC) $(ICFLAGS) -c $< -o $@
 
 
+# --------------------------------------------------------------------
+# GRAPHICS
+# --------------------------------------------------------------------
 
+export IMG2ASS ?= ../img2ass.exe
+export APIFILES := ../splash.png
 
+splash.o : splash.s $(APIFILES:.png=.api)
+	$(AS) $(ASFLAGS) -c $< -o $@
 
-
-
-
-
+%.api : %.png
+	$(IMG2ASS) $<
