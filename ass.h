@@ -114,7 +114,6 @@ extern void free(void*);
 
 #define IMODE_DISABLE	0x80	// Enable interrupts.
 #define IMODE_INVBLANK	0x04	// VBlank is triggered.
-#define IMODE_INHBLANK	0x02	// HBlank is triggered.
 
 #define BLIT_COPY				(1 << 0)
 #define BLIT_SET				(2 << 0)
@@ -308,7 +307,7 @@ typedef struct IBios
 	int16_t extensions;
 	void(*Exception)(void);
 	void(*VBlank)(void);
-	void(*HBlank)(void);
+	void(*reserved)(void);
 	void(*DrawChar)(char, int32_t, int32_t, int32_t);
 	ITextLibrary* textLibrary;
 	IDrawingLibrary* drawingLibrary;

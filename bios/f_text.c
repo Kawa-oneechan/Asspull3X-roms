@@ -3,9 +3,6 @@
 
 extern int32_t vsprintf(char*, const char*, va_list);
 
-void(*oldVBlank)(void);
-void(*oldHBlank)(void);
-
 const ITextLibrary textLibrary =
 {
 	Write, Format, WriteChar,

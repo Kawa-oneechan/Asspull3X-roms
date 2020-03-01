@@ -173,7 +173,6 @@ int32_t main(void)
 	REG_HDMACONTROL[1] = 0;
 	SPRITES_A[0] = 0;
 	interface->VBlank = 0;
-	interface->HBlank = 0;
 	interface->DrawCharFont = (char*)0x0E060A00;
 	interface->DrawCharHeight = 0x0808;
 	attribs = 0x0F;
@@ -225,11 +224,6 @@ void NMIHandler()
 	{
 		if (interface->VBlank != 0) interface->VBlank();
 		REG_INTRMODE &= ~IMODE_INVBLANK;
-	}
-	else if (interrupts & IMODE_INHBLANK)
-	{
-		if (interface->HBlank != 0) interface->HBlank();
-		REG_INTRMODE &= ~IMODE_INHBLANK;
 	}
 	asm("rte");
 }
