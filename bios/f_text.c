@@ -64,6 +64,8 @@ int Write(const char* format, ...)
 {
 	char buffer[1024];
 	intoff();
+	int caret = REG_CARET & 0x8000;
+	REG_CARET &= ~0x8000;
 	va_list args;
 	va_start(args, format);
 	vsprintf(buffer, format, args);
@@ -71,6 +73,7 @@ int Write(const char* format, ...)
 	while (*b)
 		WriteChar(*b++);
 	va_end(args);
+	REG_CARET |= caret;
 	inton();
 	return buffer - b;
 }
