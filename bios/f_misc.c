@@ -2,8 +2,6 @@
 #include "funcs.h"
 
 extern int vsprintf(char*, const char*, va_list);
-extern int cursorPos;
-extern int8_t attribs, textWidth, textHeight;
 
 extern int inVblank;
 
@@ -21,24 +19,18 @@ const IMiscLibrary miscLibrary =
 void SetTextMode(int flags)
 {
 	REG_SCREENMODE = SMODE_TEXT | flags;
-	textWidth = (flags & SMODE_320) ? 40 : 80;
-	textHeight = (flags & SMODE_240) ? 30 : 60;
 	interface->DrawChar = 0;
 }
 
 void SetBitmapMode16(int flags)
 {
 	REG_SCREENMODE = SMODE_BMP1 | flags;
-	textWidth = (flags & SMODE_320) ? 40 : 80;
-	textHeight = (flags & SMODE_240) ? 30 : 60;
 	interface->DrawChar = (flags & SMODE_320) ? DrawChar4_320 : DrawChar4_640;
 }
 
 void SetBitmapMode256(int flags)
 {
 	REG_SCREENMODE = SMODE_BMP2 | flags;
-	textWidth = (flags & SMODE_320) ? 40 : 80;
-	textHeight = (flags & SMODE_240) ? 30 : 60;
 	interface->DrawChar = (flags & SMODE_320) ? DrawChar8_320 : DrawChar8_640;
 }
 

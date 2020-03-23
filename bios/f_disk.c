@@ -2,8 +2,6 @@
 #include "funcs.h"
 
 extern int32_t vsprintf(char*, const char*, va_list);
-extern int32_t cursorPos;
-extern char attribs, textWidth, textHeight;
 
 const IDiskLibrary diskLibrary =
 {

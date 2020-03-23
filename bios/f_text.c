@@ -15,8 +15,7 @@ const ITextLibrary textLibrary =
 #define TEXT_WIDTH 80
 #define TEXT_HEIGHT 25
 #define TAB_STOPS 8
-int32_t cursorPos;
-unsigned char attribs, textWidth, textHeight;
+unsigned char attribs;
 
 //Kill our printf define for __attribute's sake
 #ifdef printf
@@ -43,6 +42,9 @@ void dpf(const char* format, ...)
 
 void ScrollIfNeeded()
 {
+	int cursorPos = REG_CARET & 0x3FFF;
+	int textWidth = (REG_SCREENMODE & SMODE_320) ? 40 : 80;
+	int textHeight = (REG_SCREENMODE & SMODE_240) ? 30 : 60;
 	if (cursorPos / textWidth >= textHeight - 1)
 	{
 		int32_t *dst = (int32_t*)MEM_VRAM;
@@ -53,6 +55,7 @@ void ScrollIfNeeded()
 		for (int32_t i = 0; i < textWidth; i++)
 			*bottomLine++ = (' ' << 8) | attribs;
 		cursorPos = textWidth * (textHeight - 2);
+		REG_CARET = (REG_CARET & 0xC000) | cursorPos;
 	}
 }
 
@@ -85,6 +88,8 @@ int Format(char* buffer, const char* format, ...)
 
 void WriteChar(char ch)
 {
+	int cursorPos = REG_CARET & 0x3FFF;
+	int textWidth = (REG_SCREENMODE & SMODE_320) ? 40 : 80;
 	if (ch == '\r')
 		;
 	else if (ch == '\n')
@@ -97,6 +102,7 @@ void WriteChar(char ch)
 	}
 	else
 		((int16_t*)MEM_VRAM)[cursorPos++] = (ch << 8) | attribs;
+	REG_CARET = (REG_CARET & 0xC000) | cursorPos;
 	ScrollIfNeeded();
 }
 
@@ -113,7 +119,8 @@ void SetBold(int32_t bold)
 
 void SetCursor(int32_t left, int32_t top)
 {
-	cursorPos = (textWidth * top) + left;
+	int textWidth = (REG_SCREENMODE & SMODE_320) ? 40 : 80;
+	REG_CARET = (REG_CARET & 0xC000) | ((textWidth * top) + left);
 }
 
 void SetTextColor(int32_t back, int32_t fore)
@@ -126,7 +133,7 @@ void ClearScreen()
 	if ((REG_SCREENMODE & 3) == 0)
 	{
 		DmaClear((void*)MEM_VRAM, ((' ' << 8) | attribs), 80*60*2, DMA_SHORT);
-		cursorPos = 0;
+		REG_CARET = (REG_CARET & 0xC000);
 	}
 	else
 	{

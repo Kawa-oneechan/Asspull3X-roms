@@ -99,9 +99,6 @@ int main(void)
 	d = malloc(0x4B000);
 	printf("Enough for high-256: 640*480 = 307200 or $4B000.\nd = malloc(that) returns $%X, heap is now $%X.\n", d, heap);
 	WAIT;
-
-	TEXT->ClearScreen();
-	TEXT->SetCursorPosition(0, 0);
 	printf("Adding 16 nodes in a linked list...");
 	for (int i = 0; i < 16; i++)
 	{

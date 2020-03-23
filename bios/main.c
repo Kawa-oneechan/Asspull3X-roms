@@ -12,7 +12,6 @@ extern int sprintf(char *buf, const char *fmt, ...);
 //from crt0.s
 IBios* interface;
 
-extern int32_t cursorPos;
 extern int8_t attribs;
 
 extern const uint16_t hdma1[], hdma2[];
@@ -52,6 +51,7 @@ int32_t main(void)
 	dpf(biosVer);
 
 	DmaCopy(TEXTFONT, (int8_t*)&fontTiles, 12288, DMA_INT);
+	REG_CARET = 0x8000;
 
 	while(1)
 	{
@@ -184,7 +184,7 @@ int32_t main(void)
 void ExHandler()
 {
 	attribs = 0x4E;
-	cursorPos = 0;
+	REG_CARET = 0;
 	printf("Fucked up, yo.");
 	while(1) WaitForVBlank();
 	asm("rte");
@@ -193,7 +193,7 @@ void ExHandler()
 void AddressHandler()
 {
 	attribs = 0x4E;
-	cursorPos = 0;
+	REG_CARET = 0;
 	printf("Address error!");
 	while(1) WaitForVBlank();
 	asm("rte");
@@ -202,7 +202,7 @@ void AddressHandler()
 void InstructionHandler()
 {
 	attribs = 0x4E;
-	cursorPos = 0;
+	REG_CARET = 0;
 	printf("Illegal mangrasp!");
 	while(1) WaitForVBlank();
 	asm("rte");
@@ -211,7 +211,7 @@ void InstructionHandler()
 void ZeroHandler()
 {
 	attribs = 0x4E;
-	cursorPos = 0;
+	REG_CARET = 0;
 	printf("Division by zero. Wow.");
 	while(1) WaitForVBlank();
 	asm("rte");
