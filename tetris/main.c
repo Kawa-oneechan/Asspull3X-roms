@@ -4,6 +4,7 @@
 
 IBios* interface;
 
+extern const TImageFile titlePic;
 extern const uint16_t tilesTiles[], farahTiles[], logoTiles[];
 extern const uint16_t tilesPal[], farahPal[];
 extern const uint16_t backgroundMap[];
@@ -39,14 +40,15 @@ static const uint16_t spritesA[] = {
 	SPRITEA_BUILD(128 + 32, 1, 4),
 	SPRITEA_BUILD(128 + 48, 1, 4),
 	SPRITEA_BUILD(128 + 56, 1, 4),
+
 	SPRITEA_BUILD(384, 1, 1),
 	SPRITEA_BUILD(384 + 16, 1, 1),
 	SPRITEA_BUILD(384 + 32, 1, 1),
 	SPRITEA_BUILD(384 + 48, 1, 1),
-	SPRITEA_BUILD(384 + 56, 1, 1),
 	SPRITEA_BUILD(384 + 64, 1, 1),
 	SPRITEA_BUILD(384 + 72, 1, 1),
 	SPRITEA_BUILD(384 + 80, 1, 1),
+	SPRITEA_BUILD(384 + 88, 1, 1),
 	0,
 };
 static const uint32_t spritesB[] = {
@@ -57,16 +59,115 @@ static const uint32_t spritesB[] = {
 	SPRITEB_BUILD(256, 40, 1, 1, 0, 0, 1, 0),
 	SPRITEB_BUILD(230, 72, 1, 0, 0, 0, 1, 0),
 	SPRITEB_BUILD(224, 48, 1, 1, 0, 0, 1, 0),
+
 	SPRITEB_BUILD(168, 176, 1, 1, 0, 0, 1, 0),
 	SPRITEB_BUILD(200, 176, 1, 1, 0, 0, 1, 0),
 	SPRITEB_BUILD(232, 176, 1, 1, 0, 0, 1, 0),
-	SPRITEB_BUILD(264, 176, 0, 1, 0, 0, 1, 0),
+	SPRITEB_BUILD(264, 176, 1, 1, 0, 0, 1, 0),
 	SPRITEB_BUILD(168, 208, 1, 0, 0, 0, 1, 0),
 	SPRITEB_BUILD(200, 208, 1, 0, 0, 0, 1, 0),
 	SPRITEB_BUILD(232, 208, 1, 0, 0, 0, 1, 0),
-	SPRITEB_BUILD(264, 208, 1, 0, 0, 0, 0, 0),
+	SPRITEB_BUILD(264, 208, 1, 0, 0, 0, 1, 0),
 	0,
 };
+
+static int musicTimer[4];
+static char* musicCursor[4];
+static int musicChannel[4];
+static int musicLastNote[4];
+static int musicNumTracks;
+extern const char* const musicTracks[];
+extern const char musicSettings[];
+
+/*
+extern const char jingleSound[];
+extern const char slideSound[];
+extern const char stepSound[];
+extern const int jingleLength;
+extern const int slideLength;
+extern const int stepLength;
+*/
+const char* currentSound;
+int currentSoundLength;
+
+void music()
+{
+	if (currentSound != 0)
+	{
+		for (int i = 0; i < 256 && currentSoundLength > 0; i++)
+		{
+			REG_AUDIOOUT = *currentSound;
+			currentSound++;
+			currentSoundLength--;
+			if (currentSoundLength == 0)
+				currentSound = 0;
+		}
+	}
+
+	if (musicNumTracks == -1)
+	{
+		musicNumTracks = musicSettings[0];
+		for (int i = 0; i < musicNumTracks; i++)
+		{
+			musicTimer[i] = 0;
+			musicCursor[i] = (char*)musicTracks[i];
+			musicChannel[i] = musicSettings[1 + (i * 2)];
+			MIDI_PROGRAM(musicChannel[i], musicSettings[2 + (i * 2)]);
+		}
+	}
+	for (int i = 0; i < musicNumTracks; i++)
+	{
+		if (musicTimer[i] == 0)
+		{
+			if (musicLastNote[i] > 0)
+				MIDI_KEYOFF(musicChannel[i], musicLastNote[i], 80);
+			char newNote = *musicCursor[i]++;
+			if (newNote == 1)
+			{	//repeat
+				musicCursor[i] = (char*)musicTracks[i];
+				continue;
+			}
+			char length = *musicCursor[i]++;
+			if ((length & 0x80) == 0)
+			{	// not tied?
+				if (musicLastNote[i] > 0)
+					MIDI_KEYOFF(musicChannel[i], musicLastNote[i], 80);
+				if (newNote > 0)
+					MIDI_KEYON(musicChannel[i], newNote, 80);
+			}
+			length &= ~0x80;
+			musicLastNote[i] = newNote;
+			musicTimer[i] = (128 / length);
+		}
+		else
+			musicTimer[i]--;
+	}
+}
+
+void PlaySound(int id)
+{
+/*
+	switch (id)
+	{
+		case 1:
+			currentSound = jingleSound;
+			currentSoundLength = jingleLength;
+			return;
+		case 2:
+			currentSound = slideSound;
+			currentSoundLength = slideLength;
+			return;
+		case 3:
+			currentSound = stepSound;
+			currentSoundLength = stepLength;
+			return;
+		default:
+			currentSound = 0;
+			currentSoundLength = 0;
+			return;
+	}
+*/
+}
 
 unsigned int rndseed = 0xDEADBEEF;
 
@@ -91,6 +192,12 @@ void WaitForKey()
 int main(void)
 {
 	interface = (IBios*)(0x01000000);
+
+	DRAW->DisplayPicture((TImageFile*)&titlePic);
+	DRAW->FadeFromBlack();
+	WaitForKey();
+	DRAW->FadeToWhite();
+
 	MISC->SetTextMode(SMODE_TILE);
 	MISC->DmaCopy(TILESET, (int8_t*)&tilesTiles, 1024, DMA_INT);
 	MISC->DmaCopy(TILESET + 0x1000, (int8_t*)&farahTiles, 1024, DMA_INT);
@@ -130,6 +237,10 @@ int main(void)
 	}
 
 	DRAW->FadeFromBlack();
+
+	interface->VBlank = music;
+	inton();
+	musicNumTracks = -1;
 
 	game *game = init_game();
 	do
