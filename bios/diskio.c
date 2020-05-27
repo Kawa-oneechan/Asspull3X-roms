@@ -18,6 +18,7 @@
 #define REG_DMATARGET	*(volatile unsigned long*)(0x0D000104)
 #define REG_DMALENGTH	*(volatile unsigned long*)(0x0D000108)
 #define REG_DMACONTROL	*(volatile unsigned char*)(0x0D00010A)
+#define REG_TIMET		*(volatile long long*)(0x0D00060)
 
 /*
 DSTATUS disk_initialize(BYTE driveNo)
@@ -36,6 +37,92 @@ DSTATUS disk_status(BYTE driveNo)
 	return STA_NOINIT; //STA_NODISK?
 }
 */
+
+#define SECSPERMIN 60L
+#define MINSPERHOUR 60L
+#define HOURSPERDAY 24L
+#define SECSPERHOUR (SECSPERMIN * MINSPERHOUR)
+#define SECSPERDAY (SECSPERHOUR * HOURSPERDAY)
+#define DAYSPERWEEK 7
+#define MONSPERYEAR 12
+#define EPOCH_ADJUSTMENT_DAYS 719468L
+#define ADJUSTED_EPOCH_YEAR 0 //year to which the adjustment was made
+#define ADJUSTED_EPOCH_WDAY 3 //1st March of year 0 is Wednesday
+#define DAYS_PER_ERA 146097L //there are 97 leap years in 400-year periods. ((400 - 97) * 365 + 97 * 366)
+#define DAYS_PER_CENTURY 36524L //there are 24 leap years in 100-year periods. ((100 - 24) * 365 + 24 * 366)
+#define DAYS_PER_4_YEARS (3 * 365 + 366) //there is one leap year every 4 years
+#define DAYS_PER_YEAR 365 //number of days in a non-leap year
+#define DAYS_IN_JANUARY 31 //number of days in January
+#define DAYS_IN_FEBRUARY 28 //number of days in non-leap February
+#define YEARS_PER_ERA 400 //number of years per era
+#define YEAR_BASE 1900
+#define EPOCH_YEAR 1970
+#define EPOCH_WDAY 4
+#define EPOCH_YEARS_SINCE_LEAP 2
+#define EPOCH_YEARS_SINCE_CENTURY 70
+#define EPOCH_YEARS_SINCE_LEAP_CENTURY 370
+#define isleap(y) ((((y) % 4) == 0 && ((y) % 100) != 0) || ((y) % 400) == 0)
+DWORD get_fattime(void)
+{
+	const long long lcltime = REG_TIMET;
+	if (lcltime == 0)
+		return ((DWORD)(FF_NORTC_YEAR - 1980) << 25 | (DWORD)FF_NORTC_MON << 21 | (DWORD)FF_NORTC_MDAY << 16);
+
+	int hours, mins, secs;
+	long days, rem;
+	int era, year;
+	unsigned erayear, yearday, month, day;
+	unsigned long eraday;
+
+	days = lcltime / ((SECSPERMIN * MINSPERHOUR) * HOURSPERDAY) + EPOCH_ADJUSTMENT_DAYS;
+	rem = lcltime % SECSPERDAY;
+	if (rem < 0)
+	{
+		rem += SECSPERDAY;
+		--days;
+	}
+
+	hours = (int) (rem / SECSPERHOUR);
+	rem %= SECSPERHOUR;
+	mins = (int) (rem / SECSPERMIN);
+	secs = (int) (rem % SECSPERMIN);
+
+	era = (days >= 0 ? days : days - (DAYS_PER_ERA - 1)) / DAYS_PER_ERA;
+	eraday = days - era * DAYS_PER_ERA;	//[0, 146096]
+	erayear = (eraday - eraday / (DAYS_PER_4_YEARS - 1) + eraday / DAYS_PER_CENTURY -
+	eraday / (DAYS_PER_ERA - 1)) / 365;	//[0, 399]
+	yearday = eraday - (DAYS_PER_YEAR * erayear + erayear / 4 - erayear / 100);	//[0, 365]
+	month = (5 * yearday + 2) / 153;	//[0, 11]
+	day = yearday - (153 * month + 2) / 5 + 1;	//[1, 31]
+	month += month < 10 ? 2 : -10;
+	year = ADJUSTED_EPOCH_YEAR + erayear + era * YEARS_PER_ERA + (month <= 1);
+
+	return ((DWORD)(year - 1980) << 25 | (DWORD)month << 21 | (DWORD)day << 16) | (DWORD)hours << 11 | (DWORD)mins << 5 | (DWORD)secs;
+}
+#undef SECSPERMIN
+#undef MINSPERHOUR
+#undef HOURSPERDAY
+#undef SECSPERHOUR
+#undef SECSPERDAY
+#undef DAYSPERWEEK
+#undef MONSPERYEAR
+#undef EPOCH_ADJUSTMENT_DAYS
+#undef ADJUSTED_EPOCH_YEAR
+#undef ADJUSTED_EPOCH_WDAY
+#undef DAYS_PER_ERA
+#undef DAYS_PER_CENTURY
+#undef DAYS_PER_4_YEARS
+#undef DAYS_PER_YEAR
+#undef DAYS_IN_JANUARY
+#undef DAYS_IN_FEBRUARY
+#undef YEARS_PER_ERA
+#undef YEAR_BASE
+#undef EPOCH_YEAR
+#undef EPOCH_WDAY
+#undef EPOCH_YEARS_SINCE_LEAP
+#undef EPOCH_YEARS_SINCE_CENTURY
+#undef EPOCH_YEARS_SINCE_LEAP_CENTURY
+#undef isleap
 
 DRESULT disk_read(BYTE driveNo, BYTE *buff, DWORD sector, UINT count)
 {
