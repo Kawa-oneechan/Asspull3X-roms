@@ -98,7 +98,7 @@ void WriteChar(char ch)
 	else if (ch == '\n')
 		cursorPos = (cursorPos / textWidth * textWidth) + textWidth;
 	else if (ch == '\t')
-		cursorPos = (cursorPos / TAB_STOPS * TAB_STOPS) + TAB_STOPS;
+		cursorPos += TAB_STOPS - (cursorPos % TAB_STOPS);
 	else if (ch == '\b')
 	{
 		((int16_t*)MEM_VRAM)[--cursorPos] = (' ' << 8) | attribs;
