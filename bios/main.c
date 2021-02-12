@@ -10,7 +10,7 @@ extern int sprintf(char *buf, const char *fmt, ...);
 #include "funcs.h"
 
 //from crt0.s
-IBios* interface;
+IBios* interface = (IBios*)(0x01000000);
 
 extern int8_t attribs;
 
@@ -41,7 +41,6 @@ extern const uint16_t iconsPal[16];
 int32_t main(void)
 {
 	char biosVer[32];
-	interface = (IBios*)(0x01000000);
 	int32_t* cartCode = (int32_t*)0x00020000;
 	void(*entry)(void)= (void*)0x00020004;
 	int32_t haveDisk = 0, hadDisk = 0;
@@ -222,8 +221,8 @@ void NMIHandler()
 	int interrupts = REG_INTRMODE;
 	if (interrupts & IMODE_INVBLANK)
 	{
-		if (interface->VBlank != 0) interface->VBlank();
 		REG_INTRMODE &= ~IMODE_INVBLANK;
+		if (interface->VBlank != 0) interface->VBlank();
 	}
 	asm("rte");
 }

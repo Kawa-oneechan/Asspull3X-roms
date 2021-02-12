@@ -96,7 +96,6 @@ nullHandler:	rte			| Empty exception handler does nothing
 	.align 16
 
 	.data
-	.global interface
 	.extern textLibrary
 
 /* For reference:
