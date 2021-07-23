@@ -19,9 +19,6 @@ int main(void)
 	TEXT->SetTextColor(0, 7);
 	TEXT->ClearScreen();
 
-	KeyboardTest();
-	WaitForKey();
-
 	TEXT->SetTextColor(0, 15);
 	printf("Welcome to the Asspull \x96\xD7 testing suite.\n");
 	TEXT->SetTextColor(0, 7);
@@ -52,6 +49,9 @@ int main(void)
 	}
 	TEXT->SetTextColor(0, 7);
 	WaitForKey();
+	REG_SCREENMODE |= 0x10;
+	WaitForKey();
+	REG_SCREENMODE &= ~0x10;
 	TEXT->ClearScreen();
 
 	printf("Dithering test 2");
@@ -69,4 +69,6 @@ int main(void)
 	}
 	TEXT->SetTextColor(0, 7);
 	WaitForKey();
+
+	KeyboardTest();
 }

@@ -120,8 +120,12 @@ void KeyboardTest()
 {
 	MISC->SetTextMode(SMODE_240 | SMODE_BOLD);
 	MISC->DmaCopy(MAP1, (int8_t*)&keyboardImage, 80 * 30, DMA_INT);
+	TEXT->SetTextColor(0, 7);
+	TEXT->SetCursorPosition(38, 26);
+	printf("Keyboard test 1.0");
+	REG_CARET = 0;
 
-	TEXT->SetTextColor(8, 0);
+	TEXT->SetTextColor(7, 0);
 	for (int i = 1; i < 93; i++)
 	{
 		if (keys[i].text == 0)
@@ -160,7 +164,7 @@ void KeyboardTest()
 		//highlight
 		{
 			TEXT->SetCursorPosition(l, t);
-			TEXT->SetTextColor(8, 14);
+			TEXT->SetTextColor(7, 12);
 			printf(text);
 		}
 
@@ -186,7 +190,7 @@ void KeyboardTest()
 		//lowlight
 		{
 			TEXT->SetCursorPosition(l, t);
-			TEXT->SetTextColor(8, 15);
+			TEXT->SetTextColor(7, 15);
 			printf(text);
 		}
 
