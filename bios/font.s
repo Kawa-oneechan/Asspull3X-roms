@@ -2,4 +2,5 @@
 	.align	2
 	.global fontTiles
 fontTiles:
-	.incbin "font.bin"
+	.incbin "font1.img.bin"
+	.incbin "font2.img.bin"
