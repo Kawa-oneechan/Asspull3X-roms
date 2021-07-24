@@ -1,5 +1,5 @@
 #include "../ass.h"
-IBios* interface = (IBios*)(0x01000000);
+IBios* interface;
 
 extern const TImageFile titlePic;
 extern const uint16_t tilesTiles[], tilesPal[];
@@ -475,6 +475,7 @@ void CheckForDisk()
 
 int main(void)
 {
+	interface = (IBios*)(0x01000000);
 	MISC->SetTextMode(0);
 
 	DRAW->DisplayPicture((TImageFile*)&titlePic);
