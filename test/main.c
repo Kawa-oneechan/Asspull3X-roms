@@ -15,28 +15,35 @@ void WaitForKey()
 int main(void)
 {
 	interface = (IBios*)(0x01000000);
-	MISC->SetTextMode(SMODE_240 | SMODE_320 | SMODE_BOLD);
+	MISC->SetTextMode(SMODE_240 | SMODE_BOLD);
 	TEXT->SetTextColor(0, 7);
 	TEXT->ClearScreen();
 
-	TEXT->SetTextColor(0, 15);
-	printf("Welcome to the Asspull \x96\xD7 testing suite.\n");
 	TEXT->SetTextColor(0, 7);
-	printf("Font test");
+	TEXT->Write("Welcome to the ");
+	TEXT->SetTextColor(0, 1);
+	TEXT->Write("Asspull ");
+	TEXT->SetTextColor(0, 9);
+	TEXT->WriteChar('\x96');
+	TEXT->SetTextColor(0, 12);
+	TEXT->WriteChar('\xD7');
+	TEXT->SetTextColor(0, 7);
+	TEXT->Write(" testing suite.\n");
 
+	TEXT->SetTextColor(0, 7);
+	TEXT->Write("Font test");
 	for (int row = 0; row < 16; row++)
 	{
 		for (int col = 0; col < 16; col++)
 		{
-			((int16_t*)MEM_VRAM)[((row + 4)  * 40) + col + 2] = ((row * 16 + col) << 8) | 0x0F;
+			((int16_t*)MEM_VRAM)[((row + 4)  * 80) + col + 2] = ((row * 16 + col) << 8) | 0x0F;
 		}
 	}
 	WaitForKey();
 
-	MISC->SetTextMode(SMODE_240 | SMODE_BOLD);
 	TEXT->ClearScreen();
 
-	printf("Dithering test 1");
+	TEXT->Write("Dithering test 1");
 
 	for (int row = 0; row < 16; row++)
 	{
@@ -54,7 +61,7 @@ int main(void)
 	REG_SCREENMODE &= ~0x10;
 	TEXT->ClearScreen();
 
-	printf("Dithering test 2");
+	TEXT->Write("Dithering test 2");
 	for (int row = 0; row < 16; row++)
 	{
 		TEXT->SetCursorPosition(2, 2 + row);
