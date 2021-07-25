@@ -56,9 +56,9 @@ int main(void)
 	}
 	TEXT->SetTextColor(0, 7);
 	WaitForKey();
-	REG_SCREENMODE |= 0x10;
+	REG_SCREENMODE |= SMODE_BLINK;
 	WaitForKey();
-	REG_SCREENMODE &= ~0x10;
+	REG_SCREENMODE &= ~SMODE_BLINK;
 	TEXT->ClearScreen();
 
 	TEXT->Write("Dithering test 2");
