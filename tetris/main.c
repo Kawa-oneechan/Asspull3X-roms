@@ -122,9 +122,16 @@ void music()
 			if (musicLastNote[i] > 0)
 				MIDI_KEYOFF(musicChannel[i], musicLastNote[i], 80);
 			char newNote = *musicCursor[i]++;
+			//TODO: change these non-notes to the 250-ish range.
+			//TODO: add "loop N times"
 			if (newNote == 1)
 			{	//repeat
 				musicCursor[i] = (char*)musicTracks[i];
+				continue;
+			}
+			else if (newNote == 2)
+			{	//goto
+				musicCursor[i] = (char*)musicTracks[i] + (*musicCursor[i] * 2);
 				continue;
 			}
 			char length = *musicCursor[i]++;
@@ -194,6 +201,11 @@ int main(void)
 	interface = (IBios*)(0x01000000);
 
 	DRAW->DisplayPicture((TImageFile*)&titlePic);
+	//TEST: play music on the title screen for quick testing
+	interface->VBlank = music;
+	inton();
+	musicNumTracks = -1;
+	//-end test-
 	DRAW->FadeFromBlack();
 	WaitForKey();
 	DRAW->FadeToWhite();
