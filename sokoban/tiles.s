@@ -19,5 +19,5 @@ playerPal:
 diskettePal:
 	.incbin "diskette.pal.bin"
 titlePic:
-	.incbin "../sokoban.api"
+	.incbin "title.api"
 

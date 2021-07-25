@@ -1,4 +1,4 @@
 	.global picData
 	.text
 picData:
-	.incbin "../200-16.api"
+	.incbin "200-16.api"

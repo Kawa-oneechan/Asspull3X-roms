@@ -11,8 +11,8 @@ include ../ass_romrules
 export IMG2ASS ?= ../img2ass.exe
 export GRIT := $(DEVKITARM)/bin/grit.exe
 
-tiles.o : tiles.s ../sokoban.png tiles.png player.png diskette.png
-	$(IMG2ASS) ../sokoban.png
+tiles.o : tiles.s title.png tiles.png player.png diskette.png
+	$(IMG2ASS) title.png
 	$(GRIT) tiles.png -ftb -fh! -gu16 -gB4 -pu8
 	$(GRIT) player.png -ftb -fh! -gu16 -gB4 -pu8
 	$(GRIT) diskette.png -ftb -fh! -gu16 -gb -gB4 -pu8

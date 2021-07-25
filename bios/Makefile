@@ -81,7 +81,7 @@ $(DEPENDFILE):
 
 export IMG2ASS ?= ../img2ass.exe
 export GRIT := $(DEVKITARM)/bin/grit.exe
-export APIFILES := ../splash.png
+export APIFILES := splash.png
 
 splash.o : splash.s $(APIFILES:.png=.api)
 	$(AS) $(ASFLAGS) -c $< -o $@

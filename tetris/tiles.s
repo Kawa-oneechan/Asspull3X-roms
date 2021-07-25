@@ -16,4 +16,4 @@ tilesPal:
 farahPal:
 	.incbin "farah.pal.bin"
 titlePic:
-	.incbin "../tetris.api"
+	.incbin "title.api"

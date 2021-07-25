@@ -9,7 +9,7 @@ include ../ass_romrules
 # --------
 
 export IMG2ASS ?= ../img2ass.exe
-export APIFILES := ../piano.png
+export APIFILES := piano.png
 
 piano.o : piano.s $(APIFILES:.png=.api)
 	$(AS) $(ASFLAGS) -c $< -o $@
