@@ -74,7 +74,10 @@ static const uint32_t spritesB[] = {
 static int musicTimer[4];
 static char* musicCursor[4];
 static int musicChannel[4];
-static int musicLastNote[4];
+static unsigned char musicNotes[128], musicNoteLengths[128], musicNoteChannels[128];
+static char* musicRepeatFrom[4];
+static char* musicRepeatTo[4];
+static char musicRepeatTimes[4];
 static int musicNumTracks;
 extern const char* const musicTracks[];
 extern const char musicSettings[];
@@ -112,15 +115,31 @@ void music()
 			musicTimer[i] = 0;
 			musicCursor[i] = (char*)musicTracks[i];
 			musicChannel[i] = musicSettings[1 + (i * 2)];
+			musicRepeatTo[i] = 0;
+			musicRepeatTimes[i] = 0;
 			MIDI_PROGRAM(musicChannel[i], musicSettings[2 + (i * 2)]);
+		}
+		for (int i = 0; i < 128; i++)
+		{
+			musicNotes[i] = 0xFF;
+		}
+	}
+	for (int i = 0; i < 128; i++)
+	{
+		if (musicNotes[i] != 0xFF)
+		{
+			musicNoteLengths[i]--;
+			if (musicNoteLengths[i] == 0)
+			{
+				MIDI_KEYOFF(musicNoteChannels[i], musicNotes[i], 80);
+				musicNotes[i] = 0xFF;
+			}
 		}
 	}
 	for (int i = 0; i < musicNumTracks; i++)
 	{
 		if (musicTimer[i] == 0)
 		{
-			if (musicLastNote[i] > 0)
-				MIDI_KEYOFF(musicChannel[i], musicLastNote[i], 80);
 			char newNote = *musicCursor[i]++;
 			//TODO: change these non-notes to the 250-ish range.
 			//TODO: add "loop N times"
@@ -134,17 +153,50 @@ void music()
 				musicCursor[i] = (char*)musicTracks[i] + (*musicCursor[i] * 2);
 				continue;
 			}
+			else if (newNote == 3)
+			{	//repeatTo
+				if (musicRepeatTo[i] == musicCursor[i])
+				{
+					//already in a repeat
+					musicRepeatTimes[i]--;
+					if (musicRepeatTimes[i] == 0)
+					{
+						musicRepeatFrom[i] = musicRepeatTo[i] = 0;
+						musicCursor[i] += 2; //skip to and count
+						continue;
+					}
+				}
+				else
+				{
+					musicRepeatTo[i] = musicCursor[i];
+					musicRepeatFrom[i] = (char*)musicTracks[i] + (*musicCursor[i] * 2);
+					musicCursor[i]++;
+					musicRepeatTimes[i] = *musicCursor[i];
+				}
+				musicCursor[i] = musicRepeatFrom[i];
+				continue;
+			}
 			char length = *musicCursor[i]++;
 			if ((length & 0x80) == 0)
 			{	// not tied?
-				if (musicLastNote[i] > 0)
-					MIDI_KEYOFF(musicChannel[i], musicLastNote[i], 80);
+				//if (musicLastNote[i] > 0)
+				//	MIDI_KEYOFF(musicChannel[i], musicLastNote[i], 80);
 				if (newNote > 0)
 					MIDI_KEYON(musicChannel[i], newNote, 80);
 			}
 			length &= ~0x80;
-			musicLastNote[i] = newNote;
+			//musicLastNote[i] = newNote;
 			musicTimer[i] = (128 / length);
+			for (int j = 0; j < 128; j++)
+			{
+				if (musicNotes[j] == 0xFF)
+				{
+					musicNotes[j] = newNote;
+					musicNoteLengths[j] = musicTimer[i];
+					musicNoteChannels[j] = musicChannel[i];
+					break;
+				}
+			}
 		}
 		else
 			musicTimer[i]--;

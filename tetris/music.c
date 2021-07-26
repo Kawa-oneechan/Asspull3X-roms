@@ -22,6 +22,43 @@ const char track1[] =
 	MIDI_As2, 8,
 	MIDI_As3, 8,
 //------------------- :|
+	3, 0, 13, //repeat to 0, 14 times
+//------------------- 29 PART 2
+	MIDI_Ds3, 8,
+	MIDI_Fs3, 8,
+	MIDI_Ds3, 16,
+	MIDI_Fs3, 8,
+	MIDI_Ds3, 16,
+	MIDI_Fs3, 8,
+	MIDI_Ds3, 16,
+	MIDI_Fs3, 8,
+	MIDI_Ds3, 16,
+	MIDI_Fs3, 8,
+//------------------- 30
+	MIDI_Ds3, 8,
+	MIDI_Fs3, 8,
+	MIDI_Ds3, 16,
+	MIDI_Fs3, 8,
+	MIDI_Ds3, 16,
+	MIDI_Fs3, 8,
+	MIDI_Ds3, 16,
+	MIDI_Fs3, 8,
+	MIDI_Ds3, 16,
+	MIDI_Fs3, 8,
+//------------------- 31
+	MIDI_Cs3, 8,
+	MIDI_Gs3, 8,
+	MIDI_Cs3, 16,
+	MIDI_Gs3, 8,
+	MIDI_Cs3, 16,
+	MIDI_Gs3, 8,
+	MIDI_Cs3, 16,
+	MIDI_Gs3, 8,
+	MIDI_Cs3, 16,
+	MIDI_Gs3, 8,
+//------------------- 32
+	0, 1,
+//------------------- 33
 	1 //repeat
 };
 
@@ -77,7 +114,9 @@ const char track2[] =
 	MIDI_G5,  8,
 	MIDI_As5, 8,
 //------------------- :|
-	2, 8 //goto
+	3, 8, 5, //repeat to 0, 6 times
+//-------------------
+	2, 0 //goto
 };
 
 const char* const musicTracks[] =
