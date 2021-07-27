@@ -4,7 +4,7 @@ IBios* interface;
 
 extern char *strrchr(const char *, int32_t);
 
-#define MAXPATH 256
+#define MAXPATH 512
 #define MAXFILES 512
 
 void WaitForKey()
@@ -453,8 +453,9 @@ int32_t main(void)
 	intoff();
 	MISC->SetTextMode(SMODE_240 | SMODE_BOLD);
 	DRAW->ResetPalette();
+	REG_CARET = 0;
 	while(1)
 	{
-		SelectFile("/", "*.*", path, ShowFile);
+		SelectFile("0:/", "*.*", path, ShowFile);
 	}
 }
