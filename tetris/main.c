@@ -46,9 +46,9 @@ static const uint16_t spritesA[] = {
 	SPRITEA_BUILD(384 + 32, 1, 1),
 	SPRITEA_BUILD(384 + 48, 1, 1),
 	SPRITEA_BUILD(384 + 64, 1, 1),
-	SPRITEA_BUILD(384 + 72, 1, 1),
 	SPRITEA_BUILD(384 + 80, 1, 1),
-	SPRITEA_BUILD(384 + 88, 1, 1),
+	SPRITEA_BUILD(384 + 96, 1, 1),
+	SPRITEA_BUILD(384 + 112, 1, 1),
 	0,
 };
 static const uint32_t spritesB[] = {
@@ -64,10 +64,10 @@ static const uint32_t spritesB[] = {
 	SPRITEB_BUILD(200, 176, 1, 1, 0, 0, 1, 0),
 	SPRITEB_BUILD(232, 176, 1, 1, 0, 0, 1, 0),
 	SPRITEB_BUILD(264, 176, 1, 1, 0, 0, 1, 0),
-	SPRITEB_BUILD(168, 208, 1, 0, 0, 0, 1, 0),
-	SPRITEB_BUILD(200, 208, 1, 0, 0, 0, 1, 0),
-	SPRITEB_BUILD(232, 208, 1, 0, 0, 0, 1, 0),
-	SPRITEB_BUILD(264, 208, 1, 0, 0, 0, 1, 0),
+	SPRITEB_BUILD(168, 208, 1, 1, 0, 0, 1, 0),
+	SPRITEB_BUILD(200, 208, 1, 1, 0, 0, 1, 0),
+	SPRITEB_BUILD(232, 208, 1, 1, 0, 0, 1, 0),
+	SPRITEB_BUILD(264, 208, 1, 1, 0, 0, 1, 0),
 	0,
 };
 

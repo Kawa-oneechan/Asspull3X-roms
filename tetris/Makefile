@@ -15,7 +15,7 @@ tiles.o : tiles.s title.png tiles.png farah.png logo.png
 	$(IMG2ASS) title.png
 	$(GRIT) tiles.png -ftb -fh! -gu16 -gB4 -pu8
 	$(GRIT) farah.png -ftb -fh! -gu16 -gB4 -pu8
-	$(GRIT) logo.png -ftb -fh! -gu16 -gB4 -p!
+	$(GRIT) logo.png -ftb -fh! -gu16 -gB4 -p! -Mw4 -Mh4
 	$(OBJCOPY) -F binary --reverse-bytes=2 tiles.pal.bin
 	$(OBJCOPY) -F binary --reverse-bytes=2 farah.pal.bin
 	$(AS) $(ASFLAGS) -c $< -o $@

@@ -8,6 +8,7 @@
 	.text
 tilesTiles:
 	.incbin "tiles.img.bin"
+	.incbin "font.img.bin"
 playerTiles:
 	.incbin "player.img.bin"
 diskettePic:
