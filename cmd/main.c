@@ -34,6 +34,7 @@ int LoadFile(const char* path, char** buffer, int32_t len)
 
 void WaitForKey()
 {
+	while (REG_KEYIN != 0);
 	while (REG_KEYIN == 0);
 	while (REG_KEYIN != 0);
 }
@@ -79,25 +80,42 @@ int32_t ShowPic(char* filePath)
 	return 2;
 }
 
+void UpperCase(char *from, char *to)
+{
+	while (*from)
+	{
+		printf("'%c'\n", *from);
+		if (*from >= 'a' && *from <= 'z')
+			*to = *from - 'a' + 'A';
+		else
+			*to = *from;
+		to++;
+		from++;
+	}
+}
+
 int32_t ShowFile(int argc, char **args)
 {
 	if (argc == 0)
 		return 0;
 	char* filePath = args[0];
-	char* ext = strrchr(filePath, '.') + 1;
+	char ext[4] = { 0 };
+	UpperCase(strrchr(filePath, '.') + 1, ext);
 	if (!strcmp(ext, "TXT"))
 		; //ShowText(filePath);
 	else if (!strcmp(ext, "API"))
 	{
 		ShowPic(filePath);
-		MISC->SetTextMode(SMODE_240);
+		MISC->SetTextMode(SMODE_240 | SMODE_BOLD);
+		TEXT->ClearScreen();
+		TEXT->SetCursorPosition(0, 0);
 		DRAW->ResetPalette();
 	}
 	else if (!strcmp(ext, "APP"))
 		StartApp(filePath);
 	else
 	{
-		TEXT->SetCursorPosition(0, 0);
+		//TEXT->SetCursorPosition(0, 0);
 		printf("Unknown file type \"%s\".\n", ext);
 		WaitForKey();
 	}
@@ -183,7 +201,7 @@ int32_t ListFiles(int argc __attribute__((unused)), char **args __attribute__((u
 	}
 	ret = DISK->CloseDir(&dir);
 	printf("\n\t\t%8i bytes used", size);
-	printf("\n\t\t%8i bytes free\n\n", 1474560 - size); //assuming a formatted 3½' HD diskette.
+	printf("\n\t\t%8i bytes free\n\n", 1474560 - size); //assuming a formatted 3ï¿½' HD diskette.
 	return 2;
 }
 
@@ -205,7 +223,7 @@ int32_t ChangeDirectory(int argc, char **args)
 	}
 	else
 	{
-		printf("OK\n");
+		//printf("OK\n");
 	}
 	return 2;
 }
@@ -244,6 +262,7 @@ int32_t main()
 	while(1)
 	{
 		DISK->GetCurrentDir(cwd, MAX_CWD);
+		if (cwd[0] == 0) sprintf(cwd, "No disk");
 		printf("%s>", (char*)&cwd);
 		gets_s(input, MAX_INP);
 		trimmed = input;
