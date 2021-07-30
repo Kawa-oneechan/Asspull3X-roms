@@ -10,14 +10,25 @@ include ../ass_romrules
 
 export IMG2ASS ?= ../img2ass.exe
 export GRIT := $(DEVKITARM)/bin/grit.exe
+GRITFLAGS := -ftb -fh! -gB4
+# I'll explain this just here in "Sokoban":
+# -ftb    file type binary
+# -fh!    no header
+# -gB4    tile data is 4 bpp (no matter the image bitdepth, the system only supports 4bpp tiles)
 
-tiles.o : tiles.s title.png tiles.png font.png player.png diskette.png
+tiles.o : tiles.s *.pal.bin title.png tiles.png font.png player.png diskette.png
 	$(IMG2ASS) title.png
-	$(GRIT) tiles.png -ftb -fh! -gu16 -gB4 -pu8 -Mw2 -Mh2
-	$(GRIT) font.png -ftb -fh! -gu16 -gB4 -pu8 -p!
-	$(GRIT) player.png -ftb -fh! -gu16 -gB4 -pu8 -Mw2 -Mh4
-	$(GRIT) diskette.png -ftb -fh! -gu16 -gb -gB4 -pu8
+# Tiles are 16x16
+	$(GRIT) tiles.png $(GRITFLAGS) -Mw2 -Mh2
+# Font is 8x8 (default), we don't need a palette.
+	$(GRIT) font.png $(GRITFLAGS) -p!
+# Player sprites are 16x32
+	$(GRIT) player.png $(GRITFLAGS) -Mw2 -Mh4
+# Spinning diskette is a bitmap
+	$(GRIT) diskette.png $(GRITFLAGS) -gb
+# Flip palette data around
 	$(OBJCOPY) -F binary --reverse-bytes=2 tiles.pal.bin
 	$(OBJCOPY) -F binary --reverse-bytes=2 player.pal.bin
 	$(OBJCOPY) -F binary --reverse-bytes=2 diskette.pal.bin
+# Produce final result
 	$(AS) $(ASFLAGS) -c $< -o $@

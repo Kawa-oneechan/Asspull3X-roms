@@ -10,12 +10,18 @@ include ../ass_romrules
 
 export IMG2ASS ?= ../img2ass.exe
 export GRIT := $(DEVKITARM)/bin/grit.exe
+GRITFLAGS := -ftb -fh! -gB4
 
 tiles.o : tiles.s title.png tiles.png farah.png logo.png
 	$(IMG2ASS) title.png
-	$(GRIT) tiles.png -ftb -fh! -gu16 -gB4 -pu8
-	$(GRIT) farah.png -ftb -fh! -gu16 -gB4 -pu8
-	$(GRIT) logo.png -ftb -fh! -gu16 -gB4 -p! -Mw4 -Mh4
+# Tiles are 8x8
+	$(GRIT) tiles.png $(GRITFLAGS)
+# Farah is a mess (TODO)
+	$(GRIT) farah.png $(GRITFLAGS)
+# Logo is 32x32, doesn't have a unique palette
+	$(GRIT) logo.png $(GRITFLAGS) -p! -Mw4 -Mh4
+# Flip palette data around
 	$(OBJCOPY) -F binary --reverse-bytes=2 tiles.pal.bin
 	$(OBJCOPY) -F binary --reverse-bytes=2 farah.pal.bin
+# Produce final result
 	$(AS) $(ASFLAGS) -c $< -o $@

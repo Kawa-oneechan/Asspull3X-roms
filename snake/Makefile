@@ -9,8 +9,11 @@ include ../ass_romrules
 # --------
 
 export GRIT := $(DEVKITARM)/bin/grit.exe
+GRITFLAGS := -ftb -fh! -gB4
 
 tiles.o : tiles.s tiles.png
-	$(GRIT) tiles.png -ftb -fh! -gu16 -gB4 -pu8
+# Tiles need nothing special...
+	$(GRIT) tiles.png ($GRITFLAGS)
+# ...except to have the palette data flipped around
 	$(OBJCOPY) -F binary --reverse-bytes=2 tiles.pal.bin
 	$(AS) $(ASFLAGS) -c $< -o $@
