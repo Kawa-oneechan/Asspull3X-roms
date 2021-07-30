@@ -89,9 +89,11 @@ int fgetc(FILE* file)
 	}
 	while (1)
 	{
-		if (REG_KEYIN == 0)
+		if ((REG_KEYIN & 0xFF) == 0)
 			break;
+		vbl();
 	}
+	PALETTE[0] = 0x00;
 	if (file == STDIN && __fgetc_echo) TEXT->WriteChar(sctoasc[key]);
 	return sctoasc[key];
 }
