@@ -1,19 +1,10 @@
 	.global jingleSound
-	.global jingleLength
 	.global slideSound
-	.global slideLength
 	.global stepSound
-	.global stepLength
 	.text
 jingleSound:
-	.incbin "jingle.raw"
-jingleLength:
-	.int jingleLength - jingleSound
+	.incbin "jingle.wav"
 slideSound:
-	.incbin "slide.raw"
-slideLength:
-	.int slideLength - slideSound
+	.incbin "slide.wav"
 stepSound:
-	.incbin "step.raw"
-stepLength:
-	.int stepLength - stepSound
+	.incbin "step.wav"
