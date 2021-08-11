@@ -27,7 +27,7 @@ const IDrawingLibrary drawingLibrary =
 				if (p & 2) *target = (*target & 0x0F) | (color << 4); \
 				target++; } target += (WIDTH/2) - 4; \
 		} }	else { for (int32_t line = 0; line < (interface->DrawCharHeight & 0x00FF); line++) { \
-			char g = *glyph++; if (g & 1) *target = (*target & 0xF0) | color; \
+			char g = *glyph++; if (g & 1) *target = (*target & 0x0F) | (color << 4); \
 			for (int32_t bit = 1; bit < 7; bit += 2) { target++; int32_t p = g >> bit; \
 				if (p & 1) *target = (*target & 0xF0) | (color << 0); \
 				if (p & 2) *target = (*target & 0x0F) | (color << 4); \
