@@ -3,6 +3,7 @@ IBios* interface;
 
 extern void KeyboardTest();
 extern void BitmapTest();
+extern void MouseTest();
 
 void WaitForKey()
 {
@@ -16,11 +17,9 @@ void WaitForKey()
 int main(void)
 {
 	interface = (IBios*)(0x01000000);
-	BitmapTest();
 	MISC->SetTextMode(SMODE_240 | SMODE_BOLD);
 	TEXT->SetTextColor(0, 7);
 	TEXT->ClearScreen();
-
 
 	TEXT->SetTextColor(0, 7);
 	TEXT->Write("Welcome to the ");
