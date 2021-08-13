@@ -1,4 +1,4 @@
 	.global pianoData
 	.text
 pianoData:
-	.incbin "../piano.api"
+	.incbin "piano.api"

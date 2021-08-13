@@ -13,7 +13,7 @@ GRITFLAGS := -ftb -fh! -gB4
 
 tiles.o : tiles.s tiles.png
 # Tiles need nothing special...
-	$(GRIT) tiles.png ($GRITFLAGS)
+	$(GRIT) tiles.png $(GRITFLAGS)
 # ...except to have the palette data flipped around
 	$(OBJCOPY) -F binary --reverse-bytes=2 tiles.pal.bin
 	$(AS) $(ASFLAGS) -c $< -o $@

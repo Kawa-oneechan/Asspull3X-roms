@@ -24,13 +24,13 @@ void SetTextMode(int flags)
 
 void SetBitmapMode16(int flags)
 {
-	REG_SCREENMODE = SMODE_BMP1 | flags;
+	REG_SCREENMODE = SMODE_BMP16 | flags;
 	interface->DrawChar = (flags & SMODE_320) ? DrawChar4_320 : DrawChar4_640;
 }
 
 void SetBitmapMode256(int flags)
 {
-	REG_SCREENMODE = SMODE_BMP2 | flags;
+	REG_SCREENMODE = SMODE_BMP256 | flags;
 	interface->DrawChar = (flags & SMODE_320) ? DrawChar8_320 : DrawChar8_640;
 }
 

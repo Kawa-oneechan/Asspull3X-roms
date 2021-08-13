@@ -81,7 +81,7 @@ void DisplayPicture(TImageFile* picData)
 		mode |= SMODE_BOLD;
 	if (mode > -1)
 	{
-		//mode |= (picData->BitDepth == 8) ? SMODE_BMP2 : SMODE_BMP1;
+		//mode |= (picData->BitDepth == 8) ? SMODE_BMP256 : SMODE_BMP16;
 		//REG_SCREENMODE = (uint8_t)mode;
 		if (picData->BitDepth == 8)
 			SetBitmapMode256(mode);
