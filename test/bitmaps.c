@@ -29,5 +29,4 @@ void BitmapTest()
 		DRAW->DisplayPicture((TImageFile*)bitmaps[i]);
 		WaitForKey2();
 	}
-	DRAW->ResetPalette();
 }

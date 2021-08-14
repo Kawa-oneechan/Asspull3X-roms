@@ -1,9 +1,16 @@
 #include "../ass.h"
 IBios* interface;
 
-extern void KeyboardTest();
-extern void BitmapTest();
-extern void MouseTest();
+static const char sctoasc[256] = {
+	0,0,'1','2','3','4','5','6','7','8','9','0','-','=',0,0,
+	'q','w','e','r','t','y','u','i','o','p','[',']',0,0,'a','s',
+	'd','f','g','h','j','k','l',';',39,'`',0,92,'z','x','c','v',
+	'b','n','m',',','.','/',0,'*',0,32,0,0,0,0,0,0,
+	0,0,0,0,0,0,0,'7','8','9','-','4','5','6','+','1',
+	'2','3','0','.',0,0,0,0,0,0,0,0,0,0,0,0,
+	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+};
 
 void WaitForKey()
 {
@@ -14,70 +21,92 @@ void WaitForKey()
 	while (REG_KEYIN != 0) { vbl(); }
 }
 
+char getchar()
+{
+	unsigned short key = 0;
+	while (1)
+	{
+		key = REG_KEYIN;
+		if ((key & 0xFF) > 0)
+			break;
+	}
+	while (1)
+	{
+		if ((REG_KEYIN & 0xFF) == 0)
+			break;
+	}
+	return sctoasc[key & 0xFF];
+}
+
+#define NUMOPTS 9
+extern void TextTest();
+extern void BitmapTest();
+extern void KeyboardTest();
+extern void MouseTest();
+
+const char* const optionNames[] =
+{
+	"Textmode",
+	"Bitmaps",
+	"Tilemaps",
+	"Keyboard",
+	"Mouse",
+	"Real-time clock",
+	"Disk I/O",
+	"MIDI out",
+	"PCM out",
+};
+const void* const optionFuncs[] =
+{
+	TextTest,
+	BitmapTest,
+	0,
+	KeyboardTest,
+	MouseTest,
+	0,
+	0,
+	0,
+	0,
+};
+
 int main(void)
 {
 	interface = (IBios*)(0x01000000);
-	MISC->SetTextMode(SMODE_240 | SMODE_BOLD);
-	TEXT->SetTextColor(0, 7);
-	TEXT->ClearScreen();
 
-	TEXT->SetTextColor(0, 7);
-	TEXT->Write("Welcome to the ");
-	TEXT->SetTextColor(0, 1);
-	TEXT->Write("Asspull ");
-	TEXT->SetTextColor(0, 9);
-	TEXT->WriteChar('\x96');
-	TEXT->SetTextColor(0, 12);
-	TEXT->WriteChar('\xD7');
-	TEXT->SetTextColor(0, 7);
-	TEXT->Write(" testing suite.\n");
-
-	TEXT->SetTextColor(0, 7);
-	TEXT->Write("Font test");
-	for (int row = 0; row < 16; row++)
+	while (1)
 	{
-		for (int col = 0; col < 16; col++)
+		DRAW->ResetPalette();
+		MISC->SetTextMode(SMODE_240 | SMODE_BOLD);
+		TEXT->SetTextColor(0, 7);
+		TEXT->ClearScreen();
+
+		TEXT->SetTextColor(0, 7);
+		TEXT->Write("Welcome to the ");
+		TEXT->SetTextColor(0, 1);
+		TEXT->Write("Asspull ");
+		TEXT->SetTextColor(0, 9);
+		TEXT->WriteChar('\x96');
+		TEXT->SetTextColor(0, 12);
+		TEXT->WriteChar('\xD7');
+		TEXT->SetTextColor(0, 7);
+		TEXT->Write(" testing suite.\n");
+
+		for (int i = 0; i < NUMOPTS; i++)
 		{
-			((int16_t*)MEM_VRAM)[((row + 4)  * 80) + col + 2] = ((row * 16 + col) << 8) | 0x0F;
+			TEXT->SetCursorPosition(2, 4 + i);
+			TEXT->SetTextColor(0, 11);
+			TEXT->WriteChar('A' + i);
+			TEXT->SetTextColor(0, (optionFuncs[i] == 0) ? 8 : 7);
+			TEXT->Write(". ");
+			TEXT->Write(optionNames[i]);
+		}
+		char option = getchar();
+		if (option >= 'a' && option <= 'a' + NUMOPTS)
+		{
+			void (*func)(void) = (void*)optionFuncs[option-'a'];
+			if (func == 0)
+				continue;
+			func();
 		}
 	}
-	WaitForKey();
-
-	TEXT->ClearScreen();
-
-	TEXT->Write("Dithering test 1");
-
-	for (int row = 0; row < 16; row++)
-	{
-		TEXT->SetCursorPosition(2, 2 + row);
-		for (int col = 0; col < 16; col++)
-		{
-			TEXT->SetTextColor(row, col);
-			printf(" %X%X ", row, col);
-		}
-	}
-	TEXT->SetTextColor(0, 7);
-	WaitForKey();
-	REG_SCREENMODE |= SMODE_BLINK;
-	WaitForKey();
-	REG_SCREENMODE &= ~SMODE_BLINK;
-	TEXT->ClearScreen();
-
-	TEXT->Write("Dithering test 2");
-	for (int row = 0; row < 16; row++)
-	{
-		TEXT->SetCursorPosition(2, 2 + row);
-		for (int col = 0; col < 16; col++)
-		{
-			TEXT->SetTextColor(row, col);
-			TEXT->WriteChar(0x20);
-			TEXT->WriteChar(0x80);
-			TEXT->WriteChar(0x81);
-			TEXT->WriteChar(0x82);
-		}
-	}
-	TEXT->SetTextColor(0, 7);
-	WaitForKey();
-
-	KeyboardTest();
 }
