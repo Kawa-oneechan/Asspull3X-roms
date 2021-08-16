@@ -51,8 +51,10 @@ void MouseTest()
 	}
 	while (REG_KEYIN != 0) { vbl(); }
 	DRAW->DisplayPicture((TImageFile*)&bmp320x240x4);
+	DRAW->DrawString("Mouse test\nPress any key when satisfied.", 0, 0, 15);
 	MISC->DmaCopy(TILESET + 0x2000, (int8_t*)&pointerTiles, 0x2E0, DMA_INT);
 	SPRITES_A[0] = SPRITEA_BUILD(256, 1, 0);
+	SPRITES_B[0] = SPRITEB_BUILD(-32, 0, 0, 0, 0, 0, 1, 0);
 	while (REG_KEYIN == 0)
 	{
 		rawX = REG_MOUSE & 0x3FF;
@@ -70,6 +72,7 @@ void MouseTest()
 		vbl();
 	}
 	while (REG_KEYIN != 0) { vbl(); }
+	SPRITES_A[0] = 0; //hide the cursor
 	DRAW->ResetPalette();
 	MISC->SetTextMode(SMODE_240 | SMODE_BOLD);
 	TEXT->ClearScreen();

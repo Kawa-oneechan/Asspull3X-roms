@@ -123,6 +123,8 @@ void KeyboardTest()
 	TEXT->SetTextColor(0, 7);
 	TEXT->SetCursorPosition(38, 26);
 	printf("Keyboard test 1.0");
+	TEXT->SetCursorPosition(27, 27);
+	printf("Press ESC five times to exit.");
 	REG_CARET = 0;
 
 	TEXT->SetTextColor(7, 0);
@@ -140,8 +142,9 @@ void KeyboardTest()
 	TEXT->SetCursorPosition(71, 19);
 	printf("Ctrl");
 
+	int escapes = 0;
 
-	while (1)
+	while (escapes < 5)
 	{
 		while (REG_KEYIN != 0) { vbl(); }
 		while (REG_KEYIN == 0) { vbl(); }
@@ -209,6 +212,17 @@ void KeyboardTest()
 		{
 			TEXT->SetCursorPosition(71, t);
 			printf(text);
+		}
+
+		if (theKey == 1)
+		{
+			escapes++;
+			if (escapes == 4)
+			{
+				TEXT->SetCursorPosition(27, 27);
+				TEXT->SetTextColor(0, 7);
+				printf("Press ESC once more to exit. ");
+			}
 		}
 	}
 }
