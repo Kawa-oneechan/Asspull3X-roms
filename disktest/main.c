@@ -33,7 +33,7 @@ void Populate(const char* path, const char* pattern)
 	}
 
 	ret = DISK->OpenDir(&dir, path);
-	if (strnlen_s(path, MAXPATH) > 1)
+	if (strnlen_s(path, MAXPATH) > 3)
 	{
 		strcpy_s(filenames[0], MAXPATH, "..");
 		fileCt++;
