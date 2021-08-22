@@ -56,7 +56,7 @@ void PrepareDiskToDevMapping()
 {
 	unsigned char* devices = (unsigned char*)0x02000000;
 	diskDrives = 0;
-	for (char i = 0; i < 8; i++)
+	for (char i = 0; i < 16; i++)
 	{
 		if (*(short*)devices == 0x0144)
 		{
@@ -71,16 +71,8 @@ void PrepareDiskToDevMapping()
 	}
 }
 
-//CONSIDER: Is it really?
-void MountIfNeeded()
-{
-//	if (FatFs.fs_type == 0)
-//		f_mount(&FatFs, "0:", 1);
-}
-
 int32_t OpenFile(TFileHandle* handle, const char* path, char mode)
 {
-	MountIfNeeded();
 	return f_open(handle, path, mode);
 }
 
@@ -166,7 +158,6 @@ uint32_t FileSize(TFileHandle* handle)
 
 int32_t OpenDir(TDirHandle* handle, const char* path)
 {
-	MountIfNeeded();
 	return f_opendir(handle, path);
 }
 
@@ -182,7 +173,6 @@ int32_t ReadDir(TDirHandle* handle, TFileInfo* info)
 
 int32_t FindFirst(TDirHandle* handle, TFileInfo* info, const char* path, const char* pattern)
 {
-	MountIfNeeded();
 	return f_findfirst(handle, info, path, pattern);
 }
 
@@ -193,26 +183,22 @@ int32_t FindNext(TDirHandle* handle, TFileInfo* info)
 
 int32_t FileStat(const char* path, TFileInfo* info)
 {
-	MountIfNeeded();
 	return f_stat(path, info);
 }
 
 int32_t UnlinkFile(const char* path)
 {
-	MountIfNeeded();
 	return f_unlink(path);
 }
 
 int32_t RenameFile(const char* from, const char* to)
 {
-	MountIfNeeded();
 	return f_rename(from, to);
 }
 
 #ifdef ALLOW_TOUCH
 int32_t FileTouch(const char* path, TFileInfo* dt)
 {
-	MountIfNeeded();
 	return f_utime(path, dt);
 }
 #else
@@ -224,19 +210,16 @@ int32_t FileTouch(const char* path, TFileInfo* dt)
 
 int32_t MakeDir(const char* path)
 {
-	MountIfNeeded();
 	return f_mkdir(path);
 }
 
 int32_t ChangeDir(const char* path)
 {
-	MountIfNeeded();
 	return f_chdir(path);
 }
 
 int32_t GetCurrentDir(char* buffer, int32_t buflen)
 {
-	MountIfNeeded();
 	return f_getcwd(buffer, buflen);
 }
 
