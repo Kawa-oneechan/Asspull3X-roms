@@ -7,6 +7,8 @@
 
 extern int sprintf(char *buf, const char *fmt, ...);
 
+extern void PrepareDiskToDevMapping();
+
 #include "funcs.h"
 
 //from crt0.s
@@ -51,6 +53,8 @@ int32_t main(void)
 
 	DmaCopy(TEXTFONT, (int8_t*)&fontTiles, 12288, DMA_INT);
 	REG_CARET = 0x8000;
+
+	PrepareDiskToDevMapping();
 
 	while(1)
 	{

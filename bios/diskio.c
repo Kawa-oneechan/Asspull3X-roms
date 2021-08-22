@@ -4,12 +4,14 @@
 //TODO: allow multiple drives
 
 //Keeping this separate from ass.h because you REALLY have no business here!
-#define DISKRAM			((unsigned char*)0x02000200)
-#define REG_DISKSECTOR	*(unsigned short*)(0x02000002)
-#define REG_DISKCONTROL	*(volatile unsigned char*)(0x02000004)
-#define REG_DISKTRACKS	*(unsigned short*)(0x02000010)
-#define REG_DISKHEADS	*(unsigned short*)(0x02000012)
-#define REG_DISKSECTORS	*(unsigned short*)(0x02000014)
+#define DEVS ((unsigned char*)0x02000000)
+#define DEVSIZE 0x8000
+#define DISKRAM &device[0x200]
+#define REG_DISKSECTOR *(unsigned short*)(&device[0x002])
+#define REG_DISKCONTROL device[0x004]
+#define REG_DISKTRACKS device[0x010]
+#define REG_DISKHEADS device[0x012]
+#define REG_DISKSECTORS device[0x014]
 #define DCTL_PRESENT	1
 #define DCTL_ERROR		2
 #define DCTL_READNOW	4
@@ -21,21 +23,7 @@
 #define REG_TIMET		*(volatile long long*)(0x0D00060)
 
 /*
-DSTATUS disk_initialize(BYTE driveNo)
-{
-	if (REG_DISKCONTROL & DCTL_PRESENT)
-		return 0;
-	return STA_NOINIT; //STA_NODISK?
-}
 DSTATUS disk_status(BYTE driveNo) __attribute__ ((weak, alias ("disk_initialize")));
-*/
-/*
-DSTATUS disk_status(BYTE driveNo)
-{
-	if (REG_DISKCONTROL & DCTL_PRESENT)
-		return 0;
-	return STA_NOINIT; //STA_NODISK?
-}
 */
 
 #define SECSPERMIN 60L
@@ -124,8 +112,28 @@ DWORD get_fattime(void)
 #undef EPOCH_YEARS_SINCE_LEAP_CENTURY
 #undef isleap
 
+extern char diskToDev[16];
+extern int diskDrives;
+
+DSTATUS disk_initialize(BYTE driveNo)
+{
+	unsigned char* device = DEVS + (diskToDev[driveNo] * DEVSIZE);
+	if (REG_DISKCONTROL & DCTL_PRESENT)
+		return 0;
+	return STA_NOINIT; //STA_NODISK?
+}
+
+DSTATUS disk_status(BYTE driveNo)
+{
+	unsigned char* device = DEVS + (diskToDev[driveNo] * DEVSIZE);
+	if (REG_DISKCONTROL & DCTL_PRESENT)
+		return 0;
+	return STA_NOINIT; //STA_NODISK?
+}
+
 DRESULT disk_read(BYTE driveNo, BYTE *buff, DWORD sector, UINT count)
 {
+	unsigned char* device = DEVS + (diskToDev[driveNo] * DEVSIZE);
 	while(count--)
 	{
 		REG_DISKSECTOR = sector++;
@@ -143,6 +151,7 @@ DRESULT disk_read(BYTE driveNo, BYTE *buff, DWORD sector, UINT count)
 
 DRESULT disk_write(BYTE driveNo, const BYTE *buff, DWORD sector, UINT count)
 {
+	unsigned char* device = DEVS + (diskToDev[driveNo] * DEVSIZE);
 	while(count--)
 	{
 		REG_DISKSECTOR = sector++;
@@ -158,6 +167,7 @@ DRESULT disk_write(BYTE driveNo, const BYTE *buff, DWORD sector, UINT count)
 
 DRESULT disk_ioctl(BYTE driveNo, BYTE ctrl, void *buff)
 {
+	unsigned char* device = DEVS + (diskToDev[driveNo] * DEVSIZE);
 	if (!(REG_DISKCONTROL & DCTL_PRESENT))
 		return RES_NOTRDY;
 	switch (ctrl)

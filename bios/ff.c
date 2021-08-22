@@ -22,10 +22,6 @@
 #include "ff.h"			/* Declarations of FatFs API */
 #include "diskio.h"		/* Declarations of device I/O functions */
 
-//KAWA
-#define REG_DISKCONTROL	*(volatile unsigned char*)(0x02000004)
-#define DCTL_PRESENT	1
-
 /*--------------------------------------------------------------------------
 
    Module Private Definitions
@@ -3402,9 +3398,7 @@ static FRESULT mount_volume (	/* FR_OK(0): successful, !=0: an error occurred */
 
 	mode &= (BYTE)~FA_READ;				/* Desired access mode, write access or not */
 	if (fs->fs_type != 0) {				/* If the volume has been mounted */
-		//KAWA
-		stat = (REG_DISKCONTROL & DCTL_PRESENT) ? 0 : STA_NOINIT;
-		//stat = disk_status(fs->pdrv);
+		stat = disk_status(fs->pdrv);
 		if (!(stat & STA_NOINIT)) {		/* and the physical drive is kept initialized */
 			if (!FF_FS_READONLY && mode && (stat & STA_PROTECT)) {	/* Check write protection if needed */
 				return FR_WRITE_PROTECTED;
@@ -3418,9 +3412,7 @@ static FRESULT mount_volume (	/* FR_OK(0): successful, !=0: an error occurred */
 
 	fs->fs_type = 0;					/* Clear the filesystem object */
 	fs->pdrv = LD2PD(vol);				/* Volume hosting physical drive */
-	//KAWA
-	stat = (REG_DISKCONTROL & DCTL_PRESENT) ? 0 : STA_NOINIT;
-	//stat = disk_initialize(fs->pdrv);	/* Initialize the physical drive */
+	stat = disk_initialize(fs->pdrv);	/* Initialize the physical drive */
 	if (stat & STA_NOINIT) { 			/* Check if the initialization succeeded */
 		return FR_NOT_READY;			/* Failed to initialize due to no medium or hard error */
 	}

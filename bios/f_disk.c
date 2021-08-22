@@ -14,10 +14,11 @@ const IDiskLibrary diskLibrary =
 	FindFirst, FindNext, FileStat,
 	UnlinkFile, RenameFile, FileTouch,
 	MakeDir, ChangeDir, GetCurrentDir,
-	GetLabel, FileErrStr
+	GetLabel, FileErrStr, GetNumDrives
 };
 
-FATFS FatFs = {0};
+FATFS FatFs[4] = { 0 };
+
 extern int32_t f_open (FILE* fp, const char* path, char mode);
 extern int32_t f_close (FILE* fp);
 extern int32_t f_read (FILE* fp, void* buff, uint32_t btr, uint32_t* br);
@@ -48,11 +49,33 @@ extern int32_t f_mount (FATFS* fs, const char* path, char opt);
 //extern int32_t f_printf (FILE* fp, const char* str, ...);
 //extern char* f_gets (char* buff, int32_t len, FILE* fp);
 
+
+char diskToDev[16] = { 0 };
+int diskDrives = 0;
+void PrepareDiskToDevMapping()
+{
+	unsigned char* devices = (unsigned char*)0x02000000;
+	diskDrives = 0;
+	for (char i = 0; i < 8; i++)
+	{
+		if (*(short*)devices == 0x0144)
+		{
+			diskToDev[diskDrives++] = i;
+		}
+		devices += 0x8000;
+	}
+	for (int i = 0; i < diskDrives; i++)
+	{
+		char path[4] = { i + '0', ':', 0 };
+		f_mount(&FatFs[i], path, 1);
+	}
+}
+
 //CONSIDER: Is it really?
 void MountIfNeeded()
 {
-	if (FatFs.fs_type == 0)
-		f_mount(&FatFs, "", 1);
+//	if (FatFs.fs_type == 0)
+//		f_mount(&FatFs, "0:", 1);
 }
 
 int32_t OpenFile(TFileHandle* handle, const char* path, char mode)
@@ -253,4 +276,9 @@ const char* FileErrStr(int32_t error)
 {
 	if (error > 19) error = 20;
 	return FSErrors[error];
+}
+
+int GetNumDrives()
+{
+	return diskDrives;
 }

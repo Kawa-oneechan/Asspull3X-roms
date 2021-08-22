@@ -302,6 +302,7 @@ typedef struct IDiskLibrary
 	int32_t(*GetCurrentDir)(char*, int32_t);
 	int32_t(*GetLabel)(char*);
 	const char*(*FileErrStr)(int32_t);
+	int32_t(*GetNumDrives)(void);
 } IDiskLibrary;
 
 typedef struct IBios

@@ -60,6 +60,7 @@ extern int32_t ChangeDir(const char*);
 extern int32_t GetCurrentDir(char*, int32_t);
 extern int32_t GetLabel(char*);
 extern const char* FileErrStr(int32_t);
+extern int32_t GetNumDrives();
 
 
 
