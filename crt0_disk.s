@@ -11,10 +11,8 @@ initialize:
 2:	move.w	(%a0)+,(%a1)+
 	dbra	%d0,2b
 
-	lea	0x013F0000,%a0
-	movea.l %a0,%sp
-	link.w	%a6,#-8
 	jsr	main
+	rts
 3:	bra.b	3b
 
 	.data
