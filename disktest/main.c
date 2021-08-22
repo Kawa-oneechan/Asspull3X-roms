@@ -24,15 +24,47 @@ void Populate(const char* path, const char* pattern)
 	FILEINFO info;
 	fileCt = 0;
 
+	/*
 	while (!HaveDisk())
 	{
 		TEXT->SetCursorPosition(0, 0);
-		TEXT->SetTextColor(4, 15);
+@ -31,8 +51,21 @@ void Populate(const char* path, const char* pattern)
 		printf("Please insert a disk.");
 		WaitForKey();
 	}
+	*/
 
+tryOpenDir:
+	//printf("trying to open dir %s\n", path);
 	ret = DISK->OpenDir(&dir, path);
+	if (ret)
+	{
+		TEXT->SetCursorPosition(0, 0);
+		TEXT->SetTextColor(4, 15);
+		printf("Disk error reading %s: ", path);
+		if (ret == 3)
+			printf("No disk inserted?");
+		else
+			printf(DISK->FileErrStr(ret));
+		TEXT->SetTextColor(0, 7);
+		printf("\nAbort or Retry? >");
+		//WaitForKey();
+		//return;
+		while (1)
+		{
+			char k = getchar();
+			if (k == 'a')
+			{
+				//Ask for another drive instead?
+				strcpy_s(filenames[0], MAXPATH, "<ERROR>");
+				fileCt++;
+				return;
+			}
+			else if (k == 'r')
+				goto tryOpenDir;
+		}
+	}
+
 	if (strnlen_s(path, MAXPATH) > 3)
 	{
 		strcpy_s(filenames[0], MAXPATH, "..");
