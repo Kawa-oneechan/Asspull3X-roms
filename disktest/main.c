@@ -97,9 +97,16 @@ tryOpenDir:
 
 void SelectFile(const char* path, const char* pattern, char* selection, int32_t(*onSelect)(char*))
 {
-	int32_t index = 0, lastIndex = 0, redraw = 1, scroll = 0;
+	int32_t index = 0, lastIndex = 0, redraw = 1, scroll = 0, currentDrive;
 	FILEINFO info;
-	char filePath[MAXPATH], workPath[MAXPATH];
+	char currDirs[16][MAXPATH], workPath[MAXPATH];
+	char filePath[MAXPATH];
+	int maxDrives = DISK->GetNumDrives();
+
+	currentDrive = path[0] - '0';
+	for (int i = 0; i < 16; i++)
+		sprintf(currDirs[i], "%d:/", i);
+	strcpy_s(filePath, MAXPATH, currDirs[currentDrive]);
 
 	strcpy_s(workPath, MAXPATH, path);
 	Populate(workPath, pattern);
@@ -187,7 +194,16 @@ void SelectFile(const char* path, const char* pattern, char* selection, int32_t(
 			{
 				while(1) { if (REG_KEYIN == 0) break; }
 
-				if (key == 0xC8) //up
+				if (key >= 2 && key < maxDrives + 2)
+				{
+					currentDrive = key - 2;
+					strcpy_s(filePath, MAXPATH, currDirs[currentDrive]);
+					strcpy_s(workPath, MAXPATH, filePath);
+					Populate(workPath, pattern);
+					redraw = 1;
+					index = 0;
+				}
+				else if (key == 0xC8) //up
 				{
 					lastIndex = index;
 					if (index > 0)
@@ -262,6 +278,7 @@ void SelectFile(const char* path, const char* pattern, char* selection, int32_t(
 						int32_t lsPos = lastSlash - workPath;
 						workPath[lsPos] = 0;
 						if (workPath[0] == 0) strcpy_s(workPath, MAXPATH, "/");
+						strcpy_s(currDirs[currentDrive], MAXPATH, workPath);
 						Populate(workPath, pattern);
 						redraw = 1;
 						index = 0;
@@ -275,6 +292,7 @@ void SelectFile(const char* path, const char* pattern, char* selection, int32_t(
 						if (info.fattrib & AM_DIRECTORY)
 						{
 							strcpy_s(workPath, MAXPATH, filePath);
+							strcpy_s(currDirs[currentDrive], MAXPATH, workPath);
 							Populate(workPath, pattern);
 							redraw = 1;
 							index = 0;
