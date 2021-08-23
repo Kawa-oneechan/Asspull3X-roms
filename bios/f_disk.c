@@ -1,5 +1,6 @@
 #include "../ass.h"
 #include "funcs.h"
+#include "ffconf.h" //for FF_VOLUMES
 
 extern int32_t vsprintf(char*, const char*, va_list);
 
@@ -17,7 +18,7 @@ const IDiskLibrary diskLibrary =
 	GetLabel, FileErrStr, GetNumDrives
 };
 
-FATFS FatFs[4] = { 0 };
+FATFS FatFs[FF_VOLUMES] = { 0 };
 
 extern int32_t f_open (FILE* fp, const char* path, char mode);
 extern int32_t f_close (FILE* fp);
@@ -50,13 +51,13 @@ extern int32_t f_mount (FATFS* fs, const char* path, char opt);
 //extern char* f_gets (char* buff, int32_t len, FILE* fp);
 
 
-char diskToDev[16] = { 0 };
+char diskToDev[FF_VOLUMES] = { 0 };
 int diskDrives = 0;
 void PrepareDiskToDevMapping()
 {
 	unsigned char* devices = (unsigned char*)0x02000000;
 	diskDrives = 0;
-	for (char i = 0; i < 16; i++)
+	for (char i = 0; i < 16 && diskDrives < FF_VOLUMES; i++)
 	{
 		if (*(short*)devices == 0x0144)
 		{

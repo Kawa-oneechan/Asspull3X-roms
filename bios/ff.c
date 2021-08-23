@@ -244,13 +244,16 @@
 
 
 /* Definitions of logical drive - physical location conversion */
-#if FF_MULTI_PARTITION
-#define LD2PD(vol) VolToPart[vol].pd	/* Get physical drive number */
-#define LD2PT(vol) VolToPart[vol].pt	/* Get partition number (0:auto search, 1..:forced partition number) */
-#else
+//KAWA: no, we don't want to do actual, REAL multi-partition shit.
+//ONE partition per drive, I DON'T NEED THIS COMPLEXITY.
+//FAT is bad enough.
+//#if
+//#define LD2PD(vol) VolToPart[vol].pd	/* Get physical drive number */
+//#define LD2PT(vol) VolToPart[vol].pt	/* Get partition number (0:auto search, 1..:forced partition number) */
+//#else
 #define LD2PD(vol) (BYTE)(vol)	/* Each logical drive is associated with the same physical drive number */
 #define LD2PT(vol) 0			/* Auto partition search */
-#endif
+//#endif
 
 
 /* Definitions of sector size */
