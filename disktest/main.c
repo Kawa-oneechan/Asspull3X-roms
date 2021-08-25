@@ -103,9 +103,9 @@ void SelectFile(const char* path, const char* pattern, char* selection, int32_t(
 	char filePath[MAXPATH];
 	int maxDrives = DISK->GetNumDrives();
 
-	currentDrive = path[0] - '0';
+	currentDrive = path[0] - 'A';
 	for (int i = 0; i < 16; i++)
-		sprintf(currDirs[i], "%d:/", i);
+		sprintf(currDirs[i], "%c:\\", i + 'A');
 	strcpy_s(filePath, MAXPATH, currDirs[currentDrive]);
 
 	strcpy_s(workPath, MAXPATH, path);
@@ -157,7 +157,7 @@ void SelectFile(const char* path, const char* pattern, char* selection, int32_t(
 					continue;
 				}
 				strcpy_s(filePath, MAXPATH, workPath);
-				if (filePath[strnlen_s(filePath, MAXPATH) - 1] != '/') strkitten_s(filePath, MAXPATH, '/');
+				if (filePath[strnlen_s(filePath, MAXPATH) - 1] != '\\') strkitten_s(filePath, MAXPATH, '\\');
 				strcat_s(filePath, MAXPATH, filenames[i + scroll]);
 				DISK->FileStat(filePath, &info);
 				if (info.fattrib & AM_DIRECTORY)
@@ -274,10 +274,10 @@ void SelectFile(const char* path, const char* pattern, char* selection, int32_t(
 				{
 					if (filenames[index][0] == '.' && filenames[index][1] == '.')
 					{
-						char *lastSlash = strrchr(workPath, '/');
+						char *lastSlash = strrchr(workPath, '\\');
 						int32_t lsPos = lastSlash - workPath;
 						workPath[lsPos] = 0;
-						if (workPath[0] == 0) strcpy_s(workPath, MAXPATH, "/");
+						if (workPath[0] == 0) strcpy_s(workPath, MAXPATH, "\\");
 						strcpy_s(currDirs[currentDrive], MAXPATH, workPath);
 						Populate(workPath, pattern);
 						redraw = 1;
@@ -286,7 +286,7 @@ void SelectFile(const char* path, const char* pattern, char* selection, int32_t(
 					else
 					{
 						strcpy_s(filePath, MAXPATH, workPath);
-						if (filePath[strnlen_s(filePath, MAXPATH)-1] != '/') strkitten_s(filePath, MAXPATH, '/');
+						if (filePath[strnlen_s(filePath, MAXPATH)-1] != '\\') strkitten_s(filePath, MAXPATH, '\\');
 						strcat_s(filePath, MAXPATH, filenames[index]);
 						DISK->FileStat(filePath, &info);
 						if (info.fattrib & AM_DIRECTORY)
@@ -338,6 +338,7 @@ int32_t StartApp(char* filePath)
 	DISK->ReadFile(&file, (void*)0x01002000, nfo.fsize);
 	TEXT->ClearScreen();
 	entry();
+	WaitForKey();
 	return 2;
 }
 
@@ -506,6 +507,6 @@ int32_t main(void)
 	REG_CARET = 0;
 	while(1)
 	{
-		SelectFile("0:/", "*.*", path, ShowFile);
+		SelectFile("A:\\", "*.*", path, ShowFile);
 	}
 }

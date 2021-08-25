@@ -67,7 +67,7 @@ void PrepareDiskToDevMapping()
 	}
 	for (int i = 0; i < diskDrives; i++)
 	{
-		char path[4] = { i + '0', ':', 0 };
+		char path[4] = { i + 'A', ':', 0 };
 		f_mount(&FatFs[i], path, 1);
 	}
 }
