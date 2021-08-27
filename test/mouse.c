@@ -22,52 +22,82 @@ extern const TImageFile bmp320x240x4;
 	(((hp) & 0x7FF) << 0)						\
 )
 
+typedef struct TMouseState
+{
+	char changed;
+	char buttons;
+	int x, y;
+	int oldX, oldY;
+	char oldButtons;
+} TMouseState;
+TMouseState MouseState;
+
+void HandleMouse()
+{
+	short rm = REG_MOUSE;
+	int rawX = rm & 0x1F;
+	int rawY = (rm >> 7) & 0x1F;
+	if (rm & 0x40)   rawX = -rawX;
+	if (rm & 0x2000) rawY = -rawY;
+	MouseState.buttons = (rm >> 14) & 3;
+
+	MouseState.x += rawX;
+	MouseState.y += rawY;
+	if (MouseState.x < 0) MouseState.x = 0;
+	if (MouseState.y < 0) MouseState.y = 0;
+	if (MouseState.x > 319) MouseState.x = 319;
+	if (MouseState.y > 239) MouseState.y = 239;
+
+	MouseState.changed = (MouseState.x != MouseState.oldX || MouseState.y != MouseState.oldY || MouseState.buttons != MouseState.oldButtons);
+
+	MouseState.oldX = MouseState.x;
+	MouseState.oldY = MouseState.y;
+	MouseState.oldButtons = MouseState.buttons;
+}
+
 void MouseTest()
 {
 	TEXT->ClearScreen();
 	TEXT->SetTextColor(0, 7);
 	TEXT->Write("Mouse test\nPress any key when satisfied.");
-	int oldX = -1, oldY = -1, oldButts = -1;
-	int newX, newY, rawX, rawY, buttons;
+	int tX, tY;
+
+	MouseState.x = 160; MouseState.y = 120;
+
 	while (REG_KEYIN != 0) { vbl(); }
 	while (REG_KEYIN == 0)
 	{
-		rawX = REG_MOUSE & 0x3FF;
-		rawY = (REG_MOUSE >> 16) & 0x1FF;
-		buttons = REG_MOUSE >> 30;
-		if (rawX != oldX || rawY != oldY || buttons != oldButts)
+		HandleMouse();
+		if (MouseState.changed)
 		{
 			TEXT->SetCursorPosition(0, 5);
-			printf("0x%08X = %dx%d, %d        \n", REG_MOUSE, rawX, rawY, buttons);
-			((int8_t*)MEM_VRAM)[(((newY * 80) + newX) * 2) + 1] = 0x07;
-			newX = rawX / 8;
-			newY = rawY / 16;
-			oldX = rawX;
-			oldY = rawY;
-			oldButts = buttons;
-			((int8_t*)MEM_VRAM)[(((newY * 80) + newX) * 2) + 1] = 0x70;
+			printf("%dx%d, %d     \n", MouseState.x, MouseState.y, MouseState.buttons);
+			((int8_t*)MEM_VRAM)[(((tY * 80) + tX) * 2) + 1] = 0x07;
+			tX = MouseState.x / 4;
+			tY = MouseState.y / 8;
+			((int8_t*)MEM_VRAM)[(((tY * 80) + tX) * 2) + 1] = 0x70;
 		}
 		vbl();
 	}
+
 	while (REG_KEYIN != 0) { vbl(); }
+
+	MouseState.x = 136; MouseState.y = 104;
+	const short colors[] = { 0x0000, 0x2223, 0x5184, 0x1A9E };
+
 	DRAW->DisplayPicture((TImageFile*)&bmp320x240x4);
 	DRAW->DrawString("Mouse test\nPress any key when satisfied.", 0, 0, 15);
 	MISC->DmaCopy(TILESET + 0x2000, (int8_t*)&pointerTiles, 0x2E0, DMA_INT);
 	SPRITES_A[0] = SPRITEA_BUILD(256, 1, 0);
-	SPRITES_B[0] = SPRITEB_BUILD(-32, 0, 0, 0, 0, 0, 1, 0);
+	SPRITES_B[0] = SPRITEB_BUILD(MouseState.x, MouseState.y, 0, 0, 0, 0, 1, 0);
+
 	while (REG_KEYIN == 0)
 	{
-		rawX = REG_MOUSE & 0x3FF;
-		rawY = (REG_MOUSE >> 16) & 0x1FF;
-		buttons = REG_MOUSE >> 30;
-		if (rawX != oldX || rawY != oldY || buttons != oldButts)
+		HandleMouse();
+		if (MouseState.changed)
 		{
-			newX = rawX;
-			newY = rawY;
-			oldX = rawX;
-			oldY = rawY;
-			oldButts = buttons;
-			SPRITES_B[0] = SPRITEB_BUILD(newX, newY, 0, 0, 0, 0, 1, 0);
+			PALETTE[0] = colors[(int)MouseState.buttons];
+			SPRITES_B[0] = SPRITEB_BUILD(MouseState.x, MouseState.y, 0, 0, 0, 0, 1, 0);
 		}
 		vbl();
 	}
