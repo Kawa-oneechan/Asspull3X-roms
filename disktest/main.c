@@ -7,6 +7,8 @@ extern char *strrchr(const char *, int32_t);
 #define MAXPATH 512
 #define MAXFILES 512
 
+#define WIDTH 40
+
 void WaitForKey()
 {
 	while (REG_KEYIN != 0) { vbl(); }
@@ -121,10 +123,10 @@ void SelectFile(const char* path, const char* pattern, char* selection, int32_t(
 		if (redraw)
 		{
 			TEXTMAP[0] = 0x9387;
-			TEXTMAP[30] = 0x8B87;
+			TEXTMAP[WIDTH] = 0x8B87;
 			TEXTMAP[(FILESSHOWN + 1) * 80] = 0x8C87;
-			TEXTMAP[((FILESSHOWN + 1) * 80) + 30] = 0x9287;
-			for (int i = 1; i < 30; i++)
+			TEXTMAP[((FILESSHOWN + 1) * 80) + WIDTH] = 0x9287;
+			for (int i = 1; i < WIDTH; i++)
 			{
 				TEXTMAP[i] = 0x9087;
 				TEXTMAP[((FILESSHOWN + 1) * 80) + i] = 0x9087;
@@ -132,16 +134,16 @@ void SelectFile(const char* path, const char* pattern, char* selection, int32_t(
 			for (int i = 1; i <= FILESSHOWN; i++)
 			{
 				TEXTMAP[(i * 80)] = 0x8987;
-				TEXTMAP[(i * 80)+30] = 0x8987;
+				TEXTMAP[(i * 80)+WIDTH] = 0x8987;
 			}
 			if (fileCt < FILESSHOWN)
 			{
 				for (int i = fileCt; i <= FILESSHOWN; i++)
-					for (int j = 1; j < 30; j++)
+					for (int j = 1; j < WIDTH; j++)
 						TEXTMAP[(i * 80) + j] = 0x2087;
 			}
 			TEXT->SetTextColor(7, 8);
-			TEXT->SetCursorPosition(15 - (strlen(workPath) / 2) - 1, 0);
+			TEXT->SetCursorPosition((WIDTH / 2) - (strlen(workPath) / 2) - 1, 0);
 			TEXT->Write(" %s ", workPath);
 
 			for (int32_t i = 0; i < fileCt && i < FILESSHOWN; i++)
@@ -150,7 +152,7 @@ void SelectFile(const char* path, const char* pattern, char* selection, int32_t(
 				TEXT->SetTextColor(8, 15);
 				if (index == i + scroll)
 					TEXT->SetTextColor(9, 15);
-				printf(" %-18s ", filenames[i + scroll]);
+				printf(" %-15s ", filenames[i + scroll]);
 				if (filenames[i + scroll][0] == '.' && filenames[i + scroll][1] == '.')
 				{
 					printf("    <UP> ");
@@ -164,13 +166,17 @@ void SelectFile(const char* path, const char* pattern, char* selection, int32_t(
 					printf("   <DIR> ");
 				else
 					printf("%8d ", info.fsize);
+				int fdy = 1980 + (info.fdate >> 9);
+				int fdm = (info.fdate >> 5) & 15;
+				int fdd = info.fdate & 0x1F;
+				printf("  %02d-%02d-%02d ", fdy, fdm, fdd);
 			}
 			TEXT->SetTextColor(0, 7);
 			redraw = 0;
 		}
 		else
 		{
-			for (int i = 1; i < 30; i++)
+			for (int i = 1; i < WIDTH; i++)
 			{
 				int16_t* here = &TEXTMAP[((1 + index - scroll) * 80)];
 				here[i] &= ~0x00FF;
@@ -183,8 +189,11 @@ void SelectFile(const char* path, const char* pattern, char* selection, int32_t(
 				}
 			}
 		}
+
+		for (int i = 0; i < 80; i++)
+			TEXTMAP[(28 * 80) + i] = 0x2007;
 		TEXT->SetCursorPosition(0, FILESSHOWN + 2);
-		printf("%s>%s         ", workPath, filenames[index]);
+		printf("%s>%s", workPath, filenames[index]);
 		vbl();
 		while(1)
 		{
@@ -263,6 +272,7 @@ void SelectFile(const char* path, const char* pattern, char* selection, int32_t(
 				}
 				else if (key == 0xD1) //page down
 				{
+					//TODO
 					index += FILESSHOWN;
 					scroll += FILESSHOWN;
 					if (index + FILESSHOWN > fileCt) index = fileCt - FILESSHOWN;
