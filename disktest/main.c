@@ -309,7 +309,7 @@ void SelectFile(const char* path1, const char* path2, const char* pattern, char*
 						index[cs]++;
 						if (index[cs] - scroll[cs] >= FILESSHOWN)
 						{
-							scroll[cs] += FILESSHOWN;
+							scroll[cs] += 1;
 							if (scroll[cs] + FILESSHOWN > fileCt[cs]) scroll[cs] = fileCt[cs] - FILESSHOWN;
 							redraw = 1;
 							break;
@@ -319,7 +319,7 @@ void SelectFile(const char* path1, const char* path2, const char* pattern, char*
 					{
 						index[cs] = 0;
 						scroll[cs] = 0;
-						if (fileCt[cs] < FILESSHOWN) redraw = 1;
+						if (fileCt[cs] >= FILESSHOWN) redraw = 1;
 						break;
 					}
 				}
@@ -334,11 +334,17 @@ void SelectFile(const char* path1, const char* path2, const char* pattern, char*
 				}
 				else if (key == 0xD1) //page down
 				{
-					//TODO
-					index[cs] += FILESSHOWN;
-					scroll[cs] += FILESSHOWN;
-					if (index[cs] + FILESSHOWN > fileCt[cs]) index[cs] = fileCt[cs] - FILESSHOWN;
-					if (scroll[cs] + FILESSHOWN > fileCt[cs]) scroll[cs] = fileCt[cs] - FILESSHOWN;
+					index[cs] += FILESSHOWN - 1;
+					if (index[cs] >= fileCt[cs])
+						index[cs] = fileCt[cs] - 1;
+					if (index[cs] + scroll[cs] > FILESSHOWN)
+					{
+						scroll[cs] = index[cs];
+						if (scroll[cs] + 1 >= fileCt[cs])
+						{
+							scroll[cs] -= FILESSHOWN - 1;
+						}
+					}
 					redraw = 1;
 					break;
 				}
