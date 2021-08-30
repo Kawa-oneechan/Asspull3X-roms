@@ -16,7 +16,8 @@ void WaitForKey()
 	while (REG_KEYIN != 0) { vbl(); }
 }
 
-char filenames[MAXFILES][16] = {0};
+//char filenames[MAXFILES][16] = {0};
+char* filenames = 0;
 int32_t fileCt = 0;
 
 void Populate(const char* path, const char* pattern)
@@ -25,16 +26,15 @@ void Populate(const char* path, const char* pattern)
 	DIR dir;
 	FILEINFO info;
 	fileCt = 0;
+	char* curFN = 0;
 
-	/*
-	while (!HaveDisk())
+	if (filenames == 0)
 	{
-		TEXT->SetCursorPosition(0, 0);
-@ -31,8 +51,21 @@ void Populate(const char* path, const char* pattern)
-		printf("Please insert a disk.");
-		WaitForKey();
+		filenames = (char*)malloc(MAXFILES * 16);
+//		for (int i = 0; i < MAXFILES * 16; i++)
+//			filenames[i] = 0;
 	}
-	*/
+	curFN = filenames;
 
 tryOpenDir:
 	//printf("trying to open dir %s\n", path);
@@ -58,7 +58,7 @@ tryOpenDir:
 			if (k == 'a')
 			{
 				//Ask for another drive instead?
-				strcpy_s(filenames[0], MAXPATH, "<ERROR>");
+				strcpy_s(curFN, MAXPATH, "<ERROR>");
 				fileCt++;
 				return;
 			}
@@ -69,7 +69,8 @@ tryOpenDir:
 
 	if (strnlen_s(path, MAXPATH) > 3)
 	{
-		strcpy_s(filenames[0], MAXPATH, "..");
+		strcpy_s(curFN, MAXPATH, "..");
+		curFN += 16;
 		fileCt++;
 	}
 
@@ -79,7 +80,8 @@ tryOpenDir:
 		if (ret != 0 || info.fname[0] == 0) break;
 		if (info.fattrib & AM_DIRECTORY)
 		{
-			strncpy(filenames[fileCt], info.fname, 13);
+			strncpy(curFN, info.fname, 13);
+			curFN += 16;
 			fileCt++;
 		}
 	}
@@ -88,7 +90,8 @@ tryOpenDir:
 	while(ret == 0 && info.fname[0])
 	{
 		if (info.fattrib & AM_HIDDEN) continue;
-		strncpy(filenames[fileCt], info.fname, 13);
+		strncpy(curFN, info.fname, 13);
+		curFN += 16;
 		fileCt++;
 		ret = DISK->FindNext(&dir, &info);
 	}
@@ -104,6 +107,7 @@ void SelectFile(const char* path, const char* pattern, char* selection, int32_t(
 	char currDirs[16][MAXPATH], workPath[MAXPATH];
 	char filePath[MAXPATH];
 	int maxDrives = DISK->GetNumDrives();
+	char* curFN;
 
 	currentDrive = path[0] - 'A';
 	for (int i = 0; i < 16; i++)
@@ -146,21 +150,23 @@ void SelectFile(const char* path, const char* pattern, char* selection, int32_t(
 			TEXT->SetCursorPosition((WIDTH / 2) - (strlen(workPath) / 2) - 1, 0);
 			TEXT->Write(" %s ", workPath);
 
+			curFN = &filenames[scroll * 16];
 			for (int32_t i = 0; i < fileCt && i < FILESSHOWN; i++)
 			{
 				TEXT->SetCursorPosition(1, i + 1);
 				TEXT->SetTextColor(8, 15);
 				if (index == i + scroll)
 					TEXT->SetTextColor(9, 15);
-				printf(" %-15s ", filenames[i + scroll]);
-				if (filenames[i + scroll][0] == '.' && filenames[i + scroll][1] == '.')
+				printf(" %-15s ", curFN);
+				if (curFN[0] == '.' && curFN[1] == '.')
 				{
 					printf("    <UP> ");
+					curFN += 16;
 					continue;
 				}
 				strcpy_s(filePath, MAXPATH, workPath);
 				if (filePath[strnlen_s(filePath, MAXPATH) - 1] != '\\') strkitten_s(filePath, MAXPATH, '\\');
-				strcat_s(filePath, MAXPATH, filenames[i + scroll]);
+				strcat_s(filePath, MAXPATH, curFN);
 				DISK->FileStat(filePath, &info);
 				if (info.fattrib & AM_DIRECTORY)
 					printf("   <DIR> ");
@@ -170,6 +176,7 @@ void SelectFile(const char* path, const char* pattern, char* selection, int32_t(
 				int fdm = (info.fdate >> 5) & 15;
 				int fdd = info.fdate & 0x1F;
 				printf("  %02d-%02d-%02d ", fdy, fdm, fdd);
+				curFN += 16;
 			}
 			TEXT->SetTextColor(0, 7);
 			redraw = 0;
@@ -193,7 +200,9 @@ void SelectFile(const char* path, const char* pattern, char* selection, int32_t(
 		for (int i = 0; i < 80; i++)
 			TEXTMAP[(28 * 80) + i] = 0x2007;
 		TEXT->SetCursorPosition(0, FILESSHOWN + 2);
-		printf("%s>%s", workPath, filenames[index]);
+
+		curFN = &filenames[index * 16];
+		printf("%s>%s", workPath, curFN);
 		vbl();
 		while(1)
 		{
@@ -282,7 +291,7 @@ void SelectFile(const char* path, const char* pattern, char* selection, int32_t(
 				}
 				else if (key == 0x1C) //enter
 				{
-					if (filenames[index][0] == '.' && filenames[index][1] == '.')
+					if (curFN[0] == '.' && curFN[1] == '.')
 					{
 						char *lastSlash = strrchr(workPath, '\\');
 						int32_t lsPos = lastSlash - workPath;
@@ -297,7 +306,7 @@ void SelectFile(const char* path, const char* pattern, char* selection, int32_t(
 					{
 						strcpy_s(filePath, MAXPATH, workPath);
 						if (filePath[strnlen_s(filePath, MAXPATH)-1] != '\\') strkitten_s(filePath, MAXPATH, '\\');
-						strcat_s(filePath, MAXPATH, filenames[index]);
+						strcat_s(filePath, MAXPATH, curFN);
 						DISK->FileStat(filePath, &info);
 						if (info.fattrib & AM_DIRECTORY)
 						{
@@ -312,6 +321,7 @@ void SelectFile(const char* path, const char* pattern, char* selection, int32_t(
 							if (onSelect)
 							{
 								int32_t ret = onSelect(filePath);
+								Populate(workPath, pattern);
 								if (ret == 1)
 								{
 									if (selection) strcpy_s(selection, MAXPATH, (const char*)filePath);
@@ -340,6 +350,11 @@ void SelectFile(const char* path, const char* pattern, char* selection, int32_t(
 
 int32_t StartApp(char* filePath)
 {
+	if (filenames != 0)
+	{
+		free(filenames);
+		filenames = 0;
+	}
 	void(*entry)(void) = (void*)0x01002020;
 	FILEINFO nfo;
 	DISK->FileStat(filePath, &nfo);
