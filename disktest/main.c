@@ -7,7 +7,8 @@ extern char *strrchr(const char *, int32_t);
 #define MAXPATH 512
 #define MAXFILES 512
 
-#define WIDTH 40
+#define WIDTH 39
+#define HEIGHT 21
 
 void WaitForKey()
 {
@@ -17,27 +18,26 @@ void WaitForKey()
 }
 
 //char filenames[MAXFILES][16] = {0};
-char* filenames = 0;
-int32_t fileCt = 0;
+char* filenames[2] = { 0 };
+int32_t fileCt[2] = { 0 };
 
-void Populate(const char* path, const char* pattern)
+void Populate(const char* path, int side, const char* pattern)
 {
 	int32_t ret;
 	DIR dir;
 	FILEINFO info;
-	fileCt = 0;
+	fileCt[side] = 0;
 	char* curFN = 0;
 
-	if (filenames == 0)
+	if (filenames[side] == 0)
 	{
-		filenames = (char*)malloc(MAXFILES * 16);
+		filenames[side] = (char*)malloc(MAXFILES * 16);
 //		for (int i = 0; i < MAXFILES * 16; i++)
 //			filenames[i] = 0;
 	}
-	curFN = filenames;
+	curFN = filenames[side];
 
 tryOpenDir:
-	//printf("trying to open dir %s\n", path);
 	ret = DISK->OpenDir(&dir, path);
 	if (ret)
 	{
@@ -59,7 +59,7 @@ tryOpenDir:
 			{
 				//Ask for another drive instead?
 				strcpy_s(curFN, MAXPATH, "<ERROR>");
-				fileCt++;
+				fileCt[side]++;
 				return;
 			}
 			else if (k == 'r')
@@ -71,7 +71,7 @@ tryOpenDir:
 	{
 		strcpy_s(curFN, MAXPATH, "..");
 		curFN += 16;
-		fileCt++;
+		fileCt[side]++;
 	}
 
 	for (;;)
@@ -82,7 +82,7 @@ tryOpenDir:
 		{
 			strncpy(curFN, info.fname, 13);
 			curFN += 16;
-			fileCt++;
+			fileCt[side]++;
 		}
 	}
 
@@ -92,30 +92,42 @@ tryOpenDir:
 		if (info.fattrib & AM_HIDDEN) continue;
 		strncpy(curFN, info.fname, 13);
 		curFN += 16;
-		fileCt++;
+		fileCt[side]++;
 		ret = DISK->FindNext(&dir, &info);
 	}
 }
 
-#define FILESSHOWN 26
+#define FILESSHOWN (HEIGHT-2)
 #define TEXTMAP ((int16_t*)MEM_VRAM)
 
-void SelectFile(const char* path, const char* pattern, char* selection, int32_t(*onSelect)(char*))
+void SelectFile(const char* path1, const char* path2, const char* pattern, char* selection, int32_t(*onSelect)(char*))
 {
-	int32_t index = 0, lastIndex = 0, redraw = 1, scroll = 0, currentDrive;
+	int32_t index[2] = { 0 }, lastIndex[2] = { 0 }, redraw = 1, scroll[2] = { 0 }, currentDrive[2];
 	FILEINFO info;
-	char currDirs[16][MAXPATH], workPath[MAXPATH];
-	char filePath[MAXPATH];
+	char currDirs[2][4][MAXPATH], workPath[2][MAXPATH];
+	char filePath[2][MAXPATH];
 	int maxDrives = DISK->GetNumDrives();
 	char* curFN;
+	int cs = 0;
 
-	currentDrive = path[0] - 'A';
-	for (int i = 0; i < 16; i++)
-		sprintf(currDirs[i], "%c:\\", i + 'A');
-	strcpy_s(filePath, MAXPATH, currDirs[currentDrive]);
+	for (int i = 0; i < 4; i++)
+	{
+		sprintf(currDirs[0][i], "%c:\\", i + 'A');
+		sprintf(currDirs[1][i], "%c:\\", i + 'A');
+	}
 
-	strcpy_s(workPath, MAXPATH, path);
-	Populate(workPath, pattern);
+	currentDrive[0] = path1[0] - 'A';
+	strcpy_s(filePath[0], MAXPATH, currDirs[0][currentDrive[0]]);
+	strcpy_s(workPath[0], MAXPATH, path1);
+	Populate(workPath[0], 0, pattern);
+
+	if (path2 != 0)
+	{
+		currentDrive[1] = path2[0] - 'A';
+		strcpy_s(filePath[1], MAXPATH, currDirs[1][currentDrive[1]]);
+		strcpy_s(workPath[1], MAXPATH, path2);
+		Populate(workPath[1], 1, pattern);
+	}
 
 	MISC->SetTextMode(SMODE_BOLD | SMODE_240);
 	TEXT->SetTextColor(0, 7);
@@ -140,57 +152,91 @@ void SelectFile(const char* path, const char* pattern, char* selection, int32_t(
 				TEXTMAP[(i * 80)] = 0x8987;
 				TEXTMAP[(i * 80)+WIDTH] = 0x8987;
 			}
-			if (fileCt < FILESSHOWN)
+			if (fileCt[0] < FILESSHOWN)
 			{
-				for (int i = fileCt; i <= FILESSHOWN; i++)
+				for (int i = fileCt[0]; i <= FILESSHOWN; i++)
 					for (int j = 1; j < WIDTH; j++)
 						TEXTMAP[(i * 80) + j] = 0x2087;
 			}
 			TEXT->SetTextColor(7, 8);
-			TEXT->SetCursorPosition((WIDTH / 2) - (strlen(workPath) / 2) - 1, 0);
-			TEXT->Write(" %s ", workPath);
+			TEXT->SetCursorPosition((WIDTH / 2) - (strlen(workPath[0]) / 2) - 1, 0);
+			TEXT->Write(" %s ", workPath[0]);
 
-			curFN = &filenames[scroll * 16];
-			for (int32_t i = 0; i < fileCt && i < FILESSHOWN; i++)
+			if (path2 != 0)
 			{
-				TEXT->SetCursorPosition(1, i + 1);
-				TEXT->SetTextColor(8, 15);
-				if (index == i + scroll)
-					TEXT->SetTextColor(9, 15);
-				printf(" %-15s ", curFN);
-				if (curFN[0] == '.' && curFN[1] == '.')
+				TEXTMAP[WIDTH+1] = 0x9387;
+				TEXTMAP[79] = 0x8B87;
+				TEXTMAP[((FILESSHOWN + 1) * 80) + WIDTH + 1] = 0x8C87;
+				TEXTMAP[((FILESSHOWN + 1) * 80) + 79] = 0x9287;
+				for (int i = 1; i < WIDTH; i++)
 				{
-					printf("    <UP> ");
-					curFN += 16;
-					continue;
+					TEXTMAP[i + WIDTH + 1] = 0x9087;
+					TEXTMAP[((FILESSHOWN + 1) * 80) + i + WIDTH + 1] = 0x9087;
 				}
-				strcpy_s(filePath, MAXPATH, workPath);
-				if (filePath[strnlen_s(filePath, MAXPATH) - 1] != '\\') strkitten_s(filePath, MAXPATH, '\\');
-				strcat_s(filePath, MAXPATH, curFN);
-				DISK->FileStat(filePath, &info);
-				if (info.fattrib & AM_DIRECTORY)
-					printf("   <DIR> ");
-				else
-					printf("%8d ", info.fsize);
-				int fdy = 1980 + (info.fdate >> 9);
-				int fdm = (info.fdate >> 5) & 15;
-				int fdd = info.fdate & 0x1F;
-				printf("  %02d-%02d-%02d ", fdy, fdm, fdd);
-				curFN += 16;
+				for (int i = 1; i <= FILESSHOWN; i++)
+				{
+					TEXTMAP[(i * 80) + WIDTH + 1] = 0x8987;
+					TEXTMAP[(i * 80) + 79] = 0x8987;
+				}
+				if (fileCt[1] < FILESSHOWN)
+				{
+					for (int i = fileCt[1]; i <= FILESSHOWN; i++)
+						for (int j = 1; j < WIDTH; j++)
+							TEXTMAP[(i * 80) + WIDTH + 1 + j] = 0x2087;
+				}
+				TEXT->SetTextColor(7, 8);
+				TEXT->SetCursorPosition((WIDTH / 2) - (strlen(workPath[1]) / 2) - 1 + WIDTH + 1, 0);
+				TEXT->Write(" %s ", workPath[1]);
 			}
-			TEXT->SetTextColor(0, 7);
-			redraw = 0;
+
+			for (int s = 0; s < 2; s++)
+			{
+				int o = (s == 0 ? 0 : WIDTH + 1);
+				if (s == 1 && path2 == 0)
+					break;
+				curFN = &filenames[s][scroll[s] * 16];
+				for (int32_t i = 0; i < fileCt[s] && i < FILESSHOWN; i++)
+				{
+					TEXT->SetCursorPosition(1 + o, i + 1);
+					TEXT->SetTextColor(8, cs == s ? 15 : 7);
+					if (index[s] == i + scroll[s])
+						TEXT->SetTextColor(cs == s ? 9 : 1, 15);
+					printf("%-15s ", curFN);
+					if (curFN[0] == '.' && curFN[1] == '.')
+					{
+						printf("     <UP>             ");
+						curFN += 16;
+						continue;
+					}
+					strcpy_s(filePath[s], MAXPATH, workPath[s]);
+					if (filePath[s][strnlen_s(filePath[s], MAXPATH) - 1] != '\\') strkitten_s(filePath[s], MAXPATH, '\\');
+					strcat_s(filePath[s], MAXPATH, curFN);
+					DISK->FileStat(filePath[s], &info);
+					if (info.fattrib & AM_DIRECTORY)
+						printf("    <DIR> ");
+					else
+						printf("%9d ", info.fsize);
+					int fdy = 1980 + (info.fdate >> 9);
+					int fdm = (info.fdate >> 5) & 15;
+					int fdd = info.fdate & 0x1F;
+					printf("  %02d-%02d-%02d", fdy, fdm, fdd);
+					curFN += 16;
+				}
+				TEXT->SetTextColor(0, 7);
+				redraw = 0;
+			}
 		}
 		else
 		{
+			int o = (cs == 0 ? 0 : WIDTH + 1);
 			for (int i = 1; i < WIDTH; i++)
 			{
-				int16_t* here = &TEXTMAP[((1 + index - scroll) * 80)];
+				int16_t* here = &TEXTMAP[o + ((1 + index[cs] - scroll[cs]) * 80)];
 				here[i] &= ~0x00FF;
 				here[i] |= 0x009F;
-				if (lastIndex != index)
+				if (lastIndex[cs] != index[cs])
 				{
-					here = &TEXTMAP[((1 + lastIndex - scroll) * 80)];
+					here = &TEXTMAP[o + ((1 + lastIndex[cs] - scroll[cs]) * 80)];
 					here[i] &= ~0x00FF;
 					here[i] |= 0x008F;
 				}
@@ -201,9 +247,11 @@ void SelectFile(const char* path, const char* pattern, char* selection, int32_t(
 			TEXTMAP[(28 * 80) + i] = 0x2007;
 		TEXT->SetCursorPosition(0, FILESSHOWN + 2);
 
-		curFN = &filenames[index * 16];
-		printf("%s>%s", workPath, curFN);
+		curFN = &filenames[cs][index[cs] * 16];
+		//printf("%s>%s", workPath[cs], curFN);
+		printf("side %d, index %d, scroll %d, fileCt %d", cs, index[cs], scroll[cs], fileCt[cs]);
 		vbl();
+
 		while(1)
 		{
 			unsigned short key = REG_KEYIN;
@@ -212,80 +260,85 @@ void SelectFile(const char* path, const char* pattern, char* selection, int32_t(
 			{
 				while(1) { if (REG_KEYIN == 0) break; }
 
+				if (key == 0x0F && path2 != 0) //tab
+				{
+					cs ^= 1;
+					redraw = 1;
+				}
 				if (key >= 2 && key < maxDrives + 2)
 				{
-					currentDrive = key - 2;
-					strcpy_s(filePath, MAXPATH, currDirs[currentDrive]);
-					strcpy_s(workPath, MAXPATH, filePath);
-					Populate(workPath, pattern);
+					currentDrive[cs] = key - 2;
+					strcpy_s(filePath[cs], MAXPATH, currDirs[cs][currentDrive[cs]]);
+					strcpy_s(workPath[cs], MAXPATH, filePath[cs]);
+					Populate(workPath[cs], cs, pattern);
 					redraw = 1;
-					index = 0;
+					index[cs] = 0;
 				}
 				else if (key == 0xC8) //up
 				{
-					lastIndex = index;
-					if (index > 0)
+					lastIndex[cs] = index[cs];
+					if (index[cs] > 0)
 					{
-						index--;
-						if (index < scroll)
+						index[cs]--;
+						if (index[cs] < scroll[cs])
 						{
-							scroll -= FILESSHOWN;
-							if (scroll < 0) scroll = 0;
+							scroll[cs] -= FILESSHOWN;
+							if (scroll[cs] < 0) scroll[cs] = 0;
 							redraw = 1;
 							break;
 						}
 					}
 					else
 					{
-						index = fileCt - 1;
-						if (fileCt > FILESSHOWN)
+						index[cs] = fileCt[cs] - 1;
+						if (fileCt[cs] > FILESSHOWN)
 						{
-							scroll = fileCt - FILESSHOWN;
+							scroll[cs] = fileCt[cs] - FILESSHOWN;
 							redraw = 1;
 						}
 						else
-							scroll = 0;
+							scroll[cs] = 0;
 						break;
 					}
 				}
 				else if (key == 0xD0) //down
 				{
-					lastIndex = index;
-					if (index < fileCt - 1)
+					lastIndex[cs] = index[cs];
+					if (index[cs] < fileCt[cs] - 1)
 					{
-						index++;
-						if (index - scroll >= FILESSHOWN)
+						index[cs]++;
+						if (index[cs] - scroll[cs] >= FILESSHOWN)
 						{
-							scroll += FILESSHOWN;
-							if (scroll + FILESSHOWN > fileCt) scroll = fileCt - FILESSHOWN;
+							scroll[cs] += FILESSHOWN;
+							if (scroll[cs] + FILESSHOWN > fileCt[cs]) scroll[cs] = fileCt[cs] - FILESSHOWN;
 							redraw = 1;
 							break;
 						}
 					}
 					else
 					{
-						index = 0;
-						scroll = 0;
-						if (fileCt < FILESSHOWN) redraw = 1;
+						index[cs] = 0;
+						scroll[cs] = 0;
+						if (fileCt[cs] < FILESSHOWN) redraw = 1;
 						break;
 					}
 				}
 				else if (key == 0xC9) //page up
 				{
-					index -= FILESSHOWN;
-					scroll -= FILESSHOWN;
-					if (index < 0) index = 0;
-					if (scroll < 0) scroll = 0;
+					index[cs] -= FILESSHOWN;
+					scroll[cs] -= FILESSHOWN;
+					if (index[cs] < 0) index[cs] = 0;
+					if (scroll[cs] < 0) scroll[cs] = 0;
 					redraw = 1;
 					break;
 				}
 				else if (key == 0xD1) //page down
 				{
 					//TODO
-					index += FILESSHOWN;
-					scroll += FILESSHOWN;
-					if (index + FILESSHOWN > fileCt) index = fileCt - FILESSHOWN;
-					if (scroll + FILESSHOWN > fileCt) scroll = fileCt - FILESSHOWN;
+					index[cs] += FILESSHOWN;
+					scroll[cs] += FILESSHOWN;
+					if (index[cs] + FILESSHOWN > fileCt[cs]) index[cs] = fileCt[cs] - FILESSHOWN;
+					if (scroll[cs] + FILESSHOWN > fileCt[cs]) scroll[cs] = fileCt[cs] - FILESSHOWN;
 					redraw = 1;
 					break;
 				}
@@ -293,38 +346,50 @@ void SelectFile(const char* path, const char* pattern, char* selection, int32_t(
 				{
 					if (curFN[0] == '.' && curFN[1] == '.')
 					{
-						char *lastSlash = strrchr(workPath, '\\');
-						int32_t lsPos = lastSlash - workPath;
-						workPath[lsPos] = 0;
-						if (workPath[0] == 0) strcpy_s(workPath, MAXPATH, "\\");
-						strcpy_s(currDirs[currentDrive], MAXPATH, workPath);
-						Populate(workPath, pattern);
+						char *lastSlash = strrchr(workPath[cs], '\\');
+						int32_t lsPos = lastSlash - workPath[cs];
+						workPath[cs][lsPos] = 0;
+						if (workPath[cs][0] == 0) strcpy_s(workPath[cs], MAXPATH, "\\");
+						strcpy_s(currDirs[cs][currentDrive[cs]], MAXPATH, workPath[cs]);
+						Populate(workPath[cs], cs, pattern);
 						redraw = 1;
-						index = 0;
+						index[cs] = 0;
 					}
 					else
 					{
-						strcpy_s(filePath, MAXPATH, workPath);
-						if (filePath[strnlen_s(filePath, MAXPATH)-1] != '\\') strkitten_s(filePath, MAXPATH, '\\');
-						strcat_s(filePath, MAXPATH, curFN);
-						DISK->FileStat(filePath, &info);
+						strcpy_s(filePath[cs], MAXPATH, workPath[cs]);
+						if (filePath[cs][strnlen_s(filePath[cs], MAXPATH)-1] != '\\') strkitten_s(filePath[cs], MAXPATH, '\\');
+						strcat_s(filePath[cs], MAXPATH, curFN);
+						DISK->FileStat(filePath[cs], &info);
 						if (info.fattrib & AM_DIRECTORY)
 						{
-							strcpy_s(workPath, MAXPATH, filePath);
-							strcpy_s(currDirs[currentDrive], MAXPATH, workPath);
-							Populate(workPath, pattern);
+							strcpy_s(workPath[cs], MAXPATH, filePath[cs]);
+							strcpy_s(currDirs[cs][currentDrive[cs]], MAXPATH, workPath[cs]);
+							Populate(workPath[cs], cs, pattern);
 							redraw = 1;
-							index = 0;
+							index[cs] = 0;
 						}
 						else
 						{
 							if (onSelect)
 							{
-								int32_t ret = onSelect(filePath);
-								Populate(workPath, pattern);
+								if (filenames[0] != 0)
+								{
+									free(filenames[0]);
+									filenames[0] = 0;
+								}
+								if (filenames[1] != 0)
+								{
+									free(filenames[1]);
+									filenames[1] = 0;
+								}
+								int32_t ret = onSelect(filePath[cs]);
+								Populate(workPath[0], 0, pattern);
+								if (path2 != 0)
+									Populate(workPath[1], 1, pattern);
 								if (ret == 1)
 								{
-									if (selection) strcpy_s(selection, MAXPATH, (const char*)filePath);
+									if (selection) strcpy_s(selection, MAXPATH, (const char*)filePath[cs]);
 									return;
 								}
 								redraw = (ret == 2);
@@ -336,7 +401,7 @@ void SelectFile(const char* path, const char* pattern, char* selection, int32_t(
 							}
 							else if (selection)
 							{
-								strcpy_s(selection, MAXPATH, (const char*)filePath);
+								strcpy_s(selection, MAXPATH, (const char*)filePath[cs]);
 								return;
 							}
 						}
@@ -350,11 +415,6 @@ void SelectFile(const char* path, const char* pattern, char* selection, int32_t(
 
 int32_t StartApp(char* filePath)
 {
-	if (filenames != 0)
-	{
-		free(filenames);
-		filenames = 0;
-	}
 	void(*entry)(void) = (void*)0x01002020;
 	FILEINFO nfo;
 	DISK->FileStat(filePath, &nfo);
@@ -532,6 +592,6 @@ int32_t main(void)
 	REG_CARET = 0;
 	while(1)
 	{
-		SelectFile("A:\\", "*.*", path, ShowFile);
+		SelectFile("A:\\", "A:\\", "*.*", path, ShowFile);
 	}
 }
