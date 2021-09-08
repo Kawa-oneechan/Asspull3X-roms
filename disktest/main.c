@@ -32,10 +32,17 @@ void Populate(const char* path, int side, const char* pattern)
 	if (filenames[side] == 0)
 	{
 		filenames[side] = (char*)malloc(MAXFILES * 16);
-//		for (int i = 0; i < MAXFILES * 16; i++)
-//			filenames[i] = 0;
 	}
 	curFN = filenames[side];
+
+	//Always add other drives
+	int numDrives = DISK->GetNumDrives();
+	for (int i = 0; i < numDrives; i++)
+	{
+		sprintf(curFN, "%c:", 'A' + i);
+		curFN += 16;
+		fileCt[side]++;
+	}
 
 tryOpenDir:
 	ret = DISK->OpenDir(&dir, path);
@@ -50,8 +57,6 @@ tryOpenDir:
 			printf(DISK->FileErrStr(ret));
 		TEXT->SetTextColor(0, 7);
 		printf("\nAbort or Retry? >");
-		//WaitForKey();
-		//return;
 		while (1)
 		{
 			char k = getchar();
@@ -106,7 +111,6 @@ void SelectFile(const char* path1, const char* path2, const char* pattern, char*
 	FILEINFO info;
 	char currDirs[2][4][MAXPATH], workPath[2][MAXPATH];
 	char filePath[2][MAXPATH];
-	int maxDrives = DISK->GetNumDrives();
 	char* curFN;
 	int cs = 0;
 
@@ -208,6 +212,12 @@ void SelectFile(const char* path1, const char* path2, const char* pattern, char*
 						curFN += 16;
 						continue;
 					}
+					else if (curFN[1] == ':')
+					{
+						printf("   <DISK>             ");
+						curFN += 16;
+						continue;
+					}
 					strcpy_s(filePath[s], MAXPATH, workPath[s]);
 					if (filePath[s][strnlen_s(filePath[s], MAXPATH) - 1] != '\\') strkitten_s(filePath[s], MAXPATH, '\\');
 					strcat_s(filePath[s], MAXPATH, curFN);
@@ -249,7 +259,7 @@ void SelectFile(const char* path1, const char* path2, const char* pattern, char*
 
 		curFN = &filenames[cs][index[cs] * 16];
 		//printf("%s>%s", workPath[cs], curFN);
-		printf("side %d, index %d, scroll %d, fileCt %d", cs, index[cs], scroll[cs], fileCt[cs]);
+		//printf("side %d, index %d, scroll %d, fileCt %d", cs, index[cs], scroll[cs], fileCt[cs]);
 		vbl();
 
 		while(1)
@@ -264,15 +274,6 @@ void SelectFile(const char* path1, const char* path2, const char* pattern, char*
 				{
 					cs ^= 1;
 					redraw = 1;
-				}
-				if (key >= 2 && key < maxDrives + 2)
-				{
-					currentDrive[cs] = key - 2;
-					strcpy_s(filePath[cs], MAXPATH, currDirs[cs][currentDrive[cs]]);
-					strcpy_s(workPath[cs], MAXPATH, filePath[cs]);
-					Populate(workPath[cs], cs, pattern);
-					redraw = 1;
-					index[cs] = 0;
 				}
 				else if (key == 0xC8) //up
 				{
@@ -357,6 +358,15 @@ void SelectFile(const char* path1, const char* path2, const char* pattern, char*
 						workPath[cs][lsPos] = 0;
 						if (workPath[cs][0] == 0) strcpy_s(workPath[cs], MAXPATH, "\\");
 						strcpy_s(currDirs[cs][currentDrive[cs]], MAXPATH, workPath[cs]);
+						Populate(workPath[cs], cs, pattern);
+						redraw = 1;
+						index[cs] = 0;
+					}
+					else if (curFN[1] == ':')
+					{
+						currentDrive[cs] = curFN[0] - 'A';
+						strcpy_s(filePath[cs], MAXPATH, currDirs[cs][currentDrive[cs]]);
+						strcpy_s(workPath[cs], MAXPATH, filePath[cs]);
 						Populate(workPath[cs], cs, pattern);
 						redraw = 1;
 						index[cs] = 0;
