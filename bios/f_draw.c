@@ -179,8 +179,8 @@ void DrawFormat(const char* format, int32_t x, int32_t y, int32_t color, ...)
 	inton();
 }
 
-void DrawChar(char c, int32_t x, int32_t y, int32_t color)
+void DrawChar(char ch, int32_t x, int32_t y, int32_t color)
 {
-	interface->DrawChar(c, x, y, color);
+	interface->DrawChar(ch, x, y, color);
 }
 

@@ -9,7 +9,6 @@ const IDiskLibrary diskLibrary =
 	OpenFile, CloseFile,
 	ReadFile, WriteFile,
 	SeekFile, TruncateFile, FlushFile,
-	//FileReadLine, FilePutChar, FileWriteLine,
 	FilePosition, FileEnd, FileSize,
 	OpenDir, CloseDir, ReadDir,
 	FindFirst, FindNext, FileStat,
@@ -123,24 +122,6 @@ int32_t FlushFile(TFileHandle* handle)
 {
 	return f_sync(handle);
 }
-
-/*
-char* FileReadLine(TFileHandle* handle, char* buffer, uint32_t len)
-{
-	f_gets(buffer, sizeof buffer, handle);
-	return buffer;
-}
-
-int32_t FilePutChar(TFileHandle* handle, char c)
-{
-	return f_putc(c, handle);
-}
-
-int32_t FileWriteLine(TFileHandle* handle, const char* s)
-{
-	return f_puts(s, handle);
-}
-*/
 
 uint32_t FilePosition(TFileHandle* handle)
 {

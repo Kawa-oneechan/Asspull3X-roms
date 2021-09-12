@@ -51,9 +51,9 @@ void WaitForVBlank()
 //		interface->VBlank();
 }
 
-void WaitForVBlanks(int i)
+void WaitForVBlanks(int vbls)
 {
-	while(i--) WaitForVBlank();
+	while(vbls--) WaitForVBlank();
 }
 
 //CONSIDER: Replace these with #define macros in ass.h.

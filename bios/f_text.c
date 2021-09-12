@@ -5,10 +5,7 @@ extern int32_t vsprintf(char*, const char*, va_list);
 
 const ITextLibrary textLibrary =
 {
-	Write, Format, WriteChar,
-	SetBold,
-	//WriteString, WriteInt, WriteCharacter,
-	//WriteHex, WriteHex8, WriteHex16, WriteHex32,
+	Write, Format, WriteChar, SetBold,
 	SetCursor, SetTextColor, ClearScreen,
 };
 
