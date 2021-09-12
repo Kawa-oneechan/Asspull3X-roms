@@ -51,6 +51,8 @@ extern void free(void*);
 //-----------------
 #define MEM_VRAM	0x0E000000
 #define MEM_IO		0x0D000000
+#define TEXTMAP		((uint16_t*)(MEM_VRAM))
+#define BITMAP		((uint8_t*)(MEM_VRAM))
 #define MAP1		((uint16_t*)(MEM_VRAM))
 #define MAP2		((uint16_t*)(MEM_VRAM + 0x4000))
 #define MAP3		((uint16_t*)(MEM_VRAM + 0x8000))
@@ -228,80 +230,68 @@ typedef struct TFileInfo {
 //Text
 typedef struct ITextLibrary
 {
-	int(*Write)(const char*,...);
-	int(*Format)(char*,const char*,...);
-//	void(*WriteString)(const int8_t*);
-//	void(*WriteInt)(int32_t);
-	void(*WriteChar)(char);
-//	void(*WriteHex)(int32_t);
-//	void(*WriteHex8)(int8_t);
-//	void(*WriteHex16)(int16_t);
-//	void(*WriteHex32)(int32_t);
-	void(*SetBold)(int32_t);
-	void(*SetCursorPosition)(int32_t, int32_t);
-	void(*SetTextColor)(int32_t, int32_t);
+	int(*Write)(const char* format, ...);
+	int(*Format)(char* buffer, const char* format, ...);
+	void(*WriteChar)(char ch);
+	void(*SetBold)(int32_t bold);
+	void(*SetCursorPosition)(int32_t left, int32_t top);
+	void(*SetTextColor)(int32_t back, int32_t fore);
 	void(*ClearScreen)(void);
 } ITextLibrary;
 
 typedef struct IDrawingLibrary
 {
 	void(*ResetPalette)(void);
-	void(*DisplayPicture)(TImageFile*);
+	void(*DisplayPicture)(TImageFile* picData);
 	void(*FadeToBlack)(void);
 	void(*FadeFromBlack)(void);
 	void(*FadeToWhite)(void);
 	void(*FadeFromWhite)(void);
-	void(*DrawString)(const char*, int32_t, int32_t, int32_t);
-	void(*DrawFormat)(const char*, int32_t, int32_t, int32_t, ...);
-	void(*DrawChar)(char, int32_t, int32_t, int32_t);
+	void(*DrawString)(const char* str, int32_t x, int32_t y, int32_t color);
+	void(*DrawFormat)(const char* format, int32_t x, int32_t y, int32_t color, ...);
+	void(*DrawChar)(char ch, int32_t x, int32_t y, int32_t color);
 } IDrawingLibrary;
 
 typedef struct IMiscLibrary
 {
-//	void(*SetTextMode80x30)(void);
-//	void(*SetTextMode80x60)(void);
-	void(*SetTextMode)(int32_t);
-	void(*SetBitmapMode16)(int32_t);
-	void(*SetBitmapMode256)(int32_t);
+	void(*SetTextMode)(int32_t flags);
+	void(*SetBitmapMode16)(int32_t flags);
+	void(*SetBitmapMode256)(int32_t flags);
 	void(*EnableSprites)(int32_t);
 	void(*WaitForVBlank)(void);
-	void(*WaitForVBlanks)(int32_t);
-	void(*DmaCopy)(void*, const void*, uint32_t, int32_t);
-	void(*DmaClear)(void*, int32_t, uint32_t, int32_t);
+	void(*WaitForVBlanks)(int32_t vbls);
+	void(*DmaCopy)(void* dst, const void* src, uint32_t size, int32_t step);
+	void(*DmaClear)(void* dst, int32_t src, uint32_t size, int32_t step);
 	void(*MidiReset)(void);
-//	void(*LzUnpack)(int8_t*, int8_t*);
-	void(*RleUnpack)(int8_t*, int8_t*, uint32_t);
+	void(*RleUnpack)(int8_t* dst, int8_t* src, uint32_t size);
 } IMiscLibrary;
 
 typedef struct IDiskLibrary
 {
-	int32_t(*OpenFile)(TFileHandle*, const char*, char);
-	int32_t(*CloseFile)(TFileHandle*);
-	int32_t(*ReadFile)(TFileHandle*,void*,uint32_t);
-	int32_t(*WriteFile)(TFileHandle*,void*,uint32_t);
-	int32_t(*SeekFile)(TFileHandle*,uint32_t, int32_t);
-	int32_t(*TruncateFile)(TFileHandle*);
-	int32_t(*FlushFile)(TFileHandle*);
-	//char*(*FileReadLine)(TFileHandle*,char*,uint32_t);
-	//int32_t(*FilePutChar)(TFileHandle*,char);
-	//int32_t(*FileWriteLine)(TFileHandle*,const char*);
-	uint32_t(*FilePosition)(TFileHandle*);
-	int32_t(*FileEnd)(TFileHandle*);
-	uint32_t(*FileSize)(TFileHandle*);
-	int32_t(*OpenDir)(TDirHandle*,const char*);
-	int32_t(*CloseDir)(TDirHandle*);
-	int32_t(*ReadDir)(TDirHandle*,TFileInfo*);
-	int32_t(*FindFirst)(TDirHandle*,TFileInfo*,const char*,const char*);
-	int32_t(*FindNext)(TDirHandle*,TFileInfo*);
-	int32_t(*FileStat)(const char*,TFileInfo*);
-	int32_t(*UnlinkFile)(const char*);
-	int32_t(*RenameFile)(const char*,const char*);
-	int32_t(*FileTouch)(const char*,TFileInfo*);
-	int32_t(*MakeDir)(const char*);
-	int32_t(*ChangeDir)(const char*);
-	int32_t(*GetCurrentDir)(char*, int32_t);
-	int32_t(*GetLabel)(char*);
-	const char*(*FileErrStr)(int32_t);
+	int32_t(*OpenFile)(TFileHandle* handle, const char* path, char mode);
+	int32_t(*CloseFile)(TFileHandle* handle);
+	int32_t(*ReadFile)(TFileHandle* handle, void* target, uint32_t length);
+	int32_t(*WriteFile)(TFileHandle* handle, void* source, uint32_t length);
+	int32_t(*SeekFile)(TFileHandle* handle, uint32_t offset, int32_t origin);
+	int32_t(*TruncateFile)(TFileHandle* handle);
+	int32_t(*FlushFile)(TFileHandle* handle);
+	uint32_t(*FilePosition)(TFileHandle* handle);
+	int32_t(*FileEnd)(TFileHandle* handle);
+	uint32_t(*FileSize)(TFileHandle* handle);
+	int32_t(*OpenDir)(TDirHandle* handle, const char* path);
+	int32_t(*CloseDir)(TDirHandle* handle);
+	int32_t(*ReadDir)(TDirHandle* handle, TFileInfo* info);
+	int32_t(*FindFirst)(TDirHandle* handle, TFileInfo* info, const char* path,const char* pattern);
+	int32_t(*FindNext)(TDirHandle* handle, TFileInfo* info);
+	int32_t(*FileStat)(const char* path, TFileInfo* info);
+	int32_t(*UnlinkFile)(const char* path);
+	int32_t(*RenameFile)(const char* from, const char* to);
+	int32_t(*FileTouch)(const char* path, TFileInfo* dt);
+	int32_t(*MakeDir)(const char* path);
+	int32_t(*ChangeDir)(const char* path);
+	int32_t(*GetCurrentDir)(char* buffer, int32_t buflen);
+	int32_t(*GetLabel)(char* buffer);
+	const char*(*FileErrStr)(int32_t error);
 	int32_t(*GetNumDrives)(void);
 } IDiskLibrary;
 
