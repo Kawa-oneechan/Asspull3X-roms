@@ -1,4 +1,5 @@
 #include "../ass.h"
+#include "../ass-midi.h"
 IBios* interface;
 
 #define KEY_UP 0xC8

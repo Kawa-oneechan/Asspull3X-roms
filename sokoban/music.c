@@ -1,4 +1,4 @@
-#include "../ass.h" //for the names
+#include "../ass-midi.h" //for the names
 
 const char track1[] =
 {

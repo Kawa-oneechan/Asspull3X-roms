@@ -1,4 +1,5 @@
 #include "../ass.h"
+#include "../ass-midi.h"
 IBios* interface;
 
 extern const TImageFile titlePic;
