@@ -145,7 +145,7 @@ int32_t main(void)
 			REG_HDMASOURCE[1] = (int32_t)hdma2;
 			REG_HDMATARGET[1] = (int32_t)(PALETTE + 1);
 			REG_HDMACONTROL[1] = DMA_ENABLE | HDMA_DOUBLE | (DMA_SHORT << 4) | (254 << 8) | (170 << 20);
-			MISC->DmaCopy(PALETTE + 16, (int8_t*)&iconsPal, 16, DMA_INT);
+			MISC->DmaCopy(PALETTE + 16, (int8_t*)&iconsPal, 16, DMA_SHORT);
 			MISC->DmaCopy(TILESET, (int8_t*)&iconsTiles, 512, DMA_INT);
 			SPRITES_A[0] = SPRITEA_BUILD(0, 1, 1);
 			SPRITES_B[0] = SPRITEB_BUILD(144, 152, 1, 1, 0, 0, 1, 0);
