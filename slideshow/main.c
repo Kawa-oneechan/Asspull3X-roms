@@ -44,7 +44,6 @@ void WaitForKey()
 
 int32_t main(void)
 {
-	interface = (IBios*)(0x01000000);
 
 	int ret;
 	DIR dir;

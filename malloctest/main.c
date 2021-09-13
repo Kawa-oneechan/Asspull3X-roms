@@ -52,7 +52,6 @@ void WaitForKey()
 
 int main(void)
 {
-	interface = (IBios*)(0x01000000);
 	heap = (void*)0x03000000;
 	MISC->SetTextMode(SMODE_240);
 	TEXT->SetTextColor(0, 4);

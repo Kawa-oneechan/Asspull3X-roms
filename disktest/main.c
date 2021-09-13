@@ -600,7 +600,6 @@ int32_t ShowFile(char* filePath)
 
 int32_t main(void)
 {
-	interface = (IBios*)(0x01000000);
 	char path[MAXPATH];
 	intoff();
 	MISC->SetTextMode(SMODE_240 | SMODE_BOLD);

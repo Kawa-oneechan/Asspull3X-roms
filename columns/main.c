@@ -356,7 +356,6 @@ void WaitForKey()
 
 int main(void)
 {
-	interface = (IBios*)(0x01000000);
 	MISC->SetTextMode(SMODE_TILE);
 	MISC->DmaCopy(TILESET, (int8_t*)&tilesTiles, 96 * 8, DMA_INT);
 	MISC->DmaCopy(PALETTE, (int16_t*)&tilesPal, 16, DMA_INT);

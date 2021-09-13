@@ -252,7 +252,6 @@ const TCommand commands[] =
 
 int32_t main()
 {
-	interface = (IBios*)(0x01000000);
 	MISC->SetTextMode(SMODE_240 | SMODE_BOLD);
 	char input[MAX_INP];
 	const char del[] = " \t\n";

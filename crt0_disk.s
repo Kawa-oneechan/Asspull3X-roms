@@ -10,7 +10,7 @@ initialize:
 	subq.w	#1,%d0
 2:	move.w	(%a0)+,(%a1)+
 	dbra	%d0,2b
-
+	move.l  #0x01000000,interface
 	jsr	main
 	rts
 3:	bra.b	3b

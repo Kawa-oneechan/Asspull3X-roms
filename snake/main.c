@@ -287,7 +287,6 @@ void ClearBoard()
 
 int main(void)
 {
-	interface = (IBios*)(0x01000000);
 	MISC->SetTextMode(SMODE_TILE | SMODE_320 | SMODE_240);
 	MISC->DmaCopy(PALETTE, (int8_t*)&tilesPal, 16, DMA_INT);
 	MISC->DmaCopy(TILESET, (int8_t*)&tilesTiles, 1024, DMA_INT);

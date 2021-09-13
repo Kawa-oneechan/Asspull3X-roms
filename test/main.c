@@ -117,7 +117,6 @@ const void* const optionFuncs[] =
 
 int main(void)
 {
-	interface = (IBios*)(0x01000000);
 
 	while (1)
 	{

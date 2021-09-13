@@ -199,7 +199,6 @@ void Write(const char* str)
 
 int main(void)
 {
-	interface = (IBios*)(0x01000000);
 	REG_SCREENFADE = 31;
 	DRAW->DisplayPicture((TImageFile*)&pianoData);
 

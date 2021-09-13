@@ -29,7 +29,6 @@ void LP_Print(const char* text)
 //The rest is *mostly* just HelloWorld.
 int main(void)
 {
-	interface = (IBios*)(0x01000000);
 	MISC->SetTextMode(SMODE_240 | SMODE_BOLD);
 	TEXT->SetTextColor(1, 7);
 	TEXT->ClearScreen();

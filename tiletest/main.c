@@ -76,7 +76,6 @@ typedef struct TSpriteB
 
 int main(void)
 {
-	interface = (IBios*)(0x01000000);
 	REG_SCREENMODE = SMODE_TILE;
 	REG_SCREENFADE = 0;
 

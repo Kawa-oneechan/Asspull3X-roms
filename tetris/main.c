@@ -251,7 +251,6 @@ void WaitForKey()
 
 int main(void)
 {
-	interface = (IBios*)(0x01000000);
 
 	DRAW->DisplayPicture((TImageFile*)&titlePic);
 	//TEST: play music on the title screen for quick testing

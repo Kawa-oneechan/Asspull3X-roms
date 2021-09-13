@@ -13,6 +13,7 @@ initialize:
 
 	lea     0x013F0000,%a0
 	movea.l %a0,%sp
+	move.l  #0x01000000,interface
 	link.w  %a6,#-8
 	jsr     main
 3:	bra.b   3b

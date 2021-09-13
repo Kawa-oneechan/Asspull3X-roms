@@ -93,7 +93,6 @@ void ListFiles(const char* path, int32_t mode)
 
 int32_t main1()
 {
-	interface = (IBios*)(0x01000000);
 	MISC->SetTextMode(SMODE_240 | SMODE_BOLD);
 
 	//GETCHAR
@@ -115,7 +114,6 @@ int32_t main1()
 
 int32_t main()
 {
-	interface = (IBios*)(0x01000000);
 	MISC->SetTextMode(SMODE_240 | SMODE_BOLD);
 	char cwd[MAX_CWD];
 	char input[MAX_INP];

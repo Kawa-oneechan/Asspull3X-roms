@@ -466,7 +466,6 @@ void CheckForDisk()
 
 int main(void)
 {
-	interface = (IBios*)(0x01000000);
 	MISC->SetTextMode(0);
 
 	DRAW->DisplayPicture((TImageFile*)&titlePic);
