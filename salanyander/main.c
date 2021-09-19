@@ -1,4 +1,5 @@
 #include "../ass.h"
+#define sprintf(b,f,rest...) TEXT->Format(b,f, ## rest)
 IBios* interface;
 
 extern const uint16_t fontTiles[], fontPal[];
@@ -23,6 +24,17 @@ extern const uint16_t playerTiles[], playerPal[];
 	(((hp) & 0x7FF) << 0)						\
 )
 
+void print(char* str, int x, int y)
+{
+	unsigned short *t = &MAP1[(y * 64) + x];
+	char *b = str;
+	while (*b)
+	{
+		*t++ = (*b - 32);
+		b++;
+	}
+}
+
 
 
 //==== STARTING OFF =====
@@ -44,6 +56,11 @@ typedef struct tEntity
 
 tEntity entities[MAXENTITIES];
 
+int Spawn(int type, int x, int y);
+
+unsigned int scroll = 0;
+char debugBuffer[256];
+
 
 
 //===== PLAYER =====
@@ -58,14 +75,13 @@ typedef struct tPlayer
 	char spr;
 	char state;
 	void (*draw)(), (*think)();
-	short flameTick, swerve, intro;
+	short flameTick, swerve, intro, shotTimer;
 } tPlayer;
 
 void DrawPlayer(int id)
 {
 	tPlayer* p = (tPlayer*)&entities[id];
 
-	const char flameOffsets[] = { 7, 6, 4, 4, 4 };
 	int frame = 0;
 
 	if (p->y < p->oldY)
@@ -86,7 +102,7 @@ void DrawPlayer(int id)
 	SPRITES_A[(int)p->spr] = SPRITEA_BUILD(128 + (frame * 8), 0, 1, p->pal);
 	SPRITES_B[(int)p->spr] = SPRITEB_BUILD(p->x, p->y, 1, 0, 0, 0, 1, 0);
 	SPRITES_A[(int)p->spr+1] = SPRITEA_BUILD(128 + 40 + ((p->flameTick >> 2) % 2), 1, 1, 2);
-	SPRITES_B[(int)p->spr+1] = SPRITEB_BUILD(p->x - 8, p->y + flameOffsets[frame], 0, 0, 0, 0, 0, 0);
+	SPRITES_B[(int)p->spr+1] = SPRITEB_BUILD(p->x - 8, p->y + 4, 0, 0, 0, 0, 0, 0);
 }
 
 void ThinkPlayer(int id)
@@ -111,6 +127,19 @@ void ThinkPlayer(int id)
 		else if (REG_KEYIN == 0xC8) p->y--;
 		else if (REG_KEYIN == 0xCD) p->x++;
 		else if (REG_KEYIN == 0xCB) p->x--;
+
+		if (REG_KEYIN == 0x2E)
+		{
+			if (p->shotTimer == 0)
+			{
+				Spawn(2, p->x + 12, p->y + 4);
+				p->shotTimer = 5;
+			}
+		}
+		else if (p->shotTimer > 0)
+		{
+			p->shotTimer--;
+		}
 	}
 
 	p->flameTick++;
@@ -126,12 +155,40 @@ void InitPlayer(int id)
 
 
 
+//===== PLAYER'S BULLETS =====
+
+void DrawPlayerBullet(int id)
+{
+	tEntity* p = &entities[id];
+
+	SPRITES_A[(int)p->spr] = SPRITEA_BUILD(128 + 42, 0, 1, p->pal);
+	SPRITES_B[(int)p->spr] = SPRITEB_BUILD(p->x, p->y, 1, 0, 0, 0, 0, 0);
+}
+
+void ThinkPlayerBullet(int id)
+{
+	tEntity* p = &entities[id];
+	p->x += 4;
+	if (p->x > 320)
+		p->type = 0; //die
+}
+
+void InitPlayerBullet(int id)
+{
+	tEntity* p = &entities[id];
+	p->pal = 2;
+	p->spr = 8 + id;
+}
+
+
+
 //==== PUTTING IT TOGETHER =====
 
 const void* const entityFuncs[] =
 {
 	0, 0, 0, 0,
 	ThinkPlayer, DrawPlayer, InitPlayer, 0,
+	ThinkPlayerBullet, DrawPlayerBullet, InitPlayerBullet, 0
 };
 
 void Think()
@@ -183,6 +240,9 @@ int main(void)
 
 	intoff();
 
+	REG_MAPSET = 0x10;
+	MISC->DmaClear(MAP1, 0, 64 * 32, DMA_SHORT);
+
 	MISC->DmaClear(entities, 0, sizeof(tEntity) * 64, DMA_BYTE);
 
 	MISC->DmaCopy(TILESET, (int8_t*)&fontTiles, 512, DMA_INT);
@@ -192,14 +252,20 @@ int main(void)
 	MISC->DmaCopy(PALETTE + 32, (int8_t*)&playerPal, 32, DMA_SHORT);
 
 	int e = Spawn(1, 64, 128);
-	e = Spawn(1, 48, 64);
-	entities[e].spr = 4;
-	entities[e].pal = 3;
+	//e = Spawn(1, 48, 64);
+	//entities[e].spr = 4;
+	//entities[e].pal = 3;
+
+	print("SOKONYAN INDEV", 0, 0);
 
 	for(;;)
 	{
+		sprintf(debugBuffer, "SCROLL %d  REG_KEYIN $%02X ", scroll, REG_KEYIN);
+		print(debugBuffer, 0, 1);
+
 		Think();
 		Draw();
+		scroll++;
 
 		vbl();
 	}
