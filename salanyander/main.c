@@ -256,7 +256,7 @@ int main(void)
 	//entities[e].spr = 4;
 	//entities[e].pal = 3;
 
-	print("SOKONYAN INDEV", 0, 0);
+	print("SALANYANDER INDEV", 0, 0);
 
 	for(;;)
 	{
