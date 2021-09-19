@@ -24,15 +24,35 @@ extern const uint16_t playerTiles[], playerPal[];
 	(((hp) & 0x7FF) << 0)						\
 )
 
-void print(char* str, int x, int y)
+void print(char* str, int x, int y, int color)
 {
 	unsigned short *t = &MAP1[(y * 64) + x];
+	color *= 64;
 	char *b = str;
 	while (*b)
 	{
-		*t++ = (*b - 32);
+		*t++ = (*b - 32) + color;
 		b++;
 	}
+}
+
+int bitTest(int* set, int bit)
+{
+	return set[bit / 32] & (1 << (bit % 32));
+}
+
+int bitSet(int* set, int bit)
+{
+	int old = bitTest(set, bit);
+	set[bit / 32] |= (1 << (bit % 32));
+	return old;
+}
+
+int bitClear(int* set, int bit)
+{
+	int old = bitTest(set, bit);
+	set[bit / 32] &= ~(1 << (bit % 32));
+	return old;
 }
 
 
@@ -56,7 +76,11 @@ typedef struct tEntity
 
 tEntity entities[MAXENTITIES];
 
+int spritesUsed[256/32];
+
 int Spawn(int type, int x, int y);
+int GetNextSpriteIn(int min, int max);
+int GetNextSprite();
 
 unsigned int scroll = 0;
 char debugBuffer[256];
@@ -151,6 +175,9 @@ void InitPlayer(int id)
 
 	p->pal = 2;
 	p->x -= 64; //to fly in
+	p->spr = GetNextSpriteIn(0, 4);
+	bitSet(spritesUsed, p->spr);
+	bitSet(spritesUsed, p->spr + 1);
 }
 
 
@@ -170,14 +197,18 @@ void ThinkPlayerBullet(int id)
 	tEntity* p = &entities[id];
 	p->x += 4;
 	if (p->x > 320)
-		p->type = 0; //die
+	{
+		p->type = 0;
+		bitClear(spritesUsed, p->spr);
+	}
 }
 
 void InitPlayerBullet(int id)
 {
 	tEntity* p = &entities[id];
 	p->pal = 2;
-	p->spr = 8 + id;
+	p->spr = GetNextSpriteIn(4, 24);
+	bitSet(spritesUsed, p->spr);
 }
 
 
@@ -233,6 +264,21 @@ int Spawn(int type, int x, int y)
 	return -1;
 }
 
+int GetNextSpriteIn(int min, int max)
+{
+	for (int i = min; i < max; i++)
+	{
+		if (!bitTest(spritesUsed, i))
+			return i;
+	}
+	return -1;
+}
+
+int GetNextSprite()
+{
+	return GetNextSpriteIn(0, 256);
+}
+
 int main(void)
 {
 	REG_SCREENMODE = SMODE_TILE;
@@ -242,10 +288,12 @@ int main(void)
 
 	REG_MAPSET = 0x10;
 	MISC->DmaClear(MAP1, 0, 64 * 32, DMA_SHORT);
+	for (int i = 0; i < 256/32; i++)
+		spritesUsed[i] = 0;
 
 	MISC->DmaClear(entities, 0, sizeof(tEntity) * 64, DMA_BYTE);
 
-	MISC->DmaCopy(TILESET, (int8_t*)&fontTiles, 512, DMA_INT);
+	MISC->DmaCopy(TILESET, (int8_t*)&fontTiles, 1024, DMA_INT);
 	MISC->DmaCopy(PALETTE, (int8_t*)&fontPal, 16, DMA_SHORT);
 
 	MISC->DmaCopy(TILESET + 0x1000, (int8_t*)&playerTiles, 512, DMA_INT);
@@ -256,12 +304,14 @@ int main(void)
 	//entities[e].spr = 4;
 	//entities[e].pal = 3;
 
-	print("SALANYANDER INDEV", 0, 0);
+	print("SALANYANDER INDEV", 0, 0, 0);
 
 	for(;;)
 	{
 		sprintf(debugBuffer, "SCROLL %d  REG_KEYIN $%02X ", scroll, REG_KEYIN);
-		print(debugBuffer, 0, 1);
+		print(debugBuffer, 0, 1, 0);
+		sprintf(debugBuffer, "SPRUSE %04X%04X%04X%04X", spritesUsed[3], spritesUsed[2], spritesUsed[1], spritesUsed[0]);
+		print(debugBuffer, 0, 2, 0);
 
 		Think();
 		Draw();
