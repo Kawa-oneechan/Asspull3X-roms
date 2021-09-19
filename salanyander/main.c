@@ -23,6 +23,12 @@ extern const uint16_t playerTiles[], playerPal[];
 	(((hp) & 0x7FF) << 0)						\
 )
 
+
+
+//==== STARTING OFF =====
+
+#define MAXENTITIES 64
+
 typedef struct tEntity
 {
 	short type;
@@ -31,13 +37,17 @@ typedef struct tEntity
 	short oldX, oldY;
 	char pal;
 	char spr;
+	char state;
 	void (*draw)(), (*think)();
 	short extra[16];
 } tEntity;
 
-tEntity entities[64];
+tEntity entities[MAXENTITIES];
+
+
 
 //===== PLAYER =====
+
 typedef struct tPlayer
 {
 	short type;
@@ -46,8 +56,9 @@ typedef struct tPlayer
 	short oldX, oldY;
 	char pal;
 	char spr;
+	char state;
 	void (*draw)(), (*think)();
-	short flameTick, swerve;
+	short flameTick, swerve, intro;
 } tPlayer;
 
 void DrawPlayer(int id)
@@ -82,12 +93,87 @@ void ThinkPlayer(int id)
 {
 	tPlayer* p = (tPlayer*)&entities[id];
 
-	if (REG_KEYIN == 0xD0) p->y++;
-	else if (REG_KEYIN == 0xC8) p->y--;
-	else if (REG_KEYIN == 0xCD) p->x++;
-	else if (REG_KEYIN == 0xCB) p->x--;
+	if (p->state == 0) //flying in
+	{
+		if (p->intro < 64)
+		{
+			p->intro++;
+			p->x++;
+		}
+		else
+		{
+			p->state = 1; //player control
+		}
+	}
+	else
+	{
+		if (REG_KEYIN == 0xD0) p->y++;
+		else if (REG_KEYIN == 0xC8) p->y--;
+		else if (REG_KEYIN == 0xCD) p->x++;
+		else if (REG_KEYIN == 0xCB) p->x--;
+	}
 
 	p->flameTick++;
+}
+
+void InitPlayer(int id)
+{
+	tPlayer* p = (tPlayer*)&entities[id];
+
+	p->pal = 2;
+	p->x -= 64; //to fly in
+}
+
+
+
+//==== PUTTING IT TOGETHER =====
+
+const void* const entityFuncs[] =
+{
+	0, 0, 0, 0,
+	ThinkPlayer, DrawPlayer, InitPlayer, 0,
+};
+
+void Think()
+{
+	for (int i = 0; i < MAXENTITIES; i++)
+	{
+		if (entities[i].type == 0)
+			continue;
+		if (entities[i].think != 0)
+			entities[i].think(i);
+	}
+}
+
+void Draw()
+{
+	for (int i = 0; i < MAXENTITIES; i++)
+	{
+		if (entities[i].type == 0)
+			continue;
+		if (entities[i].draw != 0)
+			entities[i].draw(i);
+	}
+}
+
+int Spawn(int type, int x, int y)
+{
+	for (int i = 0; i < MAXENTITIES; i++)
+	{
+		if (entities[i].type != 0)
+			continue;
+		tEntity* e = &entities[i];
+		e->type = type;
+		e->x = e->oldX = x;
+		e->y = e->oldY = y;
+		e->think = entityFuncs[(type * 4) + 0];
+		e->draw = entityFuncs[(type * 4) + 1];
+		void (*init)(int) = (void*)entityFuncs[(type * 4) + 2];
+		if (init != 0)
+			init(i);
+		return i;
+	}
+	return -1;
 }
 
 int main(void)
@@ -105,32 +191,15 @@ int main(void)
 	MISC->DmaCopy(TILESET + 0x1000, (int8_t*)&playerTiles, 512, DMA_INT);
 	MISC->DmaCopy(PALETTE + 32, (int8_t*)&playerPal, 32, DMA_SHORT);
 
-	entities[0].type = 0x42;
-	entities[0].x = 32;
-	entities[0].y = entities[0].oldY = 128;
-	entities[0].spr = 0;
-	entities[0].pal = 2;
-	entities[0].draw = DrawPlayer;
-	entities[0].think = ThinkPlayer;
-
-	entities[1].type = 0x42;
-	entities[1].x = 24;
-	entities[1].y = entities[1].oldY = 64;
-	entities[1].spr = 4;
-	entities[1].pal = 3;
-	entities[1].draw = DrawPlayer;
-	entities[1].think = ThinkPlayer;
-	entities[1].extra[0] = 4;
+	int e = Spawn(1, 64, 128);
+	e = Spawn(1, 48, 64);
+	entities[e].spr = 4;
+	entities[e].pal = 3;
 
 	for(;;)
 	{
-		for (int i = 0; i < 64; i++)
-		{
-			if (entities[i].type == 0)
-				continue;
-			entities[i].think(i);
-			entities[i].draw(i);
-		}
+		Think();
+		Draw();
 
 		vbl();
 	}
