@@ -3,7 +3,9 @@
 IBios* interface;
 
 extern const uint16_t fontTiles[], fontPal[];
-extern const uint16_t playerTiles[], playerPal[];
+extern const uint16_t player1Tiles[], player1Pal[];
+extern const uint16_t player2Tiles[], player2Pal[];
+extern const uint16_t starfieldTiles[], starfieldPal[], starfieldMap[];
 
 #define SPRITEA_BUILD(t,b,e,p)	\
 (								\
@@ -26,12 +28,12 @@ extern const uint16_t playerTiles[], playerPal[];
 
 void print(char* str, int x, int y, int color)
 {
-	unsigned short *t = &MAP1[(y * 64) + x];
+	unsigned short *t = &MAP2[(y * 64) + x];
 	color *= 64;
 	char *b = str;
 	while (*b)
 	{
-		*t++ = (*b - 32) + color;
+		*t++ = ((*b - 32) + color) | 0xF000;
 		b++;
 	}
 }
@@ -123,9 +125,9 @@ void DrawPlayer(int id)
 	if (p->swerve > 0) frame = 3;
 	if (p->swerve > 16) { frame = 4; p->swerve = 16; }
 
-	SPRITES_A[(int)p->spr] = SPRITEA_BUILD(128 + (frame * 8), 0, 1, p->pal);
+	SPRITES_A[(int)p->spr] = SPRITEA_BUILD(256 + (frame * 8), 0, 1, p->pal);
 	SPRITES_B[(int)p->spr] = SPRITEB_BUILD(p->x, p->y, 1, 0, 0, 0, 1, 0);
-	SPRITES_A[(int)p->spr+1] = SPRITEA_BUILD(128 + 40 + ((p->flameTick >> 2) % 2), 1, 1, 2);
+	SPRITES_A[(int)p->spr+1] = SPRITEA_BUILD(256 + 40 + ((p->flameTick >> 2) % 2), 1, 1, 8);
 	SPRITES_B[(int)p->spr+1] = SPRITEB_BUILD(p->x - 8, p->y + 4, 0, 0, 0, 0, 0, 0);
 }
 
@@ -173,11 +175,14 @@ void InitPlayer(int id)
 {
 	tPlayer* p = (tPlayer*)&entities[id];
 
-	p->pal = 2;
+	p->pal = 8;
 	p->x -= 64; //to fly in
 	p->spr = GetNextSpriteIn(0, 4);
 	bitSet(spritesUsed, p->spr);
 	bitSet(spritesUsed, p->spr + 1);
+
+	MISC->DmaCopy(TILESET + 0x2000, (int8_t*)&player1Tiles, 512, DMA_INT);
+	MISC->DmaCopy(PALETTE + 128, (int8_t*)&player1Pal, 16, DMA_SHORT);
 }
 
 
@@ -188,7 +193,7 @@ void DrawPlayerBullet(int id)
 {
 	tEntity* p = &entities[id];
 
-	SPRITES_A[(int)p->spr] = SPRITEA_BUILD(128 + 42, 0, 1, p->pal);
+	SPRITES_A[(int)p->spr] = SPRITEA_BUILD(256 + 42, 0, 1, p->pal);
 	SPRITES_B[(int)p->spr] = SPRITEB_BUILD(p->x, p->y, 1, 0, 0, 0, 0, 0);
 }
 
@@ -206,7 +211,7 @@ void ThinkPlayerBullet(int id)
 void InitPlayerBullet(int id)
 {
 	tEntity* p = &entities[id];
-	p->pal = 2;
+	p->pal = 8;
 	p->spr = GetNextSpriteIn(4, 24);
 	bitSet(spritesUsed, p->spr);
 }
@@ -286,18 +291,19 @@ int main(void)
 
 	intoff();
 
-	REG_MAPSET = 0x10;
-	MISC->DmaClear(MAP1, 0, 64 * 32, DMA_SHORT);
+	REG_MAPSET = 0x30;
+	MISC->DmaClear(MAP2, 0, 64 * 32, DMA_SHORT);
 	for (int i = 0; i < 256/32; i++)
 		spritesUsed[i] = 0;
 
 	MISC->DmaClear(entities, 0, sizeof(tEntity) * 64, DMA_BYTE);
 
 	MISC->DmaCopy(TILESET, (int8_t*)&fontTiles, 1024, DMA_INT);
-	MISC->DmaCopy(PALETTE, (int8_t*)&fontPal, 16, DMA_SHORT);
+	MISC->DmaCopy(PALETTE + 240, (int8_t*)&fontPal, 16, DMA_SHORT);
 
-	MISC->DmaCopy(TILESET + 0x1000, (int8_t*)&playerTiles, 512, DMA_INT);
-	MISC->DmaCopy(PALETTE + 32, (int8_t*)&playerPal, 32, DMA_SHORT);
+	MISC->DmaCopy(TILESET + (64 * 32), (int8_t*)&starfieldTiles, 1024, DMA_INT);
+	MISC->DmaCopy(PALETTE, (int8_t*)&starfieldPal, 16, DMA_SHORT);
+	MISC->DmaCopy(MAP1, (int8_t*)&starfieldMap, 32 * 64, DMA_SHORT);
 
 	int e = Spawn(1, 64, 128);
 	//e = Spawn(1, 48, 64);
@@ -316,6 +322,7 @@ int main(void)
 		Think();
 		Draw();
 		scroll++;
+		REG_SCROLLX1 = scroll >> 1;
 
 		vbl();
 	}
