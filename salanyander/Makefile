@@ -12,13 +12,15 @@ export IMG2ASS ?= ../img2ass.exe
 export GRIT := $(DEVKITARM)/bin/grit.exe
 GRITFLAGS := -ftb -fh! -gB4
 
-graphics.o : graphics.s font.png player1.png player2.png
-	$(GRIT) player1.png $(GRITFLAGS) -Mw4 -Mh2
-	$(GRIT) player2.png $(GRITFLAGS) -Mw4 -Mh2
+graphics.o : graphics.s font.png
+	$(GRIT) players/vicviper.png $(GRITFLAGS) -Mw4 -Mh2 -oplayers/vicviper.bin
+	$(GRIT) players/lordbritish.png $(GRITFLAGS) -Mw4 -Mh2 -oplayers/lordbritish.bin
+
+	$(OBJCOPY) -F binary --reverse-bytes=2 players/vicviper.pal.bin
+	$(OBJCOPY) -F binary --reverse-bytes=2 players/lordbritish.pal.bin
+
 	$(GRIT) font.png $(GRITFLAGS)
 	$(GRIT) starfield.png $(GRITFLAGS)
-	$(OBJCOPY) -F binary --reverse-bytes=2 player1.pal.bin
-	$(OBJCOPY) -F binary --reverse-bytes=2 player2.pal.bin
 	$(OBJCOPY) -F binary --reverse-bytes=2 font.pal.bin
 	$(OBJCOPY) -F binary --reverse-bytes=2 starfield.pal.bin
 	$(AS) $(ASFLAGS) -c $< -o $@

@@ -2,9 +2,23 @@
 #define sprintf(b,f,rest...) TEXT->Format(b,f, ## rest)
 IBios* interface;
 
+#define __PLAYERS G(vicViper) G(lordBritish)
+#define G(x) extern const unsigned short x ## Tiles[], x ## Pal[];
+__PLAYERS
+#undef G
+const unsigned short* const playerTiles[] = {
+#define G(x) x ## Tiles,
+__PLAYERS
+#undef G
+};
+const unsigned short* const playerPal[] = {
+#define G(x) x ## Pal,
+__PLAYERS
+#undef G
+};
+#undef __PLAYERS
+
 extern const uint16_t fontTiles[], fontPal[];
-extern const uint16_t player1Tiles[], player1Pal[];
-extern const uint16_t player2Tiles[], player2Pal[];
 extern const uint16_t starfieldTiles[], starfieldPal[], starfieldMap[];
 
 #define SPRITEA_BUILD(t,b,e,p)	\
@@ -181,8 +195,11 @@ void InitPlayer(int id)
 	bitSet(spritesUsed, p->spr);
 	bitSet(spritesUsed, p->spr + 1);
 
-	MISC->DmaCopy(TILESET + 0x2000, (int8_t*)&player1Tiles, 512, DMA_INT);
-	MISC->DmaCopy(PALETTE + 128, (int8_t*)&player1Pal, 16, DMA_SHORT);
+	sprintf(debugBuffer, "$%X", &playerTiles[0]);
+	print(debugBuffer, 0, 4, 0);
+
+	MISC->DmaCopy(TILESET + 0x2000, playerTiles[0], 512, DMA_INT);
+	MISC->DmaCopy(PALETTE + 128, playerPal[0], 16, DMA_SHORT);
 }
 
 
@@ -305,7 +322,7 @@ int main(void)
 	MISC->DmaCopy(PALETTE, (int8_t*)&starfieldPal, 16, DMA_SHORT);
 	MISC->DmaCopy(MAP1, (int8_t*)&starfieldMap, 32 * 64, DMA_SHORT);
 
-	int e = Spawn(1, 64, 128);
+	Spawn(1, 64, 128);
 	//e = Spawn(1, 48, 64);
 	//entities[e].spr = 4;
 	//entities[e].pal = 3;
