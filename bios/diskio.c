@@ -1,8 +1,6 @@
 #include "diskio.h"
 #include "ff.h"
 
-//TODO: allow multiple drives
-
 //Keeping this separate from ass.h because you REALLY have no business here!
 #define DEVS ((unsigned char*)0x02000000)
 #define DEVSIZE 0x8000
