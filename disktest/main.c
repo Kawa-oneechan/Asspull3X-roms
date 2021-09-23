@@ -103,7 +103,6 @@ tryOpenDir:
 }
 
 #define FILESSHOWN (HEIGHT-2)
-#define TEXTMAP ((int16_t*)MEM_VRAM)
 
 void SelectFile(const char* path1, const char* path2, const char* pattern, char* selection, int32_t(*onSelect)(char*))
 {
@@ -241,7 +240,7 @@ void SelectFile(const char* path1, const char* path2, const char* pattern, char*
 			int o = (cs == 0 ? 0 : WIDTH + 1);
 			for (int i = 1; i < WIDTH; i++)
 			{
-				int16_t* here = &TEXTMAP[o + ((1 + index[cs] - scroll[cs]) * 80)];
+				uint16_t* here = &TEXTMAP[o + ((1 + index[cs] - scroll[cs]) * 80)];
 				here[i] &= ~0x00FF;
 				here[i] |= 0x009F;
 				if (lastIndex[cs] != index[cs])
