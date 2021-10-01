@@ -10,6 +10,9 @@ extern const uint16_t diskettePal[];
 extern const uint16_t hdma1[];
 extern const char * const levels[];
 
+extern const unsigned short imfData[];
+extern const unsigned short imfSize;
+
 char *levelPack;
 char *thisLevel;
 
@@ -293,60 +296,13 @@ void nextLevel()
 	DRAW->FadeFromWhite();
 }
 
-static int musicTimer[4];
-static char* musicCursor[4];
-static int musicChannel[4];
-static int musicLastNote[4];
-static int musicNumTracks;
-extern const char* const musicTracks[];
-extern const char musicSettings[];
-
 extern const unsigned char jingleSound[];
 extern const unsigned char slideSound[];
 extern const unsigned char stepSound[];
 const unsigned char * const sounds[] = { 0, jingleSound, slideSound, stepSound };
 
-void music()
-{
-	if (musicNumTracks == -1)
-	{
-		musicNumTracks = musicSettings[0];
-		for (int i = 0; i < musicNumTracks; i++)
-		{
-			musicTimer[i] = 0;
-			musicCursor[i] = (char*)musicTracks[i];
-			musicChannel[i] = musicSettings[1 + (i * 2)];
-			MIDI_PROGRAM(musicChannel[i], musicSettings[2 + (i * 2)]);
-		}
-	}
-	for (int i = 0; i < musicNumTracks; i++)
-	{
-		if (musicTimer[i] == 0)
-		{
-			if (musicLastNote[i] > 0)
-				MIDI_KEYOFF(musicChannel[i], musicLastNote[i], 80);
-			char newNote = *musicCursor[i]++;
-			if (newNote == 1)
-			{	//repeat
-				musicCursor[i] = (char*)musicTracks[i];
-				continue;
-			}
-			char length = *musicCursor[i]++;
-			if ((length & 0x80) == 0)
-			{	// not tied?
-				if (musicLastNote[i] > 0)
-					MIDI_KEYOFF(musicChannel[i], musicLastNote[i], 80);
-				if (newNote > 0)
-					MIDI_KEYON(musicChannel[i], newNote, 80);
-			}
-			length &= ~0x80;
-			musicLastNote[i] = newNote;
-			musicTimer[i] = (128 / length);
-		}
-		else
-			musicTimer[i]--;
-	}
-}
+extern int IMF_LoadSong(const unsigned short *sauce, unsigned short size);
+extern void IMF_Play();
 
 void PlaySound(int id)
 {
@@ -469,11 +425,11 @@ int main(void)
 	MISC->DmaCopy(PALETTE + 32, (int16_t*)&playerPal, 16, DMA_INT);
 	MISC->DmaClear(MAP1, 0, WIDTH * HEIGHT, 2);
 
-	interface->VBlank = music;
+	interface->VBlank = IMF_Play;
 	inton();
-	musicNumTracks = -1;
 
 	levelNum = -1;
+	IMF_LoadSong(imfData, imfSize);
 	PlaySound(1);
 	nextLevel();
 
@@ -491,7 +447,6 @@ int main(void)
 			else if (REG_JOYPAD & 4) in = KEY_DOWN;
 			else if (REG_JOYPAD & 8) in = KEY_LEFT;
 		}
-		//music();
 		//if (REG_TICKCOUNT % 8 < 7)
 		//	continue;
 		switch (in)
