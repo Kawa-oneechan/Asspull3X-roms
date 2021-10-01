@@ -82,9 +82,11 @@ extern void free(void*);
 #define REG_JOYPAD1		*(volatile uint8_t*)(MEM_IO + 0x0042)
 #define REG_JOYPAD2		*(volatile uint8_t*)(MEM_IO + 0x0043)
 #define REG_MIDIOUT		*(volatile int32_t*)(MEM_IO + 0x0044)
-#define REG_AUDIOOUT	*(int8_t*)(MEM_IO + 0x0048)
+#define REG_OPLOUT		*(int16_t*)(MEM_IO + 0x0048)
 #define REG_MOUSE		*(uint16_t*)(MEM_IO + 0x0050)
 #define REG_CARET		*(uint16_t*)(MEM_IO + 0x0054)
+#define REG_PCMOFFSET	*(int32_t*)(MEM_IO + 0x0070)
+#define REG_PCMLENGTH	*(int32_t*)(MEM_IO + 0x0074)
 #define REG_DEBUGOUT	*(char*)(MEM_IO + 0x0080)
 #define REG_DMASOURCE	*(volatile uint32_t*)(MEM_IO + 0x0100)
 #define REG_DMATARGET	*(volatile uint32_t*)(MEM_IO + 0x0104)
@@ -120,6 +122,8 @@ extern void free(void*);
 
 #define IMODE_DISABLE	0x80	// Enable interrupts.
 #define IMODE_INVBLANK	0x04	// VBlank is triggered.
+
+#define PCM_REPEAT		0x80000000
 
 #define BLIT_COPY				(1 << 0)
 #define BLIT_SET				(2 << 0)

@@ -1,10 +1,11 @@
+	.include "../ass-macros.i"
 	.global jingleSound
 	.global slideSound
 	.global stepSound
 	.text
 jingleSound:
-	.incbin "jingle.wav"
+	incwav "jingle.wav"
 slideSound:
-	.incbin "slide.wav"
+	incwav "slide.wav"
 stepSound:
-	.incbin "step.wav"
+	incwav "step.wav"

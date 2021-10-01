@@ -83,31 +83,10 @@ static int musicNumTracks;
 extern const char* const musicTracks[];
 extern const char musicSettings[];
 
-/*
-extern const char jingleSound[];
-extern const char slideSound[];
-extern const char stepSound[];
-extern const int jingleLength;
-extern const int slideLength;
-extern const int stepLength;
-*/
-const char* currentSound;
-int currentSoundLength;
+const unsigned char * const sounds[] = { 0 };
 
 void music()
 {
-	if (currentSound != 0)
-	{
-		for (int i = 0; i < 256 && currentSoundLength > 0; i++)
-		{
-			REG_AUDIOOUT = *currentSound;
-			currentSound++;
-			currentSoundLength--;
-			if (currentSoundLength == 0)
-				currentSound = 0;
-		}
-	}
-
 	if (musicNumTracks == -1)
 	{
 		musicNumTracks = musicSettings[0];
@@ -206,27 +185,9 @@ void music()
 
 void PlaySound(int id)
 {
-/*
-	switch (id)
-	{
-		case 1:
-			currentSound = jingleSound;
-			currentSoundLength = jingleLength;
-			return;
-		case 2:
-			currentSound = slideSound;
-			currentSoundLength = slideLength;
-			return;
-		case 3:
-			currentSound = stepSound;
-			currentSoundLength = stepLength;
-			return;
-		default:
-			currentSound = 0;
-			currentSoundLength = 0;
-			return;
-	}
-*/
+	int soundData = (int)sounds[id];
+	REG_PCMOFFSET = soundData + 4;
+	REG_PCMLENGTH = *(unsigned int*)soundData;
 }
 
 unsigned int rndseed = 0xDEADBEEF;

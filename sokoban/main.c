@@ -305,23 +305,9 @@ extern const unsigned char jingleSound[];
 extern const unsigned char slideSound[];
 extern const unsigned char stepSound[];
 const unsigned char * const sounds[] = { 0, jingleSound, slideSound, stepSound };
-const unsigned char* currentSound;
-unsigned int currentSoundLength;
 
 void music()
 {
-	if (currentSound != 0)
-	{
-		for (int i = 0; i < 256 && currentSoundLength > 0; i++)
-		{
-			REG_AUDIOOUT = *currentSound - 128;
-			currentSound++;
-			currentSoundLength--;
-			if (currentSoundLength == 0)
-				currentSound = 0;
-		}
-	}
-
 	if (musicNumTracks == -1)
 	{
 		musicNumTracks = musicSettings[0];
@@ -364,17 +350,9 @@ void music()
 
 void PlaySound(int id)
 {
-	//We ASSUME these are all 11025 Hz 8 bit signed PCM RIFF WAVE files with no extra junk.
-	//That way, the length of the sound *should* be at 40 bytes in, followed directly by
-	//ONLY raw data.
-	currentSound = sounds[id];
-	currentSoundLength = 0;
-	currentSound += 40;
-	//currentSoundLength = *(unsigned int*)currentSound; //little endian
-	currentSoundLength  = *currentSound++; //big endian, cos this is a 68020.
-	currentSoundLength |= *currentSound++ << 8;
-	currentSoundLength |= *currentSound++ << 16;
-	currentSoundLength |= *currentSound++ << 24;
+	int soundData = (int)sounds[id];
+	REG_PCMOFFSET = soundData + 4;
+	REG_PCMLENGTH = *(unsigned int*)soundData;
 }
 
 void WaitForKey()
