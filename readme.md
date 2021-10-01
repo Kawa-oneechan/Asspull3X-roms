@@ -41,6 +41,9 @@ An attempt at stress-testing heap memory.
 ### `midipiano`
 A toy piano. Use the keyboard to play notes, change octaves with the arrow keys
 
+### `salanyander`
+An attempt to make a Gradius-style horizontal space shooter.
+
 ### `slideshow`
 Tries to display all the `api` files on the currently-inserted diskette.
 
@@ -59,9 +62,6 @@ Early work to test the games console-style tilemap mode.
 ### `twohundred`
 Normally, the A3X draws 240 or 480 lines, but by setting the bold font flag in graphics mode you can make it draw 200 or 400 lines, stretched.
 
-### Several `png` and `api` files in the root
-The `png` files can be passed to the included `img2ass` tool to convert them to `api` files ("*a*ss*p*ull *i*mage"). The various applications listed above can use them.
-
 ## How to make your own A3X stuff
 * Get DevkitPro and install at *least* devkit68k.
 * Copy the contents of the `devkit68K` directory into DKP's.
@@ -77,3 +77,4 @@ The `png` files can be passed to the included `img2ass` tool to convert them to 
 * *Farah Furcett* character named by Screwtape.
 * Snake game ported from [an implementation by Jason Kruse](https://github.com/mnisjk/snake).
 * Tetris game ported from [an implementation by Marco Lucidi](https://github.com/MarcoLucidi01/tetris_clone).
+* IMF player based on work by K1n9 Duk3.
