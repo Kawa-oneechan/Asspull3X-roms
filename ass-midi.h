@@ -1,7 +1,7 @@
-#define MIDI_PROGRAM(c, p) { REG_MIDIOUT = (0xC0 | c) | (p << 8); }
-#define MIDI_CONTROL(c, p, v) { REG_MIDIOUT = (0xB0 | c) | (p << 8) | (v << 16); }
-#define MIDI_KEYON(c, p, v) { REG_MIDIOUT = (0x90 | c) | (p << 8) | (v << 16); }
-#define MIDI_KEYOFF(c, p, v) { REG_MIDIOUT = (0x80 | c) | (p << 8) | (v << 16); }
+#define MIDI_PROGRAM(c, p) { REG_MIDIOUT = 0xC0 | (c); REG_MIDIOUT = (p); }
+#define MIDI_CONTROL(c, p, v) { REG_MIDIOUT = 0xB0 | (c); REG_MIDIOUT = (p); REG_MIDIOUT = (v); }
+#define MIDI_KEYON(c, p, v) { REG_MIDIOUT = 0x90 | (c); REG_MIDIOUT = (p); REG_MIDIOUT = (v); }
+#define MIDI_KEYOFF(c, p, v) { REG_MIDIOUT = 0x80 | (c); REG_MIDIOUT = (p); REG_MIDIOUT = (v); }
 
 #define MIDI_ACOUSTICGRANDPIANO 0
 #define MIDI_BRIGHTACOUSTICPIANO 1

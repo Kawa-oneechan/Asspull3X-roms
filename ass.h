@@ -81,7 +81,7 @@ extern void free(void*);
 #define REG_KEYIN		*(volatile uint16_t*)(MEM_IO + 0x0040)
 #define REG_JOYPAD1		*(volatile uint8_t*)(MEM_IO + 0x0042)
 #define REG_JOYPAD2		*(volatile uint8_t*)(MEM_IO + 0x0043)
-#define REG_MIDIOUT		*(volatile int32_t*)(MEM_IO + 0x0044)
+#define REG_MIDIOUT		*(int8_t*)(MEM_IO + 0x0044)
 #define REG_OPLOUT		*(int16_t*)(MEM_IO + 0x0048)
 #define REG_MOUSE		*(uint16_t*)(MEM_IO + 0x0050)
 #define REG_CARET		*(uint16_t*)(MEM_IO + 0x0054)
