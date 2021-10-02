@@ -41,6 +41,8 @@ extern const uint16_t iconsPal[16];
 	(((hp) & 0x7FF) << 0)						\
 )
 
+void FindFont();
+
 int32_t main(void)
 {
 	char biosVer[32];
@@ -56,6 +58,7 @@ int32_t main(void)
 	REG_CARET = 0x8000;
 
 	PrepareDiskToDevMapping();
+	FindFont();
 
 	while(1)
 	{
@@ -183,6 +186,22 @@ int32_t main(void)
 	ClearScreen();
 	ResetPalette();
 	entry();
+}
+
+void FindFont()
+{
+	FILE file;
+	char fontName[] = "A:/font.bin";
+	for (int i = 0; i < GetNumDrives(); i++)
+	{
+		fontName[0] = 'A' + i;
+		if (OpenFile(&file, fontName, FA_READ) == 0)
+		{
+			ReadFile(&file, (void*)TEXTFONT, 0);
+			CloseFile(&file);
+			return;
+		}
+	}
 }
 
 void ExHandler()

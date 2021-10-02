@@ -6,6 +6,7 @@ extern void WaitForKey();
 void TextTest()
 {
 	TEXT->SetTextColor(0, 7);
+	TEXT->ClearScreen();
 	TEXT->Write("Font test");
 	for (int row = 0; row < 16; row++)
 	{
