@@ -10,7 +10,7 @@ extern const uint16_t diskettePal[];
 extern const uint16_t hdma1[];
 extern const char * const levels[];
 
-extern const unsigned short imfData[];
+extern const unsigned short imfData1[], imfData2[], imfData3[], imfData4[], imfData5[];
 
 char *levelPack;
 char *thisLevel;
@@ -428,7 +428,7 @@ int main(void)
 	inton();
 
 	levelNum = -1;
-	IMF_LoadSong(imfData, -1);
+	IMF_LoadSong(imfData2, -1);
 	PlaySound(1);
 	nextLevel();
 
