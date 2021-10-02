@@ -14,11 +14,24 @@ static const char sctoasc[256] = {
 
 void WaitForKey()
 {
-	TEXT->SetCursorPosition(0, 28);
-	printf("Press any key to continue.");
+	//TEXT->SetCursorPosition(0, 28);
+	//printf("Press any key to continue.");
+	const char prompt[] = "Press any key to continue.";
+	const char spinner[] = "\xB8\x08+*+\x08\xB8    ";
+	int spin = 0;
+	for (int i = 0; i < 26; i++)
+		TEXTMAP[(29 * 80) + i] = 0x07 | (prompt[i] << 8);
 	while (REG_KEYIN != 0) { vbl(); }
-	while (REG_KEYIN == 0) { vbl(); }
+	while (REG_KEYIN == 0)
+	{
+		TEXTMAP[(29 * 80) + 29] = 0x0E | (spinner[((spin++) >> 4) % 11] << 8);
+		TEXTMAP[(29 * 80) + 28] = 0x0E | (spinner[((spin >> 4) + 1) % 11] << 8);
+		TEXTMAP[(29 * 80) + 27] = 0x0E | (spinner[((spin >> 4) + 2) % 11] << 8);
+		vbl();
+	}
 	while (REG_KEYIN != 0) { vbl(); }
+	for (int i = 0; i < 30; i++)
+		TEXTMAP[(29 * 80) + i] = 0x2007;
 }
 
 char getchar()
@@ -38,7 +51,7 @@ char getchar()
 	return sctoasc[key & 0xFF];
 }
 
-#define NUMOPTS 10
+#define NUMOPTS 11
 extern void TextTest();
 extern void BitmapTest();
 extern void KeyboardTest();
@@ -88,6 +101,65 @@ void JoypadTest()
 	}
 }
 
+extern const unsigned char soundLoop[], soundOne[];
+
+void PCMTest()
+{
+	TEXT->SetTextColor(0, 7);
+	TEXT->ClearScreen();
+	TEXT->Write("PCM audio test");
+
+	TEXT->SetCursorPosition(0, 2);
+	TEXT->Write("Playing a sample on loop.");
+	REG_PCMOFFSET = (unsigned int)soundLoop + 4;
+	REG_PCMLENGTH = *(unsigned int*)soundLoop | PCM_REPEAT;
+	WaitForKey();
+	REG_PCMLENGTH = 0;
+	TEXT->SetCursorPosition(0, 3);
+	TEXT->Write("The loop should have stopped.");
+	WaitForKey();
+	TEXT->SetCursorPosition(0, 4);
+	TEXT->Write("Playing a sample once.");
+	REG_PCMOFFSET = (unsigned int)soundOne + 4;
+	REG_PCMLENGTH = *(unsigned int*)soundOne;
+	WaitForKey();
+}
+
+extern void IMF_Play();
+extern int IMF_LoadSong(const unsigned short *sauce, int loop);
+extern const unsigned short imfData[];
+
+void ResetOPL()
+{
+	const char regs[] = {
+		0x20, 0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x28, 0x29, 0x2A, 0x2B, 0x2C, 0x2D, 0x2E, 0x2F,
+		0x30, 0x31, 0x32, 0x33, 0x34, 0x35,
+		0xA0, 0xA1, 0xA2, 0xA2, 0xA3, 0xA4, 0xA5, 0xA6, 0xA7, 0xA8,
+		0xB0, 0xB1, 0xB2, 0xB2, 0xB3, 0xB4, 0xB5, 0xB6, 0xB7, 0xB8, 0xBD,
+		0xC0, 0xC1, 0xC2, 0xC2, 0xC3, 0xC4, 0xC5, 0xC6, 0xC7, 0xC8,
+		0xE0, 0xE1, 0xE2, 0xE3, 0xE4, 0xE5, 0xE6, 0xE7, 0xE8, 0xE9, 0xEA, 0xEB, 0xEC, 0xED, 0xEE, 0xEF,
+		0xF0, 0xF1, 0xF2, 0xF3, 0xF4, 0xF5,
+		0x08, 0x01,
+	};
+	for (int i = 0; i < 77; i++) REG_OPLOUT = regs[i] << 8;
+}
+
+void OPLTest()
+{
+	TEXT->SetTextColor(0, 7);
+	TEXT->ClearScreen();
+	TEXT->Write("OPL3 music test");
+
+	TEXT->SetCursorPosition(0, 2);
+	//TEXT->Write("Playing a sample on loop.");
+	interface->VBlank = IMF_Play;
+	IMF_LoadSong(imfData, 1);
+	WaitForKey();
+	interface->VBlank = 0;
+
+	ResetOPL();
+}
+
 const char* const optionNames[] =
 {
 	"Textmode",
@@ -100,6 +172,7 @@ const char* const optionNames[] =
 	"Disk I/O",
 	"MIDI out",
 	"PCM out",
+	"OPL out",
 };
 const void* const optionFuncs[] =
 {
@@ -111,13 +184,13 @@ const void* const optionFuncs[] =
 	JoypadTest,
 	0,
 	0,
-	0,
-	0,
+	0, //MIDITest
+	PCMTest,
+	OPLTest
 };
 
 int main(void)
 {
-
 	while (1)
 	{
 		DRAW->ResetPalette();

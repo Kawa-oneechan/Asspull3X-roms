@@ -1,6 +1,8 @@
+	.include "../ass-macros.i"
 	.global keyboardImage
 	.global pointerTiles
 	.global bmp320x200x4, bmp320x240x4, bmp640x480x4, bmp320x200x8, bmp320x240x8, bmp640x480x8
+	.global soundLoop, soundOne, imfData
 	.text
 keyboardImage:
 	.incbin "kbdimg.bin"
@@ -18,3 +20,9 @@ bmp320x240x8:
 	.incbin "bmp320x240x8.api"
 bmp640x480x8:
 	.incbin "bmp640x480x8.api"
+soundLoop:
+	incwav "heyevery.wav"
+soundOne:
+	incwav "jingle.wav"
+imfData:
+	.incbin "lot_bon.imf"
