@@ -2,6 +2,8 @@
 #include "../ass-midi.h"
 IBios* interface;
 
+#define REG_TIMET *(long long*)(MEM_IO + 0x0060)
+
 extern const TImageFile titlePic;
 extern const uint16_t tilesTiles[], tilesPal[];
 extern const uint16_t playerTiles[], playerPal[];
@@ -57,6 +59,8 @@ char *thisLevel;
 #define ANIMSPEED 32
 
 int levelNum = 0;
+int moves, seconds, minutes;
+long long lastTimeT;
 
 char map[BOUNDS*BOUNDS] = {0};
 int playerX = 0, playerY = 0;
@@ -167,10 +171,9 @@ void draw()
 void drawStatus()
 {
 	char buffer[256];
-	int dummy = 1;
-	TEXT->Format(buffer, "LEVEL %2d   TIME %02d:%02d   MOVES: %d", levelNum, dummy, dummy, dummy);
+	TEXT->Format(buffer, "LEVEL %d   TIME %02d:%02d   MOVES %d   ", levelNum + 1, minutes, seconds, moves);
 	char *c = buffer;
-	int pos = (29 * 64) + 4;
+	int pos = (29 * 64) + 3;
 	while (*c)
 	{
 		MAP3[pos++] = (*c - ' ' + 64) | 0x1000;
@@ -211,6 +214,8 @@ void move(char byX, char byY)
 		PlaySound(3);
 		playerX += byX;
 		playerY += byY;
+		moves++;
+		drawStatus();
 		drawPlayer();
 	}
 }
@@ -358,10 +363,12 @@ void nextLevel()
 	loadFromCode(thisLevel);
 	while(*thisLevel++) ;
 	lastDir = 2;
+	moves = seconds = minutes = 0;
 	draw();
 	drawStatus();
 	loadBackground();
 	DRAW->FadeFromWhite();
+	lastTimeT = REG_TIMET;
 }
 
 extern const unsigned char jingleSound[];
@@ -470,10 +477,10 @@ int main(void)
 {
 	MISC->SetTextMode(0);
 
-	//DRAW->DisplayPicture((TImageFile*)&titlePic);
-	//DRAW->FadeFromBlack();
-	//WaitForKey();
-	//DRAW->FadeToWhite();
+	DRAW->DisplayPicture((TImageFile*)&titlePic);
+	DRAW->FadeFromBlack();
+	WaitForKey();
+	DRAW->FadeToWhite();
 
 	//REG_HDMASOURCE[0] = (int32_t)hdma1;
 	//REG_HDMATARGET[0] = (int32_t)PALETTE;
@@ -517,6 +524,17 @@ int main(void)
 			else if (REG_JOYPAD & 2) in = KEY_RIGHT;
 			else if (REG_JOYPAD & 4) in = KEY_DOWN;
 			else if (REG_JOYPAD & 8) in = KEY_LEFT;
+		}
+		if (REG_TIMET > lastTimeT)
+		{
+			seconds += REG_TIMET - lastTimeT;
+			while (seconds >= 60)
+			{
+				minutes++;
+				seconds -= 60;
+			}
+			drawStatus();
+			lastTimeT = REG_TIMET;
 		}
 		//if (REG_TICKCOUNT % 8 < 7)
 		//	continue;
