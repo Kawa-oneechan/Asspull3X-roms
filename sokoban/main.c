@@ -5,6 +5,7 @@ IBios* interface;
 extern const TImageFile titlePic;
 extern const uint16_t tilesTiles[], tilesPal[];
 extern const uint16_t playerTiles[], playerPal[];
+extern const uint16_t backTiles[], backPals[];
 extern const uint8_t diskettePic[];
 extern const uint16_t diskettePal[];
 extern const uint16_t hdma1[];
@@ -63,6 +64,14 @@ int lastDir;
 
 void PlaySound(int);
 
+void loadBackground()
+{
+	int x = levelNum;
+	MISC->DmaCopy(PALETTE + 20, (int16_t*)&backPals + 4 + ((x % 6) * 3), 3, DMA_INT);
+	x++;
+	MISC->DmaCopy(TILESET + 0x1000, (int8_t*)&backTiles + (512 * (x % 7)), 256, DMA_INT);
+}
+
 void drawPlayer()
 {
 	int tile = 0;
@@ -90,6 +99,21 @@ void drawPlayer()
 
 void drawTile(int i, int j, int tile)
 {
+	if (tile == EXTERIOR)
+	{
+		int pos = (j * 128) + (i * 2);
+		int o = 0;
+		if (i % 2 == 1) o += 2;
+		if (j % 2 == 1) o += 8;
+		MAP1[pos] = (128 + 0 + o) | 0x1000;
+		MAP1[pos + 1] = (128 + 1 + o) | 0x1000;
+		MAP1[pos + 64] = (128 + 4 + o) | 0x1000;
+		MAP1[pos + 65] = (128 + 5 + o) | 0x1000;
+		MAP2[pos - 64] = 0;
+		MAP2[pos - 63] = 0;
+		return;
+	}
+
 	int tileUp = map[(j * BOUNDS) - BOUNDS + i];
 	int tileDown = map[(j * BOUNDS) + BOUNDS + i];
 	if (tile == WALL && j < BOUNDS)
@@ -131,8 +155,12 @@ void draw()
 	REG_SCROLLX1 = REG_SCROLLX2 = -8;
 	REG_SCROLLY1 = REG_SCROLLY2 = 8;
 	for (int j = 0; j < BOUNDS; j++)
+	{
 		for (int i = 0; i < BOUNDS; i++)
 			drawTile(i, j, *here++);
+
+		drawTile(31, j, EXTERIOR);
+	}
 	drawPlayer();
 }
 
@@ -317,6 +345,7 @@ void nextLevel()
 	while(*thisLevel++) ;
 	lastDir = 2;
 	draw();
+	loadBackground();
 	DRAW->FadeFromWhite();
 }
 
@@ -426,14 +455,14 @@ int main(void)
 {
 	MISC->SetTextMode(0);
 
-	DRAW->DisplayPicture((TImageFile*)&titlePic);
-	DRAW->FadeFromBlack();
-	WaitForKey();
-	DRAW->FadeToWhite();
+	//DRAW->DisplayPicture((TImageFile*)&titlePic);
+	//DRAW->FadeFromBlack();
+	//WaitForKey();
+	//DRAW->FadeToWhite();
 
-	REG_HDMASOURCE[0] = (int32_t)hdma1;
-	REG_HDMATARGET[0] = (int32_t)PALETTE;
-	REG_HDMACONTROL[0] = DMA_ENABLE | HDMA_DOUBLE | (DMA_SHORT << 4) | (0 << 8) | (480 << 20);
+	//REG_HDMASOURCE[0] = (int32_t)hdma1;
+	//REG_HDMATARGET[0] = (int32_t)PALETTE;
+	//REG_HDMACONTROL[0] = DMA_ENABLE | HDMA_DOUBLE | (DMA_SHORT << 4) | (0 << 8) | (480 << 20);
 	REG_SCREENFADE = 31;
 	REG_MAPSET = 0x30;
 
@@ -443,10 +472,11 @@ int main(void)
 	thisLevel = levelPack;
 
 	MISC->SetTextMode(SMODE_TILE);
-	MISC->DmaCopy(TILESET, (int8_t*)&tilesTiles, 0x4E0, DMA_INT); //TODO: check
+	MISC->DmaCopy(TILESET, (int8_t*)&tilesTiles, 0x400, DMA_INT); //TODO: check
 	MISC->DmaCopy(TILESET + 0x2000, (int8_t*)&playerTiles, 1024, DMA_INT);
-	MISC->DmaCopy(PALETTE, (int16_t*)&tilesPal, 16, DMA_INT);
-	MISC->DmaCopy(PALETTE + 32, (int16_t*)&playerPal, 16, DMA_INT);
+	MISC->DmaCopy(PALETTE, (int16_t*)&tilesPal, 8, DMA_INT);
+	MISC->DmaCopy(PALETTE + 16, (int16_t*)&backPals, 2, DMA_INT);
+	MISC->DmaCopy(PALETTE + 32, (int16_t*)&playerPal, 8, DMA_INT);
 	MISC->DmaClear(MAP1, 0, WIDTH * HEIGHT, 2);
 	MISC->DmaClear(MAP2, 0, WIDTH * HEIGHT, 2);
 
