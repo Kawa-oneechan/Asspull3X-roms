@@ -164,6 +164,20 @@ void draw()
 	drawPlayer();
 }
 
+void drawStatus()
+{
+	char buffer[256];
+	int dummy = 1;
+	TEXT->Format(buffer, "LEVEL %2d   TIME %02d:%02d   MOVES: %d", levelNum, dummy, dummy, dummy);
+	char *c = buffer;
+	int pos = (29 * 64) + 4;
+	while (*c)
+	{
+		MAP3[pos++] = (*c - ' ' + 64) | 0x1000;
+		c++;
+	}
+}
+
 void move(char byX, char byY)
 {
 	//char *under = &map[(playerY * BOUNDS) + playerX];
@@ -276,7 +290,7 @@ void loadFromCode(const char* source)
 			wasDigit = 0;
 		}
 	}
-	REG_DEBUGOUT = '\n';
+	//REG_DEBUGOUT = '\n';
 }
 
 void load(const char* source)
@@ -345,6 +359,7 @@ void nextLevel()
 	while(*thisLevel++) ;
 	lastDir = 2;
 	draw();
+	drawStatus();
 	loadBackground();
 	DRAW->FadeFromWhite();
 }
@@ -464,7 +479,7 @@ int main(void)
 	//REG_HDMATARGET[0] = (int32_t)PALETTE;
 	//REG_HDMACONTROL[0] = DMA_ENABLE | HDMA_DOUBLE | (DMA_SHORT << 4) | (0 << 8) | (480 << 20);
 	REG_SCREENFADE = 31;
-	REG_MAPSET = 0x30;
+	REG_MAPSET = 0x70;
 
 	levelPack = (char*)levels[0];
 	CheckForDisk();
@@ -479,6 +494,7 @@ int main(void)
 	MISC->DmaCopy(PALETTE + 32, (int16_t*)&playerPal, 8, DMA_INT);
 	MISC->DmaClear(MAP1, 0, WIDTH * HEIGHT, 2);
 	MISC->DmaClear(MAP2, 0, WIDTH * HEIGHT, 2);
+	MISC->DmaClear(MAP3, 0, WIDTH * HEIGHT, 2);
 
 	interface->VBlank = IMF_Play;
 	inton();
