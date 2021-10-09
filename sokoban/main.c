@@ -46,8 +46,10 @@ char *thisLevel;
 #define GOAL 2
 #define BOXINGOAL 3
 #define WALL 4
-#define WALLALT 5
 #define EXTERIOR 6
+#define BOXTOP 7
+#define SPACEALT 8
+#define WALLALT 12
 
 #define BOUNDS 20
 #define ANIMSPEED 32
@@ -92,19 +94,34 @@ void drawTile(int i, int j, int tile)
 		if (map[(j * BOUNDS) + BOUNDS + i] != WALL)
 			tile = WALLALT;
 	}
+	else if (tile == SPACE && j < BOUNDS)
+	{
+		if (map[(j * BOUNDS) - BOUNDS + i] == WALL)
+			tile = SPACEALT;
+	}
 	int pos = (j * 128) + (i * 2);
 	MAP1[pos] = 4 + (tile * 4) + 0;
 	MAP1[pos + 1] = 4 + (tile * 4) + 1;
 	MAP1[pos + 64] = 4 + (tile * 4) + 2;
 	MAP1[pos + 65] = 4 + (tile * 4) + 3;
+	if (tile == BOX || tile == BOXINGOAL)
+	{
+		MAP2[pos - 64] = 4 + (BOXTOP * 4) + 2;
+		MAP2[pos - 63] = 4 + (BOXTOP * 4) + 3;
+	}
+	else
+	{
+		MAP2[pos - 64] = 0;
+		MAP2[pos - 63] = 0;
+	}
 }
 
 void draw()
 {
 	char* here = map;
 	//intoff();
-	REG_SCROLLX1 = -8;
-	REG_SCROLLY1 = 8;
+	REG_SCROLLX1 = REG_SCROLLX2 = -8;
+	REG_SCROLLY1 = REG_SCROLLY2 = 8;
 	for (int j = 0; j < BOUNDS; j++)
 		for (int i = 0; i < BOUNDS; i++)
 			drawTile(i, j, *here++);
@@ -410,7 +427,7 @@ int main(void)
 	REG_HDMATARGET[0] = (int32_t)PALETTE;
 	REG_HDMACONTROL[0] = DMA_ENABLE | HDMA_DOUBLE | (DMA_SHORT << 4) | (0 << 8) | (480 << 20);
 	REG_SCREENFADE = 31;
-	REG_MAPSET = 0x10;
+	REG_MAPSET = 0x30;
 
 	levelPack = (char*)levels[0];
 	CheckForDisk();
@@ -418,11 +435,12 @@ int main(void)
 	thisLevel = levelPack;
 
 	MISC->SetTextMode(SMODE_TILE);
-	MISC->DmaCopy(TILESET, (int8_t*)&tilesTiles, 0x2E0, DMA_INT);
+	MISC->DmaCopy(TILESET, (int8_t*)&tilesTiles, 0x4E0, DMA_INT); //TODO: check
 	MISC->DmaCopy(TILESET + 0x2000, (int8_t*)&playerTiles, 1024, DMA_INT);
 	MISC->DmaCopy(PALETTE, (int16_t*)&tilesPal, 16, DMA_INT);
 	MISC->DmaCopy(PALETTE + 32, (int16_t*)&playerPal, 16, DMA_INT);
 	MISC->DmaClear(MAP1, 0, WIDTH * HEIGHT, 2);
+	MISC->DmaClear(MAP2, 0, WIDTH * HEIGHT, 2);
 
 	interface->VBlank = IMF_Play;
 	inton();
