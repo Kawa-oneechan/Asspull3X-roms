@@ -49,6 +49,7 @@ char *thisLevel;
 #define EXTERIOR 6
 #define BOXTOP 7
 #define SPACEALT 8
+#define WALLTOP 11
 #define WALLALT 12
 
 #define BOUNDS 20
@@ -89,14 +90,16 @@ void drawPlayer()
 
 void drawTile(int i, int j, int tile)
 {
+	int tileUp = map[(j * BOUNDS) - BOUNDS + i];
+	int tileDown = map[(j * BOUNDS) + BOUNDS + i];
 	if (tile == WALL && j < BOUNDS)
 	{
-		if (map[(j * BOUNDS) + BOUNDS + i] != WALL)
+		if (tileDown != WALL)
 			tile = WALLALT;
 	}
 	else if (tile == SPACE && j < BOUNDS)
 	{
-		if (map[(j * BOUNDS) - BOUNDS + i] == WALL)
+		if (tileUp == WALL)
 			tile = SPACEALT;
 	}
 	int pos = (j * 128) + (i * 2);
@@ -108,6 +111,11 @@ void drawTile(int i, int j, int tile)
 	{
 		MAP2[pos - 64] = 4 + (BOXTOP * 4) + 2;
 		MAP2[pos - 63] = 4 + (BOXTOP * 4) + 3;
+	}
+	else if ((tile == WALL || tile == WALLALT) && tileUp != WALL)
+	{
+		MAP2[pos - 64] = 4 + (WALLTOP * 4) + 2;
+		MAP2[pos - 63] = 4 + (WALLTOP * 4) + 3;
 	}
 	else
 	{
