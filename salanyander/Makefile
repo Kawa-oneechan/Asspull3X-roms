@@ -1,6 +1,6 @@
 export TARGET :=	salanyander
 export SFILES :=	crt0.s graphics.s starfield-map.s
-export CFILES :=	main.c ../ass-rt.c
+export CFILES :=	main.c actor.c act-player.c act-starfield.c ../ass-rt.c
 export AFILES :=	
 include ../ass_romrules
 
