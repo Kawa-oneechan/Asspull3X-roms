@@ -23,7 +23,7 @@ tiles.o : tiles.s *.pal.bin title.png tiles.png font.png player.png diskette.png
 # Font is 8x8 (default), we don't need a palette.
 	$(GRIT) font.png $(GRITFLAGS) -p!
 # Backgrounds are 32x32
-	$(GRIT) backs.png $(GRITFLAGS) -Mw4 -Mh4 -!p
+	$(GRIT) backs.png $(GRITFLAGS) -Mw4 -Mh4 -p!
 # Player sprites are 16x32
 	$(GRIT) player.png $(GRITFLAGS) -Mw2 -Mh4
 # Spinning diskette is a bitmap

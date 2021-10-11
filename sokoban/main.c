@@ -73,7 +73,7 @@ void loadBackground()
 	int x = levelNum;
 	MISC->DmaCopy(PALETTE + 20, (int16_t*)&backPals + 4 + ((x % 6) * 3), 3, DMA_INT);
 	x++;
-	MISC->DmaCopy(TILESET + 0x1000, (int8_t*)&backTiles + (512 * (x % 7)), 256, DMA_INT);
+	MISC->DmaCopy(TILESET + 0x1400, (int8_t*)&backTiles + (512 * (x % 7)), 128, DMA_INT);
 }
 
 void drawPlayer()
@@ -109,10 +109,10 @@ void drawTile(int i, int j, int tile)
 		int o = 0;
 		if (i % 2 == 1) o += 2;
 		if (j % 2 == 1) o += 8;
-		MAP1[pos] = (128 + 0 + o) | 0x1000;
-		MAP1[pos + 1] = (128 + 1 + o) | 0x1000;
-		MAP1[pos + 64] = (128 + 4 + o) | 0x1000;
-		MAP1[pos + 65] = (128 + 5 + o) | 0x1000;
+		MAP1[pos] = (160 + 0 + o) | 0x1000;
+		MAP1[pos + 1] = (160 + 1 + o) | 0x1000;
+		MAP1[pos + 64] = (160 + 4 + o) | 0x1000;
+		MAP1[pos + 65] = (160 + 5 + o) | 0x1000;
 		MAP2[pos - 64] = 0;
 		MAP2[pos - 63] = 0;
 		return;
@@ -494,7 +494,7 @@ int main(void)
 	thisLevel = levelPack;
 
 	MISC->SetTextMode(SMODE_TILE);
-	MISC->DmaCopy(TILESET, (int8_t*)&tilesTiles, 0x400, DMA_INT); //TODO: check
+	MISC->DmaCopy(TILESET, (int8_t*)&tilesTiles, 0x480, DMA_INT); //TODO: check
 	MISC->DmaCopy(TILESET + 0x2000, (int8_t*)&playerTiles, 1024, DMA_INT);
 	MISC->DmaCopy(PALETTE, (int16_t*)&tilesPal, 8, DMA_INT);
 	MISC->DmaCopy(PALETTE + 16, (int16_t*)&backPals, 2, DMA_INT);
