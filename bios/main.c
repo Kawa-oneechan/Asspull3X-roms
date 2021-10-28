@@ -245,8 +245,8 @@ void NMIHandler()
 	int interrupts = REG_INTRMODE;
 	if (interrupts & IMODE_INVBLANK)
 	{
-		REG_INTRMODE &= ~IMODE_INVBLANK;
 		if (interface->VBlank != 0) interface->VBlank();
+		REG_INTRMODE &= ~IMODE_INVBLANK;
 	}
 	asm("rte");
 }
