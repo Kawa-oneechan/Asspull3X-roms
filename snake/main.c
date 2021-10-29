@@ -1,5 +1,5 @@
 #include "../ass.h"
-#include "../ass-midi.h"
+//#include "../ass-midi.h"
 IBios* interface;
 
 #define KEY_UP 0xC8
@@ -13,6 +13,29 @@ IBios* interface;
 extern const uint16_t hdma1[], titleMap[];
 extern const uint16_t tilesTiles[256];
 extern const uint16_t tilesPal[16];
+
+const uint16_t oplSetup[] = {
+//fupp, apple, F1
+	0x2037, 0x4000, 0x6059, 0x80FF, 0xE000, 0x2372, 0x4300, 0x6348, 0x83FF, 0xE300,
+//jungdrum, movement beat, F3EDC
+	0x2132, 0x4144, 0x61F8, 0x81FF, 0xE100, 0x2411, 0x440F, 0x64F5, 0x847F, 0xE400,
+//ultra, death, combined with snrsust, C1
+	0x2200, 0x4200, 0x6274, 0x82F9, 0xE200, 0x2501, 0x4500, 0x6573, 0x85F9, 0xE500,
+//snrsust, death, combined with ultra, C1
+	0x2806, 0x4800, 0x68F0, 0x88F0, 0xE800, 0x2BC4, 0x4B03, 0x6BC4, 0x8B34, 0xEB00,
+//elpiano1, title song, C4DEDCDE.C.C.
+	0x2901, 0x494F, 0x69F1, 0x8950, 0xE900, 0x2C01, 0x4C04, 0x6CD2, 0x8C7C, 0xEC00,
+//Bass 295, alternative death sound, C2
+	0x2AD0, 0x4AC8, 0x6A84, 0x8AF2, 0xEA05, 0x2D01, 0x4D00, 0x6DA3, 0x8D02, 0xED04,
+};
+
+const uint8_t beat[] = {
+	//F     E     D     C
+	0xC4, 0xB0, 0x81, 0x57
+	//0xA100 | beat[drum]
+	//0xB12D
+};
+uint8_t drum = 0, drum2 = 0;
 
 unsigned long score = 0;
 int fruitTimer = 0;
@@ -74,6 +97,7 @@ void WaitForKey()
 
 void TitleMusic()
 {
+/*
 	static int cursor = 0, timer = 0, lastPitch;
 	const int tune[] =
 	{
@@ -103,6 +127,7 @@ void TitleMusic()
 	else
 		timer--;
 	//MIDI_KEYON(1, (MIDI_C2 + (rand() % 3)), (40 + (rand() % 10)));
+*/
 }
 
 void Tile(int, int, uint16_t);
@@ -201,10 +226,16 @@ void DrawBoard()
 
 void GameOver()
 {
+	REG_OPLOUT = 0xA257;
+	REG_OPLOUT = 0xB221;
+//	REG_OPLOUT = 0xA357;
+//	REG_OPLOUT = 0xB321;
 	DRAW->FadeToWhite();
 	//while(1);
 	score = 0;
 	WaitForKey();
+	REG_OPLOUT = 0xA257;
+	REG_OPLOUT = 0xB201;
 }
 
 int InBounds(pos position)
@@ -254,8 +285,10 @@ void MovePlayer(pos head)
 	//Check if we're eating the fruit
 	if (head.x == fruit.x && head.y == fruit.y)
 	{
-		MIDI_KEYON(2, MIDI_A5, 80);
-		fruitTimer = 2;
+		//MIDI_KEYON(2, MIDI_A5, 80);
+		REG_OPLOUT = 0xA0C4; //F1 -> 0x1CA, block 1
+		REG_OPLOUT = 0xB025;
+		fruitTimer = 3;
 		PlaceAndDrawFruit();
 		score += 1000;
 	}
@@ -296,9 +329,14 @@ int main(void)
 	REG_HDMACONTROL[0] = DMA_ENABLE | HDMA_DOUBLE | (DMA_SHORT << 4) | (0 << 8) | (480 << 20);
 	REG_MAPSET = 0x10;
 
+	for (int i = 0; i < 10 * 6; i++)
+		REG_OPLOUT = oplSetup[i];
+
+/*
 	MIDI_PROGRAM(1, MIDI_ACOUSTICBASS);
 	MIDI_PROGRAM(2, MIDI_FX4ATMOSPHERE);
 	MIDI_PROGRAM(3, MIDI_GUNSHOT);
+*/
 
 	TitleScreen();
 
@@ -328,12 +366,14 @@ int main(void)
 				fruitTimer--;
 				if (fruitTimer == 1)
 				{
-					MIDI_KEYOFF(2, MIDI_A5, 80);
-					MIDI_KEYON(2, MIDI_D6, 80);
+					//MIDI_KEYOFF(2, MIDI_A5, 80);
+					//MIDI_KEYON(2, MIDI_D6, 80);
 				}
 				if (fruitTimer == 0)
 				{
-					MIDI_KEYOFF(2, MIDI_D6, 80);
+					//MIDI_KEYOFF(2, MIDI_D6, 80);
+					//REG_OPLOUT = 0xA0C4; //C1 -> 0x157 block 1
+					REG_OPLOUT = 0xB005;
 				}
 			}
 
@@ -376,15 +416,31 @@ int main(void)
 			}
 			if (!InBounds(head))
 			{
+/*
 				MIDI_KEYON(3, MIDI_C2, 80);
 				MIDI_KEYOFF(2, MIDI_A5, 80);
 				MIDI_KEYOFF(2, MIDI_D6, 80);
+*/
 				GameOver();
 				break;
 			}
 			else
 			{
-				MIDI_KEYON(1, (MIDI_C2 + (rand() % 3)), (40 + (rand() % 10)));
+				//MIDI_KEYON(1, (MIDI_C2 + (rand() % 3)), (40 + (rand() % 10)));
+				drum++;
+				if (drum == 1)
+				{
+					REG_OPLOUT = 0xA1 | beat[drum2 % 4];
+					REG_OPLOUT = 0xB109;
+				} else if (drum == 2)
+				{
+					drum2++;
+					REG_OPLOUT = 0xA100 | beat[drum2 % 4];
+					REG_OPLOUT = 0xB129;
+				}
+				else if (drum == 3)
+					drum = 0;
+
 				MovePlayer(head);
 			}
 		}
