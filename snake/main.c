@@ -1,5 +1,4 @@
 #include "../ass.h"
-//#include "../ass-midi.h"
 IBios* interface;
 
 #define KEY_UP 0xC8
@@ -36,6 +35,7 @@ const uint8_t beat[] = {
 	//0xB12D
 };
 uint8_t drum = 0, drum2 = 0;
+
 
 unsigned long score = 0;
 int fruitTimer = 0;
@@ -97,37 +97,30 @@ void WaitForKey()
 
 void TitleMusic()
 {
-/*
-	static int cursor = 0, timer = 0, lastPitch;
-	const int tune[] =
+	static uint8_t cursor = 0, timer = 0, lastPitch = 0;
+	const uint8_t tune[] = { 0x57, 0x81, 0xB0, 0x81, 0x57, 0x81, 0xB0, 0x57, 0x57 };
+	if (timer == 2)
 	{
-		MIDI_G4, 8,
-		MIDI_A4, 8,
-		MIDI_B4, 8,
-		MIDI_A4, 8,
-		MIDI_G4, 8,
-		MIDI_A4, 8,
-		MIDI_B4, 16,
-		MIDI_G4, 16,
-		MIDI_G4, 32,
-		0, 0
-	};
+		REG_OPLOUT = 0xA400 | lastPitch;
+		REG_OPLOUT = 0xB411;
+	}
 	if (timer == 0)
 	{
-		MIDI_KEYOFF(1, lastPitch, 40);
 		lastPitch = tune[cursor++];
-		timer = tune[cursor++];
-		if (lastPitch == 0)
+		timer = cursor > 6 ? 16 : 8;
+		if (cursor == 10)
 		{
 			interface->VBlank = 0;
 			return;
 		}
-		MIDI_KEYON(1, lastPitch, 40);
+		if (lastPitch != 0)
+		{
+			REG_OPLOUT = 0xA400 | lastPitch;
+			REG_OPLOUT = 0xB431;
+		}
 	}
 	else
 		timer--;
-	//MIDI_KEYON(1, (MIDI_C2 + (rand() % 3)), (40 + (rand() % 10)));
-*/
 }
 
 void Tile(int, int, uint16_t);
@@ -285,7 +278,6 @@ void MovePlayer(pos head)
 	//Check if we're eating the fruit
 	if (head.x == fruit.x && head.y == fruit.y)
 	{
-		//MIDI_KEYON(2, MIDI_A5, 80);
 		REG_OPLOUT = 0xA0C4; //F1 -> 0x1CA, block 1
 		REG_OPLOUT = 0xB025;
 		fruitTimer = 3;
@@ -332,12 +324,6 @@ int main(void)
 	for (int i = 0; i < 10 * 6; i++)
 		REG_OPLOUT = oplSetup[i];
 
-/*
-	MIDI_PROGRAM(1, MIDI_ACOUSTICBASS);
-	MIDI_PROGRAM(2, MIDI_FX4ATMOSPHERE);
-	MIDI_PROGRAM(3, MIDI_GUNSHOT);
-*/
-
 	TitleScreen();
 
 	while(1)
@@ -363,18 +349,8 @@ int main(void)
 
 			if (fruitTimer)
 			{
-				fruitTimer--;
-				if (fruitTimer == 1)
-				{
-					//MIDI_KEYOFF(2, MIDI_A5, 80);
-					//MIDI_KEYON(2, MIDI_D6, 80);
-				}
-				if (fruitTimer == 0)
-				{
-					//MIDI_KEYOFF(2, MIDI_D6, 80);
-					//REG_OPLOUT = 0xA0C4; //C1 -> 0x157 block 1
+				if (--fruitTimer == 0)
 					REG_OPLOUT = 0xB005;
-				}
 			}
 
 			int in = REG_KEYIN;
@@ -416,19 +392,12 @@ int main(void)
 			}
 			if (!InBounds(head))
 			{
-/*
-				MIDI_KEYON(3, MIDI_C2, 80);
-				MIDI_KEYOFF(2, MIDI_A5, 80);
-				MIDI_KEYOFF(2, MIDI_D6, 80);
-*/
 				GameOver();
 				break;
 			}
 			else
 			{
-				//MIDI_KEYON(1, (MIDI_C2 + (rand() % 3)), (40 + (rand() % 10)));
-				drum++;
-				if (drum == 1)
+				if (++drum == 1)
 				{
 					REG_OPLOUT = 0xA1 | beat[drum2 % 4];
 					REG_OPLOUT = 0xB109;
