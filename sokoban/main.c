@@ -376,7 +376,7 @@ extern const unsigned char slideSound[];
 extern const unsigned char stepSound[];
 const unsigned char * const sounds[] = { 0, jingleSound, slideSound, stepSound };
 
-extern int IMF_LoadSong(const unsigned short *sauce, unsigned short size);
+extern int IMF_LoadSong(const unsigned short *sauce, int loop);
 extern void IMF_Play();
 
 void PlaySound(int id)
@@ -507,7 +507,7 @@ int main(void)
 	inton();
 
 	levelNum = -1;
-	IMF_LoadSong(imfData2, -1);
+	IMF_LoadSong(imfData2, 1);
 	PlaySound(1);
 	nextLevel();
 

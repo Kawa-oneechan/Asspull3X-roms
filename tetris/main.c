@@ -76,7 +76,7 @@ static const uint32_t spritesB[] = {
 
 const unsigned char * const sounds[] = { 0 };
 
-extern int IMF_LoadSong(const unsigned short *sauce, unsigned short size);
+extern int IMF_LoadSong(const unsigned short *sauce,  int loop);
 extern void IMF_Play();
 
 void PlaySound(int id)
@@ -157,7 +157,7 @@ int main(void)
 	DRAW->FadeFromBlack();
 
 	inton();
-	IMF_LoadSong(imfData1, -1);
+	IMF_LoadSong(imfData1, 1);
 
 	game *game = init_game();
 	do
