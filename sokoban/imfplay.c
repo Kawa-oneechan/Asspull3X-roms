@@ -20,7 +20,7 @@ static void IMF_Service()
 	{
 		value = *_imfptr++;
 		_imfwait = *_imfptr++;
-		_imfwait /= 128;
+		_imfwait = (_imfwait + 128) / 128;
 		_imfsize -= 4;
 		REG_OPLOUT = value;
 	}
