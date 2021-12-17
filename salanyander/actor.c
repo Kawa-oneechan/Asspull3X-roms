@@ -3,7 +3,7 @@
 
 tEntity entities[MAXENTITIES];
 
-int spritesUsed[256/32];
+int objectsUsed[256/32];
 unsigned int scroll = 0;
 
 const void* const entityFuncs[] =
@@ -57,17 +57,17 @@ int Spawn(int type, int x, int y)
 	return -1;
 }
 
-int GetNextSpriteIn(int min, int max)
+int GetNextObjectIdx(int min, int max)
 {
 	for (int i = min; i < max; i++)
 	{
-		if (!bitTest(spritesUsed, i))
+		if (!bitTest(objectsUsed, i))
 			return i;
 	}
 	return -1;
 }
 
-int GetNextSprite()
+int GetNextObject()
 {
-	return GetNextSpriteIn(0, 256);
+	return GetNextObjectIdx(0, 256);
 }

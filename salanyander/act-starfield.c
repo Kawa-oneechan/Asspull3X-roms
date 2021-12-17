@@ -25,21 +25,21 @@ void ThinkStar(int id)
 	if (p->x < -16)
 	{
 		p->type = 0;
-		bitClear(spritesUsed, p->spr);
+		bitClear(objectsUsed, p->obj);
 	}
 }
 
 void DrawStar(int id)
 {
 	tEntity* p = &entities[id];
-	SPRITES_A[(int)p->spr] = SPRITEA_BUILD(p->extra[0], 0, 1, p->pal);
-	SPRITES_B[(int)p->spr] = SPRITEB_BUILD(p->x, p->y, 0, 0, 0, 0, 0, 1);
+	OBJECTS_A[(int)p->obj] = OBJECTA_BUILD(p->extra[0], 0, 1, p->pal);
+	OBJECTS_B[(int)p->obj] = OBJECTB_BUILD(p->x, p->y, 0, 0, 0, 0, 0, 1);
 }
 
 void InitStar(int id)
 {
 	tEntity* p = &entities[id];
 	p->extra[0] = 73 + (rand() % 3);
-	p->spr = GetNextSpriteIn(4, 128);
-	bitSet(spritesUsed, p->spr);
+	p->obj = GetNextObjectIdx(4, 128);
+	bitSet(objectsUsed, p->obj);
 }

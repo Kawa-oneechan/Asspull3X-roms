@@ -80,7 +80,7 @@ int main(void)
 	REG_MAPSET = 0x30;
 	MISC->DmaClear(MAP2, 0, 64 * 32, DMA_SHORT);
 	for (int i = 0; i < 256/32; i++)
-		spritesUsed[i] = 0;
+		objectsUsed[i] = 0;
 
 	MISC->DmaClear(entities, 0, sizeof(tEntity) * 64, DMA_BYTE);
 
@@ -95,7 +95,7 @@ int main(void)
 	int e = Spawn(3, 0, 0);
 	entities[e].extra[1] = 1000;
 	//e = Spawn(1, 48, 64);
-	//entities[e].spr = 4;
+	//entities[e].obj = 4;
 	//entities[e].pal = 3;
 
 	print("SALANYANDER INDEV", 0, 0, 0);
@@ -104,7 +104,7 @@ int main(void)
 	{
 		sprintf(debugBuffer, "SCROLL %d  REG_KEYIN $%02X ", scroll, REG_KEYIN);
 		print(debugBuffer, 0, 1, 0);
-		sprintf(debugBuffer, "SPRUSE %04X%04X%04X%04X", spritesUsed[3], spritesUsed[2], spritesUsed[1], spritesUsed[0]);
+		sprintf(debugBuffer, "OBJUSE %04X%04X%04X%04X", objectsUsed[3], objectsUsed[2], objectsUsed[1], objectsUsed[0]);
 		print(debugBuffer, 0, 2, 0);
 
 		Think();

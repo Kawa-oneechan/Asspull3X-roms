@@ -4,14 +4,14 @@ extern IBios* interface;
 extern const uint16_t pointerTiles[];
 extern const TImageFile bmp320x240x4;
 
-#define SPRITEA_BUILD(t,b,e,p)	\
+#define OBJECTA_BUILD(t,b,e,p)	\
 (								\
 	(((p) & 15) << 12) |		\
 	(((e) &  1) << 11) |		\
 	(((b) &  3) <<  9) |		\
 	(((t) & 0x1FF) << 0)		\
 )
-#define SPRITEB_BUILD(hp,vp,dw,dh,hf,vf,ds,pr)	\
+#define OBJECTB_BUILD(hp,vp,dw,dh,hf,vf,ds,pr)	\
 (												\
 	(((pr) & 3) << 30) |						\
 	(((ds) & 1) << 28) |						\
@@ -89,10 +89,10 @@ void MouseTest()
 	DRAW->DisplayPicture((TImageFile*)&bmp320x240x4);
 	DRAW->DrawString("Mouse test\nPress any key when satisfied.", 0, 0, 15);
 	MISC->DmaCopy(TILESET + 0x2000, (int8_t*)&pointerTiles, 0x2E0, DMA_INT);
-	SPRITES_A[0] = SPRITEA_BUILD(256, 1, 1, 1);
-	SPRITES_B[0] = SPRITEB_BUILD(MouseState.x + 2, MouseState.y + 2, 0, 0, 0, 0, 1, 0);
-	SPRITES_A[1] = SPRITEA_BUILD(256, 0, 1, 0);
-	SPRITES_B[1] = SPRITEB_BUILD(MouseState.x + 0, MouseState.y + 0, 0, 0, 0, 0, 1, 0);
+	OBJECTS_A[0] = OBJECTA_BUILD(256, 1, 1, 1);
+	OBJECTS_B[0] = OBJECTB_BUILD(MouseState.x + 2, MouseState.y + 2, 0, 0, 0, 0, 1, 0);
+	OBJECTS_A[1] = OBJECTA_BUILD(256, 0, 1, 0);
+	OBJECTS_B[1] = OBJECTB_BUILD(MouseState.x + 0, MouseState.y + 0, 0, 0, 0, 0, 1, 0);
 
 	while (REG_KEYIN == 0)
 	{
@@ -100,13 +100,13 @@ void MouseTest()
 		if (MouseState.changed)
 		{
 			PALETTE[0] = colors[(int)MouseState.buttons];
-			SPRITES_B[0] = SPRITEB_BUILD(MouseState.x + 2, MouseState.y + 2, 0, 0, 0, 0, 1, 0);
-			SPRITES_B[1] = SPRITEB_BUILD(MouseState.x + 0, MouseState.y + 0, 0, 0, 0, 0, 1, 0);
+			OBJECTS_B[0] = OBJECTB_BUILD(MouseState.x + 2, MouseState.y + 2, 0, 0, 0, 0, 1, 0);
+			OBJECTS_B[1] = OBJECTB_BUILD(MouseState.x + 0, MouseState.y + 0, 0, 0, 0, 0, 1, 0);
 		}
 		vbl();
 	}
 	while (REG_KEYIN != 0) { vbl(); }
-	SPRITES_A[0] = 0; //hide the cursor
+	OBJECTS_A[0] = 0; //hide the cursor
 	DRAW->ResetPalette();
 	MISC->SetTextMode(SMODE_240 | SMODE_BOLD);
 	TEXT->ClearScreen();

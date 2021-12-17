@@ -11,7 +11,7 @@ typedef struct tPlayer
 	short x, y;
 	short oldX, oldY;
 	char pal;
-	char spr;
+	char obj;
 	char state;
 	void (*draw)(), (*think)();
 	short flameTick, swerve, intro, shotTimer;
@@ -38,10 +38,10 @@ void DrawPlayer(int id)
 	if (p->swerve > 0) frame = 3;
 	if (p->swerve > 16) { frame = 4; p->swerve = 16; }
 
-	SPRITES_A[(int)p->spr] = SPRITEA_BUILD(256 + (frame * 8), 0, 1, p->pal);
-	SPRITES_B[(int)p->spr] = SPRITEB_BUILD(p->x, p->y, 1, 0, 0, 0, 1, 0);
-	SPRITES_A[(int)p->spr+1] = SPRITEA_BUILD(256 + 40 + ((p->flameTick >> 2) % 2), 1, 1, 8);
-	SPRITES_B[(int)p->spr+1] = SPRITEB_BUILD(p->x - 8, p->y + 4, 0, 0, 0, 0, 0, 0);
+	OBJECTS_A[(int)p->obj] = OBJECTA_BUILD(256 + (frame * 8), 0, 1, p->pal);
+	OBJECTS_B[(int)p->obj] = OBJECTB_BUILD(p->x, p->y, 1, 0, 0, 0, 1, 0);
+	OBJECTS_A[(int)p->obj+1] = OBJECTA_BUILD(256 + 40 + ((p->flameTick >> 2) % 2), 1, 1, 8);
+	OBJECTS_B[(int)p->obj+1] = OBJECTB_BUILD(p->x - 8, p->y + 4, 0, 0, 0, 0, 0, 0);
 }
 
 void ThinkPlayer(int id)
@@ -90,9 +90,9 @@ void InitPlayer(int id)
 
 	p->pal = 8;
 	p->x -= 64; //to fly in
-	p->spr = GetNextSpriteIn(0, 4);
-	bitSet(spritesUsed, p->spr);
-	bitSet(spritesUsed, p->spr + 1);
+	p->obj = GetNextObjectIdx(0, 4);
+	bitSet(objectsUsed, p->obj);
+	bitSet(objectsUsed, p->obj + 1);
 
 	MISC->DmaCopy(TILESET + 0x2000, playerTiles[0], 512, DMA_INT);
 	MISC->DmaCopy(PALETTE + 128, playerPal[0], 16, DMA_SHORT);
@@ -102,8 +102,8 @@ void DrawPlayerBullet(int id)
 {
 	tEntity* p = &entities[id];
 
-	SPRITES_A[(int)p->spr] = SPRITEA_BUILD(256 + 42, 0, 1, p->pal);
-	SPRITES_B[(int)p->spr] = SPRITEB_BUILD(p->x, p->y, 1, 0, 0, 0, 0, 0);
+	OBJECTS_A[(int)p->obj] = OBJECTA_BUILD(256 + 42, 0, 1, p->pal);
+	OBJECTS_B[(int)p->obj] = OBJECTB_BUILD(p->x, p->y, 1, 0, 0, 0, 0, 0);
 }
 
 void ThinkPlayerBullet(int id)
@@ -113,7 +113,7 @@ void ThinkPlayerBullet(int id)
 	if (p->x > 320)
 	{
 		p->type = 0;
-		bitClear(spritesUsed, p->spr);
+		bitClear(objectsUsed, p->obj);
 	}
 }
 
@@ -121,6 +121,6 @@ void InitPlayerBullet(int id)
 {
 	tEntity* p = &entities[id];
 	p->pal = 8;
-	p->spr = GetNextSpriteIn(4, 24);
-	bitSet(spritesUsed, p->spr);
+	p->obj = GetNextObjectIdx(4, 24);
+	bitSet(objectsUsed, p->obj);
 }

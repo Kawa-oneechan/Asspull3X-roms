@@ -60,8 +60,8 @@ extern void free(void*);
 #define TILESET		((uint8_t*)(MEM_VRAM + 0x50000))
 #define PALETTE		((uint16_t*)(MEM_VRAM + 0x60000))
 #define TEXTFONT	((uint8_t*)(MEM_VRAM + 0x60200))
-#define SPRITES_A	((uint16_t*)(MEM_VRAM + 0x64000))
-#define SPRITES_B	((uint32_t*)(MEM_VRAM + 0x64200))
+#define OBJECTS_A	((uint16_t*)(MEM_VRAM + 0x64000))
+#define OBJECTS_B	((uint32_t*)(MEM_VRAM + 0x64200))
 
 #define REG_INTRMODE	*(int8_t*)(MEM_IO + 0x0000)
 #define REG_SCREENMODE	*(int8_t*)(MEM_IO + 0x0001)
@@ -261,7 +261,7 @@ typedef struct IMiscLibrary
 	void(*SetTextMode)(int32_t flags);
 	void(*SetBitmapMode16)(int32_t flags);
 	void(*SetBitmapMode256)(int32_t flags);
-	void(*EnableSprites)(int32_t);
+	void(*EnableObjects)(int32_t);
 	void(*WaitForVBlank)(void);
 	void(*WaitForVBlanks)(int32_t vbls);
 	void(*DmaCopy)(void* dst, const void* src, uint32_t size, int32_t step);

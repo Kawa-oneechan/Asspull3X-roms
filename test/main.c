@@ -58,13 +58,13 @@ extern void KeyboardTest();
 extern void MouseTest();
 
 extern const uint16_t pointerTiles[];
-#define SPRITEA_BUILD(t,e,p)	\
+#define OBJECTA_BUILD(t,e,p)	\
 (								\
 	(((p) & 15) << 12) |		\
 	(((e) &  1) << 11) |		\
 	(((t) & 0x1FF) << 0)		\
 )
-#define SPRITEB_BUILD(hp,vp,dw,dh,hf,vf,ds,pr)	\
+#define OBJECTB_BUILD(hp,vp,dw,dh,hf,vf,ds,pr)	\
 (												\
 	(((pr) & 3) << 30) |						\
 	(((ds) & 1) << 28) |						\
@@ -82,8 +82,8 @@ void JoypadTest()
 	TEXT->SetTextColor(0, 7);
 	TEXT->ClearScreen();
 	MISC->DmaCopy(TILESET + 0x2000, (int8_t*)&pointerTiles, 0x2E0, DMA_INT);
-	SPRITES_A[0] = SPRITEA_BUILD(256, 1, 0);
-	SPRITES_B[0] = SPRITEB_BUILD(320, 160, 0, 0, 0, 0, 1, 0);
+	OBJECTS_A[0] = OBJECTA_BUILD(256, 1, 0);
+	OBJECTS_B[0] = OBJECTB_BUILD(320, 160, 0, 0, 0, 0, 1, 0);
 	while (1)
 	{
 		REG_JOYPAD = 1; //reset
@@ -95,7 +95,7 @@ void JoypadTest()
 		TEXT->SetCursorPosition(0, 0);
 		printf("0x%02X 0x%02X %3d,%3d  ", dpadbuts, extrabuts, axis1, axis2);
 
-		SPRITES_B[0] = SPRITEB_BUILD(160 + (axis1 / 2), 120 + (axis2 / 2), 0, 0, 0, 0, 1, 0);
+		OBJECTS_B[0] = OBJECTB_BUILD(160 + (axis1 / 2), 120 + (axis2 / 2), 0, 0, 0, 0, 1, 0);
 
 		vbl();
 	}

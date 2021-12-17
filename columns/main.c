@@ -17,13 +17,13 @@ extern const uint16_t girl1Tiles[], girl1Pal[], girl1Map[];
 
 #define POOF 12
 
-#define SPRITEA_BUILD(t,e,p)	\
+#define OBJECTA_BUILD(t,e,p)	\
 (								\
 	(((p) & 15) << 12) |		\
 	(((e) &	1) << 11) |		\
 	(((t) & 0x1FF) << 0)		\
 )
-#define SPRITEB_BUILD(hp,vp,dw,dh,hf,vf,ds,pr)	\
+#define OBJECTB_BUILD(hp,vp,dw,dh,hf,vf,ds,pr)	\
 (												\
 	(((pr) & 3) << 30) |						\
 	(((ds) & 1) << 28) |						\
@@ -239,8 +239,8 @@ void checkLanding()
 	//We've landed. Copy the current set into the board, check for triplets, and drop a new set.
 	for (int i = 0; i < 3; i++)
 	{
-		SPRITES_A[i] = 0;
-		SPRITES_B[i] = 0;
+		OBJECTS_A[i] = 0;
+		OBJECTS_B[i] = 0;
 	}
 	for (int i = 0; i < 3; i++)
 		place(currentX, currentY - i, current[i]);
@@ -309,8 +309,8 @@ void drawPlayer()
 	y += 3  * 8;
 	for (int i = 0; i < 3; i++)
 	{
-		SPRITES_A[i] = SPRITEA_BUILD((current[i] * 4), 1, tilePals[(int)current[i]]);
-		SPRITES_B[i] = SPRITEB_BUILD(x, y, 1, 1, 0, 0, 0, 0);
+		OBJECTS_A[i] = OBJECTA_BUILD((current[i] * 4), 1, tilePals[(int)current[i]]);
+		OBJECTS_B[i] = OBJECTB_BUILD(x, y, 1, 1, 0, 0, 0, 0);
 		y -= 16;
 	}
 }

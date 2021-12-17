@@ -17,13 +17,13 @@ extern const unsigned short imfData1[];
 #define KEY_RIGHT 0xCD
 #define KEY_DOWN 0xD0
 
-#define SPRITEA_BUILD(t,e,p)	\
+#define OBJECTA_BUILD(t,e,p)	\
 (								\
 	(((p) & 15) << 12) |		\
 	(((e) &  1) << 11) |		\
 	(((t) & 0x1FF) << 0)		\
 )
-#define SPRITEB_BUILD(hp,vp,dw,dh,hf,vf,ds,pr)	\
+#define OBJECTB_BUILD(hp,vp,dw,dh,hf,vf,ds,pr)	\
 (												\
 	(((pr) & 3) << 30) |						\
 	(((ds) & 1) << 28) |						\
@@ -35,42 +35,42 @@ extern const unsigned short imfData1[];
 	(((hp) & 0x7FF) << 0)						\
 )
 
-static const uint16_t spritesA[] = {
-	SPRITEA_BUILD(128, 1, 4),
-	SPRITEA_BUILD(128 + 8, 1, 4),
-	SPRITEA_BUILD(128 + 12, 1, 4),
-	SPRITEA_BUILD(128 + 16, 1, 4),
-	SPRITEA_BUILD(128 + 32, 1, 4),
-	SPRITEA_BUILD(128 + 48, 1, 4),
-	SPRITEA_BUILD(128 + 56, 1, 4),
+static const uint16_t objectsA[] = {
+	OBJECTA_BUILD(128, 1, 4),
+	OBJECTA_BUILD(128 + 8, 1, 4),
+	OBJECTA_BUILD(128 + 12, 1, 4),
+	OBJECTA_BUILD(128 + 16, 1, 4),
+	OBJECTA_BUILD(128 + 32, 1, 4),
+	OBJECTA_BUILD(128 + 48, 1, 4),
+	OBJECTA_BUILD(128 + 56, 1, 4),
 
-	SPRITEA_BUILD(384, 1, 1),
-	SPRITEA_BUILD(384 + 16, 1, 1),
-	SPRITEA_BUILD(384 + 32, 1, 1),
-	SPRITEA_BUILD(384 + 48, 1, 1),
-	SPRITEA_BUILD(384 + 64, 1, 1),
-	SPRITEA_BUILD(384 + 80, 1, 1),
-	SPRITEA_BUILD(384 + 96, 1, 1),
-	SPRITEA_BUILD(384 + 112, 1, 1),
+	OBJECTA_BUILD(384, 1, 1),
+	OBJECTA_BUILD(384 + 16, 1, 1),
+	OBJECTA_BUILD(384 + 32, 1, 1),
+	OBJECTA_BUILD(384 + 48, 1, 1),
+	OBJECTA_BUILD(384 + 64, 1, 1),
+	OBJECTA_BUILD(384 + 80, 1, 1),
+	OBJECTA_BUILD(384 + 96, 1, 1),
+	OBJECTA_BUILD(384 + 112, 1, 1),
 	0,
 };
-static const uint32_t spritesB[] = {
-	SPRITEB_BUILD(228, 24, 1, 0, 0, 0, 1, 0),
-	SPRITEB_BUILD(260, 24, 0, 0, 0, 0, 1, 0),
-	SPRITEB_BUILD(262, 72, 0, 0, 0, 0, 1, 0),
-	SPRITEB_BUILD(224, 40, 1, 1, 0, 0, 1, 0),
-	SPRITEB_BUILD(256, 40, 1, 1, 0, 0, 1, 0),
-	SPRITEB_BUILD(230, 72, 1, 0, 0, 0, 1, 0),
-	SPRITEB_BUILD(224, 48, 1, 1, 0, 0, 1, 0),
+static const uint32_t objectsB[] = {
+	OBJECTB_BUILD(228, 24, 1, 0, 0, 0, 1, 0),
+	OBJECTB_BUILD(260, 24, 0, 0, 0, 0, 1, 0),
+	OBJECTB_BUILD(262, 72, 0, 0, 0, 0, 1, 0),
+	OBJECTB_BUILD(224, 40, 1, 1, 0, 0, 1, 0),
+	OBJECTB_BUILD(256, 40, 1, 1, 0, 0, 1, 0),
+	OBJECTB_BUILD(230, 72, 1, 0, 0, 0, 1, 0),
+	OBJECTB_BUILD(224, 48, 1, 1, 0, 0, 1, 0),
 
-	SPRITEB_BUILD(168, 176, 1, 1, 0, 0, 1, 0),
-	SPRITEB_BUILD(200, 176, 1, 1, 0, 0, 1, 0),
-	SPRITEB_BUILD(232, 176, 1, 1, 0, 0, 1, 0),
-	SPRITEB_BUILD(264, 176, 1, 1, 0, 0, 1, 0),
-	SPRITEB_BUILD(168, 208, 1, 1, 0, 0, 1, 0),
-	SPRITEB_BUILD(200, 208, 1, 1, 0, 0, 1, 0),
-	SPRITEB_BUILD(232, 208, 1, 1, 0, 0, 1, 0),
-	SPRITEB_BUILD(264, 208, 1, 1, 0, 0, 1, 0),
+	OBJECTB_BUILD(168, 176, 1, 1, 0, 0, 1, 0),
+	OBJECTB_BUILD(200, 176, 1, 1, 0, 0, 1, 0),
+	OBJECTB_BUILD(232, 176, 1, 1, 0, 0, 1, 0),
+	OBJECTB_BUILD(264, 176, 1, 1, 0, 0, 1, 0),
+	OBJECTB_BUILD(168, 208, 1, 1, 0, 0, 1, 0),
+	OBJECTB_BUILD(200, 208, 1, 1, 0, 0, 1, 0),
+	OBJECTB_BUILD(232, 208, 1, 1, 0, 0, 1, 0),
+	OBJECTB_BUILD(264, 208, 1, 1, 0, 0, 1, 0),
 	0,
 };
 
@@ -143,13 +143,13 @@ int main(void)
 	}
 
 	{
-		uint16_t* sa = (uint16_t*)spritesA;
-		uint32_t* sb = (uint32_t*)spritesB;
+		uint16_t* sa = (uint16_t*)objectsA;
+		uint32_t* sb = (uint32_t*)objectsB;
 		int i = 0;
 		while (*sa)
 		{
-			SPRITES_A[i] = *sa++;
-			SPRITES_B[i] = *sb++;
+			OBJECTS_A[i] = *sa++;
+			OBJECTS_B[i] = *sb++;
 			i++;
 		}
 	}

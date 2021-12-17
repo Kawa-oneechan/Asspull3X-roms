@@ -1,11 +1,11 @@
-#define SPRITEA_BUILD(t,b,e,p)	\
+#define OBJECTA_BUILD(t,b,e,p)	\
 (								\
 	(((p) & 15) << 12) |		\
 	(((e) &  1) << 11) |		\
 	(((b) &  3) <<  9) |		\
 	(((t) & 0x1FF) << 0)		\
 )
-#define SPRITEB_BUILD(hp,vp,dw,dh,hf,vf,ds,pr)	\
+#define OBJECTB_BUILD(hp,vp,dw,dh,hf,vf,ds,pr)	\
 (												\
 	(((pr) & 3) << 30) |						\
 	(((ds) & 1) << 28) |						\
@@ -33,18 +33,18 @@ typedef struct tEntity
 	short x, y;
 	short oldX, oldY;
 	char pal;
-	char spr;
+	char obj;
 	char state;
 	void (*draw)(), (*think)();
 	short extra[16];
 } tEntity;
 
 extern tEntity entities[];
-extern int spritesUsed[];
+extern int objectsUsed[];
 
 extern int Spawn(int type, int x, int y);
-extern int GetNextSpriteIn(int min, int max);
-extern int GetNextSprite();
+extern int GetNextObjectIdx(int min, int max);
+extern int GetNextObject();
 
 extern const void* const entityFuncs[];
 

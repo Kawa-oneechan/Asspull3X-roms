@@ -26,13 +26,13 @@ char *thisLevel;
 #define KEY_RIGHT 0xCD
 #define KEY_DOWN 0xD0
 
-#define SPRITEA_BUILD(t,e,p)	\
+#define OBJECTA_BUILD(t,e,p)	\
 (								\
 	(((p) & 15) << 12) |		\
 	(((e) &  1) << 11) |		\
 	(((t) & 0x1FF) << 0)		\
 )
-#define SPRITEB_BUILD(hp,vp,dw,dh,hf,vf,ds,pr)	\
+#define OBJECTB_BUILD(hp,vp,dw,dh,hf,vf,ds,pr)	\
 (												\
 	(((pr) & 3) << 30) |						\
 	(((ds) & 1) << 28) |						\
@@ -97,8 +97,8 @@ void drawPlayer()
 	if (REG_TICKCOUNT % ANIMSPEED > (ANIMSPEED / 2))
 		tile += 8;
 
-	SPRITES_A[0] = SPRITEA_BUILD(tile + 256, 1, 0);
-	SPRITES_B[0] = SPRITEB_BUILD((playerX * 16) + 8, (playerY * 16) - 24, 0, 1, flip, 0, 1, 1);
+	OBJECTS_A[0] = OBJECTA_BUILD(tile + 256, 1, 0);
+	OBJECTS_B[0] = OBJECTB_BUILD((playerX * 16) + 8, (playerY * 16) - 24, 0, 1, flip, 0, 1, 1);
 }
 
 void drawTile(int i, int j, int tile)
@@ -351,8 +351,8 @@ void nextLevel()
 			"Reminder to self: make a nice win screen.",
 			8, 8, 15
 		);
-		//remove the sprite
-		SPRITES_B[0] = SPRITEB_BUILD(-16, -24, 0, 1, 0, 0, 1, 1);
+		//remove the object
+		OBJECTS_B[0] = OBJECTB_BUILD(-16, -24, 0, 1, 0, 0, 1, 1);
 		DRAW->FadeFromWhite();
 		while(1);
 	}

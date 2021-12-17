@@ -26,7 +26,7 @@ extern void SetTextMode80x60(void);
 extern void SetTextMode(int32_t);
 extern void SetBitmapMode16(int32_t);
 extern void SetBitmapMode256(int32_t);
-extern void EnableSprites(int32_t);
+extern void EnableObjects(int32_t);
 extern void WaitForVBlank(void);
 extern void WaitForVBlanks(int32_t);
 extern void DmaCopy(void*, const void*, uint32_t, int32_t);

@@ -23,13 +23,13 @@ extern const TImageFile splashData;
 extern const uint16_t iconsTiles[256];
 extern const uint16_t iconsPal[16];
 
-#define SPRITEA_BUILD(t,e,p)	\
+#define OBJECTA_BUILD(t,e,p)	\
 (								\
 	(((p) & 15) << 12) |		\
 	(((e) &  1) << 11) |		\
 	(((t) & 0x1FF) << 0)		\
 )
-#define SPRITEB_BUILD(hp,vp,dw,dh,hf,vf,ds,pr)	\
+#define OBJECTB_BUILD(hp,vp,dw,dh,hf,vf,ds,pr)	\
 (												\
 	(((pr) & 3) << 30) |						\
 	(((ds) & 1) << 28) |						\
@@ -73,18 +73,18 @@ int32_t main(void)
 				{
 					if (ReadFile(&file, (void*)0x01002000, 0) < 0)
 					{
-						SPRITES_A[0] = SPRITEA_BUILD(48, 1, 1); //? disk
+						OBJECTS_A[0] = OBJECTA_BUILD(48, 1, 1); //? disk
 						continue;
 					}
 					CloseFile(&file);
-					SPRITES_A[0] = SPRITEA_BUILD(32, 1, 1); //disk
+					OBJECTS_A[0] = OBJECTA_BUILD(32, 1, 1); //disk
 					entry = (void*)0x01002020;
 					break;
 				}
 				else
 				{
 					dpf("not good");
-					SPRITES_A[0] = SPRITEA_BUILD(48, 1, 1); //? disk
+					OBJECTS_A[0] = OBJECTA_BUILD(48, 1, 1); //? disk
 					continue;
 				}
 			}
@@ -92,20 +92,20 @@ int32_t main(void)
 			{
 				hadDisk = 0;
 				dpf("lost disk");
-				SPRITES_A[0] = SPRITEA_BUILD(0, 1, 1); //logo
+				OBJECTS_A[0] = OBJECTA_BUILD(0, 1, 1); //logo
 				continue;
 			}
 		}
 		else
 		{
 			entry = (void*)0x00020004;
-			SPRITES_A[0] = SPRITEA_BUILD(16, 1, 1); //cart
+			OBJECTS_A[0] = OBJECTA_BUILD(16, 1, 1); //cart
 			break;
 		}
 
 		if (REG_KEYIN == 59 && showSplash) //F1
 		{
-			SPRITES_B[0] = SPRITEB_BUILD(-32, -32, 0, 0, 0, 0, 0, 0);
+			OBJECTS_B[0] = OBJECTB_BUILD(-32, -32, 0, 0, 0, 0, 0, 0);
 			char about[256];
 			interface->DrawCharFont = (char*)0x0E060A00;
 			interface->DrawCharHeight = 0x0808;
@@ -133,7 +133,7 @@ int32_t main(void)
 				DrawString(about, 104, 130, i);
 				WaitForVBlanks(16);
 			}
-			SPRITES_B[0] = SPRITEB_BUILD(144, 152, 1, 1, 0, 0, 1, 0);
+			OBJECTS_B[0] = OBJECTB_BUILD(144, 152, 1, 1, 0, 0, 1, 0);
 		}
 
 		if (!showSplash)
@@ -150,8 +150,8 @@ int32_t main(void)
 			REG_HDMACONTROL[1] = DMA_ENABLE | HDMA_DOUBLE | (DMA_SHORT << 4) | (254 << 8) | (170 << 20);
 			MISC->DmaCopy(PALETTE + 16, (int8_t*)&iconsPal, 16, DMA_SHORT);
 			MISC->DmaCopy(TILESET, (int8_t*)&iconsTiles, 512, DMA_INT);
-			SPRITES_A[0] = SPRITEA_BUILD(0, 1, 1);
-			SPRITES_B[0] = SPRITEB_BUILD(144, 152, 1, 1, 0, 0, 1, 0);
+			OBJECTS_A[0] = OBJECTA_BUILD(0, 1, 1);
+			OBJECTS_B[0] = OBJECTB_BUILD(144, 152, 1, 1, 0, 0, 1, 0);
 			MIDI_PROGRAM(1, MIDI_SEASHORE);
 			MIDI_KEYON(1, MIDI_C4, 80);
 			FadeFromBlack();
@@ -178,7 +178,7 @@ int32_t main(void)
 	REG_SCROLLX1 = REG_SCROLLX2 = REG_SCROLLY1 = REG_SCROLLY2 = 0;
 	REG_HDMACONTROL[0] = 0;
 	REG_HDMACONTROL[1] = 0;
-	SPRITES_A[0] = 0;
+	OBJECTS_A[0] = 0;
 	interface->VBlank = 0;
 	interface->DrawCharFont = (char*)0x0E060A00;
 	interface->DrawCharHeight = 0x0808;

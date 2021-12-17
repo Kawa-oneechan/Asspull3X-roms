@@ -31,13 +31,13 @@ void DrawStripe(int source, int target)
 	}
 }
 
-#define SPRITEA_BUILD(t,e,p)	\
+#define OBJECTA_BUILD(t,e,p)	\
 (								\
 	(((p) & 15) << 12) |		\
 	(((e) &  1) << 11) |		\
 	(((t) & 0x1FF) << 0)		\
 )
-#define SPRITEB_BUILD(hp,vp,dw,dh,hf,vf,ds,pr)	\
+#define OBJECTB_BUILD(hp,vp,dw,dh,hf,vf,ds,pr)	\
 (												\
 	(((pr) & 3) << 30) |						\
 	(((ds) & 1) << 28) |						\
@@ -49,15 +49,15 @@ void DrawStripe(int source, int target)
 	(((hp) & 0x7FF) << 0)						\
 )
 
-typedef struct TSpriteA
+typedef struct TObjectA
 {
 	uint16_t palette:4;
 	uint16_t enabled:1;
 	uint16_t _waste:2;
 	uint16_t tile:9;
-} TSpriteA;
-#define spritesA ((TSpriteA*)SPRITES_A)
-typedef struct TSpriteB
+} TObjectA;
+#define objectsA ((TObjectA*)OBJECTS_A)
+typedef struct TObjectB
 {
 	uint32_t priority:3;
 	uint32_t large:1;
@@ -71,8 +71,8 @@ typedef struct TSpriteB
 	uint32_t y:9;
 	uint32_t _waste3:2;
 	uint32_t x:10;
-} TSpriteB;
-#define spritesB ((TSpriteB*)SPRITES_B)
+} TObjectB;
+#define objectsB ((TObjectB*)OBJECTS_B)
 
 int main(void)
 {
@@ -90,8 +90,8 @@ int main(void)
 
 	MISC->DmaCopy(TILESET + 0x2000, (int8_t*)&farahTiles, 64, DMA_INT);
 	MISC->DmaCopy(PALETTE + 32, (int8_t*)&farahPal, 32, DMA_SHORT);
-	SPRITES_A[0] = SPRITEA_BUILD(256, 1, 2);
-	SPRITES_B[0] = SPRITEB_BUILD(152, 176, 0, 1, 0, 0, 1, 0);
+	OBJECTS_A[0] = OBJECTA_BUILD(256, 1, 2);
+	OBJECTS_B[0] = OBJECTB_BUILD(152, 176, 0, 1, 0, 0, 1, 0);
 
 	REG_MAPSET = 0x70; //just enable it, don't worry about tile offsets.
 
@@ -110,11 +110,11 @@ int main(void)
 	{
 		vbl();
 
-		//Something to test the sprite structs with...
-		if (REG_KEYIN == 0xC8) spritesB[0].y++;
-		else if (REG_KEYIN == 0xD0) spritesB[0].y--;
-		else if (REG_KEYIN == 0xCB) spritesB[0].x--;
-		else if (REG_KEYIN == 0xCD) spritesB[0].x++;
+		//Something to test the object structs with...
+		if (REG_KEYIN == 0xC8) objectsB[0].y++;
+		else if (REG_KEYIN == 0xD0) objectsB[0].y--;
+		else if (REG_KEYIN == 0xCB) objectsB[0].x--;
+		else if (REG_KEYIN == 0xCD) objectsB[0].x++;
 
 		REG_SCROLLX1 = scroll;
 		REG_SCROLLX2 = scroll;

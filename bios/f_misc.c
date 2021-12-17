@@ -9,7 +9,7 @@ const IMiscLibrary miscLibrary =
 {
 	SetTextMode, SetBitmapMode16,
 	SetBitmapMode256,
-	EnableSprites,
+	EnableObjects,
 	WaitForVBlank, WaitForVBlanks,
 	DmaCopy, DmaClear,
 	MidiReset,
@@ -34,9 +34,9 @@ void SetBitmapMode256(int flags)
 	interface->DrawChar = (flags & SMODE_320) ? DrawChar8_320 : DrawChar8_640;
 }
 
-void EnableSprites(int enabled)
+void EnableObjects(int enabled)
 {
-	//To be replaced with RemoveSprites
+	//To be replaced with RemoveObjects
 	enabled = 0;
 }
 
