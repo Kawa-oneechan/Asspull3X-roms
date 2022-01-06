@@ -83,8 +83,29 @@ void MidiReset()
 
 void RleUnpack(int8_t* dst, int8_t* src, uint32_t size)
 {
-	REG_BLITSOURCE = (int32_t)src;
-	REG_BLITTARGET = (int32_t)dst;
-	REG_BLITLENGTH = (int32_t)size;
-	REG_BLITCONTROL= BLIT_UNRLE;
+	int8_t ints = REG_INTRMODE;
+	intoff();
+
+	uint8_t data = 0;
+	while (size)
+	{
+		data = *src++;
+		if ((data & 0xC0) == 0xC0)
+		{
+			int8_t len = data & 0x3F;
+			data = *src++;
+			size--;
+			if (data == 0xC0 && len == 0)
+				break;
+			for (; len > 0; len--)
+				*dst++ = data;
+		}
+		else
+		{
+			*dst++ = data;
+		}
+		size--;
+	}
+
+	REG_INTRMODE = ints;
 }
