@@ -8,7 +8,8 @@ const IDrawingLibrary drawingLibrary =
 	ResetPalette, DisplayPicture,
 	FadeToBlack, FadeFromBlack,
 	FadeToWhite, FadeFromWhite,
-	DrawString, DrawFormat, DrawChar
+	DrawString, DrawFormat, DrawChar,
+	DrawLine, FloodFill
 };
 
 /* CONSIDER: We have four different copies of this routine after preprocessing.
@@ -89,13 +90,13 @@ void DisplayPicture(TImageFile* picData)
 			SetBitmapMode16(mode);
 	}
 	int32_t colors = (picData->BitDepth == 8) ? 256 : 16;
+	DmaCopy((void*)PALETTE, (int8_t*)((int32_t)picData + picData->ColorOffset), colors * 1, DMA_SHORT);
 	int8_t* source = (int8_t*)picData;
 	source += picData->ImageOffset;
 	if (picData->Flags & 1)
 		RleUnpack((void*)MEM_VRAM, source, picData->Stride * picData->Height);
 	else
 		DmaCopy((void*)MEM_VRAM, source, picData->ByteSize, DMA_INT);
-	DmaCopy((void*)PALETTE, (int8_t*)((int32_t)picData + picData->ColorOffset), colors * 1, DMA_SHORT);
 }
 
 #define FADESPEED 1
@@ -184,3 +185,92 @@ void DrawChar(char ch, int32_t x, int32_t y, int32_t color)
 	interface->DrawChar(ch, x, y, color);
 }
 
+extern int abs(int);
+void DrawLine(int32_t x0, int32_t y0, int32_t x1, int32_t y1, int32_t color, uint8_t* dest)
+{
+	int8_t ints = REG_INTRMODE;
+	intoff();
+
+//	if (dest == NULL) dest = BITMAP;
+
+	int width = 640;
+	if (REG_SCREENMODE & SMODE_320) width /= 2;
+	if (REG_SCREENMODE & SMODE_BMP16) width /= 2;
+
+	int steep = abs(y1 - y0) > abs(x1 - x0);
+	if (steep)
+	{
+		int t = x0; // swap x0 and y0
+		x0 = y0;
+		y0 = t;
+		t = x1; // swap x1 and y1
+		x1 = y1;
+		y1 = t;
+	}
+	if (x0 > x1)
+	{
+		int t = x0; // swap x0 and x1
+		x0 = x1;
+		x1 = t;
+		t = y0; // swap y0 and y1
+		y0 = y1;
+		y1 = t;
+	}
+	int dx = x1 - x0;
+	int dy = abs(y1 - y0);
+	int error = dx / 2;
+	int ystep = (y0 < y1) ? 1 : -1;
+	int y = y0;
+
+	if ((REG_SCREENMODE & SMODE_BMP16))
+	{
+		for (int x = x0; x <= x1; x++)
+		{
+			int nx = steep ? y : x;
+			int ny = steep ? x : y;
+
+			char now = dest[(ny * width) + (nx / 2)];
+			if (nx % 2 == 0)
+				now = (now & 0xF0) | (color << 0);
+			else
+				now = (now & 0x0F) | (color << 4);
+			dest[(ny * width) + (nx / 2)] = now;
+
+			error = error - dy;
+			if (error < 0)
+			{
+				y += ystep;
+				error += dx;
+			}
+		}
+	}
+	else
+	{
+		for (int x = x0; x <= x1; x++)
+		{
+			int nx = steep ? y : x;
+			int ny = steep ? x : y;
+
+			dest[(ny * width) + nx] = color;
+
+			error = error - dy;
+			if (error < 0)
+			{
+				y += ystep;
+				error += dx;
+			}
+		}
+	}
+
+	REG_INTRMODE = ints;
+}
+
+void FloodFill(int32_t x, int32_t y, int32_t color)
+{
+	int8_t ints = REG_INTRMODE;
+	intoff();
+
+	//https://lodev.org/cgtutor/floodfill.html#Recursive_Scanline_Floodfill_Algorithm
+
+	REG_INTRMODE = ints;
+}
