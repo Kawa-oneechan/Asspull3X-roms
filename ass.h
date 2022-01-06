@@ -85,6 +85,7 @@ extern void free(void*);
 #define REG_OPLOUT		*(int16_t*)(MEM_IO + 0x0048)
 #define REG_MOUSE		*(uint16_t*)(MEM_IO + 0x0050)
 #define REG_CARET		*(uint16_t*)(MEM_IO + 0x0054)
+#define REG_TIMET		*(signed long long*)(MEM_IO + 0x0060)
 #define REG_PCMOFFSET	*(int32_t*)(MEM_IO + 0x0070)
 #define REG_PCMLENGTH	*(int32_t*)(MEM_IO + 0x0074)
 #define REG_DEBUGOUT	*(char*)(MEM_IO + 0x0080)
@@ -230,6 +231,19 @@ typedef struct TFileInfo {
 #define	AM_SYSTEM			0x04
 #define AM_DIRECTORY		0x10
 #define AM_ARCHIVE			0x20
+
+typedef signed long long time_t;
+typedef struct {
+	int tm_sec;   //0-59
+	int tm_min;   //0-59
+	int tm_hour;  //0-23
+	int tm_mday;  //1-31
+	int tm_mon;   //0-11
+	int tm_year;  //
+	int tm_wday;  //0-6
+	int tm_yday;  //0-356
+	int tm_isdst; //
+} tm;
 
 //Text
 typedef struct ITextLibrary

@@ -56,6 +56,7 @@ extern void TextTest();
 extern void BitmapTest();
 extern void KeyboardTest();
 extern void MouseTest();
+extern void ClockTest();
 
 extern const uint16_t pointerTiles[];
 #define OBJECTA_BUILD(t,e,p)	\
@@ -182,7 +183,7 @@ const void* const optionFuncs[] =
 	KeyboardTest,
 	MouseTest,
 	JoypadTest,
-	0,
+	ClockTest,
 	0,
 	0, //MIDITest
 	PCMTest,

@@ -264,4 +264,139 @@ void* calloc(int nelem, int elsize)
 	return ptr;
 }
 
-//#endif //BIOS
+
+//----
+//TIME
+//----
+
+#define DAYS_PER_YEAR 365 //number of days in a non-leap year
+#define SECSPERMIN 60L
+#define MINSPERHOUR 60L
+#define HOURSPERDAY 24L
+#define SECSPERHOUR (SECSPERMIN * MINSPERHOUR)
+#define SECSPERDAY (SECSPERHOUR * HOURSPERDAY)
+#define SECSPERYEAR (SECSPERDAY * DAYS_PER_YEAR)
+#define DAYSPERWEEK 7
+#define EPOCH_ADJUSTMENT_DAYS 719468L
+#define ADJUSTED_EPOCH_YEAR 0 //year to which the adjustment was made
+#define ADJUSTED_EPOCH_WDAY 3 //1st March of year 0 is Wednesday
+#define DAYS_PER_ERA 146097L //there are 97 leap years in 400-year periods. ((400 - 97) * 365 + 97 * 366)
+#define DAYS_PER_CENTURY 36524L //there are 24 leap years in 100-year periods. ((100 - 24) * 365 + 24 * 366)
+#define DAYS_PER_4_YEARS (3 * 365 + 366) //there is one leap year every 4 years
+#define DAYS_IN_JANUARY 31 //number of days in January
+#define DAYS_IN_FEBRUARY 28 //number of days in non-leap February
+#define YEARS_PER_ERA 400 //number of years per era
+#define YEAR_BASE 1900
+#define EPOCH_YEAR 1970
+#define EPOCH_WDAY 4
+#define isleap(y) ((((y) % 4) == 0 && ((y) % 100) != 0) || ((y) % 400) == 0)
+
+tm __gmtime_res;
+
+char* asctime(const tm *timeptr)
+{
+	static const char wday_name[][4] = {
+		"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"
+	};
+	static const char mon_name[][4] = {
+		"Jan", "Feb", "Mar", "Apr", "May", "Jun",
+		"Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+	};
+	static char result[32];
+	TEXT->Format(result, "%.3s %.3s%3d %.2d:%.2d:%.2d %d",
+		wday_name[timeptr->tm_wday],
+		mon_name[timeptr->tm_mon],
+		timeptr->tm_mday, timeptr->tm_hour,
+		timeptr->tm_min, timeptr->tm_sec,
+		YEAR_BASE + timeptr->tm_year);
+	return result;
+}
+
+tm* gmtime(const time_t* timer)
+{
+	tm* res = &__gmtime_res;
+	long days, rem;
+	const time_t lcltime = *timer;
+	int era, weekday, year;
+	unsigned erayear, yearday, month, day;
+	unsigned long eraday;
+
+	days = lcltime / SECSPERDAY + EPOCH_ADJUSTMENT_DAYS;
+	rem = lcltime % SECSPERDAY;
+	if (rem < 0)
+	{
+		rem += SECSPERDAY;
+		--days;
+	}
+
+	//compute hour, min, and sec
+	res->tm_hour = (int) (rem / SECSPERHOUR);
+	rem %= SECSPERHOUR;
+	res->tm_min = (int) (rem / SECSPERMIN);
+	res->tm_sec = (int) (rem % SECSPERMIN);
+
+	//compute day of week
+	if ((weekday = ((ADJUSTED_EPOCH_WDAY + days) % DAYSPERWEEK)) < 0)
+	weekday += DAYSPERWEEK;
+	res->tm_wday = weekday;
+
+	//compute year, month, day & day of year
+	era = (days >= 0 ? days : days - (DAYS_PER_ERA - 1)) / DAYS_PER_ERA;
+	eraday = days - era * DAYS_PER_ERA;	//[0, 146096]
+	erayear = (eraday - eraday / (DAYS_PER_4_YEARS - 1) + eraday / DAYS_PER_CENTURY -
+	eraday / (DAYS_PER_ERA - 1)) / 365;	//[0, 399]
+	yearday = eraday - (DAYS_PER_YEAR * erayear + erayear / 4 - erayear / 100);	//[0, 365]
+	month = (5 * yearday + 2) / 153;	//[0, 11]
+	day = yearday - (153 * month + 2) / 5 + 1;	//[1, 31]
+	month += month < 10 ? 2 : -10;
+	year = ADJUSTED_EPOCH_YEAR + erayear + era * YEARS_PER_ERA + (month <= 1);
+
+	res->tm_yday = yearday >= DAYS_PER_YEAR - DAYS_IN_JANUARY - DAYS_IN_FEBRUARY ?
+		yearday - (DAYS_PER_YEAR - DAYS_IN_JANUARY - DAYS_IN_FEBRUARY) :
+		yearday + DAYS_IN_JANUARY + DAYS_IN_FEBRUARY + isleap(erayear);
+	res->tm_year = year - YEAR_BASE;
+	res->tm_mon = month;
+	res->tm_mday = day;
+
+	res->tm_isdst = 0;
+
+	return (res);
+}
+
+time_t mktime(tm* timeptr)
+{
+    //......wow.
+    return timeptr->tm_sec
+        + timeptr->tm_min * SECSPERMIN
+        + timeptr->tm_hour * SECSPERHOUR
+        + timeptr->tm_yday * SECSPERDAY
+        + (timeptr->tm_year - 70) * SECSPERYEAR
+        + ((timeptr->tm_year - 69) / 4) * SECSPERDAY
+        - ((timeptr->tm_year - 1) / 100) * SECSPERDAY
+        + ((timeptr->tm_year + 299) / 400) * SECSPERDAY;
+}
+
+#undef SECSPERMIN
+#undef MINSPERHOUR
+#undef HOURSPERDAY
+#undef SECSPERHOUR
+#undef SECSPERDAY
+#undef DAYSPERWEEK
+#undef EPOCH_ADJUSTMENT_DAYS
+#undef ADJUSTED_EPOCH_YEAR
+#undef ADJUSTED_EPOCH_WDAY
+#undef DAYS_PER_ERA
+#undef DAYS_PER_CENTURY
+#undef DAYS_PER_4_YEARS
+#undef DAYS_PER_YEAR
+#undef DAYS_IN_JANUARY
+#undef DAYS_IN_FEBRUARY
+#undef YEARS_PER_ERA
+#undef YEAR_BASE
+#undef EPOCH_YEAR
+#undef EPOCH_WDAY
+#undef EPOCH_YEARS_SINCE_LEAP
+#undef EPOCH_YEARS_SINCE_CENTURY
+#undef EPOCH_YEARS_SINCE_LEAP_CENTURY
+#undef isleap
+
