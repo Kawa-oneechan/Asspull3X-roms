@@ -269,7 +269,7 @@ typedef struct IDrawingLibrary
 	void(*DrawFormat)(const char* format, int32_t x, int32_t y, int32_t color, ...);
 	void(*DrawChar)(char ch, int32_t x, int32_t y, int32_t color);
 	void(*DrawLine)(int32_t x0, int32_t y0, int32_t x1, int32_t y1, int32_t color, uint8_t* dest);
-	void(*FloodFill)(int32_t x, int32_t y, int32_t color);
+	void(*FloodFill)(int32_t x, int32_t y, int32_t color, uint8_t* dest);
 } IDrawingLibrary;
 
 typedef struct IMiscLibrary

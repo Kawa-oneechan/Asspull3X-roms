@@ -22,7 +22,7 @@ extern void DrawString(const char*, int32_t, int32_t, int32_t);
 extern void DrawFormat(const char*, int32_t, int32_t, int32_t, ...);
 extern void DrawChar(char, int32_t, int32_t, int32_t);
 extern void DrawLine(int32_t, int32_t, int32_t, int32_t, int32_t, uint8_t*);
-extern void FloodFill(int32_t, int32_t, int32_t);
+extern void FloodFill(int32_t, int32_t, int32_t, uint8_t*);
 extern void SetTextMode80x30(void);
 extern void SetTextMode80x60(void);
 extern void SetTextMode(int32_t);

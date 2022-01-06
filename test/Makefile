@@ -1,6 +1,6 @@
 export TARGET :=	test
 export SFILES :=	crt0.s pictures.s
-export CFILES :=	main.c text.c keyboard.c bitmaps.c mouse.c imfplay.c clock.c ../ass-rt.c
+export CFILES :=	main.c text.c graphics.c keyboard.c mouse.c joypad.c clock.c pcm.c opl.c imfplay.c ../ass-rt.c
 export AFILES :=	
 include ../ass_romrules
 

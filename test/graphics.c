@@ -13,7 +13,7 @@ const TImageFile * const bitmaps[] =
 	&bmp320x200x8, &bmp320x240x8, &bmp640x480x8,
 };
 
-void WaitForKey2()
+static void WaitForKey()
 {
 	DRAW->DrawString("Press any key to continue.", 0, 0, 15);
 	while (REG_KEYIN != 0) { vbl(); }
@@ -21,12 +21,24 @@ void WaitForKey2()
 	while (REG_KEYIN != 0) { vbl(); }
 }
 
-void BitmapTest()
+void GraphicsTest()
 {
 	interface->DrawCharFont -= 0x800;
 	for (int i = 0; i < 6; i++)
 	{
 		DRAW->DisplayPicture((TImageFile*)bitmaps[i]);
-		WaitForKey2();
+		WaitForKey();
 	}
+	MISC->SetBitmapMode256(SMODE_320 | SMODE_240);
+	MISC->DmaClear(BITMAP, 0, 320*240, DMA_BYTE);
+	for (int i = 1; i < 16; i++)
+	{
+		DRAW->DrawLine(i * 8, 8, i * 8, 232, i, BITMAP);
+		DRAW->DrawLine(8, i * 8, 310, i * 10, i, BITMAP);
+	}
+	for (int i = 0; i < 14; i++)
+	{
+		DRAW->FloodFill(10, (i * 8) + 2, i, BITMAP);
+	}
+	WaitForKey();
 }

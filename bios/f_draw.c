@@ -265,7 +265,7 @@ void DrawLine(int32_t x0, int32_t y0, int32_t x1, int32_t y1, int32_t color, uin
 	REG_INTRMODE = ints;
 }
 
-void FloodFill(int32_t x, int32_t y, int32_t color)
+void FloodFill(int32_t x, int32_t y, int32_t color, uint8_t* dest)
 {
 	int8_t ints = REG_INTRMODE;
 	intoff();
