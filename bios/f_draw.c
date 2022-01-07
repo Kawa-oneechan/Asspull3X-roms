@@ -187,32 +187,32 @@ void DrawChar(char ch, int32_t x, int32_t y, int32_t color)
 
 extern int abs(int);
 
-static int32_t _getPixel8(int32_t x, int32_t y, int32_t width, uint8_t* dest)
+static int32_t _getPixel8(int32_t x, int32_t y, int32_t stride, uint8_t* dest)
 {
-	return dest[(y * width) + x];
+	return dest[(y * stride) + x];
 }
 
-static int32_t _getPixel4(int32_t x, int32_t y, int32_t width, uint8_t* dest)
+static int32_t _getPixel4(int32_t x, int32_t y, int32_t stride, uint8_t* dest)
 {
-	char now = dest[(y * width) + (x / 2)];
+	char now = dest[(y * stride) + (x / 2)];
 	if (x % 2 == 0)
-		return (now & 0xF0) >> 4;
-	return (now & 0x0F);
+		return (now & 0x0F);
+	return (now & 0xF0) >> 4;
 }
 
-static void _setPixel8(int32_t x, int32_t y, int32_t width, int32_t color, uint8_t* dest)
+static void _setPixel8(int32_t x, int32_t y, int32_t stride, int32_t color, uint8_t* dest)
 {
-	dest[(y * width) + x] = color;
+	dest[(y * stride) + x] = color;
 }
 
-static void _setPixel4(int32_t x, int32_t y, int32_t width, int32_t color, uint8_t* dest)
+static void _setPixel4(int32_t x, int32_t y, int32_t stride, int32_t color, uint8_t* dest)
 {
-	char now = dest[(y * width) + (x / 2)];
+	char now = dest[(y * stride) + (x / 2)];
 	if (x % 2 == 0)
 		now = (now & 0xF0) | (color << 0);
 	else
 		now = (now & 0x0F) | (color << 4);
-	dest[(y * width) + (x / 2)] = now;
+	dest[(y * stride) + (x / 2)] = now;
 }
 
 void DrawLine(int32_t x0, int32_t y0, int32_t x1, int32_t y1, int32_t color, uint8_t* dest)
@@ -222,13 +222,29 @@ void DrawLine(int32_t x0, int32_t y0, int32_t x1, int32_t y1, int32_t color, uin
 
 //	if (dest == NULL) dest = BITMAP;
 
-	int width = 640;
-	if (REG_SCREENMODE & SMODE_320) width /= 2;
-	if (REG_SCREENMODE & SMODE_BMP16) width /= 2;
+	int stride = 640;
+	if (REG_SCREENMODE & SMODE_320) stride /= 2;
+	if (REG_SCREENMODE & SMODE_BMP16) stride /= 2;
 
 	void(*setPixel)(int32_t,int32_t,int32_t,int32_t,uint8_t*) = _setPixel8;
 	if (REG_SCREENMODE & SMODE_BMP16)
 		setPixel = _setPixel4;
+
+	//Short out axis-aligned lines
+	if (x0 == x1)
+	{
+		for (int y = y0; y <= y1; y++)
+			setPixel(x0, y, stride, color, dest);
+		REG_INTRMODE = ints;
+		return;
+	}
+	if (y0 == y1)
+	{
+		for (int x = x0; x <= x1; x++)
+			setPixel(x, y0, stride, color, dest);
+		REG_INTRMODE = ints;
+		return;
+	}
 
 	int steep = abs(y1 - y0) > abs(x1 - x0);
 	if (steep)
@@ -260,7 +276,7 @@ void DrawLine(int32_t x0, int32_t y0, int32_t x1, int32_t y1, int32_t color, uin
 		int nx = steep ? y : x;
 		int ny = steep ? x : y;
 
-		setPixel(nx, ny, width, color, dest);
+		setPixel(nx, ny, stride, color, dest);
 
 		error = error - dy;
 		if (error < 0)
@@ -314,9 +330,10 @@ static inline int16_t _ffPeek()
 
 static void _floodFill(int32_t x, int32_t y, int32_t oldColor, int32_t newColor, uint8_t* dest)
 {
-	int width = 640;
-	if (REG_SCREENMODE & SMODE_320) width = 320;
-	if (REG_SCREENMODE & SMODE_BMP16) width /= 2;
+	int stride = 640;
+	if (REG_SCREENMODE & SMODE_320) stride = 320;
+	int width = stride;
+	if (REG_SCREENMODE & SMODE_BMP16) stride /= 2;
 
 	int height = 480;
 	if (REG_SCREENMODE & SMODE_200) height = 400;
@@ -331,12 +348,12 @@ static void _floodFill(int32_t x, int32_t y, int32_t oldColor, int32_t newColor,
 	}
 
 	if (oldColor == -1)
-		oldColor = getPixel(x, y, width, dest);
+		oldColor = getPixel(x, y, stride, dest);
 
 	//https://lodev.org/cgtutor/floodfill.html
 
 	if (oldColor == newColor) return;
-//	if (getPixel(x, y, width, dest) != oldColor) return;
+	if (getPixel(x, y, stride, dest) != oldColor) return;
 
 	_ffStack = malloc(_FFSTACKMAX * 2);
 	_ffSP = -1;
@@ -348,27 +365,27 @@ static void _floodFill(int32_t x, int32_t y, int32_t oldColor, int32_t newColor,
 		y = _ffPop();
 		x = _ffPop();
 		int x1 = x;
-		while (x1 >= 0 && getPixel(x1, y, width, dest) == oldColor) x1--;
+		while (x1 >= 0 && getPixel(x1, y, stride, dest) == oldColor) x1--;
 		x1++;
 		spanAbove = spanBelow = 0;
-		while (x1 < width && getPixel(x1, y, width, dest) == oldColor)
+		while (x1 < width && getPixel(x1, y, stride, dest) == oldColor)
 		{
-			setPixel(x1, y, width, newColor, dest);
-			if (!spanAbove && y > 0 && getPixel(x1, y - 1, width, dest) == oldColor)
+			setPixel(x1, y, stride, newColor, dest);
+			if (!spanAbove && y > 0 && getPixel(x1, y - 1, stride, dest) == oldColor)
 			{
 				_ffPush(x1); _ffPush(y - 1);
 				spanAbove = 1;
 			}
-			else if (spanAbove && y > 0 && getPixel(x1, y - 1, width, dest) != oldColor)
+			else if (spanAbove && y > 0 && getPixel(x1, y - 1, stride, dest) != oldColor)
 			{
 				spanAbove = 0;
 			}
-			if (!spanBelow && y < height - 1 && getPixel(x1, y + 1, width, dest) == oldColor)
+			if (!spanBelow && y < height - 1 && getPixel(x1, y + 1, stride, dest) == oldColor)
 			{
 				_ffPush(x1); _ffPush(y + 1);
 				spanBelow = 1;
 			}
-			else if (spanBelow && y < height - 1 && getPixel(x1, y + 1, width, dest) != oldColor)
+			else if (spanBelow && y < height - 1 && getPixel(x1, y + 1, stride, dest) != oldColor)
 			{
 				spanBelow = 0;
 			}

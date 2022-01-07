@@ -29,17 +29,18 @@ void GraphicsTest()
 		DRAW->DisplayPicture((TImageFile*)bitmaps[i]);
 		WaitForKey();
 	}
-	MISC->SetBitmapMode256(SMODE_320 | SMODE_240);
+	MISC->SetBitmapMode16(SMODE_320 | SMODE_240);
 	MISC->DmaClear(BITMAP, 0, 320*240, DMA_BYTE);
-	for (int i = 1; i < 16; i++)
+	DRAW->FloodFill(4, 4, 1, BITMAP);
+	for (int i = 1; i < 18; i++)
 	{
-		DRAW->DrawLine(i * 8, 8, i * 8, 232, i, BITMAP);
-		DRAW->DrawLine(8, i * 8, 310, i * 10, i, BITMAP);
+		DRAW->DrawLine(i * 8, 8, i * 8, 232, 0, BITMAP);
+		DRAW->DrawLine(8, i * 8, 310, i * 10, 0, BITMAP);
 	}
-	for (int i = 1; i < 14; i++)
+	for (int i = 1; i < 17; i++)
 	{
-		DRAW->FloodFill(12, (i * 8) + 2, i, BITMAP);
+		DRAW->FloodFill(12, (i * 8) + 2, i - 1, BITMAP);
 	}
-//	DRAW->FloodFill(1, 1, 1, BITMAP);
+	DRAW->FloodFill(4, 4, 8, BITMAP);
 	WaitForKey();
 }
