@@ -186,6 +186,35 @@ void DrawChar(char ch, int32_t x, int32_t y, int32_t color)
 }
 
 extern int abs(int);
+
+static int32_t _getPixel8(int32_t x, int32_t y, int32_t width, uint8_t* dest)
+{
+	return dest[(y * width) + x];
+}
+
+static int32_t _getPixel4(int32_t x, int32_t y, int32_t width, uint8_t* dest)
+{
+	char now = dest[(y * width) + (x / 2)];
+	if (x % 2 == 0)
+		return (now & 0xF0) >> 4;
+	return (now & 0x0F);
+}
+
+static void _setPixel8(int32_t x, int32_t y, int32_t width, int32_t color, uint8_t* dest)
+{
+	dest[(y * width) + x] = color;
+}
+
+static void _setPixel4(int32_t x, int32_t y, int32_t width, int32_t color, uint8_t* dest)
+{
+	char now = dest[(y * width) + (x / 2)];
+	if (x % 2 == 0)
+		now = (now & 0xF0) | (color << 0);
+	else
+		now = (now & 0x0F) | (color << 4);
+	dest[(y * width) + (x / 2)] = now;
+}
+
 void DrawLine(int32_t x0, int32_t y0, int32_t x1, int32_t y1, int32_t color, uint8_t* dest)
 {
 	int8_t ints = REG_INTRMODE;
@@ -196,6 +225,10 @@ void DrawLine(int32_t x0, int32_t y0, int32_t x1, int32_t y1, int32_t color, uin
 	int width = 640;
 	if (REG_SCREENMODE & SMODE_320) width /= 2;
 	if (REG_SCREENMODE & SMODE_BMP16) width /= 2;
+
+	void(*setPixel)(int32_t,int32_t,int32_t,int32_t,uint8_t*) = _setPixel8;
+	if (REG_SCREENMODE & SMODE_BMP16)
+		setPixel = _setPixel4;
 
 	int steep = abs(y1 - y0) > abs(x1 - x0);
 	if (steep)
@@ -222,55 +255,136 @@ void DrawLine(int32_t x0, int32_t y0, int32_t x1, int32_t y1, int32_t color, uin
 	int ystep = (y0 < y1) ? 1 : -1;
 	int y = y0;
 
-	if ((REG_SCREENMODE & SMODE_BMP16))
+	for (int x = x0; x <= x1; x++)
 	{
-		for (int x = x0; x <= x1; x++)
+		int nx = steep ? y : x;
+		int ny = steep ? x : y;
+
+		setPixel(nx, ny, width, color, dest);
+
+		error = error - dy;
+		if (error < 0)
 		{
-			int nx = steep ? y : x;
-			int ny = steep ? x : y;
-
-			char now = dest[(ny * width) + (nx / 2)];
-			if (nx % 2 == 0)
-				now = (now & 0xF0) | (color << 0);
-			else
-				now = (now & 0x0F) | (color << 4);
-			dest[(ny * width) + (nx / 2)] = now;
-
-			error = error - dy;
-			if (error < 0)
-			{
-				y += ystep;
-				error += dx;
-			}
-		}
-	}
-	else
-	{
-		for (int x = x0; x <= x1; x++)
-		{
-			int nx = steep ? y : x;
-			int ny = steep ? x : y;
-
-			dest[(ny * width) + nx] = color;
-
-			error = error - dy;
-			if (error < 0)
-			{
-				y += ystep;
-				error += dx;
-			}
+			y += ystep;
+			error += dx;
 		}
 	}
 
 	REG_INTRMODE = ints;
 }
 
-void FloodFill(int32_t x, int32_t y, int32_t color, uint8_t* dest)
+#define _FFSTACKMAX 2048
+static uint16_t* _ffStack;
+static int32_t _ffSP = -1;
+
+static int _ffEmpty()
+{
+	return (_ffSP == -1);
+}
+
+static int _ffFull()
+{
+	return (_ffSP == _FFSTACKMAX);
+}
+
+static inline void _ffPush(int16_t i)
+{
+	if (!_ffFull())
+	{
+		_ffSP++;
+		_ffStack[_ffSP] = i;
+	}
+}
+
+static inline int16_t _ffPop()
+{
+	if (!_ffEmpty())
+	{
+		int16_t data = _ffStack[_ffSP];
+		_ffSP--;
+		return data;
+	}
+	return 0;
+}
+
+static inline int16_t _ffPeek()
+{
+	return _ffStack[_ffSP];
+}
+
+static void _floodFill(int32_t x, int32_t y, int32_t oldColor, int32_t newColor, uint8_t* dest)
+{
+	int width = 640;
+	if (REG_SCREENMODE & SMODE_320) width = 320;
+	if (REG_SCREENMODE & SMODE_BMP16) width /= 2;
+
+	int height = 480;
+	if (REG_SCREENMODE & SMODE_200) height = 400;
+	if (REG_SCREENMODE & SMODE_240) height /= 2;
+
+	int32_t(*getPixel)(int32_t,int32_t,int32_t,uint8_t*) = _getPixel8;
+	void(*setPixel)(int32_t,int32_t,int32_t,int32_t,uint8_t*) = _setPixel8;
+	if (REG_SCREENMODE & SMODE_BMP16)
+	{
+		getPixel = _getPixel4;
+		setPixel = _setPixel4;
+	}
+
+	if (oldColor == -1)
+		oldColor = getPixel(x, y, width, dest);
+
+	//https://lodev.org/cgtutor/floodfill.html
+
+	if (oldColor == newColor) return;
+//	if (getPixel(x, y, width, dest) != oldColor) return;
+
+	_ffStack = malloc(_FFSTACKMAX * 2);
+	_ffSP = -1;
+	_ffPush(x); _ffPush(y);
+
+	int spanAbove, spanBelow;
+	while (!_ffEmpty())
+	{
+		y = _ffPop();
+		x = _ffPop();
+		int x1 = x;
+		while (x1 >= 0 && getPixel(x1, y, width, dest) == oldColor) x1--;
+		x1++;
+		spanAbove = spanBelow = 0;
+		while (x1 < width && getPixel(x1, y, width, dest) == oldColor)
+		{
+			setPixel(x1, y, width, newColor, dest);
+			if (!spanAbove && y > 0 && getPixel(x1, y - 1, width, dest) == oldColor)
+			{
+				_ffPush(x1); _ffPush(y - 1);
+				spanAbove = 1;
+			}
+			else if (spanAbove && y > 0 && getPixel(x1, y - 1, width, dest) != oldColor)
+			{
+				spanAbove = 0;
+			}
+			if (!spanBelow && y < height - 1 && getPixel(x1, y + 1, width, dest) == oldColor)
+			{
+				_ffPush(x1); _ffPush(y + 1);
+				spanBelow = 1;
+			}
+			else if (spanBelow && y < height - 1 && getPixel(x1, y + 1, width, dest) != oldColor)
+			{
+				spanBelow = 0;
+			}
+			x1++;
+		}
+	}
+
+	free(_ffStack);
+}
+
+void FloodFill(int32_t x, int32_t y, int32_t newColor, uint8_t* dest)
 {
 	int8_t ints = REG_INTRMODE;
 	intoff();
 
-	//https://lodev.org/cgtutor/floodfill.html#Recursive_Scanline_Floodfill_Algorithm
+	_floodFill(x, y, -1, newColor, dest);
 
 	REG_INTRMODE = ints;
 }

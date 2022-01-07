@@ -36,9 +36,10 @@ void GraphicsTest()
 		DRAW->DrawLine(i * 8, 8, i * 8, 232, i, BITMAP);
 		DRAW->DrawLine(8, i * 8, 310, i * 10, i, BITMAP);
 	}
-	for (int i = 0; i < 14; i++)
+	for (int i = 1; i < 14; i++)
 	{
-		DRAW->FloodFill(10, (i * 8) + 2, i, BITMAP);
+		DRAW->FloodFill(12, (i * 8) + 2, i, BITMAP);
 	}
+//	DRAW->FloodFill(1, 1, 1, BITMAP);
 	WaitForKey();
 }
