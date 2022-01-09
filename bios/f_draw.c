@@ -215,12 +215,12 @@ static void _setPixel4(int32_t x, int32_t y, int32_t stride, int32_t color, uint
 	dest[(y * stride) + (x / 2)] = now;
 }
 
-void DrawLine(int32_t x0, int32_t y0, int32_t x1, int32_t y1, int32_t color, uint8_t* dest)
+#define SWAP(A, B) { int32_t tmp = A; A = B; B = tmp; }
+
+void DrawLine(int32_t x1, int32_t y1, int32_t x2, int32_t y2, int32_t color, uint8_t* dest)
 {
 	int8_t ints = REG_INTRMODE;
 	intoff();
-
-//	if (dest == NULL) dest = BITMAP;
 
 	int stride = 640;
 	if (REG_SCREENMODE & SMODE_320) stride /= 2;
@@ -230,59 +230,62 @@ void DrawLine(int32_t x0, int32_t y0, int32_t x1, int32_t y1, int32_t color, uin
 	if (REG_SCREENMODE & SMODE_BMP16)
 		setPixel = _setPixel4;
 
-	//Short out axis-aligned lines
-	if (x0 == x1)
+	if (y1 == y2)
 	{
-		for (int y = y0; y <= y1; y++)
-			setPixel(x0, y, stride, color, dest);
+		if (x2 < x1)
+			SWAP(x2, x1);
+		for (int i = x1; i <= x2; i++)
+			setPixel(i, y1, stride, color, dest);
 		REG_INTRMODE = ints;
 		return;
 	}
-	if (y0 == y1)
+	if (x1 == x2)
 	{
-		for (int x = x0; x <= x1; x++)
-			setPixel(x, y0, stride, color, dest);
+		if (y1 > y2)
+			SWAP(y1, y2);
+		for (int i = y1; i <= y2; i++)
+			setPixel(x1, i, stride, color, dest);
 		REG_INTRMODE = ints;
 		return;
 	}
 
-	int steep = abs(y1 - y0) > abs(x1 - x0);
-	if (steep)
+	int32_t dy = y2 - y1;
+	int32_t dx = x2 - x1;
+	int32_t stepy = dy < 0 ? -1 : 1;
+	int32_t stepx = dx < 0 ? -1 : 1;
+	dy = abs(dy) << 1;
+	dx = abs(dx) << 1;
+
+	setPixel(x1, y1, stride, color, dest);
+	setPixel(x2, y2, stride, color, dest);
+
+	if (dx > dy)
 	{
-		int t = x0; // swap x0 and y0
-		x0 = y0;
-		y0 = t;
-		t = x1; // swap x1 and y1
-		x1 = y1;
-		y1 = t;
+		int fraction = dy - (dx >> 1);
+		while (x1 != x2) {
+			if (fraction >= 0)
+			{
+				y1 += stepy;
+				fraction -= dx;
+			}
+			x1 += stepx;
+			fraction += dy;
+			setPixel(x1, y1, stride, color, dest);
+		}
 	}
-	if (x0 > x1)
+	else
 	{
-		int t = x0; // swap x0 and x1
-		x0 = x1;
-		x1 = t;
-		t = y0; // swap y0 and y1
-		y0 = y1;
-		y1 = t;
-	}
-	int dx = x1 - x0;
-	int dy = abs(y1 - y0);
-	int error = dx / 2;
-	int ystep = (y0 < y1) ? 1 : -1;
-	int y = y0;
-
-	for (int x = x0; x <= x1; x++)
-	{
-		int nx = steep ? y : x;
-		int ny = steep ? x : y;
-
-		setPixel(nx, ny, stride, color, dest);
-
-		error = error - dy;
-		if (error < 0)
+		int fraction = dx - (dy >> 1);
+		while (y1 != y2)
 		{
-			y += ystep;
-			error += dx;
+			if (fraction >= 0)
+			{
+				x1 += stepx;
+				fraction -= dy;
+			}
+			y1 += stepy;
+			fraction += dx;
+			setPixel(x1, y1, stride, color, dest);
 		}
 	}
 
@@ -328,8 +331,11 @@ static inline int16_t _ffPeek()
 	return _ffStack[_ffSP];
 }
 
-static void _floodFill(int32_t x, int32_t y, int32_t oldColor, int32_t newColor, uint8_t* dest)
+void FloodFill(int32_t x, int32_t y, int32_t newColor, uint8_t* dest)
 {
+	int8_t ints = REG_INTRMODE;
+	intoff();
+
 	int stride = 640;
 	if (REG_SCREENMODE & SMODE_320) stride = 320;
 	int width = stride;
@@ -347,13 +353,20 @@ static void _floodFill(int32_t x, int32_t y, int32_t oldColor, int32_t newColor,
 		setPixel = _setPixel4;
 	}
 
-	if (oldColor == -1)
-		oldColor = getPixel(x, y, stride, dest);
+	int32_t oldColor = getPixel(x, y, stride, dest);
 
 	//https://lodev.org/cgtutor/floodfill.html
 
-	if (oldColor == newColor) return;
-	if (getPixel(x, y, stride, dest) != oldColor) return;
+	if (oldColor == newColor)
+	{
+		REG_INTRMODE = ints;
+		return;
+	}
+	if (getPixel(x, y, stride, dest) != oldColor)
+	{
+		REG_INTRMODE = ints;
+		return;
+	}
 
 	_ffStack = malloc(_FFSTACKMAX * 2);
 	_ffSP = -1;
@@ -394,14 +407,6 @@ static void _floodFill(int32_t x, int32_t y, int32_t oldColor, int32_t newColor,
 	}
 
 	free(_ffStack);
-}
-
-void FloodFill(int32_t x, int32_t y, int32_t newColor, uint8_t* dest)
-{
-	int8_t ints = REG_INTRMODE;
-	intoff();
-
-	_floodFill(x, y, -1, newColor, dest);
 
 	REG_INTRMODE = ints;
 }
