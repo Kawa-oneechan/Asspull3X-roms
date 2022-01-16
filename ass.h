@@ -86,8 +86,10 @@ extern void free(void*);
 #define REG_MOUSE		*(uint16_t*)(MEM_IO + 0x0050)
 #define REG_CARET		*(uint16_t*)(MEM_IO + 0x0054)
 #define REG_TIMET		*(signed long long*)(MEM_IO + 0x0060)
-#define REG_PCMOFFSET	*(int32_t*)(MEM_IO + 0x0070)
-#define REG_PCMLENGTH	*(int32_t*)(MEM_IO + 0x0074)
+#define REG_PCM1OFFSET	*(int32_t*)(MEM_IO + 0x0070)
+#define REG_PCM2OFFSET	*(int32_t*)(MEM_IO + 0x0074)
+#define REG_PCM1LENGTH	*(int32_t*)(MEM_IO + 0x0078)
+#define REG_PCM2LENGTH	*(int32_t*)(MEM_IO + 0x007C)
 #define REG_DEBUGOUT	*(char*)(MEM_IO + 0x0080)
 #define REG_DMASOURCE	*(volatile uint32_t*)(MEM_IO + 0x0100)
 #define REG_DMATARGET	*(volatile uint32_t*)(MEM_IO + 0x0104)
@@ -102,8 +104,12 @@ extern void free(void*);
 #define REG_BLITLENGTH	*(uint32_t*)(MEM_IO + 0x020C)
 #define REG_BLITKEY		*(uint32_t*)(MEM_IO + 0x0210)
 
-#define JOYPADS		((volatile uint8_t*)(MEM_IO + 0x0042))
-#define REG_JOYPAD	REG_JOYPAD1
+#define JOYPADS			((volatile uint8_t*)(MEM_IO + 0x0042))
+#define PCMOFFSET		((int32_t*)(MEM_IO + 0x0070))
+#define PCMLENGTH		((int32_t*)(MEM_IO + 0x0078))
+#define REG_JOYPAD		REG_JOYPAD1
+#define REG_PCMOFFSET	REG_PCM1OFFSET
+#define REG_PCMLENGTH	REG_PCM1LENGTH
 
 #define DMA_BYTE 0
 #define DMA_SHORT 1
