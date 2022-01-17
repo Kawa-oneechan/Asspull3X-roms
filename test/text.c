@@ -16,7 +16,50 @@ const char customBits[96] =
 void TextTest()
 {
 	TEXT->SetTextColor(0, 7);
+
+	MISC->SetTextMode(SMODE_240 | SMODE_BOLD);
 	TEXT->ClearScreen();
+	for (int row = 0; row < 30; row++)
+		((int16_t*)MEM_VRAM)[row  * 80] = (('0' + (row % 10)) << 8) | 0x8F;
+	for (int col = 1; col < 80; col++)
+		((int16_t*)MEM_VRAM)[col] = (('0' + (col % 10)) << 8) | 0x8F;
+	TEXT->SetCursorPosition(4, 2);
+	TEXT->Write("Size test - 80x30");
+	WaitForKey();
+
+	MISC->SetTextMode(SMODE_320 | SMODE_BOLD);
+	TEXT->ClearScreen();
+	for (int row = 0; row < 60; row++)
+		((int16_t*)MEM_VRAM)[row  * 40] = (('0' + (row % 10)) << 8) | 0x8F;
+	for (int col = 1; col < 40; col++)
+		((int16_t*)MEM_VRAM)[col] = (('0' + (col % 10)) << 8) | 0x8F;
+	TEXT->SetCursorPosition(4, 2);
+	TEXT->Write("Size test - 40x60");
+	WaitForKey();
+
+	MISC->SetTextMode(SMODE_320 | SMODE_240 | SMODE_BOLD);
+	TEXT->ClearScreen();
+	for (int row = 0; row < 30; row++)
+		((int16_t*)MEM_VRAM)[row  * 40] = (('0' + (row % 10)) << 8) | 0x8F;
+	for (int col = 1; col < 40; col++)
+		((int16_t*)MEM_VRAM)[col] = (('0' + (col % 10)) << 8) | 0x8F;
+	TEXT->SetCursorPosition(4, 2);
+	TEXT->Write("Size test - 40x30");
+	WaitForKey();
+
+	MISC->SetTextMode(SMODE_BOLD);
+	TEXT->ClearScreen();
+	for (int row = 0; row < 60; row++)
+		((int16_t*)MEM_VRAM)[row  * 80] = (('0' + (row % 10)) << 8) | 0x8F;
+	for (int col = 1; col < 80; col++)
+		((int16_t*)MEM_VRAM)[col] = (('0' + (col % 10)) << 8) | 0x8F;
+	TEXT->SetCursorPosition(4, 2);
+	TEXT->Write("Size test - 80x60");
+	WaitForKey();
+
+	MISC->SetTextMode(SMODE_240 | SMODE_BOLD);
+	TEXT->ClearScreen();
+
 	TEXT->Write("Font test - Bold");
 	for (int row = 0; row < 8; row++)
 	{
