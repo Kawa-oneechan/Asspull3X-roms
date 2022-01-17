@@ -51,6 +51,17 @@ int32_t main(void)
 	int32_t haveDisk = 0, hadDisk = 0;
 	int32_t showSplash = 0;
 
+	unsigned char* devices = (unsigned char*)0x02000000;
+	for (char i = 0; i < 16; i++)
+	{
+		if (*(short*)devices == 0x4C50)
+		{
+			interface->LinePrinter = devices + 2;
+			break;
+		}
+		devices += 0x8000;
+	}
+
 	sprintf(biosVer, "BIOS v%d.%d", (interface->biosVersion >> 8) & 0xFF, (interface->biosVersion >> 0) & 0xFF);
 	dpf(biosVer);
 

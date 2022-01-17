@@ -119,7 +119,7 @@ extern void free(void*);
 #define REG_PCMVOLUMER	REG_PCM1VOLUMER
 
 //Deprecated
-#define REG_DEBUGOUT	*(char*)(MEM_IO + 0x0080)
+#define REG_DEBUGOUT	*interface->LinePrinter
 
 #define DMA_BYTE 0
 #define DMA_SHORT 1
@@ -346,6 +346,7 @@ typedef struct IBios
 	IDiskLibrary* diskLibrary;
 	char* DrawCharFont;
 	uint16_t DrawCharHeight;
+	uint8_t* LinePrinter;
 } IBios;
 
 #define TEXT interface->textLibrary

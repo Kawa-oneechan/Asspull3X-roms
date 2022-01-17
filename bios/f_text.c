@@ -24,6 +24,7 @@ __attribute((format (printf, 1, 2)))
 void dpf(const char* format, ...)
 {
 	char buffer[1024] = "[DEBUG] ";
+	int ints = REG_INTRMODE;
 	intoff();
 	va_list args;
 	va_start(args, format);
@@ -31,9 +32,10 @@ void dpf(const char* format, ...)
 	char* b = buffer;
 	while(*b)
 		REG_DEBUGOUT = *b++;
+//	WriteFile(STD_PRINT, (void*)buffer, -1);
 	REG_DEBUGOUT = '\n';
 	va_end(args);
-	inton();
+	REG_INTRMODE = ints;
 }
 #endif
 
