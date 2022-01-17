@@ -382,8 +382,16 @@ extern void IMF_Play();
 void PlaySound(int id)
 {
 	int soundData = (int)sounds[id];
-	REG_PCMOFFSET = soundData + 4;
-	REG_PCMLENGTH = *(unsigned int*)soundData;
+	if (id == 1)
+	{
+		PCMOFFSET[1] = soundData + 4;
+		PCMLENGTH[1] = *(unsigned int*)soundData;
+	}
+	else
+	{
+		PCMOFFSET[0] = soundData + 4;
+		PCMLENGTH[0] = *(unsigned int*)soundData;
+	}
 }
 
 void WaitForKey()
@@ -436,6 +444,10 @@ void CheckForDisk()
 	if (ret != 0) return;
 	if (nfo.fname[0] == 0) return;
 
+	REG_HDMASOURCE[0] = (int32_t)hdma1;
+	REG_HDMATARGET[0] = (int32_t)PALETTE;
+	REG_HDMACONTROL[0] = DMA_ENABLE | HDMA_DOUBLE | (DMA_SHORT << 4) | (0 << 8) | (480 << 20);
+
 	MISC->SetBitmapMode16(SMODE_240);
 	MISC->DmaClear((void*)MEM_VRAM, 0, 640*240/4, DMA_INT);
 
@@ -455,6 +467,7 @@ void CheckForDisk()
 		else if (key == 0x31) //n
 		{
 			DRAW->FadeToWhite();
+			REG_HDMACONTROL[0] = 0;
 			return;
 		}
 	}
@@ -471,6 +484,7 @@ void CheckForDisk()
 		c++;
 	}
 	DRAW->FadeToWhite();
+	REG_HDMACONTROL[0] = 0;
 }
 
 int main(void)
