@@ -90,8 +90,10 @@ extern void free(void*);
 #define REG_PCM2OFFSET	*(int32_t*)(MEM_IO + 0x0074)
 #define REG_PCM1LENGTH	*(int32_t*)(MEM_IO + 0x0078)
 #define REG_PCM2LENGTH	*(int32_t*)(MEM_IO + 0x007C)
-#define REG_PCM1VOLUME	*(int8_t*)(MEM_IO + 0x0080)
-#define REG_PCM2VOLUME	*(int8_t*)(MEM_IO + 0x0080)
+#define REG_PCM1VOLUMEL	*(int8_t*)(MEM_IO + 0x0080)
+#define REG_PCM1VOLUMER	*(int8_t*)(MEM_IO + 0x0081)
+#define REG_PCM2VOLUMEL	*(int8_t*)(MEM_IO + 0x0080)
+#define REG_PCM2VOLUMER	*(int8_t*)(MEM_IO + 0x0081)
 #define REG_DMASOURCE	*(volatile uint32_t*)(MEM_IO + 0x0100)
 #define REG_DMATARGET	*(volatile uint32_t*)(MEM_IO + 0x0104)
 #define REG_DMALENGTH	*(volatile uint32_t*)(MEM_IO + 0x0108)
@@ -113,7 +115,8 @@ extern void free(void*);
 #define REG_JOYPAD		REG_JOYPAD1
 #define REG_PCMOFFSET	REG_PCM1OFFSET
 #define REG_PCMLENGTH	REG_PCM1LENGTH
-#define REG_PCMVOLUME	REG_PCM1VOLUME
+#define REG_PCMVOLUMEL	REG_PCM1VOLUMEL
+#define REG_PCMVOLUMER	REG_PCM1VOLUMER
 
 //Deprecated
 #define REG_DEBUGOUT	*(char*)(MEM_IO + 0x0080)
