@@ -79,7 +79,7 @@ tryOpenDir:
 		fileCt[side]++;
 	}
 
-	for (;;)
+	while (fileCt[side] < MAXFILES)
 	{
 		ret = DISK->ReadDir(&dir, &info);
 		if (ret != 0 || info.fname[0] == 0) break;
@@ -92,7 +92,7 @@ tryOpenDir:
 	}
 
 	ret = DISK->FindFirst(&dir, &info, path, pattern);
-	while(ret == 0 && info.fname[0])
+	while(ret == 0 && info.fname[0] && fileCt[side] < MAXFILES)
 	{
 		if (!(info.fattrib & AM_HIDDEN))
 		{
