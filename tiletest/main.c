@@ -49,7 +49,7 @@ void DrawStripe(int source, int target)
 	(((hp) & 0x7FF) << 0)						\
 )
 
-typedef struct TObjectA
+typedef struct
 {
 	uint16_t palette:4;
 	uint16_t enabled:1;
@@ -57,7 +57,7 @@ typedef struct TObjectA
 	uint16_t tile:9;
 } TObjectA;
 #define objectsA ((TObjectA*)OBJECTS_A)
-typedef struct TObjectB
+typedef struct
 {
 	uint32_t priority:3;
 	uint32_t large:1;

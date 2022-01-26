@@ -26,7 +26,7 @@ extern int bitClear(int* set, int bit);
 
 #define MAXENTITIES 128
 
-typedef struct tEntity
+typedef struct
 {
 	short type;
 	short group;

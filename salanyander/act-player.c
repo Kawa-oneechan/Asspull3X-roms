@@ -4,7 +4,7 @@
 extern const unsigned short* const playerTiles[];
 extern const unsigned short* const playerPal[];
 
-typedef struct tPlayer
+typedef struct
 {
 	short type;
 	short group;

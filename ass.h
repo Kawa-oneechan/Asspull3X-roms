@@ -154,7 +154,7 @@ extern void free(void*);
 #define BLIT_SOURCESTRIDE(x)	((x) << 8)
 #define BLIT_TARGETSTRIDE(x)	((x) << 20)
 
-typedef struct TImageFile
+typedef struct
 {
 	int32_t Identifier;		// Should always be "AIMG".
 	uint8_t BitDepth;		// Should be equal to 4 or 8, for 16 or 256 colors respectively.
@@ -198,7 +198,7 @@ typedef struct {
 	int32_t	objsize;		// Object size (valid when sclust != 0)
 } _FDID;
 
-typedef struct TFileHandle {
+typedef struct {
 	_FDID	obj;			// Object identifier (must be the 1st member to detect invalid object pointer)
 	int8_t	flag;			// File status flags
 	int8_t	err;			// Abort flag (error code)
@@ -210,7 +210,7 @@ typedef struct TFileHandle {
 	int8_t	buf[512];		// File private data read/write window
 } TFileHandle;
 
-typedef struct TDirHandle {
+typedef struct {
 	_FDID	obj;			// Object identifier
 	int32_t	dptr;			// Current read/write offset
 	int32_t	clust;			// Current cluster
@@ -220,7 +220,7 @@ typedef struct TDirHandle {
 	const int8_t* pat;		// Pointer to the name matching pattern
 } TDirHandle;
 
-typedef struct TFileInfo {
+typedef struct {
 	int32_t	fsize;			// File size
 	int16_t	fdate;			// Modified date
 	int16_t	ftime;			// Modified time
@@ -262,7 +262,7 @@ typedef struct {
 } tm;
 
 //Text
-typedef struct ITextLibrary
+typedef struct
 {
 	int(*Write)(const char* format, ...);
 	int(*Format)(char* buffer, const char* format, ...);
@@ -273,7 +273,7 @@ typedef struct ITextLibrary
 	void(*ClearScreen)(void);
 } ITextLibrary;
 
-typedef struct IDrawingLibrary
+typedef struct
 {
 	void(*ResetPalette)(void);
 	void(*DisplayPicture)(TImageFile* picData);
@@ -288,7 +288,7 @@ typedef struct IDrawingLibrary
 	void(*FloodFill)(int32_t x, int32_t y, int32_t color, uint8_t* dest);
 } IDrawingLibrary;
 
-typedef struct IMiscLibrary
+typedef struct
 {
 	void(*SetTextMode)(int32_t flags);
 	void(*SetBitmapMode16)(int32_t flags);
@@ -302,7 +302,7 @@ typedef struct IMiscLibrary
 	void(*RleUnpack)(int8_t* dst, int8_t* src, uint32_t size);
 } IMiscLibrary;
 
-typedef struct IDiskLibrary
+typedef struct
 {
 	int32_t(*OpenFile)(TFileHandle* handle, const char* path, char mode);
 	int32_t(*CloseFile)(TFileHandle* handle);
@@ -331,7 +331,7 @@ typedef struct IDiskLibrary
 	int32_t(*GetNumDrives)(void);
 } IDiskLibrary;
 
-typedef struct IBios
+typedef struct
 {
 	long AssBang;
 	int16_t biosVersion;

@@ -23,7 +23,7 @@ extern const TImageFile bmp320x240x4;
 	(((hp) & 0x7FF) << 0)						\
 )
 
-typedef struct TMouseState
+typedef struct
 {
 	char changed;
 	char buttons;

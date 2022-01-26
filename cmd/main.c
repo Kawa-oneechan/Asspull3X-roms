@@ -234,7 +234,7 @@ int32_t ChangeDirUp(int argc __attribute__((unused)), char **args __attribute__(
 	return ChangeDirectory(1, &newArgs);
 }
 
-typedef struct TCommand
+typedef struct
 {
 	const char* keyword;
 	int32_t(*handler)(int, char**);
