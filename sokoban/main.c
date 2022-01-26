@@ -2,8 +2,6 @@
 #include "../ass-midi.h"
 IBios* interface;
 
-#define REG_TIMET *(long long*)(MEM_IO + 0x0060)
-
 extern const TImageFile titlePic;
 extern const uint16_t tilesTiles[], tilesPal[];
 extern const uint16_t playerTiles[], playerPal[];
