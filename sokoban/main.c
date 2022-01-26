@@ -1,5 +1,4 @@
 #include "../ass.h"
-#include "../ass-midi.h"
 IBios* interface;
 
 extern const TImageFile titlePic;
@@ -487,7 +486,7 @@ void CheckForDisk()
 
 int main(void)
 {
-	MISC->SetTextMode(0);
+	REG_SCREENFADE = 31;
 
 	DRAW->DisplayPicture((TImageFile*)&titlePic);
 	DRAW->FadeFromBlack();
@@ -526,7 +525,6 @@ int main(void)
 	int in;
 	for(;;)
 	{
-
 		drawPlayer(lastDir);
 		for (int delay = 0; delay < 12; delay++)
 		{
