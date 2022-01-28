@@ -2,10 +2,11 @@
 IBios* interface;
 
 extern const uint16_t pointerTiles[];
-#define OBJECTA_BUILD(t,e,p)	\
+#define OBJECTA_BUILD(t,b,e,p)	\
 (								\
 	(((p) & 15) << 12) |		\
 	(((e) &  1) << 11) |		\
+	(((b) &  3) <<  9) |		\
 	(((t) & 0x1FF) << 0)		\
 )
 #define OBJECTB_BUILD(hp,vp,dw,dh,hf,vf,ds,pr)	\
@@ -26,7 +27,7 @@ void JoypadTest()
 	TEXT->SetTextColor(0, 7);
 	TEXT->ClearScreen();
 	MISC->DmaCopy(TILESET + 0x2000, (int8_t*)&pointerTiles, 0x2E0, DMA_INT);
-	OBJECTS_A[0] = OBJECTA_BUILD(256, 1, 0);
+	OBJECTS_A[0] = OBJECTA_BUILD(256, 0, 1, 0);
 	OBJECTS_B[0] = OBJECTB_BUILD(320, 160, 0, 0, 0, 0, 1, 0);
 	while (1)
 	{

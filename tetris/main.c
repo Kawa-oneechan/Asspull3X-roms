@@ -17,10 +17,11 @@ extern const unsigned short imfData1[];
 #define KEY_RIGHT 0xCD
 #define KEY_DOWN 0xD0
 
-#define OBJECTA_BUILD(t,e,p)	\
+#define OBJECTA_BUILD(t,b,e,p)	\
 (								\
 	(((p) & 15) << 12) |		\
 	(((e) &  1) << 11) |		\
+	(((b) &  3) <<  9) |		\
 	(((t) & 0x1FF) << 0)		\
 )
 #define OBJECTB_BUILD(hp,vp,dw,dh,hf,vf,ds,pr)	\
@@ -36,22 +37,22 @@ extern const unsigned short imfData1[];
 )
 
 static const uint16_t objectsA[] = {
-	OBJECTA_BUILD(128, 1, 4),
-	OBJECTA_BUILD(128 + 8, 1, 4),
-	OBJECTA_BUILD(128 + 12, 1, 4),
-	OBJECTA_BUILD(128 + 16, 1, 4),
-	OBJECTA_BUILD(128 + 32, 1, 4),
-	OBJECTA_BUILD(128 + 48, 1, 4),
-	OBJECTA_BUILD(128 + 56, 1, 4),
+	OBJECTA_BUILD(128, 0, 1, 4),
+	OBJECTA_BUILD(128 + 8, 0, 1, 4),
+	OBJECTA_BUILD(128 + 12, 0, 1, 4),
+	OBJECTA_BUILD(128 + 16, 0, 1, 4),
+	OBJECTA_BUILD(128 + 32, 0, 1, 4),
+	OBJECTA_BUILD(128 + 48, 0, 1, 4),
+	OBJECTA_BUILD(128 + 56, 0, 1, 4),
 
-	OBJECTA_BUILD(384, 1, 1),
-	OBJECTA_BUILD(384 + 16, 1, 1),
-	OBJECTA_BUILD(384 + 32, 1, 1),
-	OBJECTA_BUILD(384 + 48, 1, 1),
-	OBJECTA_BUILD(384 + 64, 1, 1),
-	OBJECTA_BUILD(384 + 80, 1, 1),
-	OBJECTA_BUILD(384 + 96, 1, 1),
-	OBJECTA_BUILD(384 + 112, 1, 1),
+	OBJECTA_BUILD(384, 0, 1, 1),
+	OBJECTA_BUILD(384 + 16, 0, 1, 1),
+	OBJECTA_BUILD(384 + 32, 0, 1, 1),
+	OBJECTA_BUILD(384 + 48, 0, 1, 1),
+	OBJECTA_BUILD(384 + 64, 0, 1, 1),
+	OBJECTA_BUILD(384 + 80, 0, 1, 1),
+	OBJECTA_BUILD(384 + 96, 0, 1, 1),
+	OBJECTA_BUILD(384 + 112, 0, 1, 1),
 	0,
 };
 static const uint32_t objectsB[] = {

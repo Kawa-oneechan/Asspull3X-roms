@@ -23,10 +23,11 @@ char *thisLevel;
 #define KEY_RIGHT 0xCD
 #define KEY_DOWN 0xD0
 
-#define OBJECTA_BUILD(t,e,p)	\
+#define OBJECTA_BUILD(t,b,e,p)	\
 (								\
 	(((p) & 15) << 12) |		\
 	(((e) &  1) << 11) |		\
+	(((b) &  3) <<  9) |		\
 	(((t) & 0x1FF) << 0)		\
 )
 #define OBJECTB_BUILD(hp,vp,dw,dh,hf,vf,ds,pr)	\
@@ -94,7 +95,7 @@ void drawPlayer()
 	if (REG_TICKCOUNT % ANIMSPEED > (ANIMSPEED / 2))
 		tile += 8;
 
-	OBJECTS_A[0] = OBJECTA_BUILD(tile + 256, 1, 0);
+	OBJECTS_A[0] = OBJECTA_BUILD(tile + 256, 0, 1, 0);
 	OBJECTS_B[0] = OBJECTB_BUILD((playerX * 16) + 8, (playerY * 16) - 24, 0, 1, flip, 0, 1, 3);
 }
 

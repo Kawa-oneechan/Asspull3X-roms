@@ -17,10 +17,11 @@ extern const uint16_t girl1Tiles[], girl1Pal[], girl1Map[];
 
 #define POOF 12
 
-#define OBJECTA_BUILD(t,e,p)	\
+#define OBJECTA_BUILD(t,b,e,p)	\
 (								\
 	(((p) & 15) << 12) |		\
-	(((e) &	1) << 11) |		\
+	(((e) &  1) << 11) |		\
+	(((b) &  3) <<  9) |		\
 	(((t) & 0x1FF) << 0)		\
 )
 #define OBJECTB_BUILD(hp,vp,dw,dh,hf,vf,ds,pr)	\
@@ -309,7 +310,7 @@ void drawPlayer()
 	y += 3  * 8;
 	for (int i = 0; i < 3; i++)
 	{
-		OBJECTS_A[i] = OBJECTA_BUILD((current[i] * 4), 1, tilePals[(int)current[i]]);
+		OBJECTS_A[i] = OBJECTA_BUILD((current[i] * 4), 0, 1, tilePals[(int)current[i]]);
 		OBJECTS_B[i] = OBJECTB_BUILD(x, y, 1, 1, 0, 0, 0, 0);
 		y -= 16;
 	}

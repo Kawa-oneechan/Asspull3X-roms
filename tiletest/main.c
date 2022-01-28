@@ -31,10 +31,11 @@ void DrawStripe(int source, int target)
 	}
 }
 
-#define OBJECTA_BUILD(t,e,p)	\
+#define OBJECTA_BUILD(t,b,e,p)	\
 (								\
 	(((p) & 15) << 12) |		\
 	(((e) &  1) << 11) |		\
+	(((b) &  3) <<  9) |		\
 	(((t) & 0x1FF) << 0)		\
 )
 #define OBJECTB_BUILD(hp,vp,dw,dh,hf,vf,ds,pr)	\
@@ -90,7 +91,7 @@ int main(void)
 
 	MISC->DmaCopy(TILESET + 0x2000, (int8_t*)&farahTiles, 64, DMA_INT);
 	MISC->DmaCopy(PALETTE + 32, (int8_t*)&farahPal, 32, DMA_SHORT);
-	OBJECTS_A[0] = OBJECTA_BUILD(256, 1, 2);
+	OBJECTS_A[0] = OBJECTA_BUILD(256, 0, 1, 2);
 	OBJECTS_B[0] = OBJECTB_BUILD(152, 176, 0, 1, 0, 0, 1, 0);
 
 	REG_MAPSET = 0x70; //just enable it, don't worry about tile offsets.

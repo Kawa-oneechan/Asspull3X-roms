@@ -23,10 +23,11 @@ extern const TImageFile splashData;
 extern const uint16_t iconsTiles[256];
 extern const uint16_t iconsPal[16];
 
-#define OBJECTA_BUILD(t,e,p)	\
+#define OBJECTA_BUILD(t,b,e,p)	\
 (								\
 	(((p) & 15) << 12) |		\
 	(((e) &  1) << 11) |		\
+	(((b) &  3) <<  9) |		\
 	(((t) & 0x1FF) << 0)		\
 )
 #define OBJECTB_BUILD(hp,vp,dw,dh,hf,vf,ds,pr)	\
@@ -84,18 +85,18 @@ int32_t main(void)
 				{
 					if (ReadFile(&file, (void*)0x01002000, 0) < 0)
 					{
-						OBJECTS_A[0] = OBJECTA_BUILD(48, 1, 1); //? disk
+						OBJECTS_A[0] = OBJECTA_BUILD(48, 0, 1, 1); //? disk
 						continue;
 					}
 					CloseFile(&file);
-					OBJECTS_A[0] = OBJECTA_BUILD(32, 1, 1); //disk
+					OBJECTS_A[0] = OBJECTA_BUILD(32, 0, 1, 1); //disk
 					entry = (void*)0x01002020;
 					break;
 				}
 				else
 				{
 					dpf("not good");
-					OBJECTS_A[0] = OBJECTA_BUILD(48, 1, 1); //? disk
+					OBJECTS_A[0] = OBJECTA_BUILD(48, 0, 1, 1); //? disk
 					continue;
 				}
 			}
@@ -103,14 +104,14 @@ int32_t main(void)
 			{
 				hadDisk = 0;
 				dpf("lost disk");
-				OBJECTS_A[0] = OBJECTA_BUILD(0, 1, 1); //logo
+				OBJECTS_A[0] = OBJECTA_BUILD(0, 0, 1, 1); //logo
 				continue;
 			}
 		}
 		else
 		{
 			entry = (void*)0x00020004;
-			OBJECTS_A[0] = OBJECTA_BUILD(16, 1, 1); //cart
+			OBJECTS_A[0] = OBJECTA_BUILD(16, 0, 1, 1); //cart
 			break;
 		}
 
@@ -161,7 +162,7 @@ int32_t main(void)
 			REG_HDMACONTROL[1] = DMA_ENABLE | HDMA_DOUBLE | (DMA_SHORT << 4) | (254 << 8) | (170 << 20);
 			MISC->DmaCopy(PALETTE + 16, (int8_t*)&iconsPal, 16, DMA_SHORT);
 			MISC->DmaCopy(TILESET, (int8_t*)&iconsTiles, 512, DMA_INT);
-			OBJECTS_A[0] = OBJECTA_BUILD(0, 1, 1);
+			OBJECTS_A[0] = OBJECTA_BUILD(0, 0, 1, 1);
 			OBJECTS_B[0] = OBJECTB_BUILD(144, 152, 1, 1, 0, 0, 1, 0);
 			MIDI_PROGRAM(1, MIDI_SEASHORE);
 			MIDI_KEYON(1, MIDI_C4, 80);
