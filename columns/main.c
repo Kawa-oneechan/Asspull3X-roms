@@ -25,7 +25,7 @@ extern const uint16_t girl1Tiles[], girl1Pal[], girl1Map[];
 )
 #define OBJECTB_BUILD(hp,vp,dw,dh,hf,vf,ds,pr)	\
 (												\
-	(((pr) & 3) << 30) |						\
+	(((pr) & 4) << 29) |						\
 	(((ds) & 1) << 28) |						\
 	(((vf) & 1) << 27) |						\
 	(((hf) & 1) << 26) |						\

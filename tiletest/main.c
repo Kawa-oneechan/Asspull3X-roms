@@ -39,7 +39,7 @@ void DrawStripe(int source, int target)
 )
 #define OBJECTB_BUILD(hp,vp,dw,dh,hf,vf,ds,pr)	\
 (												\
-	(((pr) & 3) << 30) |						\
+	(((pr) & 4) << 29) |						\
 	(((ds) & 1) << 28) |						\
 	(((vf) & 1) << 27) |						\
 	(((hf) & 1) << 26) |						\
@@ -111,8 +111,8 @@ int main(void)
 		vbl();
 
 		//Something to test the object structs with...
-		if (REG_KEYIN == 0xC8) objectsB[0].y++;
-		else if (REG_KEYIN == 0xD0) objectsB[0].y--;
+		if (REG_KEYIN == 0xC8) objectsB[0].y--;
+		else if (REG_KEYIN == 0xD0) objectsB[0].y++;
 		else if (REG_KEYIN == 0xCB) objectsB[0].x--;
 		else if (REG_KEYIN == 0xCD) objectsB[0].x++;
 

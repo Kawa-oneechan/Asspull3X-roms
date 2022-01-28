@@ -31,7 +31,7 @@ char *thisLevel;
 )
 #define OBJECTB_BUILD(hp,vp,dw,dh,hf,vf,ds,pr)	\
 (												\
-	(((pr) & 3) << 30) |						\
+	(((pr) & 4) << 29) |						\
 	(((ds) & 1) << 28) |						\
 	(((vf) & 1) << 27) |						\
 	(((hf) & 1) << 26) |						\
@@ -95,7 +95,7 @@ void drawPlayer()
 		tile += 8;
 
 	OBJECTS_A[0] = OBJECTA_BUILD(tile + 256, 1, 0);
-	OBJECTS_B[0] = OBJECTB_BUILD((playerX * 16) + 8, (playerY * 16) - 24, 0, 1, flip, 0, 1, 1);
+	OBJECTS_B[0] = OBJECTB_BUILD((playerX * 16) + 8, (playerY * 16) - 24, 0, 1, flip, 0, 1, 3);
 }
 
 void drawTile(int i, int j, int tile)
@@ -349,7 +349,7 @@ void nextLevel()
 			8, 8, 15
 		);
 		//remove the object
-		OBJECTS_B[0] = OBJECTB_BUILD(-16, -24, 0, 1, 0, 0, 1, 1);
+		OBJECTS_B[0] = OBJECTB_BUILD(-16, -24, 0, 1, 0, 0, 1, 3);
 		DRAW->FadeFromWhite();
 		while(1);
 	}
