@@ -561,20 +561,20 @@ void drawWindow(int l, int t, int w, int h)
 {
 	for (int i = t + 1; i < t + h - 1; i++)
 	{
-		MAP4[(i * 64) + l] = 0xF306;
-		MAP4[(i * 64) + l + w - 1] = 0xF706;
+		MAP4[(i * 64) + l] = 0xF30A;
+		MAP4[(i * 64) + l + w - 1] = 0xF30C;
 		for (int j = l + 1; j < l + w - 1; j++)
 			MAP4[(i * 64) + j] = 0xF301;
 	}
 	for (int i = l + 1; i < l + w - 1; i++)
 	{
-		MAP4[(t * 64) + i] = 0xF307;
-		MAP4[((t + h - 1) * 64) + i] = 0xFB07;
+		MAP4[(t * 64) + i] = 0xF30B;
+		MAP4[((t + h - 1) * 64) + i] = 0xF30D;
 	}
-	MAP4[(t * 64) + l] = 0xF305;
-	MAP4[(t * 64) + l + w - 1] = 0xF705;
-	MAP4[((t + h - 1) * 64) + l] = 0xFB05;
-	MAP4[((t + h - 1) * 64) + l + w - 1] = 0xFF05;
+	MAP4[(t * 64) + l] = 0xF306;
+	MAP4[(t * 64) + l + w - 1] = 0xF307;
+	MAP4[((t + h - 1) * 64) + l] = 0xF308;
+	MAP4[((t + h - 1) * 64) + l + w - 1] = 0xF309;
 }
 
 void drawString(int x, int y, const char* string)
@@ -654,6 +654,7 @@ int main(void)
 	strcpy(playerName, "Farrah"); //"[-MAX-NAME-LEN-]";
 
 	drawMap();
+	saySomething("* What a year, huh?\n* Captain, it's February.");
 
 	for(;;)
 	{
