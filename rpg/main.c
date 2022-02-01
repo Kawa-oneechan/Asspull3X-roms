@@ -605,8 +605,18 @@ int main(void)
 	REG_MAPSET = 0xF0;
 
 	MISC->SetTextMode(SMODE_TILE);
-	MISC->DmaCopy(TILESET + 0x6000, (int8_t*)&uiTiles, 0x700, DMA_INT);
 	MISC->DmaCopy(PALETTE + 240, (int16_t*)&uiPal, 8, DMA_INT);
+
+//	MISC->DmaCopy(TILESET + 0x6000, (int8_t*)&uiTiles, 0x700, DMA_INT);
+
+	MISC->DmaCopy(TILESET + 0x6000, (int8_t*)&uiTiles, 0x80, DMA_INT);
+	MISC->DmaClear(TILESET+ 0x6400, 0x88888888, 0x5D0, DMA_INT);
+//	MISC->DmaCopy(TILESET + 0x6400, (int8_t*)&uiTiles + 0x400, 0x5D0, DMA_INT);
+	REG_BLITSOURCE = (long)uiTiles + 0x400;
+	REG_BLITTARGET = (long)TILESET + 0x6400;
+	REG_BLITLENGTH = 0x1740;
+	REG_BLITKEY = 0;
+	REG_BLITCONTROL = BLIT_COPY | 0xC0 | BLIT_COLORKEY;
 
 	//TODO: use six or so standard palettes
 	MISC->DmaCopy(PALETTE + 144, (int16_t*)spritePal, 48, DMA_INT);
@@ -617,7 +627,7 @@ int main(void)
 	MISC->DmaClear(MAP4, 0, WIDTH * HEIGHT, DMA_INT);
 
 	REG_HDMASOURCE[0] = (int32_t)uiBackground;
-	REG_HDMATARGET[0] = (int32_t)PALETTE + 482;
+	REG_HDMATARGET[0] = (int32_t)PALETTE + 496;
 	REG_HDMACONTROL[0] = DMA_ENABLE | HDMA_DOUBLE | (DMA_SHORT << 4) | (0 << 8) | (480 << 20);
 
 	map = (Map*)testMap;
@@ -654,6 +664,7 @@ int main(void)
 	strcpy(playerName, "Farrah"); //"[-MAX-NAME-LEN-]";
 
 	drawMap();
+		updateAndDraw();
 	saySomething("* What a year, huh?\n* Captain, it's February.");
 
 	for(;;)
