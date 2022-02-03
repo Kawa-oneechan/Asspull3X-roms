@@ -56,15 +56,17 @@ void PrepareDiskToDevMapping()
 {
 	unsigned char* devices = (unsigned char*)0x02000000;
 	diskDrives = 0;
-	for (char i = 0; i < 16 && diskDrives < FF_VOLUMES; i++)
+	for (char i = 0; i < 16; i++)
 	{
 		if (*(short*)devices == 0x0144)
 		{
-			diskToDev[diskDrives++] = i;
+			if (diskDrives < FF_VOLUMES)
+				diskToDev[diskDrives] = i;
+			diskDrives++;
 		}
 		devices += 0x8000;
 	}
-	for (int i = 0; i < diskDrives; i++)
+	for (int i = 0; i < diskDrives && i < FF_VOLUMES; i++)
 	{
 		char path[4] = { i + 'A', ':', 0 };
 		f_mount(&FatFs[i], path, 1);

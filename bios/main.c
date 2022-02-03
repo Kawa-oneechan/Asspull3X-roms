@@ -43,6 +43,7 @@ extern const uint16_t iconsPal[16];
 )
 
 void FindFont();
+extern char diskToDev[16];
 
 int32_t main(void)
 {
@@ -51,6 +52,9 @@ int32_t main(void)
 	void(*entry)(void)= (void*)0x00020004;
 	int32_t haveDisk = 0, hadDisk = 0;
 	int32_t showSplash = 0;
+
+	sprintf(biosVer, "BIOS v%d.%d", (interface->biosVersion >> 8) & 0xFF, (interface->biosVersion >> 0) & 0xFF);
+	dpf(biosVer);
 
 	unsigned char* devices = (unsigned char*)0x02000000;
 	for (char i = 0; i < 16; i++)
@@ -63,25 +67,44 @@ int32_t main(void)
 		devices += 0x8000;
 	}
 
-	sprintf(biosVer, "BIOS v%d.%d", (interface->biosVersion >> 8) & 0xFF, (interface->biosVersion >> 0) & 0xFF);
-	dpf(biosVer);
-
 	DmaCopy(TEXTFONT, (int8_t*)&fontTiles, 12288, DMA_INT);
-	REG_CARET = 0x8000;
+	ResetPalette();
+	REG_SCREENMODE = SMODE_TEXT | SMODE_240 | SMODE_BOLD;
+	//REG_CARET = 0x8000;
+	attribs = 0x0B;
+	Write("Asspull \x96\xD7 %s\n\n");
+	((char*)TEXTMAP)[17] = 0x0C;
+	((char*)TEXTMAP)[19] = 0x09;
+	attribs = 0x07;
 
 	PrepareDiskToDevMapping();
+	if (GetNumDrives() == 0)
+	{
+		Write("No disk drive connected. Power off, or press F1 to continue.");
+		while (REG_KEYIN != 59)
+			vbl();
+	}
+	else if (GetNumDrives() > 4)
+	{
+		Write("Too many disk drives connected. Only the first four will be accessible.\nPress F1 to continue.");
+		while (REG_KEYIN != 59)
+			vbl();
+	}
 	FindFont();
+
+	volatile uint8_t* firstDisk = (uint8_t*)0x02000000 + (diskToDev[0] * 0x8000);
+	dpf("firstDisk $%08x\n", firstDisk);
 
 	while(1)
 	{
 		if (*cartCode != 0x41535321) //ASS!
 		{
-			haveDisk = *(volatile uint8_t*)(0x02000004) & 1;
+			haveDisk = firstDisk[4] & 1;
 			if (haveDisk && !hadDisk)
 			{
 				hadDisk = 1;
 				FILE file;
-				if (OpenFile(&file, "0:/start.app", FA_READ) == 0)
+				if (OpenFile(&file, "A:/start.app", FA_READ) == 0)
 				{
 					if (ReadFile(&file, (void*)0x01002000, 0) < 0)
 					{
