@@ -8,6 +8,7 @@ IBios* interface;
 #define KEY_LEFT 0xCB
 #define KEY_RIGHT 0xCD
 #define KEY_DOWN 0xD0
+#define KEY_ACTION 45
 
 #define OBJECTA_BUILD(t,b,e,p)	\
 (								\
@@ -32,6 +33,7 @@ extern char *strcpy(char *dest, const char *src);
 extern int strlen(const char *str);
 
 void drawWindow(int l, int t, int w, int h);
+void eraseWindow(int l, int t, int w, int h);
 void drawString(int x, int y, const char* string);
 void updateAndDraw();
 
@@ -85,11 +87,30 @@ int lastInput;
 int cameraX, cameraY;
 int cameraTX, cameraTY, lastCameraTX, lastCameraTY;
 
+int dialogueBoxIsOpen;
+
 unsigned int scriptVariables[256];
 char playerName[16];
 
 const char xdisp[] = { 0, -1, 0, 1 };
 const char ydisp[] = { 1, 0, -1, 0 };
+
+const unsigned char cursorTiles[] =
+{
+	0x00,0x00,0x30,0x33,0x00,0x00,0x23,0x22,0x00,0x30,0x25,0x52,0x30,0x30,0x22,0x22,
+	0x53,0x53,0x22,0x22,0x23,0x24,0x22,0x22,0x23,0x24,0x22,0x22,0x53,0x54,0x22,0x22,
+	0x03,0x00,0x00,0x00,0x32,0x00,0x00,0x00,0x44,0x33,0x33,0x00,0x22,0x22,0x22,0x03,
+	0x22,0x22,0x22,0x32,0x22,0x55,0x55,0x03,0x52,0x35,0x33,0x00,0x52,0x34,0x00,0x00,
+	0x53,0x54,0x25,0x22,0x53,0x44,0x55,0x55,0x43,0x43,0x54,0x55,0x30,0x30,0x44,0x44,
+	0x00,0x00,0x33,0x33,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
+	0x55,0x34,0x00,0x00,0x45,0x03,0x00,0x00,0x44,0x03,0x00,0x00,0x34,0x00,0x00,0x00,
+	0x03,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
+
+	0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
+	0x00,0x70,0x77,0x77,0x77,0x77,0x77,0x77,0x77,0x77,0x77,0x77,0x00,0x77,0x77,0x77,
+	0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
+	0x77,0x77,0x77,0x00,0x77,0x77,0x77,0x77,0x77,0x77,0x77,0x07,0x00,0x00,0x00,0x00,
+};
 
 void drawTile(int x, int y, int tileNum)
 {
@@ -297,27 +318,46 @@ void entityWalk(MapEntity *entity, int facing)
 	entity->state = stateStep;
 }
 
-void saySomething(char *what)
+void saySomething(char *what, int flags)
 {
 	char d[256] = {0};
 	char *c = what;
 	char *f = d;
-	for (int i = 0; i < 3; i++)
+
+	if (!dialogueBoxIsOpen)
 	{
-		drawWindow(2, 4 - i, 36, 2 + (i * 2));
-		vbl();
-		vbl();
+		for (int i = 0; i < 3; i++)
+		{
+			drawWindow(2, 4 - i, 36, 2 + (i * 2));
+			vbl();
+			vbl();
+		}
 	}
-	while (*c != 0)
+	else
+		drawWindow(2, 2, 36, 6);
+	dialogueBoxIsOpen = 1;
+
+	if (*c != 0)
 	{
-		vbl();
-		vbl();
-		*f++ = *c++;
-		drawString(3, 3, d);
+		while (*c != 0)
+		{
+			vbl();
+			vbl();
+			*f++ = *c++;
+			drawString(3, 3, d);
+		}
+		while (REG_KEYIN != 0) vbl();
+		while (REG_KEYIN == 0) vbl();
+		while (REG_KEYIN != KEY_ACTION) vbl();
 	}
-	while (REG_KEYIN != 0) vbl();
-	while (REG_KEYIN == 0) vbl();
-	while (REG_KEYIN != 45) vbl();
+
+	if (flags & 1)
+	{
+		while (REG_KEYIN != 0) vbl();
+		return;
+	}
+
+	dialogueBoxIsOpen = 0;
 	for (int i = 2; i >= 0; --i)
 	{
 		MISC->DmaClear(MAP4, 0, WIDTH * 8, DMA_INT);
@@ -327,6 +367,58 @@ void saySomething(char *what)
 	}
 	MISC->DmaClear(MAP4, 0, WIDTH * 8, DMA_INT);
 	while (REG_KEYIN != 0) vbl();
+}
+
+int doMenu(int left, int top, char* options, int num)
+{
+	char *b = options;
+	int len = 0;
+	for (int i = 0; i < num; i++)
+	{
+		int nl = strlen(b);
+		if (nl > len)
+			len = nl;
+		b += nl + 1;
+	}
+	drawWindow(left, top, len + 5, (num * 2) + 2);
+	b = options;
+	for (int i = 0; i < num; i++)
+	{
+		drawString(left + 3, top + 1 + (i * 2), b);
+		b += strlen(b) + 1;
+	}
+	MISC->DmaCopy(TILESET + 32, cursorTiles, 48, DMA_INT);
+
+	OBJECTS_A[255] = OBJECTA_BUILD(1, 0, 1, 15);
+	OBJECTS_A[254] = OBJECTA_BUILD(5, 1, 1, 15);
+
+	int choice = 0;
+	lastInput = 0;
+	while (lastInput != KEY_ACTION)
+	{
+		OBJECTS_B[255] = OBJECTB_BUILD(((left + 1) * 8) - 4, ((top + 1 + (choice * 2)) * 8) + ((REG_TICKCOUNT / 32) % 2), 0, 0, 0, 0, 1, 0);
+		OBJECTS_B[254] = OBJECTB_BUILD(((left + 1) * 8) - 4, (top + 2 + (choice * 2)) * 8, 0, 0, 0, 0, 1, 0);
+		vbl();
+		lastInput = REG_KEYIN;
+		if (REG_JOYPAD & 1) lastInput = KEY_UP;
+		else if (REG_JOYPAD & 4) lastInput = KEY_DOWN;
+		switch (lastInput)
+		{
+			case KEY_UP:
+				if (choice == 0) choice = num;
+				choice--;
+				break;
+			case KEY_DOWN:
+				choice++;
+				if (choice == num) choice = 0;
+				break;
+		}
+		if (lastInput)
+			while (REG_KEYIN != 0) vbl();
+	}
+	OBJECTS_A[255] = 0;
+	eraseWindow(left, top, len + 5, (num * 2) + 2);
+	return choice;
 }
 
 #define MAXSTACK 250
@@ -434,8 +526,8 @@ void runScript(unsigned char* code, int entityID)
 						switch (*pi)
 						{
 							case '%': *po++ = '%'; break;
-							case 'd':po += TEXT->Format(po, "%d", stack[--stackSize]); break;
-							case 's': po += TEXT->Format(po, "%s", stack[--stackSize]); break;
+							case 'd': po += TEXT->Format(po, "%d", stack[--stackSize]); argc--; break;
+							case 's': po += TEXT->Format(po, "%s", stack[--stackSize]); argc--; break;
 							default: break;
 						}
 						pi++;
@@ -444,7 +536,7 @@ void runScript(unsigned char* code, int entityID)
 						*po++ = *pi++;
 				}
 				*po = 0;
-				saySomething(printBuffer);
+				saySomething(printBuffer, (argc > 1 && stack[--stackSize]));
 				break;
 			}
 			case 0x82: //face
@@ -471,6 +563,26 @@ void runScript(unsigned char* code, int entityID)
 					}
 				}
 				drawEntity((MapEntity*)&entities[d]);
+				break;
+			}
+			case 0x83: //ask
+			{
+				argc = stack[--stackSize];
+				//sprintf(printBuffer, "pb $%x", printBuffer); saySomething(printBuffer, 0);
+				printBuffer[0] = 0;
+				char *biga = printBuffer;
+				char *chu;
+				int opts = 0;
+				while (argc--)
+				{
+					chu = (char*)stack[--stackSize];
+					strcpy(biga, chu);
+					biga += strlen(biga);
+					*biga++ = 0;
+					opts++;
+				}
+				acc = doMenu(2, 8, printBuffer, opts);
+				break;
 			}
 		}
 		//printf(" 0x%04X  ", acc);
@@ -491,7 +603,7 @@ void entityPlayerMotor(MapEntity *entity)
 		case 30: entity->state = stateTsk; entity->counter[0] = 0; break;
 		case 31: entity->state = stateWave; entity->counter[0] = 0; break;
 		case 32: entity->state = stateLaugh; entity->counter[0] = 0; break;
-		case 45:
+		case KEY_ACTION:
 		{
 			int tx = entity->x + xdisp[entity->facing];
 			int ty = entity->y + ydisp[entity->facing];
@@ -575,6 +687,15 @@ void drawWindow(int l, int t, int w, int h)
 	MAP4[(t * 64) + l + w - 1] = 0xF307;
 	MAP4[((t + h - 1) * 64) + l] = 0xF308;
 	MAP4[((t + h - 1) * 64) + l + w - 1] = 0xF309;
+}
+
+void eraseWindow(int l, int t, int w, int h)
+{
+	for (int i = t; i < t + h; i++)
+	{
+		for (int j = l; j < l + w; j++)
+			MAP4[(i * 64) + j] = 0;
+	}
 }
 
 void drawString(int x, int y, const char* string)
@@ -664,8 +785,7 @@ int main(void)
 	strcpy(playerName, "Farrah"); //"[-MAX-NAME-LEN-]";
 
 	drawMap();
-		updateAndDraw();
-	saySomething("* What a year, huh?\n* Captain, it's February.");
+	//saySomething("* What a year, huh?\n* Captain, it's February.", 1);
 
 	for(;;)
 	{

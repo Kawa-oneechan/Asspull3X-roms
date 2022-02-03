@@ -35,7 +35,7 @@ __testMap_Entities:
 	.long 0
 //1
 	.byte 2
-	.byte 13, 6
+	.byte 8, 6 //13, 6
 	.byte 0
 	.byte 0
 	.byte 0
@@ -46,17 +46,33 @@ __testMap_Entity1_Script:
 	  .byte 0x04 //4
 	.byte 0x11 //push1
 	.byte 0x82 //face
+	.byte 0x11 //push1
 	.byte 0x0C //push.v
 	  .byte 0x02 //2
 	.byte 0x0F //push.s
-	  .long __testMap_Entity1_7
+	  .long __testMap_Entity1_8
+	.byte 0x0D //push.b
+	  .byte 0x03 //3
+	.byte 0x81 //say
+	.byte 0x0F //push.s
+	  .long __testMap_Entity1_14
+	.byte 0x0F //push.s
+	  .long __testMap_Entity1_17
 	.byte 0x12 //push2
+	.byte 0x83 //ask
+	.byte 0x11 //push1
+	.byte 0x10 //push0
 	.byte 0x81 //say
 	.byte 0x10 //push0
 	.byte 0x11 //push1
 	.byte 0x82 //face
 	.byte 0xFF //end of script
-__testMap_Entity1_7:
+__testMap_Entity1_8:
 	.asciz "Hello there, %s."
+__testMap_Entity1_14:
+	.asciz "No"
+__testMap_Entity1_17:
+	.asciz "Yes"
+
 
 
