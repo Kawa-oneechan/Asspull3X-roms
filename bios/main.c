@@ -95,16 +95,18 @@ int32_t main(void)
 	volatile uint8_t* firstDisk = (uint8_t*)0x02000000 + (diskToDev[0] * 0x8000);
 	dpf("firstDisk $%08x\n", firstDisk);
 
+	int diskLock = REG_KEYIN == 0x100;
+
 	while(1)
 	{
-		if (*cartCode != 0x41535321) //ASS!
+		if (!diskLock && *cartCode != 0x41535321) //ASS!
 		{
 			haveDisk = firstDisk[4] & 1;
 			if (haveDisk && !hadDisk)
 			{
 				hadDisk = 1;
 				FILE file;
-				if (OpenFile(&file, "A:/start.app", FA_READ) == 0)
+				if (OpenFile(&file, "start.app", FA_READ) == 0)
 				{
 					if (ReadFile(&file, (void*)0x01002000, 0) < 0)
 					{
