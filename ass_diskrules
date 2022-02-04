@@ -1,12 +1,11 @@
-PATH	:= $(DEVKIT68K)/bin:$(PATH)
-CROSS	:= m68k-elf-
-CC	:= $(CROSS)gcc
-AS	:= $(CROSS)gcc
-LD	:= $(CROSS)gcc
-OBJCOPY	:= $(CROSS)objcopy
-export ROFILES	:= $(SFILES:.s=.o) $(CFILES:.c=.o)
-export IOFILES	:= $(ICFILES:.c=.o)
-export OFILES	:= $(ROFILES) $(IOFILES)
+PATH		:= $(DEVKIT68K)/bin:$(PATH)
+CROSS		:= m68k-elf-
+CC		:= $(CROSS)gcc
+AS		:= $(CROSS)gcc
+LD		:= $(CROSS)gcc
+OBJCOPY		:= $(CROSS)objcopy
+
+export OFILES	:= $(SFILES:.s=.o) $(CFILES:.c=.o)
 
 # --------------------------------------------------------------------
 # OPTIONS
@@ -14,19 +13,15 @@ export OFILES	:= $(ROFILES) $(IOFILES)
 
 MAPFILE		:= $(TARGET).map
 
-ARCH    := -m68000
-RARCH   := -m68000
-SPECS   := -specs=asspull-disk.specs
+ARCH		:= -m68000
+SPECS		:= -specs=asspull-disk.specs
 
 INCLUDE		:= # -I toolinclude
 LIBPATHS	:=
 
-CBASE   := $(INCLUDE) -Wall -fno-strict-aliasing -fomit-frame-pointer
-RCFLAGS := $(CBASE) $(RARCH)
-CFLAGS  := $(RCFLAGS)
-
-ASFLAGS := -x assembler-with-cpp -c -m68000 -Wall
-LDFLAGS := $(ARCH) $(SPECS) $(LIBPATHS) $(LIBS)
+CFLAGS		:= $(INCLUDE) -Wall -fno-strict-aliasing -fomit-frame-pointer $(ARCH)
+ASFLAGS		:= -x assembler-with-cpp -c $(ARCH) -Wall
+LDFLAGS		:= $(ARCH) $(SPECS) $(LIBPATHS) $(LIBS)
 
 LDFLAGS += -Wl,-Map $(MAPFILE) -nostartfiles 
 
@@ -42,26 +37,17 @@ $(TARGET).elf : $(OFILES) $(AFILES) Makefile $(DEPENDFILE)
 	@echo > $(MAPFILE)
 	$(LD) -g -o $@ $(OFILES) $(AFILES) $(LDFLAGS)
 
-.PHONY: all clean depend
+.PHONY:	all clean
 
-all:    clean $(TARGET).elf
+all:	clean $(TARGET).elf
 
-depend:
-	$(CC) $(RCFLAGS) -M $(RCFILES) > $(DEPENDFILE)
-	$(CC) $(ICFLAGS) -M $(ICFILES) > $(DEPENDFILE)
-
-$(DEPENDFILE): 
-	$(CC) $(RCFLAGS) -M $(CFILES) $(ICFLAGS) $(ICFILES) > $(DEPENDFILE)
-
+clean:
+	rm -f $(OFILES) $(MAPFILE) $(TARGET).elf ../_disk2_/$(TARGET).app
 
 # --- ROM compilation ---
 %.o : %.c
-	$(CC) $(RCFLAGS) -c $< -o $@
+	$(CC) $(CFLAGS) -c $< -o $@
 
 # --- Assembling ---
 %.o : %.s
 	$(AS) $(ASFLAGS) -c $< -o $@
-
-
-#$(.IOFILES) : %.o : %.c
-#	$(CC) $(ICFLAGS) -c $< -o $@

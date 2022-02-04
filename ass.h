@@ -26,6 +26,7 @@ typedef int8_t* va_list;
 #endif
 
 #define printf interface->textLibrary->Write
+#define sprintf interface->textLibrary->Format
 #define vbl interface->miscLibrary->WaitForVBlank
 #define intoff() REG_INTRMODE |= IMODE_DISABLE
 #define inton() REG_INTRMODE &= ~IMODE_DISABLE
