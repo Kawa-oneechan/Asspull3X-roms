@@ -32,7 +32,7 @@ char *thisLevel;
 )
 #define OBJECTB_BUILD(hp,vp,dw,dh,hf,vf,ds,pr)	\
 (												\
-	(((pr) & 4) << 29) |						\
+	(((pr) & 3) << 29) |						\
 	(((ds) & 1) << 28) |						\
 	(((vf) & 1) << 27) |						\
 	(((hf) & 1) << 26) |						\
@@ -96,7 +96,6 @@ void drawPlayer()
 		tile += 8;
 
 	OBJECTS_A[0] = OBJECTA_BUILD(tile + 256, 0, 1, 0);
-	//TODO: find out why this broke *again*.
 	OBJECTS_B[0] = OBJECTB_BUILD((playerX * 16) + 8, (playerY * 16) - 24, 0, 1, flip, 0, 1, 3);
 }
 

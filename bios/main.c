@@ -32,7 +32,7 @@ extern const uint16_t iconsPal[16];
 )
 #define OBJECTB_BUILD(hp,vp,dw,dh,hf,vf,ds,pr)	\
 (												\
-	(((pr) & 4) << 29) |						\
+	(((pr) & 3) << 29) |						\
 	(((ds) & 1) << 28) |						\
 	(((vf) & 1) << 27) |						\
 	(((hf) & 1) << 26) |						\
