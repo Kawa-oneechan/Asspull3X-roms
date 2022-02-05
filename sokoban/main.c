@@ -96,6 +96,7 @@ void drawPlayer()
 		tile += 8;
 
 	OBJECTS_A[0] = OBJECTA_BUILD(tile + 256, 0, 1, 0);
+	//TODO: find out why this broke *again*.
 	OBJECTS_B[0] = OBJECTB_BUILD((playerX * 16) + 8, (playerY * 16) - 24, 0, 1, flip, 0, 1, 3);
 }
 
@@ -489,6 +490,9 @@ int main(void)
 {
 	REG_SCREENFADE = 31;
 
+	MISC->DmaClear(TILESET, 0, 0x4000, DMA_INT);
+	MISC->DmaClear(OBJECTS_A, 0, 0x1000, DMA_INT);
+
 	DRAW->DisplayPicture((TImageFile*)&titlePic);
 	DRAW->FadeFromBlack();
 	WaitForKey();
@@ -508,9 +512,9 @@ int main(void)
 	MISC->SetTextMode(SMODE_TILE);
 	MISC->DmaCopy(TILESET, (int8_t*)&tilesTiles, 0x480, DMA_INT); //TODO: check
 	MISC->DmaCopy(TILESET + 0x2000, (int8_t*)&playerTiles, 1024, DMA_INT);
-	MISC->DmaCopy(PALETTE, (int16_t*)&tilesPal, 8, DMA_INT);
-	MISC->DmaCopy(PALETTE + 16, (int16_t*)&backPals, 2, DMA_INT);
-	MISC->DmaCopy(PALETTE + 32, (int16_t*)&playerPal, 8, DMA_INT);
+	MISC->DmaCopy(PALETTE, (int16_t*)&tilesPal, 16, DMA_SHORT);
+	MISC->DmaCopy(PALETTE + 16, (int16_t*)&backPals, 4, DMA_SHORT);
+	MISC->DmaCopy(PALETTE + 256, (int16_t*)&playerPal, 16, DMA_SHORT);
 	MISC->DmaClear(MAP1, 0, WIDTH * HEIGHT, 2);
 	MISC->DmaClear(MAP2, 0, WIDTH * HEIGHT, 2);
 	MISC->DmaClear(MAP3, 0, WIDTH * HEIGHT, 2);

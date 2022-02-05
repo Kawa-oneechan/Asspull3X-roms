@@ -40,7 +40,7 @@ void DrawPlayer(int id)
 
 	OBJECTS_A[(int)p->obj] = OBJECTA_BUILD(256 + (frame * 8), 0, 1, p->pal);
 	OBJECTS_B[(int)p->obj] = OBJECTB_BUILD(p->x, p->y, 1, 0, 0, 0, 1, 0);
-	OBJECTS_A[(int)p->obj+1] = OBJECTA_BUILD(256 + 40 + ((p->flameTick >> 2) % 2), 1, 1, 8);
+	OBJECTS_A[(int)p->obj+1] = OBJECTA_BUILD(256 + 40 + ((p->flameTick >> 2) % 2), 1, 1, 0);
 	OBJECTS_B[(int)p->obj+1] = OBJECTB_BUILD(p->x - 8, p->y + 4, 0, 0, 0, 0, 0, 0);
 }
 
@@ -88,14 +88,14 @@ void InitPlayer(int id)
 {
 	tPlayer* p = (tPlayer*)&entities[id];
 
-	p->pal = 8;
+	p->pal = 0;
 	p->x -= 64; //to fly in
 	p->obj = GetNextObjectIdx(0, 4);
 	bitSet(objectsUsed, p->obj);
 	bitSet(objectsUsed, p->obj + 1);
 
 	MISC->DmaCopy(TILESET + 0x2000, playerTiles[0], 512, DMA_INT);
-	MISC->DmaCopy(PALETTE + 128, playerPal[0], 16, DMA_SHORT);
+	MISC->DmaCopy(PALETTE + 256, playerPal[0], 16, DMA_SHORT);
 }
 
 void DrawPlayerBullet(int id)
@@ -120,7 +120,7 @@ void ThinkPlayerBullet(int id)
 void InitPlayerBullet(int id)
 {
 	tEntity* p = &entities[id];
-	p->pal = 8;
+	p->pal = 0;
 	p->obj = GetNextObjectIdx(4, 24);
 	bitSet(objectsUsed, p->obj);
 }

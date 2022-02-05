@@ -252,7 +252,7 @@ void drawEntity(MapEntity *entity)
 
 	MISC->DmaClear(TILESET + (entity->oid * 256), 0, 64, DMA_INT);
 	MISC->DmaCopy(TILESET + (entity->oid * 256) + 64, entity->tileset + (tile * 24), 48, DMA_INT);
-	OBJECTS_A[entity->oid] = OBJECTA_BUILD(entity->oid * 8, 0, 1, 9 + entity->palette);
+	OBJECTS_A[entity->oid] = OBJECTA_BUILD(entity->oid * 8, 0, 1, entity->palette);
 	OBJECTS_B[entity->oid] = OBJECTB_BUILD(x - cameraX, y - cameraY, 0, 1, flip, 0, 1, 2);
 }
 
@@ -726,7 +726,10 @@ int main(void)
 	REG_MAPSET = 0xF0;
 
 	MISC->SetTextMode(SMODE_TILE);
+	MISC->DmaClear(TILESET, 0, 0x4000, DMA_INT);
+	MISC->DmaClear(OBJECTS_A, 0, 0x1000, DMA_INT);
 	MISC->DmaCopy(PALETTE + 240, (int16_t*)&uiPal, 8, DMA_INT);
+	MISC->DmaCopy(PALETTE + 256 + 240, (int16_t*)&uiPal, 8, DMA_INT);
 
 //	MISC->DmaCopy(TILESET + 0x6000, (int8_t*)&uiTiles, 0x700, DMA_INT);
 
@@ -739,8 +742,7 @@ int main(void)
 	REG_BLITKEY = 0;
 	REG_BLITCONTROL = BLIT_COPY | 0xC0 | BLIT_COLORKEY;
 
-	//TODO: use six or so standard palettes
-	MISC->DmaCopy(PALETTE + 144, (int16_t*)spritePal, 48, DMA_INT);
+	MISC->DmaCopy(PALETTE + 256, (int16_t*)spritePal, 48, DMA_INT);
 
 	MISC->DmaClear(MAP1, 0, WIDTH * HEIGHT, DMA_INT);
 	MISC->DmaClear(MAP2, 0, WIDTH * HEIGHT, DMA_INT);

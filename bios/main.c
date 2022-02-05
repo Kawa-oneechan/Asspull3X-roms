@@ -67,7 +67,7 @@ int32_t main(void)
 		devices += 0x8000;
 	}
 
-	DmaCopy(TEXTFONT, (int8_t*)&fontTiles, 12288, DMA_INT);
+	DmaCopy(TEXTFONT, (int8_t*)&fontTiles, 0xC00, DMA_INT);
 	ResetPalette();
 	REG_SCREENMODE = SMODE_TEXT | SMODE_240 | SMODE_BOLD;
 	//REG_CARET = 0x8000;
@@ -110,18 +110,18 @@ int32_t main(void)
 				{
 					if (ReadFile(&file, (void*)0x01002000, 0) < 0)
 					{
-						OBJECTS_A[0] = OBJECTA_BUILD(48, 0, 1, 1); //? disk
+						OBJECTS_A[0] = OBJECTA_BUILD(48, 0, 1, 0); //? disk
 						continue;
 					}
 					CloseFile(&file);
-					OBJECTS_A[0] = OBJECTA_BUILD(32, 0, 1, 1); //disk
+					OBJECTS_A[0] = OBJECTA_BUILD(32, 0, 1, 0); //disk
 					entry = (void*)0x01002020;
 					break;
 				}
 				else
 				{
 					dpf("not good");
-					OBJECTS_A[0] = OBJECTA_BUILD(48, 0, 1, 1); //? disk
+					OBJECTS_A[0] = OBJECTA_BUILD(48, 0, 1, 0); //? disk
 					continue;
 				}
 			}
@@ -129,14 +129,14 @@ int32_t main(void)
 			{
 				hadDisk = 0;
 				dpf("lost disk");
-				OBJECTS_A[0] = OBJECTA_BUILD(0, 0, 1, 1); //logo
+				OBJECTS_A[0] = OBJECTA_BUILD(0, 0, 1, 0); //logo
 				continue;
 			}
 		}
 		else
 		{
 			entry = (void*)0x00020004;
-			OBJECTS_A[0] = OBJECTA_BUILD(16, 0, 1, 1); //cart
+			OBJECTS_A[0] = OBJECTA_BUILD(16, 0, 1, 0); //cart
 			break;
 		}
 
@@ -144,7 +144,7 @@ int32_t main(void)
 		{
 			OBJECTS_B[0] = OBJECTB_BUILD(-32, -32, 0, 0, 0, 0, 0, 0);
 			char about[256];
-			interface->DrawCharFont = (char*)0x0E060A00;
+			interface->DrawCharFont = (char*)0x0E060C00;
 			interface->DrawCharHeight = 0x0808;
 			sprintf(about, "  ASSPULL \x96\xD7\n\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\n%s\nCode by Kawa\n" __DATE__, biosVer);
 			for (int i = 2; i <= 6; i++)
@@ -178,6 +178,8 @@ int32_t main(void)
 			showSplash = 1;
 			WaitForVBlank();
 			REG_SCREENFADE = 31;
+			MISC->DmaClear(TILESET, 0, 0xC000, DMA_INT);
+			MISC->DmaClear(OBJECTS_A, 0, 0x1000, DMA_INT);
 			DisplayPicture((TImageFile*)&splashData);
 			REG_HDMASOURCE[0] = (int32_t)hdma1;
 			REG_HDMATARGET[0] = (int32_t)PALETTE;
@@ -185,9 +187,9 @@ int32_t main(void)
 			REG_HDMASOURCE[1] = (int32_t)hdma2;
 			REG_HDMATARGET[1] = (int32_t)(PALETTE + 1);
 			REG_HDMACONTROL[1] = DMA_ENABLE | HDMA_DOUBLE | (DMA_SHORT << 4) | (254 << 8) | (170 << 20);
-			MISC->DmaCopy(PALETTE + 16, (int8_t*)&iconsPal, 16, DMA_SHORT);
+			MISC->DmaCopy(PALETTE + 256, (int8_t*)&iconsPal, 16, DMA_SHORT);
 			MISC->DmaCopy(TILESET, (int8_t*)&iconsTiles, 512, DMA_INT);
-			OBJECTS_A[0] = OBJECTA_BUILD(0, 0, 1, 1);
+			OBJECTS_A[0] = OBJECTA_BUILD(0, 0, 1, 0);
 			OBJECTS_B[0] = OBJECTB_BUILD(144, 152, 1, 1, 0, 0, 1, 0);
 			MIDI_PROGRAM(1, MIDI_SEASHORE);
 			MIDI_KEYON(1, MIDI_C4, 80);
@@ -217,7 +219,7 @@ int32_t main(void)
 	REG_HDMACONTROL[1] = 0;
 	OBJECTS_A[0] = 0;
 	interface->VBlank = 0;
-	interface->DrawCharFont = (char*)0x0E060A00;
+	interface->DrawCharFont = (char*)0x0E060C00;
 	interface->DrawCharHeight = 0x0808;
 	attribs = 0x0F;
 	ClearScreen();

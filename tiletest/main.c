@@ -82,15 +82,18 @@ int main(void)
 
 	intoff();
 
+	MISC->DmaClear(TILESET, 0, 0x4000, DMA_INT);
+	MISC->DmaClear(OBJECTS_A, 0, 0x1000, DMA_INT);
+
 	REG_HDMASOURCE[0] = (int32_t)hdma1;
 	REG_HDMATARGET[0] = (int32_t)PALETTE;
 	REG_HDMACONTROL[0] = DMA_ENABLE | HDMA_DOUBLE | (DMA_SHORT << 4) | (0 << 8) | (480 << 20);
 
 	MISC->DmaCopy(TILESET, (int8_t*)&tilesetTiles, 2560, DMA_INT);
-	MISC->DmaCopy(PALETTE, (int8_t*)&tilesetPal, 64, DMA_SHORT);
+	MISC->DmaCopy(PALETTE, (int8_t*)&tilesetPal, 32, DMA_SHORT);
 
 	MISC->DmaCopy(TILESET + 0x2000, (int8_t*)&farahTiles, 64, DMA_INT);
-	MISC->DmaCopy(PALETTE + 32, (int8_t*)&farahPal, 32, DMA_SHORT);
+	MISC->DmaCopy(PALETTE + 32, (int8_t*)&farahPal, 16, DMA_SHORT);
 	OBJECTS_A[0] = OBJECTA_BUILD(256, 0, 1, 2);
 	OBJECTS_B[0] = OBJECTB_BUILD(152, 176, 0, 1, 0, 0, 1, 0);
 

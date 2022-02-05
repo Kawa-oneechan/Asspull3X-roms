@@ -128,7 +128,7 @@ interface:
 	.long drawingLibrary
 	.long miscLibrary
 	.long diskLibrary
-	.long 0x0E050A00	| Bold
+	.long 0x0E050C00	| Bold
 	.short 0x0808		| 8x8, line height 8
 	.long 0x00000000	| No line printer
 

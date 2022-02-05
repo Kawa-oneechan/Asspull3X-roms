@@ -78,6 +78,8 @@ int main(void)
 	intoff();
 
 	REG_MAPSET = 0x30;
+	MISC->DmaClear(TILESET, 0, 0x4000, DMA_INT);
+	MISC->DmaClear(OBJECTS_A, 0, 0x1000, DMA_INT);
 	MISC->DmaClear(MAP2, 0, 64 * 32, DMA_SHORT);
 	for (int i = 0; i < 256/32; i++)
 		objectsUsed[i] = 0;
@@ -89,6 +91,7 @@ int main(void)
 
 	MISC->DmaCopy(TILESET + (64 * 32), (int8_t*)&starfieldTiles, 256, DMA_INT);
 	MISC->DmaCopy(PALETTE, (int8_t*)&starfieldPal, 16, DMA_SHORT);
+	MISC->DmaCopy(PALETTE + 256 + 240, (int8_t*)&starfieldPal, 16, DMA_SHORT);
 	MISC->DmaCopy(MAP1, (int8_t*)&starfieldMap, 32 * 64, DMA_SHORT);
 
 	Spawn(1, 64, 128);

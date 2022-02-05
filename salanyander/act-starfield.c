@@ -32,7 +32,7 @@ void ThinkStar(int id)
 void DrawStar(int id)
 {
 	tEntity* p = &entities[id];
-	OBJECTS_A[(int)p->obj] = OBJECTA_BUILD(p->extra[0], 0, 1, p->pal);
+	OBJECTS_A[(int)p->obj] = OBJECTA_BUILD(p->extra[0], 0, 1, 15);
 	OBJECTS_B[(int)p->obj] = OBJECTB_BUILD(p->x, p->y, 0, 0, 0, 0, 0, 1);
 }
 

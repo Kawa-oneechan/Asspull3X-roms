@@ -26,7 +26,6 @@ typedef int8_t* va_list;
 #endif
 
 #define printf interface->textLibrary->Write
-#define sprintf interface->textLibrary->Format
 #define vbl interface->miscLibrary->WaitForVBlank
 #define intoff() REG_INTRMODE |= IMODE_DISABLE
 #define inton() REG_INTRMODE &= ~IMODE_DISABLE
@@ -60,7 +59,7 @@ extern void free(void*);
 #define MAP4		((uint16_t*)(MEM_VRAM + 0xC000))
 #define TILESET		((uint8_t*)(MEM_VRAM + 0x50000))
 #define PALETTE		((uint16_t*)(MEM_VRAM + 0x60000))
-#define TEXTFONT	((uint8_t*)(MEM_VRAM + 0x60200))
+#define TEXTFONT	((uint8_t*)(MEM_VRAM + 0x60400))
 #define OBJECTS_A	((uint16_t*)(MEM_VRAM + 0x64000))
 #define OBJECTS_B	((uint32_t*)(MEM_VRAM + 0x64200))
 
