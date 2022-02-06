@@ -87,6 +87,7 @@ void MouseTest()
 	const short colors[] = { 0x0000, 0x2223, 0x5184, 0x1A9E };
 
 	DRAW->DisplayPicture((TImageFile*)&bmp320x240x4);
+	MISC->DmaCopy(PALETTE + 256, PALETTE, 16, DMA_SHORT);
 	DRAW->DrawString("Mouse test\nPress any key when satisfied.", 0, 0, 15);
 	MISC->DmaCopy(TILESET + 0x2000, (int8_t*)&pointerTiles, 0x2E0, DMA_INT);
 	OBJECTS_A[0] = OBJECTA_BUILD(256, 1, 1, 1);
@@ -106,7 +107,7 @@ void MouseTest()
 		vbl();
 	}
 	while (REG_KEYIN != 0) { vbl(); }
-	OBJECTS_A[0] = 0; //hide the cursor
+	OBJECTS_A[0] = OBJECTS_A[1] = 0; //hide the cursor
 	DRAW->ResetPalette();
 	MISC->SetTextMode(SMODE_240 | SMODE_BOLD);
 	TEXT->ClearScreen();
