@@ -20,9 +20,14 @@ graphics.o : graphics.s title.png font.png farah.png spritepal.png
 	$(GRIT) farah.png $(GRITFLAGS) -Mw2 -Mh3 -p!
 	$(GRIT) ilira.png $(GRITFLAGS) -Mw2 -Mh3 -p!
 	$(GRIT) spritepal.png -ftb -fh! -g! -gb -pe96
+# Portraits are 32x32, but are just the one per file.
+	$(GRIT) farah_prt.png $(GRITFLAGS)
+	$(GRIT) ilira_prt.png $(GRITFLAGS)
 # Flip palette data around
 	$(OBJCOPY) -F binary --reverse-bytes=2 font.pal.bin
 	$(OBJCOPY) -F binary --reverse-bytes=2 spritepal.pal.bin
+	$(OBJCOPY) -F binary --reverse-bytes=2 farah_prt.pal.bin
+	$(OBJCOPY) -F binary --reverse-bytes=2 ilira_prt.pal.bin
 # Produce final result
 	$(AS) $(ASFLAGS) -c $< -o $@
 

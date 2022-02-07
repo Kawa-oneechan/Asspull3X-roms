@@ -46,6 +46,9 @@ __testMap_Entity1_Script:
 	  .byte 0x04 //4
 	.byte 0x11 //push1
 	.byte 0x82 //face
+	.byte 0x12 //push2
+	.byte 0x11 //push1
+	.byte 0x84 //portrait
 	.byte 0x11 //push1
 	.byte 0x0C //push.v
 	  .byte 0x02 //2
@@ -61,18 +64,24 @@ __testMap_Entity1_Script:
 	.byte 0x12 //push2
 	.byte 0x83 //ask
 	.byte 0x11 //push1
-	.byte 0x10 //push0
+	.byte 0x11 //push1
+	.byte 0x84 //portrait
+	.byte 0x0F //push.s
+	  .long __testMap_Entity1_18
+	.byte 0x11 //push1
 	.byte 0x81 //say
 	.byte 0x10 //push0
 	.byte 0x11 //push1
 	.byte 0x82 //face
 	.byte 0xFF //end of script
 __testMap_Entity1_8:
-	.asciz "Hello there, %s."
+	.asciz "What a year, huh?"
 __testMap_Entity1_14:
-	.asciz "No"
+	.asciz "Ignore"
 __testMap_Entity1_17:
-	.asciz "Yes"
+	.asciz "Joke"
+__testMap_Entity1_18:
+	.asciz "It's only February."
 
 
 

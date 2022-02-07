@@ -42,7 +42,7 @@ void updateAndDraw();
 extern const TImageFile titlePic;
 extern const uint16_t spritePal[], uiTiles[], uiPal[], uiBackground[];
 extern const uint8_t testMap[], spritePals[];
-extern const uint32_t sprites[];
+extern const uint32_t sprites[], portraits[];
 
 enum facing
 {
@@ -87,7 +87,7 @@ int lastInput;
 int cameraX, cameraY;
 int cameraTX, cameraTY, lastCameraTX, lastCameraTY;
 
-int dialogueBoxIsOpen;
+int dialogueBoxIsOpen, dialoguePortrait;
 
 unsigned int scriptVariables[256];
 char playerName[16];
@@ -337,14 +337,25 @@ void saySomething(char *what, int flags)
 		drawWindow(2, 2, 36, 6);
 	dialogueBoxIsOpen = 1;
 
+	if (dialoguePortrait)
+	{
+		MISC->DmaCopy(TILESET + 0x1800, portraits[dialoguePortrait - 1], 0x80, DMA_INT);
+		MISC->DmaCopy(PALETTE + 256 + 256 - 32, (int16_t*)portraits[dialoguePortrait - 1 + 8], 16, DMA_SHORT);
+		OBJECTS_A[253] = OBJECTA_BUILD(192, 0, 1, 14);
+		OBJECTS_B[253] = OBJECTB_BUILD(3 * 8, 3 * 8, 1, 1, 0, 0, 1, 0);
+	}
+	else
+		OBJECTS_A[253] = OBJECTA_BUILD(5, 0, 0, 14);
+
 	if (*c != 0)
 	{
+		int x = dialoguePortrait ? 8 : 3;
 		while (*c != 0)
 		{
 			vbl();
 			vbl();
 			*f++ = *c++;
-			drawString(3, 3, d);
+			drawString(x, 3, d);
 		}
 		while (REG_KEYIN != 0) vbl();
 		while (REG_KEYIN == 0) vbl();
@@ -358,6 +369,7 @@ void saySomething(char *what, int flags)
 	}
 
 	dialogueBoxIsOpen = 0;
+	OBJECTS_A[253] = OBJECTA_BUILD(5, 0, 0, 14);
 	for (int i = 2; i >= 0; --i)
 	{
 		MISC->DmaClear(MAP4, 0, WIDTH * 8, DMA_INT);
@@ -417,6 +429,7 @@ int doMenu(int left, int top, char* options, int num)
 			while (REG_KEYIN != 0) vbl();
 	}
 	OBJECTS_A[255] = 0;
+	OBJECTS_A[254] = 0;
 	eraseWindow(left, top, len + 5, (num * 2) + 2);
 	return choice;
 }
@@ -582,6 +595,20 @@ void runScript(unsigned char* code, int entityID)
 					opts++;
 				}
 				acc = doMenu(2, 8, printBuffer, opts);
+				break;
+			}
+			case 0x84: //portrait
+			{
+				argc = stack[--stackSize];
+				if (argc == 0)
+					acc = 0;
+				else
+				{
+					acc = stack[--stackSize];
+					argc--;
+				}
+				while (argc--) stack[--stackSize];
+				dialoguePortrait = acc;
 				break;
 			}
 		}
