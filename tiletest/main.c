@@ -93,8 +93,8 @@ int main(void)
 	MISC->DmaCopy(PALETTE, (int8_t*)&tilesetPal, 32, DMA_SHORT);
 
 	MISC->DmaCopy(TILESET + 0x2000, (int8_t*)&farahTiles, 64, DMA_INT);
-	MISC->DmaCopy(PALETTE + 32, (int8_t*)&farahPal, 16, DMA_SHORT);
-	OBJECTS_A[0] = OBJECTA_BUILD(256, 0, 1, 2);
+	MISC->DmaCopy(PALETTE + 256, (int8_t*)&farahPal, 16, DMA_SHORT);
+	OBJECTS_A[0] = OBJECTA_BUILD(256, 0, 1, 0);
 	OBJECTS_B[0] = OBJECTB_BUILD(152, 176, 0, 1, 0, 0, 1, 0);
 
 	REG_MAPSET = 0x70; //just enable it, don't worry about tile offsets.
