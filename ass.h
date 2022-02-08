@@ -208,6 +208,8 @@ typedef struct {
 	int8_t	buf[512];		// File private data read/write window
 } TFileHandle;
 
+#define STD_PRINT (TFileHandle*)-1
+
 typedef struct {
 	_FDID	obj;			// Object identifier
 	int32_t	dptr;			// Current read/write offset

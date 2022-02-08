@@ -80,11 +80,13 @@ int32_t OpenFile(TFileHandle* handle, const char* path, char mode)
 
 int32_t CloseFile(TFileHandle* handle)
 {
+	if (handle == STD_PRINT) return -1;
 	return f_close(handle);
 }
 
 int32_t ReadFile(TFileHandle* handle, void* target, uint32_t length)
 {
+	if (handle == STD_PRINT) return 0;
 	uint32_t read;
 	if (length == 0)
 		length = FileSize(handle);
@@ -97,6 +99,16 @@ int32_t ReadFile(TFileHandle* handle, void* target, uint32_t length)
 
 int32_t WriteFile(TFileHandle* handle, void* source, uint32_t length)
 {
+	if (handle == STD_PRINT)
+	{
+		if (interface->LinePrinter)
+		{
+			char* b = (char*)source;
+			while(*b)
+				*interface->LinePrinter = *b++;
+		}
+		return length;
+	}
 	uint32_t wrote;
 	int32_t r = f_write(handle, source, length, &wrote);
 	if (r)
@@ -107,6 +119,7 @@ int32_t WriteFile(TFileHandle* handle, void* source, uint32_t length)
 
 int32_t SeekFile(TFileHandle* handle, uint32_t offset, int32_t origin)
 {
+	if (handle == STD_PRINT) return 0;
 	if (origin == SEEK_CUR)
 		f_lseek(handle, handle->fptr + offset);
 	else if (origin == SEEK_END)
@@ -118,25 +131,30 @@ int32_t SeekFile(TFileHandle* handle, uint32_t offset, int32_t origin)
 
 int32_t TruncateFile(TFileHandle* handle)
 {
+	if (handle == STD_PRINT) return 0;
 	return f_truncate(handle);
 }
 int32_t FlushFile(TFileHandle* handle)
 {
+	if (handle == STD_PRINT) return 0;
 	return f_sync(handle);
 }
 
 uint32_t FilePosition(TFileHandle* handle)
 {
+	if (handle == STD_PRINT) return 0;
 	return handle->fptr;
 }
 
 int32_t FileEnd(TFileHandle* handle)
 {
+	if (handle == STD_PRINT) return 0;
 	return (int32_t)(handle->fptr >= handle->obj.objsize);
 }
 
 uint32_t FileSize(TFileHandle* handle)
 {
+	if (handle == STD_PRINT) return 0;
 	return handle->obj.objsize;
 }
 
