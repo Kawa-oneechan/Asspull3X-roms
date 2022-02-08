@@ -13,6 +13,15 @@ char cwd[MAX_CWD];
 char *args[128];
 int argc;
 
+int HaveDisk(const char* path)
+{
+	DIR dir;
+	int ret = DISK->OpenDir(&dir, path);
+	if (ret == 3)
+		return 0;
+	return 1;
+}
+
 int LoadFile(const char* path, char** buffer, int32_t len)
 {
 	FILE file;
@@ -133,7 +142,7 @@ int32_t ListFiles(int argc __attribute__((unused)), char **args __attribute__((u
 	char *path = cwd;
 	int mode = 1;
 
-	if (!HaveDisk())
+	if (!HaveDisk(path))
 	{
 		printf("No disk.\n\n");
 		return 1;

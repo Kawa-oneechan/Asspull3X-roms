@@ -13,6 +13,15 @@ void WaitForKey()
 #define MAXPATH 256
 #define MAX_INP 256
 
+int HaveDisk(const char* path)
+{
+	DIR dir;
+	int ret = DISK->OpenDir(&dir, path);
+	if (ret == 3)
+		return 0;
+	return 1;
+}
+
 void ListFiles(const char* path, int32_t mode)
 {
 	int32_t ret;
@@ -20,7 +29,7 @@ void ListFiles(const char* path, int32_t mode)
 	FILEINFO fno;
 	uint32_t files = 0, dirs = 0, size = 0;
 	char buff[MAXPATH];
-	if (!HaveDisk())
+	if (!HaveDisk(path))
 	{
 		printf("No disk.\n\n");
 		return;
@@ -136,11 +145,31 @@ int32_t main()
 		while (*trimmed == ' ')
 			trimmed++;
 		//printf("<len:%d>", strlen(trimmed));
-		if (strlen(input) < 1)
+		if (strlen(trimmed) < 1)
 			continue;
+
+		if (strlen(trimmed) == 2 && trimmed[1] == ':')
+		{
+			int driveNum = trimmed[0] - 'a';
+			if (driveNum < DISK->GetNumDrives())
+			{
+				cwd[0] = 'A' + driveNum;
+				cwd[1] = ':';
+				cwd[2] = '\\';
+				cwd[3] = 0;
+				DISK->ChangeDir(cwd);
+			}
+			else
+			{
+				printf("No such drive.");
+			}
+			continue;
+		}
+
 		//printf("<%s>\n", line);
 		token = strtok_r(trimmed, del, &ptr);
 		//printf("[%s]\n", token);
+
 		if (!strcmp(token, "cd"))
 		{
 			token = strtok_r(NULL, del, &ptr);
@@ -163,7 +192,7 @@ int32_t main()
 
 			}
 			//printf("(CD: %s)", path);
-			printf("(CD: %s)", token);
+			//printf("(CD: %s)", token);
 			//int ret = DISK->ChangeDir(path);
 			int ret = DISK->ChangeDir(token);
 			if (ret != 0)
@@ -173,7 +202,7 @@ int32_t main()
 				else printf("Shit's fucked: %d\n", ret);
 			} else
 			{
-				printf("OK\n");
+				//printf("OK\n");
 				//strcpy_s(cwd, MAXPATH, path);
 				//DISK->GetCurrentDir(cwd, MAX_CWD);
 			}
