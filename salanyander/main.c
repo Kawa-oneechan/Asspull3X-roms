@@ -105,7 +105,7 @@ int main(void)
 
 	for(;;)
 	{
-		sprintf(debugBuffer, "SCROLL %d  REG_KEYIN $%02X ", scroll, REG_KEYIN);
+		sprintf(debugBuffer, "SCROLL %d  ", scroll);
 		print(debugBuffer, 0, 1, 0);
 		sprintf(debugBuffer, "OBJUSE %04X%04X%04X%04X", objectsUsed[3], objectsUsed[2], objectsUsed[1], objectsUsed[0]);
 		print(debugBuffer, 0, 2, 0);

@@ -62,12 +62,17 @@ void ThinkPlayer(int id)
 	}
 	else
 	{
-		if (REG_KEYIN == 0xD0) p->y++;
-		else if (REG_KEYIN == 0xC8) p->y--;
-		else if (REG_KEYIN == 0xCD) p->x++;
-		else if (REG_KEYIN == 0xCB) p->x--;
+		REG_JOYPAD = 1; //reset
 
-		if (REG_KEYIN == 0x2E)
+		int dpadbuts = REG_JOYPAD;
+		int extrabuts = REG_JOYPAD;
+
+		if (dpadbuts & 4) p->y++;
+		else if (dpadbuts & 1) p->y--;
+		if (dpadbuts & 2) p->x++;
+		else if (dpadbuts & 8) p->x--;
+
+		if (dpadbuts & 16)
 		{
 			if (p->shotTimer == 0)
 			{
