@@ -4,10 +4,7 @@ extern unsigned int rndseed;
 extern void srand(unsigned int seed);
 extern unsigned int rand();
 
-#define KEY_UP 0xC8
-#define KEY_LEFT 0xCB
-#define KEY_RIGHT 0xCD
-#define KEY_DOWN 0xD0
+#define sprintf TEXT->Format
 
 /*
  * reset_game:  sets game fields to their initial state.
@@ -218,6 +215,7 @@ static void update_infos(game *game)
 
 	char buffer[64];
 	sprintf(buffer, "%7d", game->score);
+	//TODO: use a function already!
 	uint16_t *here = &MAP1[(15 * 64) + 28];
 	char *c = buffer;
 	while (*c) *here++ = 0x2000 | *c++;
@@ -232,83 +230,61 @@ static void update_infos(game *game)
 	c = buffer;
 	while (*c) *here++ = 0x2000 | *c++;
 
-/*
-	if (game->is_paused || game->is_over) {
-
-		if (game->is_paused) {
-			snprintf(game->scene->infos[6], LEN_INFO_LINE,
-				 "PAUSE");
-			snprintf(game->scene->infos[7], LEN_INFO_LINE,
-				 "Press P to Unpause, E to End Game");
-		} else {
-			snprintf(game->scene->infos[6], LEN_INFO_LINE,
-				 "GAME OVER");
-			snprintf(game->scene->infos[7], LEN_INFO_LINE,
-				 "Press N to New Game, Q to Quit");
-		}
-	} else {
+	if (game->is_paused)
+	{
+		sprintf(buffer, " PAUSED ");
+		here = &MAP1[(15 * 64) + 28];
+		c = buffer;
+		while (*c) *here++ = 0x2000 | *c++;
+	}
+	//else if (game->is_over)
+		//snprintf(game->scene->infos[6], LEN_INFO_LINE, "GAME OVER");
+	/*
+	else
+	{
 		snprintf(game->scene->infos[6], LEN_INFO_LINE,
 			 "\n");
 		snprintf(game->scene->infos[7], LEN_INFO_LINE,
 			 "\n");
 	}
-*/
+	*/
 }
 
 static action get_action(int delay)
 {
-	int in;
 	delay /= 10;
 	while (delay--)
 	{
 		vbl();
-		in = REG_KEYIN;
-		if (REG_JOYPAD & 1) in = KEY_UP;
-		else if (REG_JOYPAD & 2) in = KEY_RIGHT;
-		else if (REG_JOYPAD & 4) in = KEY_DOWN;
-		else if (REG_JOYPAD & 8) in = KEY_LEFT;
-		else if (REG_JOYPAD & 16) in = KEY_UP;
-		rndseed += in;
+		REG_JOYPAD = 1; //reset
+		int dpadbuts = REG_JOYPAD;
+		int extrabuts = REG_JOYPAD;
+		rndseed += dpadbuts + extrabuts;
 
-		if (in)
+		if (dpadbuts)
 		{
 			int debounce = 10;
+			if (dpadbuts & (1 | 16)) debounce = 20;
+			if (dpadbuts & 32) debounce = 20;
 			while (debounce)
 			{
 				vbl();
 				debounce--;
-				if (REG_KEYIN == 0)
+				REG_JOYPAD = 1; //reset
+				if (REG_JOYPAD == 0)
 					break;
 			}
 		}
 
-		switch (in)
-		{
-			case KEY_LEFT: return MOVE_LEFT;
-			case KEY_RIGHT: return MOVE_RIGHT;
-			case KEY_UP: return ROTATE;
-			case KEY_DOWN: return MOVE_DOWN;
-		}
+		if (dpadbuts & 1) return ROTATE;
+		if (dpadbuts & 2) return MOVE_RIGHT;
+		if (dpadbuts & 8) return MOVE_LEFT;
+		if (dpadbuts & 4) return MOVE_DOWN;
+		if (dpadbuts & 16) return ROTATE;
+		if (dpadbuts & 32) return DROP;
+		if (extrabuts & 8) return PAUSE;
 	}
 	return MOVE_DOWN;
-	/*
-	timeout(delay);
-
-	switch (getch()) {
-		case ' ':
-			return DROP;
-		case 'n':
-			return NEW_GAME;
-		case 'e':
-			return END_GAME;
-		case 'p':
-			return PAUSE;
-		case 'q':
-			return QUIT;
-		default:
-			return MOVE_DOWN;
-	}
-	*/
 }
 
 static void push_in_history(action action, game *game)
@@ -319,17 +295,39 @@ static void push_in_history(action action, game *game)
 
 static void pause_game(game *game)
 {
-	action action;
-
 	game->is_paused = 1;
+	REG_SCREENFADE = 4;
 	update_infos(game);
 	refresh_grid(game->grid);
 
-	while ((action = get_action(-1)) != PAUSE && action != END_GAME)
+	//debounce
+	while (1)
+	{
 		vbl();
+		REG_JOYPAD = 1;
+		int buttons = REG_JOYPAD;
+		buttons = REG_JOYPAD;
+		if (!buttons) break;
+	}
+	while (1)
+	{
+		vbl();
+		REG_JOYPAD = 1;
+		int buttons = REG_JOYPAD;
+		buttons = REG_JOYPAD;
+		if (buttons & 8) break;
+	}
+	//debounce
+	while (1)
+	{
+		vbl();
+		REG_JOYPAD = 1;
+		int buttons = REG_JOYPAD;
+		buttons = REG_JOYPAD;
+		if (!buttons) break;
+	}
 
-	if (action == END_GAME)
-		game->is_over = 1;
+	REG_SCREENFADE = 0;
 	game->is_paused = 0;
 }
 
