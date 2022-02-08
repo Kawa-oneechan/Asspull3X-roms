@@ -12,11 +12,6 @@ extern const uint16_t backgroundMap[];
 
 extern const unsigned short imfData1[];
 
-#define KEY_UP 0xC8
-#define KEY_LEFT 0xCB
-#define KEY_RIGHT 0xCD
-#define KEY_DOWN 0xD0
-
 #define OBJECTA_BUILD(t,b,e,p)	\
 (								\
 	(((p) & 15) << 12) |		\
@@ -37,13 +32,13 @@ extern const unsigned short imfData1[];
 )
 
 static const uint16_t objectsA[] = {
-	OBJECTA_BUILD(128, 0, 1, 4),
-	OBJECTA_BUILD(128 + 8, 0, 1, 4),
-	OBJECTA_BUILD(128 + 12, 0, 1, 4),
-	OBJECTA_BUILD(128 + 16, 0, 1, 4),
-	OBJECTA_BUILD(128 + 32, 0, 1, 4),
-	OBJECTA_BUILD(128 + 48, 0, 1, 4),
-	OBJECTA_BUILD(128 + 56, 0, 1, 4),
+	OBJECTA_BUILD(128, 0, 1, 0),
+	OBJECTA_BUILD(128 + 8, 0, 1, 0),
+	OBJECTA_BUILD(128 + 12, 0, 1, 0),
+	OBJECTA_BUILD(128 + 16, 0, 1, 0),
+	OBJECTA_BUILD(128 + 32, 0, 1, 0),
+	OBJECTA_BUILD(128 + 48, 0, 1, 0),
+	OBJECTA_BUILD(128 + 56, 0, 1, 0),
 
 	OBJECTA_BUILD(384, 0, 1, 1),
 	OBJECTA_BUILD(384 + 16, 0, 1, 1),
@@ -121,8 +116,9 @@ int main(void)
 	MISC->DmaCopy(TILESET, (int8_t*)&tilesTiles, 1024, DMA_INT);
 	MISC->DmaCopy(TILESET + 0x1000, (int8_t*)&farahTiles, 1024, DMA_INT);
 	MISC->DmaCopy(TILESET + 0x3000, (int8_t*)&logoTiles, 1024, DMA_INT);
-	MISC->DmaCopy(PALETTE, (int16_t*)&tilesPal, 64, DMA_INT);
-	MISC->DmaCopy(PALETTE + 64, (int16_t*)&farahPal, 64, DMA_INT);
+	MISC->DmaCopy(PALETTE, (int16_t*)&tilesPal, 48, DMA_SHORT);
+	MISC->DmaCopy(PALETTE + 256, (int16_t*)&tilesPal, 32, DMA_SHORT);
+	MISC->DmaCopy(PALETTE + 256, (int16_t*)&farahPal, 16, DMA_SHORT);
 	MISC->DmaClear(MAP1, 0, 64 * 64, 2);
 	MISC->DmaClear(MAP2, 0, 64 * 64, 2);
 	REG_MAPSET = 0x30;
