@@ -89,8 +89,11 @@ int cameraTX, cameraTY, lastCameraTX, lastCameraTY;
 
 int dialogueBoxIsOpen, dialoguePortrait;
 
-unsigned int scriptVariables[256];
-char playerName[16];
+char playerName[16] = "Farrah";
+unsigned int scriptVariables[256] =
+{
+	0, 0, (unsigned int)&playerName
+};
 
 const char xdisp[] = { 0, -1, 0, 1 };
 const char ydisp[] = { 1, 0, -1, 0 };
@@ -339,7 +342,7 @@ void saySomething(char *what, int flags)
 
 	if (dialoguePortrait)
 	{
-		MISC->DmaCopy(TILESET + 0x1800, portraits[dialoguePortrait - 1], 0x80, DMA_INT);
+		MISC->DmaCopy(TILESET + 0x1800, (int8_t*)portraits[dialoguePortrait - 1], 0x80, DMA_INT);
 		MISC->DmaCopy(PALETTE + 256 + 256 - 32, (int16_t*)portraits[dialoguePortrait - 1 + 8], 16, DMA_SHORT);
 		OBJECTS_A[253] = OBJECTA_BUILD(192, 0, 1, 14);
 		OBJECTS_B[253] = OBJECTB_BUILD(3 * 8, 3 * 8, 1, 1, 0, 0, 1, 0);
@@ -607,7 +610,7 @@ void runScript(unsigned char* code, int entityID)
 					acc = stack[--stackSize];
 					argc--;
 				}
-				while (argc--) stack[--stackSize];
+				while (argc--) --stackSize;
 				dialoguePortrait = acc;
 				break;
 			}
@@ -809,9 +812,6 @@ int main(void)
 		data += 10;
 	}
 	PALETTE[0] = 0;
-
-	scriptVariables[2] = (unsigned int)&playerName;
-	strcpy(playerName, "Farrah"); //"[-MAX-NAME-LEN-]";
 
 	drawMap();
 	//saySomething("* What a year, huh?\n* Captain, it's February.", 1);

@@ -78,3 +78,5 @@ Normally, the A3X draws 240 or 480 lines, but by setting the bold font flag in g
 * Snake game ported from [an implementation by Jason Kruse](https://github.com/mnisjk/snake).
 * Tetris game ported from [an implementation by Marco Lucidi](https://github.com/MarcoLucidi01/tetris_clone).
 * IMF player based on work by K1n9 Duk3.
+* `.data` segment help by Dmitry Grinberg.
+

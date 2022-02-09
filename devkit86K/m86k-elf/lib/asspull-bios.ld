@@ -63,6 +63,7 @@ SECTIONS
     SHORT (0x4E5E)	/* unlk %fp */
     SHORT (0x4E75)	/* rts */
 
+    . = ALIGN(2);
     _etext = .;
     *(.lit)
   } > rom
@@ -74,6 +75,7 @@ SECTIONS
     *(.got.plt) *(.got)
     *(.shdata)
     *(.data .data.*)
+    . = ALIGN(2);
     _edata = .;
   } > ram
   _sdata = SIZEOF (.data);

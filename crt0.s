@@ -3,7 +3,7 @@
 initialize:
 	move    #0x2700,%sr
 
-	lea     _stext,%a0
+	lea     _etext,%a0
 	lea     0x01001000,%a1
 	move.l  #_sdata,%d0
 	lsr.l   #1,%d0

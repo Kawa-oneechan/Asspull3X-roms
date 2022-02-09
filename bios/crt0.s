@@ -74,8 +74,8 @@ initialize:
 	move	#0x2700,%sr		| disable interrupts
 
 | Copy initialized variables from ROM to Work RAM
-	lea	_stext,%a0
-	lea	0x01000000,%a1
+	lea		_etext,%a0
+	lea		0x01000000,%a1
 	move.l	#_sdata,%d0
 	lsr.l	#1,%d0
 	subq.w	#1,%d0
@@ -83,11 +83,11 @@ initialize:
 	move.w	(%a0)+,(%a1)+
 	dbra	%d0,2b
 
-	lea	0x013F0000,%a0
-	movea.l %a0,%sp			| set stack pointer to top of Work RAM
+	lea		0x013F0000,%a0
+	movea.l	%a0,%sp			| set stack pointer to top of Work RAM
 	link.w	%a6,#-8			| set up initial stack frame
 
-	jsr	main			| GO!
+	jsr		main			| GO!
 3:
 	bra.b	3b
 
