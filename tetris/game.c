@@ -6,6 +6,26 @@ extern unsigned int rand();
 
 #define sprintf TEXT->Format
 
+void Write(int x, int y, int p, const char* buffer)
+{
+	uint16_t *here = &MAP1[(y * 64) + x];
+	char *c = (char*)buffer;
+	p <<= 12;
+	while (*c) *here++ = p | *c++;
+}
+
+extern int32_t vsprintf(char*, const char*, va_list);
+void WriteF(int x, int y, int p, const char* format, ...)
+{
+	char buffer[256];
+	va_list args;
+	va_start(args, format);
+	vsprintf(buffer, format, args);
+	va_end(args);
+	Write(x, y, p, buffer);
+}
+
+
 /*
  * reset_game:  sets game fields to their initial state.
  */
@@ -213,30 +233,9 @@ static void update_infos(game *game)
 		for (int j = 0; j < 4; j++)
 			MAP2[((i + 2) * 64) + j + 18] = (shapes[next_shape][0][i][j]) ? (next_shape + 1) : 0;
 
-	char buffer[64];
-	sprintf(buffer, "%7d", game->score);
-	//TODO: use a function already!
-	uint16_t *here = &MAP1[(15 * 64) + 28];
-	char *c = buffer;
-	while (*c) *here++ = 0x2000 | *c++;
-
-	sprintf(buffer, "%5u", game->lines);
-	here = &MAP1[(18 * 64) + 22];
-	c = buffer;
-	while (*c) *here++ = 0x2000 | *c++;
-
-	sprintf(buffer, "%5u", game->level);
-	here = &MAP1[(18 * 64) + 30];
-	c = buffer;
-	while (*c) *here++ = 0x2000 | *c++;
-
-	if (game->is_paused)
-	{
-		sprintf(buffer, " PAUSED ");
-		here = &MAP1[(15 * 64) + 28];
-		c = buffer;
-		while (*c) *here++ = 0x2000 | *c++;
-	}
+	WriteF(28, 15, 2, "%7u", game->score);
+	WriteF(22, 18, 2, "%5u", game->lines);
+	WriteF(30, 18, 2, "%5u", game->level);
 	//else if (game->is_over)
 		//snprintf(game->scene->infos[6], LEN_INFO_LINE, "GAME OVER");
 	/*
@@ -297,7 +296,7 @@ static void pause_game(game *game)
 {
 	game->is_paused = 1;
 	REG_SCREENFADE = 4;
-	update_infos(game);
+	Write(22, 15, 0, "    PAUSE    ");
 	refresh_grid(game->grid);
 
 	//debounce
@@ -328,6 +327,7 @@ static void pause_game(game *game)
 	}
 
 	REG_SCREENFADE = 0;
+	Write(22, 15, 1, "SCORE ");
 	game->is_paused = 0;
 }
 
@@ -339,7 +339,20 @@ static int remove_full_lines(game *game)
 	{
 		if (is_full_row(game->grid, row))
 		{
+			refresh_grid(game->grid);
 			lines++;
+
+			//Animate!
+			for (int col = 0; col < game->grid->cols; col++)
+			{
+				MAP2[(row * 64) + col] = 0x101C;
+				vbl();
+				vbl();
+				vbl();
+				vbl();
+				MAP2[(row * 64) + col] = 0;
+			}
+
 			flush_row(game->grid, row);
 			for (int i = row; i > 0; i--)
 				swap_rows(game->grid, i, i - 1);
