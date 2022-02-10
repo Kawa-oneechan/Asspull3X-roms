@@ -31,25 +31,6 @@ void DrawStripe(int source, int target)
 	}
 }
 
-#define OBJECTA_BUILD(t,b,e,p)	\
-(								\
-	(((p) & 15) << 12) |		\
-	(((e) &  1) << 11) |		\
-	(((b) &  3) <<  9) |		\
-	(((t) & 0x1FF) << 0)		\
-)
-#define OBJECTB_BUILD(hp,vp,dw,dh,hf,vf,ds,pr)	\
-(												\
-	(((pr) & 3) << 29) |						\
-	(((ds) & 1) << 28) |						\
-	(((vf) & 1) << 27) |						\
-	(((hf) & 1) << 26) |						\
-	(((dh) & 1) << 25) |						\
-	(((dw) & 1) << 24) |						\
-	(((vp) & 0x7FF) << 12) |					\
-	(((hp) & 0x7FF) << 0)						\
-)
-
 typedef struct
 {
 	uint16_t palette:4;
@@ -60,18 +41,25 @@ typedef struct
 #define objectsA ((TObjectA*)OBJECTS_A)
 typedef struct
 {
-	uint32_t priority:3;
-	uint32_t large:1;
+	union
+	{
+		struct
+		{
+			uint32_t priority:3;
+			uint32_t large:1;
 
-	uint32_t flipV:1;
-	uint32_t flipH:1;
-	uint32_t tall:1;
-	uint32_t wide:1;
+			uint32_t flipV:1;
+			uint32_t flipH:1;
+			uint32_t tall:1;
+			uint32_t wide:1;
 
-	uint32_t _waste2:3;
-	uint32_t y:9;
-	uint32_t _waste3:2;
-	uint32_t x:10;
+			uint32_t :3;
+			uint32_t y:9;
+			uint32_t :2;
+			uint32_t x:10;
+		};
+		uint32_t raw;
+	};
 } TObjectB;
 #define objectsB ((TObjectB*)OBJECTS_B)
 
@@ -94,8 +82,13 @@ int main(void)
 
 	MISC->DmaCopy(TILESET + 0x2000, (int8_t*)&farahTiles, 64, DMA_INT);
 	MISC->DmaCopy(PALETTE + 256, (int8_t*)&farahPal, 16, DMA_SHORT);
-	OBJECTS_A[0] = OBJECTA_BUILD(256, 0, 1, 0);
-	OBJECTS_B[0] = OBJECTB_BUILD(152, 176, 0, 1, 0, 0, 1, 0);
+
+	objectsA[0].tile = 256;
+	objectsA[0].enabled = 1;
+	objectsB[0].x = 152;
+	objectsB[0].y = 176;
+	objectsB[0].tall = 1;
+	objectsB[0].large = 1;
 
 	REG_MAPSET = 0x70; //just enable it, don't worry about tile offsets.
 
