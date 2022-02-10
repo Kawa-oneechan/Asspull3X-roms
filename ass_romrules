@@ -32,7 +32,7 @@ LDFLAGS += -Wl,-Map $(MAPFILE) -nostartfiles
 ../$(TARGET).ap3 : $(TARGET).elf
 	$(OBJCOPY) -O binary $< $@
 #	$(CROSS)objdump -d $(TARGET).elf > $(TARGET).txt
-	../assfix ../$(TARGET).ap3
+	python ../assfix.py ../$(TARGET).ap3
 
 $(TARGET).elf : $(OFILES) $(AFILES) Makefile $(DEPENDFILE)
 	@echo > $(MAPFILE)

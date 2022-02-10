@@ -8,11 +8,8 @@ include ../ass_romrules
 # GRAPHICS
 # --------
 
-export IMG2ASS ?= ../img2ass.exe
-export APIFILES := piano.png
+export IMG2ASS := python ../img2ass.py
 
-piano.o : piano.s $(APIFILES:.png=.api)
+piano.o : piano.s piano.png
+	$(IMG2ASS) piano.png
 	$(AS) $(ASFLAGS) -c $< -o $@
-
-%.api : %.png
-	$(IMG2ASS) $<

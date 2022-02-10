@@ -8,7 +8,7 @@ include ../ass_romrules
 # GRAPHICS
 # --------
 
-export IMG2ASS ?= ../img2ass.exe
+export IMG2ASS := python ../img2ass.py
 export GRIT := $(DEVKITARM)/bin/grit.exe
 GRITFLAGS := -ftb -fh! -gB4
 
