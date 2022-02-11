@@ -30,3 +30,6 @@ Debug
 *.ap3
 *.map
 *.vhd
+*.api
+*.img.bin
+*.pal.bin
