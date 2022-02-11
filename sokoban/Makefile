@@ -8,8 +8,6 @@ include ../ass_romrules
 # GRAPHICS
 # --------
 
-export IMG2ASS := python ../img2ass.py
-export GRIT := $(DEVKITARM)/bin/grit.exe
 GRITFLAGS := -ftb -fh! -gB4
 # I'll explain this just here in "Sokoban":
 # -ftb    file type binary

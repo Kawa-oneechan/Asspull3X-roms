@@ -8,7 +8,5 @@ include ../ass_romrules
 # GRAPHICS
 # --------
 
-export IMG2ASS := python ../img2ass.py
-
 pic.s : 200-16.png
 	$(IMG2ASS) 200-16.png

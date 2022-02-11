@@ -8,7 +8,5 @@ include ../ass_romrules
 # GRAPHICS
 # --------
 
-export IMG2ASS := python ../img2ass.py
-
 piano.s : piano.png
 	$(IMG2ASS) piano.png

@@ -4,6 +4,11 @@ CC		:= $(CROSS)gcc
 AS		:= $(CROSS)gcc
 LD		:= $(CROSS)gcc
 OBJCOPY		:= $(CROSS)objcopy
+
+IMG2ASS		:= python ../img2ass.py
+HDMA2ASS	:= python ../hdma2ass.py
+GRIT		:= $(DEVKITARM)/bin/grit.exe
+
 TARGET		:= ass-bios
 
 # Regular makefile continues here
@@ -61,10 +66,6 @@ clean:
 # --------------------------------------------------------------------
 # GRAPHICS
 # --------------------------------------------------------------------
-
-export IMG2ASS := python ../img2ass.py
-export HDMA2ASS := python ../hdma2ass.py
-export GRIT := $(DEVKITARM)/bin/grit.exe
 
 splash.s : splash.png
 	$(IMG2ASS) splash.png

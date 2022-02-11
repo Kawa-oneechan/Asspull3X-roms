@@ -8,8 +8,6 @@ include ../ass_romrules
 # GRAPHICS
 # --------
 
-export IMG2ASS := python ../img2ass.py
-export GRIT := $(DEVKITARM)/bin/grit.exe
 GRITFLAGS := -ftb -fh! -gB4
 
 pictures.s : pointer.png bmp320x200x4.png bmp320x240x4.png bmp640x480x4.png bmp320x200x8.png bmp320x240x8.png bmp640x480x8.png

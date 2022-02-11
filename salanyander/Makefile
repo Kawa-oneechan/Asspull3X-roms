@@ -8,9 +8,6 @@ include ../ass_romrules
 # GRAPHICS
 # --------
 
-export IMG2ASS := python ../img2ass.py
-export TILED2ASS := python ../tiled2ass.py
-export GRIT := $(DEVKITARM)/bin/grit.exe
 GRITFLAGS := -ftb -fh! -gB4
 
 graphics.s : font.png
