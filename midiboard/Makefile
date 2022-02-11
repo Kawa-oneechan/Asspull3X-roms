@@ -8,5 +8,6 @@ include ../ass_romrules
 # GRAPHICS
 # --------
 
-piano.s : piano.png
+piano.s : piano.api
+piano.api : piano.png
 	$(IMG2ASS) piano.png

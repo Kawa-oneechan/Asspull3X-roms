@@ -67,11 +67,19 @@ clean:
 # GRAPHICS
 # --------------------------------------------------------------------
 
-splash.s : splash.png
+splash.s : splash.api
+splash.api : splash.png
 	$(IMG2ASS) splash.png
 
-font.s : font.png
+icons.s : icons.img.bin
+icons.img.bin : icons.png
+	$(GRIT) icons.png -ftb -fh! -gB4
+	$(OBJCOPY) -F binary --reverse-bytes=2 icons.pal.bin
+
+font.s : font1.img.bin font2.img.bin
+font1.img.bin : font.png
 	$(GRIT) font.png -ofont1 -ab256 -ftb -fh! -p! -gB1
+font2.img.bin : font.png
 	$(GRIT) font.png -ofont2 -at256 -ftb -fh! -p! -gB1 -th16
 
 hdma.s : hdma1.png hdma2.png

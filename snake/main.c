@@ -127,6 +127,7 @@ void Tile(int, int, uint16_t);
 void Write(int, int, char*);
 void TitleScreen()
 {
+	REG_SCREENFADE = 31;
 	uint16_t* dst = MAP1;
 	uint16_t* src = (uint16_t*)titleMap;
 	for (int line = 0; line < 30; line++)

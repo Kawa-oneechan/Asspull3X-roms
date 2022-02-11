@@ -8,5 +8,6 @@ include ../ass_romrules
 # GRAPHICS
 # --------
 
-pic.s : ranmya.png
+pic.s : ranmya.api
+ranmya.api : ranmya.png
 	$(IMG2ASS) ranmya.png

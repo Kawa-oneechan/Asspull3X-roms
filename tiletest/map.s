@@ -1,5 +1,5 @@
 	.section .rodata
-	.align	2
+	.align 2
 	.global bg2Map
 	.global bg1Map
 	.global levelMap

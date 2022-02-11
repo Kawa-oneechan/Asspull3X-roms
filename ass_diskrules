@@ -48,7 +48,7 @@ $(TARGET).elf : $(OFILES) $(AFILES) Makefile $(DEPENDFILE)
 all:	clean $(TARGET).elf
 
 clean:
-	rm -f $(OFILES) $(MAPFILE) $(TARGET).elf ../_disk2_/$(TARGET).app
+	rm -f $(OFILES) $(MAPFILE) $(TARGET).elf *.img.bin *.pal.bin *.api ../_disk2_/$(TARGET).app
 
 # --- ROM compilation ---
 %.o : %.c

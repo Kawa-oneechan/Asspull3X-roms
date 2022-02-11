@@ -10,10 +10,10 @@ include ../ass_romrules
 
 GRITFLAGS := -ftb -fh! -gB4
 
-tiles.s : tiles.png
-# Tiles need nothing special...
+tiles.s : tiles.img.bin
+
+tiles.img.bin : tiles.png
 	$(GRIT) tiles.png $(GRITFLAGS)
-# ...except to have the palette data flipped around
 	$(OBJCOPY) -F binary --reverse-bytes=2 tiles.pal.bin
 
 hdma.s : hdma.png
