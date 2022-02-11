@@ -1,5 +1,5 @@
 	.section .rodata
-	.align	2
+	.align 2
 	.global backgroundMap
 backgroundMap:
 	.short 0x1019,0x1019,0x1019,0x1019,0x1019,0x1018,0x1018,0x1018
