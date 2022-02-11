@@ -10,6 +10,5 @@ include ../ass_romrules
 
 export IMG2ASS := python ../img2ass.py
 
-pic.o : pic.s 200-16.png
+pic.s : 200-16.png
 	$(IMG2ASS) 200-16.png
-	$(AS) $(ASFLAGS) -c $< -o $@

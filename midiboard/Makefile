@@ -10,6 +10,5 @@ include ../ass_romrules
 
 export IMG2ASS := python ../img2ass.py
 
-piano.o : piano.s piano.png
+piano.s : piano.png
 	$(IMG2ASS) piano.png
-	$(AS) $(ASFLAGS) -c $< -o $@

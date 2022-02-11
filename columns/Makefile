@@ -10,9 +10,8 @@ include ../ass_romrules
 
 export GRIT := $(DEVKITARM)/bin/grit.exe
 
-tiles.o : tiles.s tiles.png girl1.png
+tiles.s : tiles.png girl1.png
 	$(GRIT) tiles.png -ftb -fh! -gu16 -gB4 -pu8
 	$(GRIT) girl1.png -ftb -fh! -gu16 -gB4 -pu8
 	$(OBJCOPY) -F binary --reverse-bytes=2 tiles.pal.bin
 	$(OBJCOPY) -F binary --reverse-bytes=2 girl1.pal.bin
-	$(AS) $(ASFLAGS) -c $< -o $@

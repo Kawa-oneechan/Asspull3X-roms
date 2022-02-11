@@ -13,7 +13,7 @@ export TILED2ASS := python ../tiled2ass.py
 export GRIT := $(DEVKITARM)/bin/grit.exe
 GRITFLAGS := -ftb -fh! -gB4
 
-tiles.o : tiles.s title.png tiles.png farah.png logo.png
+tiles.s : title.png tiles.png farah.png logo.png
 	$(IMG2ASS) title.png
 # Tiles are 8x8
 	$(GRIT) tiles.png $(GRITFLAGS)
@@ -24,9 +24,6 @@ tiles.o : tiles.s title.png tiles.png farah.png logo.png
 # Flip palette data around
 	$(OBJCOPY) -F binary --reverse-bytes=2 tiles.pal.bin
 	$(OBJCOPY) -F binary --reverse-bytes=2 farah.pal.bin
-# Produce final result
-	$(AS) $(ASFLAGS) -c $< -o $@
 
-background.o : background.s background.json
+background.s : background.json
 	$(TILED2ASS) background.json
-	$(AS) $(ASFLAGS) -c $< -o $@

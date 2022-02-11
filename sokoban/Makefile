@@ -16,7 +16,7 @@ GRITFLAGS := -ftb -fh! -gB4
 # -fh!    no header
 # -gB4    tile data is 4 bpp (no matter the image bitdepth, the system only supports 4bpp tiles)
 
-tiles.o : tiles.s *.pal.bin title.png tiles.png font.png player.png diskette.png backs.png
+tiles.s : *.pal.bin title.png tiles.png font.png player.png diskette.png backs.png
 	$(IMG2ASS) title.png
 # Tiles are 16x16
 	$(GRIT) tiles.png $(GRITFLAGS) -Mw2 -Mh2
@@ -32,5 +32,3 @@ tiles.o : tiles.s *.pal.bin title.png tiles.png font.png player.png diskette.png
 	$(OBJCOPY) -F binary --reverse-bytes=2 tiles.pal.bin
 	$(OBJCOPY) -F binary --reverse-bytes=2 player.pal.bin
 	$(OBJCOPY) -F binary --reverse-bytes=2 diskette.pal.bin
-# Produce final result
-	$(AS) $(ASFLAGS) -c $< -o $@

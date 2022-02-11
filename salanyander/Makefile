@@ -1,5 +1,5 @@
 export TARGET :=	salanyander
-export SFILES :=	crt0.s graphics.s starfield-map.s
+export SFILES :=	crt0.s graphics.s bg_space.s
 export CFILES :=	main.c actor.c act-player.c act-starfield.c ../ass-rt.c
 export AFILES :=	
 include ../ass_romrules
@@ -9,10 +9,11 @@ include ../ass_romrules
 # --------
 
 export IMG2ASS := python ../img2ass.py
+export TILED2ASS := python ../tiled2ass.py
 export GRIT := $(DEVKITARM)/bin/grit.exe
 GRITFLAGS := -ftb -fh! -gB4
 
-graphics.o : graphics.s font.png
+graphics.s : font.png
 	$(GRIT) players/vicviper.png $(GRITFLAGS) -Mw4 -Mh2 -oplayers/vicviper.bin
 	$(GRIT) players/lordbritish.png $(GRITFLAGS) -Mw4 -Mh2 -oplayers/lordbritish.bin
 
@@ -23,4 +24,6 @@ graphics.o : graphics.s font.png
 	$(GRIT) starfield.png $(GRITFLAGS)
 	$(OBJCOPY) -F binary --reverse-bytes=2 font.pal.bin
 	$(OBJCOPY) -F binary --reverse-bytes=2 starfield.pal.bin
-	$(AS) $(ASFLAGS) -c $< -o $@
+
+bg_space.s : bg_space.json
+	$(TILED2ASS) bg_space.json

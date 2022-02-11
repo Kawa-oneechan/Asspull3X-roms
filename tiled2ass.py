@@ -1,7 +1,11 @@
 #!/usr/bin/python3
 import sys, os
 import argparse
+import struct
 import json
+import gzip
+import zlib
+from base64 import b64decode
 from pathlib import Path
 
 parser = argparse.ArgumentParser(description='Convert a Tiled JSON map to A3X map data.')
@@ -36,6 +40,15 @@ for layer in mapJSON['layers']:
 		continue;
 	mapName = layer['name'].replace(' ', '')
 	mapData = layer['data']
+	if 'encoding' in layer:
+		if layer['encoding'] == 'base64':
+			mapData = b64decode(mapData)
+			if layer['compression'] == 'gzip':
+				mapData = gzip.decompress(mapData)
+			elif layer['compression'] == 'zlib':
+				mapData = zlib.decompress(mapData)
+			fmt = '<%dL' % (len(mapData) // 4)
+			mapData = list(struct.unpack(fmt, mapData))
 	tileOffset = 0
 	if 'properties' in layer:
 		for property in layer['properties']:

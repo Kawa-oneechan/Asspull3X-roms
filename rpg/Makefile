@@ -12,7 +12,7 @@ export IMG2ASS := python ../img2ass.py
 export GRIT := $(DEVKITARM)/bin/grit.exe
 GRITFLAGS := -ftb -fh! -gB4
 
-graphics.o : graphics.s title.png font.png farah.png spritepal.png
+graphics.s : title.png font.png farah.png spritepal.png
 	$(IMG2ASS) title.png
 # Font is 8x16, other UI stuff isn't really but lol
 	$(GRIT) font.png $(GRITFLAGS) -Mh2
@@ -28,10 +28,7 @@ graphics.o : graphics.s title.png font.png farah.png spritepal.png
 	$(OBJCOPY) -F binary --reverse-bytes=2 spritepal.pal.bin
 	$(OBJCOPY) -F binary --reverse-bytes=2 farah_prt.pal.bin
 	$(OBJCOPY) -F binary --reverse-bytes=2 ilira_prt.pal.bin
-# Produce final result
-	$(AS) $(ASFLAGS) -c $< -o $@
 
-office16.o : office16.s office8.png
+office16.s : office8.png
 	$(GRIT) office8.png $(GRITFLAGS)
 	$(OBJCOPY) -F binary --reverse-bytes=2 office8.pal.bin
-	$(AS) $(ASFLAGS) -c $< -o $@

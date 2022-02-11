@@ -1,5 +1,5 @@
 	.section .rodata
-	.align	2
+	.align 2
 	.global starfieldMap
 starfieldMap:
 	.short 0x0040,0x0040,0x0040,0x0040,0x0040,0x0040,0x0040,0x0040
