@@ -8,6 +8,7 @@ parser = argparse.ArgumentParser(description='Convert a color strip to HMDA colo
 parser.add_argument('inFile', help='source picture')
 parser.add_argument('outFile', nargs='?', help='target .s or .c file')
 parser.add_argument('identifier', nargs='?', help='identifier name')
+parser.add_argument('-a', '--append', help='append to target file', action='store_true')
 args = parser.parse_args()
 
 stem = Path(args.inFile).stem
@@ -23,10 +24,10 @@ imgh = im.size[1]
 
 asS = not Path(args.outFile).suffix == '.c'
 
-of = open(args.outFile, "w")
+of = open(args.outFile, "w" if not args.append else "a")
 
 if asS:
-	of.write('\t.section .rodata\n')
+	of.write('\t.section .rodata\n' if not args.append else '\n')
 	of.write('\t.align 2\n')
 	of.write(f'\t.global {args.identifier}\n')
 	of.write(f'{args.identifier}:')

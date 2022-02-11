@@ -63,10 +63,13 @@ clean:
 # --------------------------------------------------------------------
 
 export IMG2ASS := python ../img2ass.py
+export HDMA2ASS := python ../hdma2ass.py
 export GRIT := $(DEVKITARM)/bin/grit.exe
 
-splash.o : splash.s font.png splash.png
+splash.o : splash.s font.png splash.png hdma1.png hdma2.png
 	$(IMG2ASS) splash.png
+	$(HDMA2ASS) hdma1.png hdma.s hdma1
+	$(HDMA2ASS) hdma2.png hdma.s hdma2 -a
 	$(GRIT) font.png -ofont1 -ab256 -ftb -fh! -p! -gB1
 	$(GRIT) font.png -ofont2 -at256 -ftb -fh! -p! -gB1 -th16
 	$(AS) $(ASFLAGS) -c $< -o $@
