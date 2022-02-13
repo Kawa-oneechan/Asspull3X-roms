@@ -3,8 +3,9 @@ IBios* interface;
 
 extern const TImageFile title;
 extern const uint16_t tilesTiles[], tilesPal[];
+extern const uint16_t fontTiles[];
 extern const uint16_t playerTiles[], playerPal[];
-extern const uint16_t backsTiles[], backsPal[];
+extern const uint16_t backsTiles[], backPals[];
 extern const uint8_t disketteBitmap[];
 extern const uint16_t diskettePal[];
 extern const uint16_t hdma1[];
@@ -69,7 +70,7 @@ void PlaySound(int);
 void loadBackground()
 {
 	int x = levelNum;
-	MISC->DmaCopy(PALETTE + 20, (int16_t*)&backsPal + 4 + ((x % 6) * 3), 3, DMA_INT);
+	MISC->DmaCopy(PALETTE + 20, (int16_t*)&backPals + 4 + ((x % 6) * 3), 3, DMA_INT);
 	x++;
 	MISC->DmaCopy(TILESET + 0x1400, (int8_t*)&backsTiles + (512 * (x % 7)), 128, DMA_INT);
 }
@@ -438,7 +439,7 @@ void CheckForDisk()
 	FILEINFO nfo;
 	DIR dir;
 	FILE file;
-	int ret = DISK->FindFirst(&dir, &nfo, "0:/", "sokoban.txt");
+	int ret = DISK->FindFirst(&dir, &nfo, "A:/", "sokoban.txt");
 	if (ret != 0) return;
 	if (nfo.fname[0] == 0) return;
 
@@ -451,7 +452,7 @@ void CheckForDisk()
 
 	MISC->DmaCopy(PALETTE, (int16_t*)&diskettePal, 16, DMA_INT);
 	interface->VBlank = RotateTheFloppy;
-	interface->DrawCharFont = (char*)0x0E062200;
+	interface->DrawCharFont = (char*)0x0E062400;
 	interface->DrawCharHeight = 0x0B10;
 
 	DRAW->DrawString(msg, 121, 97, 9);
@@ -509,10 +510,11 @@ int main(void)
 	thisLevel = levelPack;
 
 	MISC->SetTextMode(SMODE_TILE);
-	MISC->DmaCopy(TILESET, (int8_t*)&tilesTiles, 0x480, DMA_INT); //TODO: check
-	MISC->DmaCopy(TILESET + 0x2000, (int8_t*)&playerTiles, 1024, DMA_INT);
+	MISC->DmaCopy(TILESET, (int8_t*)&tilesTiles, 0x200, DMA_INT);
+	MISC->DmaCopy(TILESET + 0x800, (int8_t*)&fontTiles, 0x280, DMA_INT);
+	MISC->DmaCopy(TILESET + 0x2000, (int8_t*)&playerTiles, 0x400, DMA_INT);
 	MISC->DmaCopy(PALETTE, (int16_t*)&tilesPal, 16, DMA_SHORT);
-	MISC->DmaCopy(PALETTE + 16, (int16_t*)&backsPal, 4, DMA_SHORT);
+	MISC->DmaCopy(PALETTE + 16, (int16_t*)&backPals, 4, DMA_SHORT);
 	MISC->DmaCopy(PALETTE + 256, (int16_t*)&playerPal, 16, DMA_SHORT);
 	MISC->DmaClear(MAP1, 0, WIDTH * HEIGHT, 2);
 	MISC->DmaClear(MAP2, 0, WIDTH * HEIGHT, 2);
