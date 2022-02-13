@@ -54,7 +54,8 @@ $(TARGET).elf : $(OFILES) $(AFILES) Makefile $(DEPENDFILE)
 all:	clean $(TARGET).elf
 
 clean:
-	rm -f $(OFILES) $(MAPFILE) $(TARGET).elf $(GFXtoclean) ../$(TARGET).ap3
+	rm -f $(OFILES) $(MAPFILE) $(TARGET).elf $(GFXtoclean)
+	# ../$(TARGET).ap3
 
 # --- ROM compilation ---
 %.o : %.c

@@ -13,6 +13,11 @@ GRIT		:= $(DEVKITARM)/bin/grit.exe
 
 export OFILES	:= $(SFILES:.s=.o) $(CFILES:.c=.o)
 
+GFXall = $(GFX8x8) $(GFX16x8) $(GFX8x16) $(GFX16x16) $(GFX32x16) $(GFX16x32) $(GFX32x32) $(GFXAPI) $(GFXbmp)
+GFXtoclean :=  $(GFXall:.png=.c) $(GFXall:.png=.s) $(GFXall:.png=.o)
+
+GRITFLAGS := -ftc -fh! -gB4 -gu8
+
 # --------------------------------------------------------------------
 # OPTIONS
 # --------------------------------------------------------------------
@@ -48,7 +53,8 @@ $(TARGET).elf : $(OFILES) $(AFILES) Makefile $(DEPENDFILE)
 all:	clean $(TARGET).elf
 
 clean:
-	rm -f $(OFILES) $(MAPFILE) $(TARGET).elf *.img.bin *.pal.bin *.api ../_disk2_/$(TARGET).app
+	rm -f $(OFILES) $(MAPFILE) $(TARGET).elf $(GFXtoclean)
+	# ../_disk2_/$(TARGET).app
 
 # --- ROM compilation ---
 %.o : %.c
@@ -57,3 +63,28 @@ clean:
 # --- Assembling ---
 %.o : %.s
 	$(AS) $(ASFLAGS) -c $< -o $@
+
+# --- Graphics ---
+
+$(GFX8x8:.png=.c) : %.c : %.png
+	$(GRIT) $< $(GRITFLAGS) -o$@
+$(GFX16x8:.png=.c) : %.c : %.png
+	$(GRIT) $< $(GRITFLAGS) -Mw2 -Mh1 -o$@
+$(GFX8x16:.png=.c) : %.c : %.png
+	$(GRIT) $< $(GRITFLAGS) -Mw1 -Mh2 -o$@
+$(GFX16x16:.png=.c) : %.c : %.png
+	$(GRIT) $< $(GRITFLAGS) -Mw2 -Mh2 -o$@
+$(GFX32x16:.png=.c) : %.c : %.png
+	$(GRIT) $< $(GRITFLAGS) -Mw4 -Mh2 -o$@
+$(GFX16x32:.png=.c) : %.c : %.png
+	$(GRIT) $< $(GRITFLAGS) -Mw2 -Mh4 -o$@
+$(GFX32x32:.png=.c) : %.c : %.png
+	$(GRIT) $< $(GRITFLAGS) -Mw4 -Mh4 -o$@
+$(GFXbmp:.png=.c) : %.c : %.png
+	$(GRIT) $< $(GRITFLAGS) -gb -o$@
+$(GFXAPI:.png=.c) : %.c : %.png
+	$(IMG2ASS) $< $@
+$(HDMA:.png=.s) : %.s : %.png
+	$(HDMA2ASS) $< $@
+$(TILED:.json=.s) : %.s : %.json
+	$(TILED2ASS) $< $@
