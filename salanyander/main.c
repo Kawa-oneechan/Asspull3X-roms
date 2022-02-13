@@ -2,7 +2,7 @@
 #define sprintf(b,f,rest...) TEXT->Format(b,f, ## rest)
 IBios* interface;
 
-#define __PLAYERS G(vicViper) G(lordBritish)
+#define __PLAYERS G(vicviper) G(lordbritish)
 #define G(x) extern const unsigned short x ## Tiles[], x ## Pal[];
 __PLAYERS
 #undef G

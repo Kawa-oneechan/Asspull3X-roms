@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-import struct, sys, os
+import struct, sys, os, io
 import argparse
 from PIL import Image
 from pathlib import Path
@@ -104,20 +104,51 @@ if args.verbose:
 	print(f'dataSize: {len(outData)}')
 	print(f'dataOffset: {0x18 + palSize}')
 
-of = open(args.outFile, "wb")
-of.write(b'AIMG')
-of.write(b'\x04' if fourBits else b'\x08')
-of.write(b'\x01' if compressed else b'\x00')
-of.write(struct.pack('>H', im.width))
-of.write(struct.pack('>H', im.height))
-of.write(struct.pack('>H', stride))
-of.write(struct.pack('>L', len(outData)))
-of.write(struct.pack('>L', 0x18))
-of.write(struct.pack('>L', 0x18 + palSize))
+bf = io.BytesIO()
+bf.write(b'AIMG')
+bf.write(b'\x04' if fourBits else b'\x08')
+bf.write(b'\x01' if compressed else b'\x00')
+bf.write(struct.pack('>H', im.width))
+bf.write(struct.pack('>H', im.height))
+bf.write(struct.pack('>H', stride))
+bf.write(struct.pack('>L', len(outData)))
+bf.write(struct.pack('>L', 0x18))
+bf.write(struct.pack('>L', 0x18 + palSize))
 
 for i in range(palLength):
 	r, g, b = inPal[(i * 3) + 0], inPal[(i * 3) + 1], inPal[(i * 3) + 2]
 	snes = ((b >> 3) << 10) | ((g >> 3) << 5) | (r >> 3)
-	of.write(struct.pack('>H', snes))
+	bf.write(struct.pack('>H', snes))
 
-of.write(outData)
+bf.write(outData)
+
+if Path(args.outFile).suffix == '.c' or Path(args.outFile).suffix == '.s':
+	asS = not Path(args.outFile).suffix == '.c'
+	of = open(args.outFile, "w")
+	data = bf.getvalue()
+
+	if asS:
+		of.write('\t.section .rodata\n')
+		of.write('\t.align 2\n')
+		of.write(f'\t.global {stem}\n')
+	
+	if asS:
+		of.write(f'{stem}:')
+	else:
+		of.write(f'const unsigned char {stem}[{len(data)}] = {{')
+	i = 0
+	for v in data:
+		if i % 16 == 0:
+			of.write('\n\t.byte ' if asS else '\n\t')
+		elif asS:
+			of.write(',')
+		i += 1
+		of.write(f'0x{v:02X}')
+		if not asS:
+			of.write(', ')
+	of.write('\n')
+	if not asS:
+		of.write('};\n')
+else:
+	with open(args.outFile, "wb") as of:
+		of.write(bf.getbuffer())

@@ -1,13 +1,6 @@
+GFXAPI := ranmya.png
+
 export TARGET :=	ranmya
-export SFILES :=	crt0.s pic.s
-export CFILES :=	main.c ../ass-rt.c
-export AFILES :=	
+export SFILES :=	crt0.s
+export CFILES :=	main.c $(GFXAPI:.png=.c) ../ass-rt.c
 include ../ass_romrules
-
-# --------
-# GRAPHICS
-# --------
-
-pic.s : ranmya.api
-ranmya.api : ranmya.png
-	$(IMG2ASS) ranmya.png

@@ -1,11 +1,11 @@
 #include "../ass.h"
 IBios* interface;
 
-extern const TImageFile titlePic;
+extern const TImageFile title;
 extern const uint16_t tilesTiles[], tilesPal[];
 extern const uint16_t playerTiles[], playerPal[];
-extern const uint16_t backTiles[], backPals[];
-extern const uint8_t diskettePic[];
+extern const uint16_t backsTiles[], backsPal[];
+extern const uint8_t disketteBitmap[];
 extern const uint16_t diskettePal[];
 extern const uint16_t hdma1[];
 extern const char * const levels[];
@@ -69,9 +69,9 @@ void PlaySound(int);
 void loadBackground()
 {
 	int x = levelNum;
-	MISC->DmaCopy(PALETTE + 20, (int16_t*)&backPals + 4 + ((x % 6) * 3), 3, DMA_INT);
+	MISC->DmaCopy(PALETTE + 20, (int16_t*)&backsPal + 4 + ((x % 6) * 3), 3, DMA_INT);
 	x++;
-	MISC->DmaCopy(TILESET + 0x1400, (int8_t*)&backTiles + (512 * (x % 7)), 128, DMA_INT);
+	MISC->DmaCopy(TILESET + 0x1400, (int8_t*)&backsTiles + (512 * (x % 7)), 128, DMA_INT);
 }
 
 void drawPlayer()
@@ -417,7 +417,7 @@ void RotateTheFloppy()
 	static int frame = 0, timer = 0;
 	if (timer == 0)
 	{
-		REG_BLITSOURCE = (uint32_t)&diskettePic[frame * 0x200];
+		REG_BLITSOURCE = (uint32_t)&disketteBitmap[frame * 0x200];
 		REG_BLITTARGET = MEM_VRAM + (96 * 320) + 24;
 		REG_BLITLENGTH = 0x200;
 		REG_BLITCONTROL = BLIT_COPY | BLIT_BYTE | BLIT_STRIDESKIP | BLIT_SOURCESTRIDE(16) | BLIT_TARGETSTRIDE(320);
@@ -492,7 +492,7 @@ int main(void)
 	MISC->DmaClear(TILESET, 0, 0x4000, DMA_INT);
 	MISC->DmaClear(OBJECTS_A, 0, 0x1000, DMA_INT);
 
-	DRAW->DisplayPicture((TImageFile*)&titlePic);
+	DRAW->DisplayPicture((TImageFile*)&title);
 	DRAW->FadeFromBlack();
 	WaitForKey();
 	DRAW->FadeToWhite();
@@ -512,7 +512,7 @@ int main(void)
 	MISC->DmaCopy(TILESET, (int8_t*)&tilesTiles, 0x480, DMA_INT); //TODO: check
 	MISC->DmaCopy(TILESET + 0x2000, (int8_t*)&playerTiles, 1024, DMA_INT);
 	MISC->DmaCopy(PALETTE, (int16_t*)&tilesPal, 16, DMA_SHORT);
-	MISC->DmaCopy(PALETTE + 16, (int16_t*)&backPals, 4, DMA_SHORT);
+	MISC->DmaCopy(PALETTE + 16, (int16_t*)&backsPal, 4, DMA_SHORT);
 	MISC->DmaCopy(PALETTE + 256, (int16_t*)&playerPal, 16, DMA_SHORT);
 	MISC->DmaClear(MAP1, 0, WIDTH * HEIGHT, 2);
 	MISC->DmaClear(MAP2, 0, WIDTH * HEIGHT, 2);

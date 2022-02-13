@@ -1,26 +1,9 @@
+GFX8x8 := tileset.png question.png grass.png
+GFX16x32 := farah.png
+HDMA := hdma1.png
+TILED := map.json
+
 export TARGET :=	tiletest
-export SFILES :=	crt0.s tileset.s map.s hdma.s
-export CFILES :=	main.c
-export AFILES :=	
+export SFILES :=	crt0.s $(HDMA:.png=.s) $(TILED:.json=.s)
+export CFILES :=	main.c $(GFX8x8:.png=.c) $(GFX16x32:.png=.c)
 include ../ass_romrules
-
-# --------
-# GRAPHICS
-# --------
-
-GRITFLAGS := -ftb -fh! -gB4
-
-tileset.s : tileset.img.bin farah.img.bin
-
-tileset.img.bin : tileset.png question.png grass.png
-	$(GRIT) tileset.png $(GRITFLAGS)
-	$(GRIT) question.png $(GRITFLAGS) -fp!
-	$(GRIT) grass.png $(GRITFLAGS) -fp!
-	$(OBJCOPY) -F binary --reverse-bytes=2 tileset.pal.bin
-
-farah.img.bin : farah.png
-	$(GRIT) farah.png $(GRITFLAGS)
-	$(OBJCOPY) -F binary --reverse-bytes=2 farah.pal.bin
-
-map.s : map.json
-	$(TILED2ASS) map.json

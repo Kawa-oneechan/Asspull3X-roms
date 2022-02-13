@@ -108,10 +108,12 @@ int main(void)
 		vbl();
 
 		//Something to test the object structs with...
-		if (REG_KEYIN == 0xC8) objectsB[0].y--;
-		else if (REG_KEYIN == 0xD0) objectsB[0].y++;
-		else if (REG_KEYIN == 0xCB) objectsB[0].x--;
-		else if (REG_KEYIN == 0xCD) objectsB[0].x++;
+		REG_JOYPAD = 1;
+		int dpadbuts = REG_JOYPAD;
+		if (dpadbuts & 4) objectsB[0].y++;
+		else if (dpadbuts & 1) objectsB[0].y--;
+		if (dpadbuts & 2) objectsB[0].x++;
+		else if (dpadbuts & 8) objectsB[0].x--;
 
 		REG_SCROLLX1 = scroll;
 		REG_SCROLLX2 = scroll;

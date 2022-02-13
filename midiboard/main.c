@@ -2,7 +2,7 @@
 #include "../ass-midi.h"
 IBios* interface;
 
-extern const TImageFile pianoData;
+extern const TImageFile piano;
 extern const unsigned char tinyFont[576];
 
 static const char sctopit[] = {
@@ -200,7 +200,7 @@ void Write(const char* str)
 int main(void)
 {
 	REG_SCREENFADE = 31;
-	DRAW->DisplayPicture((TImageFile*)&pianoData);
+	DRAW->DisplayPicture((TImageFile*)&piano);
 
 	//Clear out all keys
 	for (int i = 0; i < NUMKEYS; i++)

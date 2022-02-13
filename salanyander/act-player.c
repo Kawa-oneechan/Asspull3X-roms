@@ -65,7 +65,6 @@ void ThinkPlayer(int id)
 		REG_JOYPAD = 1; //reset
 
 		int dpadbuts = REG_JOYPAD;
-		int extrabuts = REG_JOYPAD;
 
 		if (dpadbuts & 4) p->y++;
 		else if (dpadbuts & 1) p->y--;
