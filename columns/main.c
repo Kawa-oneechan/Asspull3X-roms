@@ -360,6 +360,7 @@ int main(void)
 	MISC->SetTextMode(SMODE_TILE);
 	MISC->DmaCopy(TILESET, (int8_t*)&tilesTiles, 96 * 8, DMA_INT);
 	MISC->DmaCopy(PALETTE, (int16_t*)&tilesPal, 16, DMA_INT);
+	MISC->DmaCopy(PALETTE + 256, (int16_t*)&tilesPal, 16, DMA_INT);
 	MISC->DmaClear(MAP1, 0, WIDTH * HEIGHT, 2);
 	MISC->DmaClear(MAP2, 0, WIDTH * HEIGHT, 2);
 	MISC->DmaClear(MAP3, 0, WIDTH * HEIGHT, 2);
@@ -368,12 +369,12 @@ int main(void)
 	REG_MAPBLEND = 0x02;
 
 	MISC->DmaCopy(TILESET + (128 * 32), (int8_t*)&girl1Tiles, 10240, DMA_INT);
-	MISC->DmaCopy(PALETTE + 32, (int16_t*)&girl1Pal, 16, DMA_INT);
+	MISC->DmaCopy(PALETTE + 128, (int16_t*)&girl1Pal, 8, DMA_INT);
 	PALETTE[0] = girl1Pal[0];
 	for (uint32_t i = 1, t = 0; i < 29; i++)
 	{
 		for (int j = 4; j < 36; j++, t++)
-			MAP1[j + i * 64] = (t + 128) | 0x2000;
+			MAP1[j + i * 64] = (t + 128) | 0x8000;
 	}
 
 	for (int i = 1; i < WELL_WIDTH; i++)
@@ -393,19 +394,12 @@ int main(void)
 		for (int delay = 0; delay < 2; delay++)
 		{
 			vbl();
-			in = REG_KEYIN;
-			if (REG_JOYPAD & 1) in = KEY_UP;
-			else if (REG_JOYPAD & 2) in = KEY_RIGHT;
-			else if (REG_JOYPAD & 4) in = KEY_DOWN;
-			else if (REG_JOYPAD & 8) in = KEY_LEFT;
-			else if (REG_JOYPAD & 16) in = KEY_UP;
+			REG_JOYPAD = 1; //reset
+			in = REG_JOYPAD;
 			rndseed += in;
 		}
-		switch (in)
-		{
-			case KEY_LEFT: moveSideways(-1); break;
-			case KEY_RIGHT: moveSideways(1); break;
-			case KEY_UP: rotate(); break;
-		}
+		if (in & 1) rotate();
+		if (in & 2) moveSideways(1);
+		else if (in & 8) moveSideways(-1);
 	}
 }
