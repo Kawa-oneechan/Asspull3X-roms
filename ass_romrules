@@ -13,7 +13,7 @@ GRIT		:= $(DEVKITARM)/bin/grit.exe
 
 export OFILES	:= $(SFILES:.s=.o) $(CFILES:.c=.o)
 
-GFXall = $(GFX8x8) $(GFX16x8) $(GFX8x16) $(GFX16x16) $(GFX32x16) $(GFX16x32) $(GFX32x32) $(GFXAPI)
+GFXall = $(GFX8x8) $(GFX16x8) $(GFX8x16) $(GFX16x16) $(GFX32x16) $(GFX16x32) $(GFX32x32) $(GFXAPI) $(GFXbmp)
 GFXtoclean :=  $(GFXall:.png=.c) $(GFXall:.png=.s) $(GFXall:.png=.o)
 
 GRITFLAGS := -ftc -fh! -gB4 -gu8

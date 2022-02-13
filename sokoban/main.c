@@ -418,6 +418,7 @@ void RotateTheFloppy()
 	static int frame = 0, timer = 0;
 	if (timer == 0)
 	{
+		//TODO: figure this one out, bug is clearly in the emulator.
 		REG_BLITSOURCE = (uint32_t)&disketteBitmap[frame * 0x200];
 		REG_BLITTARGET = MEM_VRAM + (96 * 320) + 24;
 		REG_BLITLENGTH = 0x200;
