@@ -40,7 +40,7 @@ void updateAndDraw();
 #define MAXENTITIES 16
 
 extern const TImageFile titlePic;
-extern const uint16_t spritePal[], uiTiles[], uiPal[], uiBackground[];
+extern const uint16_t spritepalPal[], fontTiles[], fontPal[], uiBackground[];
 extern const uint8_t testMap[], spritePals[];
 extern const uint32_t sprites[], portraits[];
 
@@ -758,21 +758,21 @@ int main(void)
 	MISC->SetTextMode(SMODE_TILE);
 	MISC->DmaClear(TILESET, 0, 0x4000, DMA_INT);
 	MISC->DmaClear(OBJECTS_A, 0, 0x1000, DMA_INT);
-	MISC->DmaCopy(PALETTE + 240, (int16_t*)&uiPal, 8, DMA_INT);
-	MISC->DmaCopy(PALETTE + 256 + 240, (int16_t*)&uiPal, 8, DMA_INT);
+	MISC->DmaCopy(PALETTE + 240, (int16_t*)&fontPal, 8, DMA_INT);
+	MISC->DmaCopy(PALETTE + 256 + 240, (int16_t*)&fontPal, 8, DMA_INT);
 
-//	MISC->DmaCopy(TILESET + 0x6000, (int8_t*)&uiTiles, 0x700, DMA_INT);
+//	MISC->DmaCopy(TILESET + 0x6000, (int8_t*)&fontTiles, 0x700, DMA_INT);
 
-	MISC->DmaCopy(TILESET + 0x6000, (int8_t*)&uiTiles, 0x80, DMA_INT);
+	MISC->DmaCopy(TILESET + 0x6000, (int8_t*)&fontTiles, 0x80, DMA_INT);
 	MISC->DmaClear(TILESET+ 0x6400, 0x88888888, 0x5D0, DMA_INT);
 //	MISC->DmaCopy(TILESET + 0x6400, (int8_t*)&uiTiles + 0x400, 0x5D0, DMA_INT);
-	REG_BLITSOURCE = (long)uiTiles + 0x400;
+	REG_BLITSOURCE = (long)fontTiles + 0x400;
 	REG_BLITTARGET = (long)TILESET + 0x6400;
 	REG_BLITLENGTH = 0x1740;
 	REG_BLITKEY = 0;
 	REG_BLITCONTROL = BLIT_COPY | 0xC0 | BLIT_COLORKEY;
 
-	MISC->DmaCopy(PALETTE + 256, (int16_t*)spritePal, 48, DMA_INT);
+	MISC->DmaCopy(PALETTE + 256, (int16_t*)spritepalPal, 48, DMA_INT);
 
 	MISC->DmaClear(MAP1, 0, WIDTH * HEIGHT, DMA_INT);
 	MISC->DmaClear(MAP2, 0, WIDTH * HEIGHT, DMA_INT);

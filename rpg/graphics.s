@@ -2,11 +2,7 @@
 
 	.global sprites
 	.global spritePals
-	.global spritePal
 	.global portraits
-	.global uiTiles
-	.global uiPal
-	.global titlePic
 	.global uiBackground
 
 sprites:
@@ -19,33 +15,10 @@ spritePals:
 	.byte 0,0,0,0,0,0,0,0
 	.byte 0,0,0,0,0,0,0,0
 	.byte 0,0,0,0,0,0,0,0
-spritePal:
-	.incbin "spritepal.pal.bin"
-
-farahTiles:
-	.incbin "farah.img.bin"
-iliraTiles:
-	.incbin "ilira.img.bin"
 
 portraits:
-	.long farahPortTiles, iliraPortTiles, 0,0,0,0,0,0
-	.long farahPortPal, iliraPortPal, 0,0,0,0,0,0	
-farahPortTiles:
-	.incbin "farah_prt.img.bin"
-farahPortPal:
-	.incbin "farah_prt.pal.bin"
-iliraPortTiles:
-	.incbin "ilira_prt.img.bin"
-iliraPortPal:
-	.incbin "ilira_prt.pal.bin"
-
-uiTiles:
-	.incbin "font.img.bin"
-
-uiPal:
-	.incbin "font.pal.bin"
-//titlePic:
-//	.incbin "title.api"
+	.long farah_prtTiles, ilira_prtTiles, 0,0,0,0,0,0
+	.long farah_prtPal, ilira_prtPal, 0,0,0,0,0,0	
 
 uiBackground:
 	.short 0x5294,0x5294,0x5294,0x5294,0x5294,0x5294,0x4E73,0x4E73

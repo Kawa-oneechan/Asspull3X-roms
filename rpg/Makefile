@@ -6,6 +6,7 @@ HDMA := hdma1.png
 TILED := map.json
 
 GFX16x24 := farah.png ilira.png
+GFXpal := spritepal.png
 
 export TARGET :=	rpg
 export SFILES :=	crt0.s graphics.s testmap.s office16.s
@@ -13,7 +14,7 @@ export CFILES :=	main.c $(GFX8x8:.png=.c) $(GFX8x16:.png=.c) $(GFX32x32:.png=.c)
 include ../ass_romrules
 
 $(GFXpal:.png=.c) : %.c : %.png
-	$(GRIT) $< -ftb -fh! -g! -gb -pe96
+	$(GRIT) $< -ftc -fh! -g! -gb -pe96
 	
 $(GFX16x24:.png=.c) : %.c : %.png
 	$(GRIT) $< $(GRITFLAGS) -Mw2 -Mh3 !p -o$@

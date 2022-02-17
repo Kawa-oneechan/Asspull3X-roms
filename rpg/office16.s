@@ -3,14 +3,9 @@
 	.global officeTiles
 
 officeTiles:
-	.long tiles8
-	.long palette
+	.long office8Tiles
+	.long office8Pal
 	.long tiles16
-
-tiles8:
-	.incbin "office8.img.bin"
-palette:
-	.incbin "office8.pal.bin"
 
 #define SHALLOW	0x0010
 #define DESK	0x0100
