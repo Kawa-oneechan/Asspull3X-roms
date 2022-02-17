@@ -149,17 +149,19 @@ void TitleScreen()
 	while (1)
 	{
 		vbl();
-		if (REG_KEYIN == KEY_UP && delay < 16)
+		REG_JOYPAD = 1; //reset
+		int dpadbuts = REG_JOYPAD;
+		if ((REG_KEYIN == KEY_UP || dpadbuts & 1) && delay < 16)
 		{
 			delay++;
 			while (REG_KEYIN != 0) { vbl(); }
 		}
-		else if (REG_KEYIN == KEY_DOWN && delay > 1)
+		else if ((REG_KEYIN == KEY_DOWN || dpadbuts & 4) && delay > 1)
 		{
 			delay--;
 			while (REG_KEYIN != 0) { vbl(); }
 		}
-		else if (REG_KEYIN == 0x1C)
+		else if (REG_KEYIN == 0x1C || dpadbuts & 16)
 			break;
 		char buffer[25];
 		ultoa(delay, buffer);
@@ -354,28 +356,12 @@ int main(void)
 					REG_OPLOUT = 0xB005;
 			}
 
-			int in = REG_KEYIN;
-			if (REG_JOYPAD & 1) in = KEY_UP;
-			else if (REG_JOYPAD & 2) in = KEY_RIGHT;
-			else if (REG_JOYPAD & 4) in = KEY_DOWN;
-			else if (REG_JOYPAD & 8) in = KEY_LEFT;
-			rndseed += in;
-
-			switch (in)
-			{
-				case KEY_DOWN:
-					if (key != KEY_UP) key = in;
-					break;
-				case KEY_RIGHT:
-					if (key != KEY_LEFT) key = in;
-					break;
-				case KEY_UP:
-					if (key != KEY_DOWN) key = in;
-					break;
-				case KEY_LEFT:
-					if (key != KEY_RIGHT) key = in;
-					break;
-			}
+			int dpadbuts = REG_JOYPAD;
+			REG_JOYPAD = 1; //reset
+			if (dpadbuts & 1 && key != KEY_DOWN) key = KEY_UP;
+			else if (dpadbuts & 4 && key != KEY_UP) key = KEY_DOWN;
+			if (dpadbuts & 2 && key != KEY_LEFT) key = KEY_RIGHT;
+			else if (dpadbuts & 8 && key != KEY_RIGHT) key = KEY_LEFT;
 			switch(key)
 			{
 				case KEY_DOWN:
@@ -400,7 +386,7 @@ int main(void)
 			{
 				if (++drum == 1)
 				{
-					REG_OPLOUT = 0xA1 | beat[drum2 % 4];
+					REG_OPLOUT = 0xA100 | beat[drum2 % 4];
 					REG_OPLOUT = 0xB109;
 				} else if (drum == 2)
 				{
