@@ -93,7 +93,6 @@ int32_t main(void)
 	FindFont();
 
 	volatile uint8_t* firstDisk = (uint8_t*)0x02000000 + (diskToDev[0] * 0x8000);
-	dpf("firstDisk $%08x\n", firstDisk);
 
 	int diskLock = REG_KEYIN == 0x100;
 
@@ -236,6 +235,7 @@ void FindFont()
 		fontName[0] = 'A' + i;
 		if (OpenFile(&file, fontName, FA_READ) == 0)
 		{
+			dpf("Found custom font.");
 			ReadFile(&file, (void*)TEXTFONT, 0);
 			CloseFile(&file);
 			return;
