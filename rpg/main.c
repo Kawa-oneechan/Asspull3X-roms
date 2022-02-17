@@ -321,11 +321,14 @@ void entityWalk(MapEntity *entity, int facing)
 	entity->state = stateStep;
 }
 
+#define ONLYONECHARACTER
 void saySomething(char *what, int flags)
 {
+#ifndef ONLYONECHARACTER
 	char d[256] = {0};
-	char *c = what;
 	char *f = d;
+#endif
+	char *c = what;
 
 	if (!dialogueBoxIsOpen)
 	{
@@ -353,12 +356,30 @@ void saySomething(char *what, int flags)
 	if (*c != 0)
 	{
 		int x = dialoguePortrait ? 8 : 3;
+#ifdef ONLYONECHARACTER
+		int sx = x, sy = 3;
+#endif
 		while (*c != 0)
 		{
 			vbl();
 			vbl();
+#ifdef ONLYONECHARACTER
+			if (*c == '\n')
+			{
+				sy += 2;
+				c++;
+				continue;
+			}
+			int t = (*c - ' ' + 16) * 2;
+			t |= 0xF300;
+			MAP4[(sy * 64) + sx +  0] = t;
+			MAP4[(sy * 64) + sx + 64] = t + 1;
+			sx++;
+			c++;
+#else
 			*f++ = *c++;
 			drawString(x, 3, d);
+#endif
 		}
 		while (REG_KEYIN != 0) vbl();
 		while (REG_KEYIN == 0) vbl();
