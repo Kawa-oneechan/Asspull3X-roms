@@ -12,6 +12,13 @@ extern const uint16_t hdma1[];
 extern const char * const levels[];
 
 extern const unsigned short imfData1[], imfData2[], imfData3[], imfData4[], imfData5[];
+extern const unsigned char jingleSound[];
+extern const unsigned char slideSound[];
+extern const unsigned char stepSound[];
+const unsigned char * const sounds[] = { 0, jingleSound, slideSound, stepSound };
+
+extern int IMF_LoadSong(const unsigned short *sauce, int loop);
+extern void IMF_Play();
 
 char *levelPack;
 char *thisLevel;
@@ -66,6 +73,7 @@ int playerX = 0, playerY = 0;
 int lastDir;
 
 void PlaySound(int);
+void nextLevel();
 
 void loadBackground()
 {
@@ -98,6 +106,58 @@ void drawPlayer()
 
 	OBJECTS_A[0] = OBJECTA_BUILD(tile + 256, 0, 1, 0);
 	OBJECTS_B[0] = OBJECTB_BUILD((playerX * 16) + 8, (playerY * 16) - 24, 0, 1, flip, 0, 1, 3);
+}
+
+void animateMove()
+{
+	//TODO
+	switch (lastDir)
+	{
+		case 0: //left
+			break;
+		case 1: //right
+			break;
+		case 2: //down
+			break;
+		case 3: //up
+			break;
+	}
+}
+
+void victoryDance()
+{
+	int x = (playerX * 16) + 8;
+	int y = (playerY * 16) - 24;
+	int tile = 256 + 96;
+
+	//shut up
+	IMF_LoadSong(0, 0);
+
+	OBJECTS_A[0] = OBJECTA_BUILD(tile, 0, 1, 0);
+	for (int i = 0; i < 32; i++) vbl();
+
+	tile += 8;
+	OBJECTS_A[0] = OBJECTA_BUILD(tile, 0, 1, 0);
+	for (int i = 0; i < 8; i++)
+	{
+		y--;
+		OBJECTS_B[0] = OBJECTB_BUILD(x, y, 0, 1, 0, 0, 1, 3);
+		for (int j = 0; j < 4; j++) vbl();
+	}
+	for (int i = 0; i < 16; i++) vbl();
+
+	for (int i = 0; i < 8; i++)
+	{
+		y++;
+		OBJECTS_B[0] = OBJECTB_BUILD(x, y, 0, 1, 0, 0, 1, 3);
+		for (int j = 0; j < 4; j++) vbl();
+	}
+
+	tile += 8;
+	OBJECTS_A[0] = OBJECTA_BUILD(tile, 0, 1, 0);
+	for (int i = 0; i < 64; i++) vbl();
+
+	nextLevel();
 }
 
 void drawTile(int i, int j, int tile)
@@ -202,6 +262,7 @@ void move(char byX, char byY)
 			if (*here == BOX) *here = SPACE;
 			else if (*here == BOXINGOAL) *here = GOAL;
 			drawTile(playerX + byX, playerY + byY, *here);
+			animateMove();
 			playerX += byX;
 			playerY += byY;
 			drawTile(playerX + byX, playerY + byY, *further);
@@ -367,16 +428,9 @@ void nextLevel()
 	drawStatus();
 	loadBackground();
 	DRAW->FadeFromWhite();
+	IMF_LoadSong(imfData2, 1);
 	lastTimeT = REG_TIMET;
 }
-
-extern const unsigned char jingleSound[];
-extern const unsigned char slideSound[];
-extern const unsigned char stepSound[];
-const unsigned char * const sounds[] = { 0, jingleSound, slideSound, stepSound };
-
-extern int IMF_LoadSong(const unsigned short *sauce, int loop);
-extern void IMF_Play();
 
 void PlaySound(int id)
 {
@@ -418,7 +472,6 @@ void RotateTheFloppy()
 	static int frame = 0, timer = 0;
 	if (timer == 0)
 	{
-		//TODO: figure this one out, bug is clearly in the emulator.
 		REG_BLITSOURCE = (uint32_t)&disketteBitmap[frame * 0x200];
 		REG_BLITTARGET = MEM_VRAM + (96 * 320) + 24;
 		REG_BLITLENGTH = 0x200;
@@ -525,7 +578,6 @@ int main(void)
 	inton();
 
 	levelNum = -1;
-	IMF_LoadSong(imfData2, 1);
 	PlaySound(1);
 	nextLevel();
 
@@ -561,7 +613,7 @@ int main(void)
 			case KEY_RIGHT: move(1, 0); break;
 			case KEY_UP: move(0, -1); break;
 			case KEY_DOWN: move(0, 1); break;
-			case 0x13: nextLevel(); break;
+			case 0x13: victoryDance(); break;
 		}
 		if (checkWin())
 			nextLevel();

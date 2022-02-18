@@ -58,6 +58,10 @@ int IMF_LoadSong(const unsigned short *sauce, int loop)
 		_imfsize = (*_imfptr++) & 0xFCFF;
 		BYTESWAP(_imfsize);
 	}
+	else
+	{
+		_imfptr = 0;
+	}
 	imfLoop = loop;
 	return 0;
 }
