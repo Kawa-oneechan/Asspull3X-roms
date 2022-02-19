@@ -321,13 +321,15 @@ void entityWalk(MapEntity *entity, int facing)
 	entity->state = stateStep;
 }
 
-#define ONLYONECHARACTER
+void waitForActionKey()
+{
+	while (REG_KEYIN != 0) vbl();
+	while (REG_KEYIN == 0) vbl();
+	while (REG_KEYIN != KEY_ACTION) vbl();
+}
+
 void saySomething(char *what, int flags)
 {
-#ifndef ONLYONECHARACTER
-	char d[256] = {0};
-	char *f = d;
-#endif
 	char *c = what;
 
 	if (!dialogueBoxIsOpen)
@@ -356,17 +358,32 @@ void saySomething(char *what, int flags)
 	if (*c != 0)
 	{
 		int x = dialoguePortrait ? 8 : 3;
-#ifdef ONLYONECHARACTER
 		int sx = x, sy = 3;
-#endif
 		while (*c != 0)
 		{
 			vbl();
 			vbl();
-#ifdef ONLYONECHARACTER
+			if (*c == '\b')
+			{
+				waitForActionKey();
+				c++;
+				continue;
+			}
 			if (*c == '\n')
 			{
+				if (sy == 5)
+				{
+					//Already have a full box. Scroll it.
+					for (int i = 0; i < 2; i++)
+					{
+						MISC->DmaCopy(&MAP4[3 * 64], &MAP4[4 * 64], 360, DMA_BYTE);
+						MISC->DmaClear(&MAP4[6 * 64] + 3, 0xF301, 34, DMA_SHORT);
+						vbl(); vbl(); vbl(); vbl();
+					}
+					sy = 3;
+				}
 				sy += 2;
+				sx = x;
 				c++;
 				continue;
 			}
@@ -376,14 +393,8 @@ void saySomething(char *what, int flags)
 			MAP4[(sy * 64) + sx + 64] = t + 1;
 			sx++;
 			c++;
-#else
-			*f++ = *c++;
-			drawString(x, 3, d);
-#endif
 		}
-		while (REG_KEYIN != 0) vbl();
-		while (REG_KEYIN == 0) vbl();
-		while (REG_KEYIN != KEY_ACTION) vbl();
+		waitForActionKey();
 	}
 
 	if (flags & 1)
@@ -836,6 +847,7 @@ int main(void)
 
 	drawMap();
 	//saySomething("* What a year, huh?\n* Captain, it's February.", 1);
+	//saySomething("0123456789012345678901234567890123\b\nSupercalifragilisticexpialidocious\nEven though the sound of it is\nsomething quite atrocious.", 0);
 
 	for(;;)
 	{
