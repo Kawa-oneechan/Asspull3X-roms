@@ -10,6 +10,17 @@ typedef unsigned int uint32_t;
 
 typedef signed long intptr_t;
 typedef unsigned long uintptr_t;
+
+typedef unsigned long size_t;
+typedef signed long ptrdiff_t;
+
+#ifndef __bool_true_false_are_defined
+	#define bool _Bool
+	#define true ((_Bool)+1u)
+	#define false ((_Bool)+0u)
+	#define __bool_true_false_are_defined
+#endif
+
 /*
 //typedef int int;
 typedef long int32;

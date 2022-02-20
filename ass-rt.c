@@ -1,10 +1,6 @@
 #include "ass.h"
 extern IBios* interface;
 
-#if !defined NULL
-#define NULL (void*)0
-#endif
-
 //-------
 //STRINGS
 //-------
@@ -47,9 +43,9 @@ int strcat_s(char* dest, int len, const char* src)
 	return 2;
 }
 
-int strnlen_s(const char* str, int max)
+size_t strnlen_s(const char* str, size_t max)
 {
-	int i;
+	size_t i;
 	if (str == 0) return 0;
 	for (i = 0; i < max && *str; i++, str++);
 	return i;
@@ -82,7 +78,8 @@ int strkitten_s(char* dest, int len, char src)
 //------
 //MEMCPY
 //------
-void* memcpy(void* dst, const void* src, int count)
+
+void* memcpy(void* dst, const void* src, size_t count)
 {
 	void* ret = dst;
 	while (count--)
@@ -94,7 +91,7 @@ void* memcpy(void* dst, const void* src, int count)
 	return(ret);
 }
 
-void* memset(void* dst, int val, int count)
+void* memset(void* dst, int val, size_t count)
 {
 	void* start = dst;
 	while (count--)
@@ -105,7 +102,7 @@ void* memset(void* dst, int val, int count)
 	return(start);
 }
 
-int memcmp(const void* dst, const void* src, int count)
+int memcmp(const void* dst, const void* src, size_t count)
 {
 	int r = 0;
 	const char* d = (const char*)dst;
@@ -158,7 +155,7 @@ void* brk(void* new_heap)
 }
 
 typedef struct malloc_block_meta {
-	int size;
+	unsigned int size;
 	struct malloc_block_meta* next;
 	int free;
 } malloc_block_meta;
@@ -167,7 +164,7 @@ typedef struct malloc_block_meta {
 
 void* malloc_global_base = NULL;
 
-malloc_block_meta* malloc_find_free_block(struct malloc_block_meta** last, int size)
+malloc_block_meta* malloc_find_free_block(struct malloc_block_meta** last, size_t size)
 {
 	malloc_block_meta* current = malloc_global_base;
 	while (current && !(current->free && current->size >= size))
@@ -178,7 +175,7 @@ malloc_block_meta* malloc_find_free_block(struct malloc_block_meta** last, int s
 	return current;
 }
 
-struct malloc_block_meta* malloc_request_space(struct malloc_block_meta* last, int size)
+struct malloc_block_meta* malloc_request_space(struct malloc_block_meta* last, size_t size)
 {
 	malloc_block_meta *block;
 	block = (malloc_block_meta*)sbrk(0);
@@ -192,7 +189,7 @@ struct malloc_block_meta* malloc_request_space(struct malloc_block_meta* last, i
 	return block;
 }
 
-void* malloc(unsigned int size)
+void* malloc(size_t size)
 {
 	malloc_block_meta* block;
 	size = ALIGN4(size);
@@ -236,7 +233,7 @@ void free(void* ptr)
 	block_ptr->free = 1;
 }
 
-void* realloc(void* ptr, int size)
+void* realloc(void* ptr, size_t size)
 {
 	if (!ptr) //NULL ptr. realloc should act like malloc.
 		return malloc(size);
@@ -256,9 +253,9 @@ void* realloc(void* ptr, int size)
 	return new_ptr;
 }
 
-void* calloc(int nelem, int elsize)
+void* calloc(size_t nelem, size_t elsize)
 {
-	int size = nelem * elsize; //TODO: check for overflow.
+	unsigned int size = nelem * elsize; //TODO: check for overflow.
 	void* ptr = malloc(size);
 	memset(ptr, 0, size);
 	return ptr;

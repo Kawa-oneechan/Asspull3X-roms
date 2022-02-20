@@ -30,20 +30,6 @@ typedef int8_t* va_list;
 #define intoff() REG_INTRMODE |= IMODE_DISABLE
 #define inton() REG_INTRMODE &= ~IMODE_DISABLE
 
-//--------------
-//ASS-RT SUPPORT
-//--------------
-extern int8_t* strncpy(char*, const char*, int32_t);
-extern int32_t strcpy_s(char*, int32_t, const char*);
-extern int32_t strcat_s(char*, int32_t, const char*);
-extern int32_t strnlen_s(const char*, int32_t);
-extern int32_t strkitten_s(char*, int32_t, char);
-extern void* memcpy(void*, const void*, int32_t);
-extern void* memset(void*, int32_t, int32_t);
-extern void* malloc(uint32_t);
-extern void* realloc(void*, int32_t);
-extern void free(void*);
-
 //-----------------
 //ASSPULL REGISTERS
 //-----------------
@@ -246,6 +232,10 @@ typedef struct {
 #define AM_DIRECTORY		0x10
 #define AM_ARCHIVE			0x20
 
+//--------------
+//ASS-RT SUPPORT
+//--------------
+
 typedef signed long long time_t;
 typedef struct {
 	int tm_sec;   //0-59
@@ -258,6 +248,24 @@ typedef struct {
 	int tm_yday;  //0-356
 	int tm_isdst; //
 } tm;
+
+extern int strcpy_s(char*, int32_t, const char*);
+extern int strcat_s(char*, int32_t, const char*);
+extern size_t strnlen_s(const char*, size_t);
+extern int strkitten_s(char*, int32_t, char);
+extern void* memcpy(void*, const void*, size_t);
+extern void* memset(void*, int32_t, size_t);
+extern void* malloc(size_t);
+extern void* realloc(void*, size_t);
+extern void* calloc(size_t, size_t);
+extern void free(void*);
+extern char* asctime(const tm*);
+extern tm* gmtime(const time_t*);
+extern time_t mktime(tm*);
+
+//---------
+//INTERFACE
+//---------
 
 //Text
 typedef struct

@@ -1,7 +1,7 @@
 #ifndef HELPERS_HEADER
 #define HELPERS_HEADER
 
-typedef unsigned int size_t;
+typedef unsigned long size_t;
 
 /*
  * safe_malloc:  allocates size bytes and returns a void pointer to the
