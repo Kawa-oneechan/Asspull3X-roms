@@ -17,6 +17,104 @@ void WaitForKey()
 	while (REG_KEYIN != 0) { vbl(); }
 }
 
+typedef struct
+{
+	unsigned char left, top, width, height;
+	unsigned short* bits;
+} tWindow;
+
+tWindow* OpenWindow(int left, int top, int width, int height, int color)
+{
+	if (left == -1 && top == -1)
+	{
+		left = 40 - (width >> 1);
+		top = 12 - (height >> 1);
+	}
+	tWindow *win = (tWindow*)malloc(sizeof(tWindow));
+	width += 2;
+	height++;
+	win->left = left;
+	win->top = top;
+	win->width = width;
+	win->height = height;
+	win->bits = (unsigned short*)malloc(sizeof(unsigned short) * (width * height));
+	unsigned short* b = win->bits;
+	unsigned short c;
+	for (int i = 0; i < height; i++)
+	{
+		for (int j = 0; j < width; j++)
+		{
+			short o = ((i + top) * 80) + j + left;
+			*b++ = TEXTMAP[o];
+			if (i == 0 || i == height - 2)
+			{
+				c = 0x9000 | color; //top or bottom edge
+				if (j == 0)
+				{
+					if (i == 0)
+						c = 0x9300 | color; //top left
+					else
+						c = 0x8C00 | color; //bottom left
+				}
+				else if (j == width - 3)
+				{
+					if (i == 0)
+						c = 0x8B00 | color; //top right
+					else
+						c = 0x9200 | color; //bottom right
+				}
+				else if (j > width - 3)
+				{
+					c = TEXTMAP[o];
+					if (i)
+						c = (c & 0xFF00) | 0x08;
+				}
+			}
+			else
+			{
+				c = 0x2000 | color; //space
+				if (i == height - 1)
+				{
+					c = TEXTMAP[o];
+					if (j > 1)
+						c = (c & 0xFF00) | 0x08;
+				}
+				else if (j == 0 || j == width - 3)
+					c = 0x8900 | color; //sides
+				else if (j > width - 3)
+					c = (TEXTMAP[o] & 0xFF00) | 0x08;
+			}
+			TEXTMAP[o] = c;
+		}
+	}
+	return win;
+}
+
+void CloseWindow(tWindow* win)
+{
+	unsigned short* b = win->bits;
+	for (int i = 0; i < win->height; i++)
+	{
+		for (int j = 0; j < win->width; j++)
+		{
+			short o = ((i + win->top) * 80) + j + win->left;
+			TEXTMAP[o] = *b++;
+		}
+	}
+	free(win->bits);
+	free(win);
+}
+
+void ShowError(const char* message)
+{
+	tWindow* win = OpenWindow(-1, -1, strlen((char*)message) + 8, 5, 0x4F);
+	TEXT->SetTextColor(4, 15);
+	TEXT->SetCursorPosition(win->left + 4, win->top + 2);
+	printf(message);
+	WaitForKey();
+	CloseWindow(win);
+}
+
 //char filenames[MAXFILES][16] = {0};
 char* filenames[2] = { 0 };
 int32_t fileCt[2] = { 0 };
@@ -28,6 +126,8 @@ void Populate(const char* path, int side, const char* pattern)
 	FILEINFO info;
 	fileCt[side] = 0;
 	char* curFN = 0;
+
+	intoff();
 
 	if (filenames[side] == 0)
 	{
@@ -48,18 +148,24 @@ tryOpenDir:
 	ret = DISK->OpenDir(&dir, path);
 	if (ret)
 	{
-		TEXT->SetCursorPosition(0, 0);
-		TEXT->SetTextColor(4, 15);
-		printf("Disk error reading %s: ", path);
+		tWindow* error = OpenWindow(-1, -1, 50, 6, 0x1F);
+		TEXT->SetTextColor(1, 15);
+		TEXT->SetCursorPosition(error->left + 2, error->top + 1);
+		printf("Disk error reading %s:", path);
+		printf("(win at %d by %d)", error->left, error->top);
+		TEXT->SetTextColor(1, 9);
+		TEXT->SetCursorPosition(error->left + 4, error->top + 2);
 		if (ret == 3)
 			printf("No disk inserted?");
 		else
 			printf(DISK->FileErrStr(ret));
-		TEXT->SetTextColor(0, 7);
-		printf("\nAbort or Retry? >");
+		TEXT->SetTextColor(1, 14);
+		TEXT->SetCursorPosition(error->left + 2, error->top + 4);
+		printf("Abort or Retry? >");
 		while (1)
 		{
 			char k = getchar();
+			CloseWindow(error);
 			if (k == 'a')
 			{
 				//Ask for another drive instead?
@@ -455,8 +561,7 @@ int32_t ShowPic(char* filePath)
 	TImageFile* image = malloc(size);
 	if (image == NULL)
 	{
-		printf("Failed to malloc.\n");
-		WaitForKey();
+		ShowError("Failed to malloc.");
 		return 2;
 	}
 	FILE file;
@@ -465,8 +570,7 @@ int32_t ShowPic(char* filePath)
 	DISK->CloseFile(&file);
 	if (image->BitDepth != 4 && image->BitDepth != 8)
 	{
-		printf("...yeah no.");
-		WaitForKey();
+		ShowError("Weird bitdepth, not happening.");
 		return 2;
 	}
 	DRAW->DisplayPicture(image);
@@ -588,9 +692,10 @@ int32_t ShowFile(char* filePath)
 		StartApp(filePath);
 	else
 	{
-		TEXT->SetCursorPosition(0, 0);
-		printf("Unknown file type \"%s\".         ", ext);
-		WaitForKey();
+		char msg[64];
+		sprintf(msg, "Unknown file type \"%s\".", ext);
+		ShowError(msg);
+		return 3;
 	}
 	intoff();
 	TEXT->SetTextColor(0, 7);
