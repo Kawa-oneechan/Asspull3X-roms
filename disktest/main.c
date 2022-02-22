@@ -577,25 +577,32 @@ int32_t ShowPic(char* filePath)
 	return 2;
 }
 
-#define MAXVIEWERLINES 1024
-#define MAXVIEWERLINELENGTH 81
-#define MAXLINESSHOWN 29
-#define SCROLLBY 1
-
 int32_t ShowText(char* filePath)
 {
-	int i, j, cur, scroll = 0, lineCt = 0, redraw = 1;
-	char c;
-	FILE* fd;
-	char lines[MAXVIEWERLINES][MAXVIEWERLINELENGTH] = {0};
+	int i, j, scroll = 0, lineCt = 0, redraw = 1;
+
+	FILEINFO nfo;
+	DISK->FileStat(filePath, &nfo);
+	int32_t size = nfo.fsize;
+
 	intoff();
-	fd = fopen(filePath, "r");
+
+	const char* fullText = malloc(size);
+	FILE file;
+	DISK->OpenFile(&file, filePath, FA_READ);
+	DISK->ReadFile(&file, (void*)fullText, nfo.fsize);
+	DISK->CloseFile(&file);
+
+	char *b = fullText;
+	while (*b)
+	{
+		if (*b == '\r')
+			lineCt++;
+		b++;
+	}
+	b = fullText;
 	TEXT->ClearScreen();
-	printf("Loading %s...\n", filePath);
-	i = 0;
-	while (fgets(lines[i++], MAXVIEWERLINELENGTH, fd));
-	lineCt = i;
-	fclose(fd);
+
 	while(1)
 	{
 		intoff();
@@ -608,21 +615,19 @@ int32_t ShowText(char* filePath)
 				TEXTMAP[j] = 0x1B;
 			printf(" %s \t%d/%d ", filePath, scroll, lineCt);
 			intoff();
-			for (i = 0; i < MAXLINESSHOWN; i++)
+			char *c = b;
+			int row = 1;
+			int col = 0;
+			while (row < 29 && *c != 0)
 			{
-				if (i + scroll < lineCt)
-				{
-					cur = 80 * (i + 1);
-					for (j = 0; j < 80; j++)
-					{
-						c = lines[i+scroll][j];
-						if (c == 0) break;
-						if (c == '\n') break;
-						if (c == '\r') continue;
-						if (c == '\t') c = ' ';
-						TEXTMAP[cur++] = (c << 8) | 0x07;
-					}
-				}
+				if (*c == '\r')
+					col = 0;
+				else if (*c == '\n')
+					row++;
+				else
+					TEXTMAP[(row * 80) + col] = (*c << 8) | 0x07;
+				c++;
+				col++;
 			}
 			redraw = 0;
 		}
@@ -633,7 +638,7 @@ int32_t ShowText(char* filePath)
 		{
 			while(1) { if (REG_KEYIN == 0) break; }
 
-			if (key == 0xCB) //left
+			/*if (key == 0xCB) //left
 			{
 				if (scroll > 0)
 				{
@@ -651,21 +656,25 @@ int32_t ShowText(char* filePath)
 					redraw = 1;
 				}
 			}
-			else if (key == 0xD0) //up
-			{
-				if (scroll + MAXLINESSHOWN < lineCt)
-				{
-					scroll += SCROLLBY;
-					redraw = 1;
-				}
-			}
-			else if (key == 0xC8) //down
+			else*/ if (key == 0xC8) //up
 			{
 				if (scroll > 0)
 				{
-					scroll -= SCROLLBY;
-					if (scroll < 0)
-						scroll = 0;
+					b--;
+					while (b > fullText && *b != '\r')
+						b--;
+					scroll--;
+					redraw = 1;
+				}
+			}
+			else if (key == 0xD0) //down
+			{
+				if (scroll < lineCt - 29)
+				{
+					b++;
+					while (b < fullText + size && *b != '\r')
+						b++;
+					scroll++;
 					redraw = 1;
 				}
 			}
