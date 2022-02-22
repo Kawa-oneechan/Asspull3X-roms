@@ -587,19 +587,41 @@ int32_t ShowText(char* filePath)
 
 	intoff();
 
-	const char* fullText = malloc(size);
+	const char* fileText = malloc(size);
 	FILE file;
 	DISK->OpenFile(&file, filePath, FA_READ);
-	DISK->ReadFile(&file, (void*)fullText, nfo.fsize);
+	DISK->ReadFile(&file, (void*)fileText, nfo.fsize);
 	DISK->CloseFile(&file);
 
-	char *b = fullText;
-	while (*b)
+	const char* fullText = malloc(size + 1024);
+	char *b = fileText;
+	char *c = fullText;
+	i = 0;
+	while (*b != 0)
 	{
 		if (*b == '\r')
+			b++;
+		else if (*b == '\n')
+		{
+			*c++ = *b++;
 			lineCt++;
-		b++;
+			i = 0;
+		}
+		else
+		{
+			*c++ = *b++;
+			i++;
+			if (i == 80)
+			{
+				*c++ = '\n';
+				lineCt++;
+				i = 0;
+			}
+		}
 	}
+
+	free(fileText);
+
 	b = fullText;
 	TEXT->ClearScreen();
 
@@ -613,27 +635,24 @@ int32_t ShowText(char* filePath)
 			TEXT->SetTextColor(1, 11);
 			for (j = 0; j < 80; j++)
 				TEXTMAP[j] = 0x1B;
-			printf(" %s \t%d/%d $%x", filePath, scroll, lineCt, b);
+			printf(" %s \t%d/%d $%x, $%x", filePath, scroll, lineCt, b, b - fullText);
 			intoff();
-			char *c = b;
+			c = b;
 			int row = 1;
 			int col = 0;
 			while (row < 29 && *c != 0)
 			{
-				if (*c == '\n')
+				if (*c == '\n' && col < 80)
 				{
 					TEXTMAP[(row * 80) + col] = 0x0F04;
 					row++;
 					col = 0;
 				}
-				else if (col == 79)
+				else if (col == 80)
 				{
-					TEXTMAP[(row * 80) + col] = 0x0F05;
 					row++;
 					col = 0;
 				}
-				else if (*c == '\r')
-					;
 				else
 					TEXTMAP[(row * 80) + (col++)] = (*c << 8) | 0x07;
 				c++;
@@ -669,8 +688,6 @@ int32_t ShowText(char* filePath)
 			{
 				if (scroll > 0)
 				{
-					//Over-wide lines are a shit.
-					//Perhaps rewrite the file contents into a second buffer and hard-wrap them?
 					b -= 2;
 					while (b >= fullText && *b != '\n')
 						b--;
@@ -688,7 +705,6 @@ int32_t ShowText(char* filePath)
 			{
 				if (scroll < lineCt - 26)
 				{
-					b++;
 					while (b < fullText + size && *b != '\n')
 						b++;
 					b++;
