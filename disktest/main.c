@@ -115,6 +115,43 @@ void ShowError(const char* message)
 	CloseWindow(win);
 }
 
+void DrawPanel(int left, int top, int width, int height, int color)
+{
+	unsigned short c;
+	for (int i = 0; i < height; i++)
+	{
+		for (int j = 0; j < width; j++)
+		{
+			short o = ((i + top) * 80) + j + left;
+			if (i == 0 || i == height - 1)
+			{
+				c = 0x9000 | color; //top or bottom edge
+				if (j == 0)
+				{
+					if (i == 0)
+						c = 0x9300 | color; //top left
+					else
+						c = 0x8C00 | color; //bottom left
+				}
+				else if (j == width - 1)
+				{
+					if (i == 0)
+						c = 0x8B00 | color; //top right
+					else
+						c = 0x9200 | color; //bottom right
+				}
+			}
+			else
+			{
+				c = 0x2000 | color; //space
+				if (j == 0 || j == width - 1)
+					c = 0x8900 | color; //sides
+			}
+			TEXTMAP[o] = c;
+		}
+	}
+}
+
 //char filenames[MAXFILES][16] = {0};
 char* filenames[2] = { 0 };
 int32_t fileCt[2] = { 0 };
@@ -152,7 +189,6 @@ tryOpenDir:
 		TEXT->SetTextColor(1, 15);
 		TEXT->SetCursorPosition(error->left + 2, error->top + 1);
 		printf("Disk error reading %s:", path);
-		printf("(win at %d by %d)", error->left, error->top);
 		TEXT->SetTextColor(1, 9);
 		TEXT->SetCursorPosition(error->left + 4, error->top + 2);
 		if (ret == 3)
@@ -249,52 +285,14 @@ void SelectFile(const char* path1, const char* path2, const char* pattern, char*
 		intoff();
 		if (redraw)
 		{
-			TEXTMAP[0] = 0x9387;
-			TEXTMAP[WIDTH] = 0x8B87;
-			TEXTMAP[(FILESSHOWN + 1) * 80] = 0x8C87;
-			TEXTMAP[((FILESSHOWN + 1) * 80) + WIDTH] = 0x9287;
-			for (int i = 1; i < WIDTH; i++)
-			{
-				TEXTMAP[i] = 0x9087;
-				TEXTMAP[((FILESSHOWN + 1) * 80) + i] = 0x9087;
-			}
-			for (int i = 1; i <= FILESSHOWN; i++)
-			{
-				TEXTMAP[(i * 80)] = 0x8987;
-				TEXTMAP[(i * 80)+WIDTH] = 0x8987;
-			}
-			if (fileCt[0] < FILESSHOWN)
-			{
-				for (int i = fileCt[0]; i <= FILESSHOWN; i++)
-					for (int j = 1; j < WIDTH; j++)
-						TEXTMAP[(i * 80) + j] = 0x2087;
-			}
+			DrawPanel(0, 0, WIDTH + 1, FILESSHOWN + 2, 0x87);
 			TEXT->SetTextColor(7, 8);
 			TEXT->SetCursorPosition((WIDTH / 2) - (strlen(workPath[0]) / 2) - 1, 0);
 			TEXT->Write(" %s ", workPath[0]);
 
 			if (path2 != 0)
 			{
-				TEXTMAP[WIDTH+1] = 0x9387;
-				TEXTMAP[79] = 0x8B87;
-				TEXTMAP[((FILESSHOWN + 1) * 80) + WIDTH + 1] = 0x8C87;
-				TEXTMAP[((FILESSHOWN + 1) * 80) + 79] = 0x9287;
-				for (int i = 1; i < WIDTH; i++)
-				{
-					TEXTMAP[i + WIDTH + 1] = 0x9087;
-					TEXTMAP[((FILESSHOWN + 1) * 80) + i + WIDTH + 1] = 0x9087;
-				}
-				for (int i = 1; i <= FILESSHOWN; i++)
-				{
-					TEXTMAP[(i * 80) + WIDTH + 1] = 0x8987;
-					TEXTMAP[(i * 80) + 79] = 0x8987;
-				}
-				if (fileCt[1] < FILESSHOWN)
-				{
-					for (int i = fileCt[1]; i <= FILESSHOWN; i++)
-						for (int j = 1; j < WIDTH; j++)
-							TEXTMAP[(i * 80) + WIDTH + 1 + j] = 0x2087;
-				}
+				DrawPanel(WIDTH + 1, 0, WIDTH + 1, FILESSHOWN + 2, 0x87);
 				TEXT->SetTextColor(7, 8);
 				TEXT->SetCursorPosition((WIDTH / 2) - (strlen(workPath[1]) / 2) - 1 + WIDTH + 1, 0);
 				TEXT->Write(" %s ", workPath[1]);
