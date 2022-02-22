@@ -613,21 +613,30 @@ int32_t ShowText(char* filePath)
 			TEXT->SetTextColor(1, 11);
 			for (j = 0; j < 80; j++)
 				TEXTMAP[j] = 0x1B;
-			printf(" %s \t%d/%d ", filePath, scroll, lineCt);
+			printf(" %s \t%d/%d $%x", filePath, scroll, lineCt, b);
 			intoff();
 			char *c = b;
 			int row = 1;
 			int col = 0;
 			while (row < 29 && *c != 0)
 			{
-				if (*c == '\r')
-					col = 0;
-				else if (*c == '\n')
+				if (*c == '\n')
+				{
+					TEXTMAP[(row * 80) + col] = 0x0F04;
 					row++;
+					col = 0;
+				}
+				else if (col == 79)
+				{
+					TEXTMAP[(row * 80) + col] = 0x0F05;
+					row++;
+					col = 0;
+				}
+				else if (*c == '\r')
+					;
 				else
-					TEXTMAP[(row * 80) + col] = (*c << 8) | 0x07;
+					TEXTMAP[(row * 80) + (col++)] = (*c << 8) | 0x07;
 				c++;
-				col++;
 			}
 			redraw = 0;
 		}
@@ -660,31 +669,40 @@ int32_t ShowText(char* filePath)
 			{
 				if (scroll > 0)
 				{
-					b--;
-					while (b > fullText && *b != '\r')
+					//Over-wide lines are a shit.
+					//Perhaps rewrite the file contents into a second buffer and hard-wrap them?
+					b -= 2;
+					while (b >= fullText && *b != '\n')
 						b--;
+					b++;
 					scroll--;
+					if (b < fullText)
+					{
+						b = fullText;
+						scroll = 0;
+					}
 					redraw = 1;
 				}
 			}
 			else if (key == 0xD0) //down
 			{
-				if (scroll < lineCt - 29)
+				if (scroll < lineCt - 26)
 				{
 					b++;
-					while (b < fullText + size && *b != '\r')
+					while (b < fullText + size && *b != '\n')
 						b++;
+					b++;
 					scroll++;
 					redraw = 1;
 				}
 			}
 			else if (key == 0x01) //esc
-				return 2;
+				break;
 			else
 				printf("%x", key);
 		}
 	}
-	WaitForKey();
+	free(fullText);
 	return 2;
 }
 
