@@ -60,7 +60,8 @@ extern int32_t FileTouch(const char*, TFileInfo*);
 extern int32_t MakeDir(const char*);
 extern int32_t ChangeDir(const char*);
 extern int32_t GetCurrentDir(char*, int32_t);
-extern int32_t GetLabel(char*);
+extern int32_t GetLabel(char, char*, unsigned long*);
+extern int32_t GetFree(char);
 extern const char* FileErrStr(int32_t);
 extern int32_t GetNumDrives();
 

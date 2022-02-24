@@ -14,7 +14,8 @@ const IDiskLibrary diskLibrary =
 	FindFirst, FindNext, FileStat,
 	UnlinkFile, RenameFile, FileTouch,
 	MakeDir, ChangeDir, GetCurrentDir,
-	GetLabel, FileErrStr, GetNumDrives
+	GetLabel, FileErrStr, GetNumDrives,
+	GetFree
 };
 
 FATFS FatFs[FF_VOLUMES] = { 0 };
@@ -40,7 +41,7 @@ extern int32_t f_utime (const char* path, const FILEINFO* fno);
 extern int32_t f_chdir (const char* path);
 //extern int32_t f_chdrive (const char* path);
 extern int32_t f_getcwd (char* buff, uint32_t len);
-//extern int32_t f_getfree (const char* path, unsigned long* nclst, FATFS** fatfs);
+extern int32_t f_getfree (const char* path, unsigned long* nclst, FATFS** fatfs);
 extern int32_t f_getlabel (const char* path, char* label, unsigned long* vsn);
 extern int32_t f_setlabel (const char* label);
 extern int32_t f_mount (FATFS* fs, const char* path, char opt);
@@ -207,9 +208,23 @@ int32_t GetCurrentDir(char* buffer, int32_t buflen)
 	return f_getcwd(buffer, buflen);
 }
 
-int32_t GetLabel(char* buffer)
+int32_t GetLabel(char disk, char* buffer, unsigned long* id)
 {
-	return f_getlabel("", buffer, 0);
+	char path[4] = "X:";
+	path[0] = disk;
+	return f_getlabel(path, buffer, id);
+}
+
+int32_t GetFree(char disk)
+{
+	char path[4] = "X:";
+	path[0] = disk;
+	FATFS *fs;
+	unsigned long freeClusters;
+	int res = f_getfree(path, &freeClusters, &fs);
+	//if (res) return -res;
+//	return fs->csize;
+	return freeClusters * 512; //fs->ssize;
 }
 
 //TODO: Improve these a bit.

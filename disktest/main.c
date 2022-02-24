@@ -152,6 +152,30 @@ void DrawPanel(int left, int top, int width, int height, int color)
 	}
 }
 
+void PrintComma(long n)
+{
+    long n2 = 0;
+    int scale = 1;
+    if (n < 0)
+    {
+        printf("-");
+        n = -n;
+    }
+    while (n >= 1000) {
+        n2 = n2 + scale * (n % 1000);
+        n /= 1000;
+        scale *= 1000;
+    }
+    printf("%d", n);
+    while (scale != 1)
+    {
+        scale /= 1000;
+        n = n2 / scale;
+        n2 = n2  % scale;
+        printf(",%03d", n);
+    }
+}
+
 //char filenames[MAXFILES][16] = {0};
 char* filenames[2] = { 0 };
 int32_t fileCt[2] = { 0 };
@@ -290,12 +314,40 @@ void SelectFile(const char* path1, const char* path2, const char* pattern, char*
 			TEXT->SetCursorPosition((WIDTH / 2) - (strlen(workPath[0]) / 2) - 1, 0);
 			TEXT->Write(" %s ", workPath[0]);
 
+			char label[12] = { 0 };
+			unsigned long id = 0;
+			DrawPanel(0, FILESSHOWN + 1, WIDTH + 1, 4, 0x87);
+			TEXTMAP[(FILESSHOWN + 1) * 80] = 0x8F87; //|-
+			TEXTMAP[(FILESSHOWN + 1) * 80 + WIDTH] = 0x8A87; //-|
+			TEXT->SetTextColor(8, 7);
+			TEXT->SetCursorPosition(2, FILESSHOWN + 2);
+			DISK->GetLabel(workPath[0][0], label, &id);
+			TEXT->Write("Label: %04X-%04X, %s", id >> 16, id & 0xFFFF, label[0] ? label : "no name");
+			id = DISK->GetFree(workPath[0][0]);
+			TEXT->SetCursorPosition(2, FILESSHOWN + 3);
+			TEXT->Write("Space: ");
+			PrintComma(id);
+			TEXT->Write(" bytes free");
+
 			if (path2 != 0)
 			{
 				DrawPanel(WIDTH + 1, 0, WIDTH + 1, FILESSHOWN + 2, 0x87);
 				TEXT->SetTextColor(7, 8);
 				TEXT->SetCursorPosition((WIDTH / 2) - (strlen(workPath[1]) / 2) - 1 + WIDTH + 1, 0);
 				TEXT->Write(" %s ", workPath[1]);
+
+				DrawPanel(WIDTH + 1, FILESSHOWN + 1, WIDTH + 1, 4, 0x87);
+				TEXTMAP[(FILESSHOWN + 1) * 80 + WIDTH + 1] = 0x8F87; //|-
+				TEXTMAP[(FILESSHOWN + 1) * 80 + WIDTH + 1 + WIDTH] = 0x8A87; //-|
+				TEXT->SetTextColor(8, 7);
+				TEXT->SetCursorPosition(2 + WIDTH + 1, FILESSHOWN + 2);
+				DISK->GetLabel(workPath[1][0], label, &id);
+				TEXT->Write("Label: %04X-%04X, %s", id >> 16, id & 0xFFFF, label[0] ? label : "no name");
+				id = DISK->GetFree(workPath[1][0]);
+				TEXT->SetCursorPosition(2 + WIDTH + 1, FILESSHOWN + 3);
+				TEXT->Write("Space: ");
+				PrintComma(id);
+				TEXT->Write(" bytes free");
 			}
 
 			for (int s = 0; s < 2; s++)
@@ -587,15 +639,15 @@ int32_t ShowText(char* filePath)
 
 	intoff();
 
-	const char* fileText = malloc(size);
+	unsigned char* fileText = malloc(size);
 	FILE file;
 	DISK->OpenFile(&file, filePath, FA_READ);
 	DISK->ReadFile(&file, (void*)fileText, nfo.fsize);
 	DISK->CloseFile(&file);
 
-	const char* fullText = malloc(size + 1024);
-	char *b = fileText;
-	char *c = fullText;
+	unsigned char* fullText = malloc(size + 1024);
+	unsigned char *b = fileText;
+	unsigned char *c = fullText;
 	i = 0;
 	while (*b != 0)
 	{

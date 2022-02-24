@@ -332,9 +332,10 @@ typedef struct
 	int32_t(*MakeDir)(const char* path);
 	int32_t(*ChangeDir)(const char* path);
 	int32_t(*GetCurrentDir)(char* buffer, int32_t buflen);
-	int32_t(*GetLabel)(char* buffer);
+	int32_t(*GetLabel)(char disk, char* buffer, unsigned long*);
 	const char*(*FileErrStr)(int32_t error);
 	int32_t(*GetNumDrives)(void);
+	int32_t(*GetFree)(char disk);
 } IDiskLibrary;
 
 typedef struct
