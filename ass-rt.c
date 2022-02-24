@@ -290,7 +290,7 @@ void* calloc(size_t nelem, size_t elsize)
 
 tm __gmtime_res;
 
-char* asctime(const tm *timeptr)
+char* asctime_r(const tm *timeptr, char* buf)
 {
 	static const char wday_name[][4] = {
 		"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"
@@ -299,14 +299,19 @@ char* asctime(const tm *timeptr)
 		"Jan", "Feb", "Mar", "Apr", "May", "Jun",
 		"Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
 	};
-	static char result[32];
-	TEXT->Format(result, "%.3s %.3s%3d %.2d:%.2d:%.2d %d",
+	TEXT->Format(buf, "%.3s %.3s%3d %.2d:%.2d:%.2d %d",
 		wday_name[timeptr->tm_wday],
 		mon_name[timeptr->tm_mon],
 		timeptr->tm_mday, timeptr->tm_hour,
 		timeptr->tm_min, timeptr->tm_sec,
 		YEAR_BASE + timeptr->tm_year);
-	return result;
+	return buf;
+}
+
+char* asctime(const tm *timeptr)
+{
+	static char buf[32];
+	return asctime_r(timeptr, buf);
 }
 
 tm* gmtime(const time_t* timer)
@@ -358,6 +363,16 @@ tm* gmtime(const time_t* timer)
 	res->tm_isdst = 0;
 
 	return (res);
+}
+
+char* ctime_r(const time_t* timer, char* buf)
+{
+	return asctime_r(gmtime(timer), buf);
+}
+
+char* ctime(const time_t* timer)
+{
+	return asctime(gmtime(timer));
 }
 
 time_t mktime(tm* timeptr)
