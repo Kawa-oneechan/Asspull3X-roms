@@ -221,10 +221,8 @@ int32_t GetFree(char disk)
 	path[0] = disk;
 	FATFS *fs;
 	unsigned long freeClusters;
-	int res = f_getfree(path, &freeClusters, &fs);
-	//if (res) return -res;
-//	return fs->csize;
-	return freeClusters * 512; //fs->ssize;
+	f_getfree(path, &freeClusters, &fs);
+	return freeClusters * (fs->csize * 512);
 }
 
 //TODO: Improve these a bit.
