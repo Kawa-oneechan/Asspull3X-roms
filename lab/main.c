@@ -34,7 +34,7 @@ void ListFiles(const char* path, int32_t mode)
 		printf("No disk.\n\n");
 		return;
 	}
-	ret = DISK->GetLabel(buff);
+	ret = DISK->GetLabel(path[0], buff, NULL);
 	printf(" Volume name: %s\n", (buff[0] ? buff : "none"));
 	if (path == 0)
 	{

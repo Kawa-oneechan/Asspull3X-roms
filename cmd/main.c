@@ -147,7 +147,7 @@ int32_t ListFiles(int argc __attribute__((unused)), char **args __attribute__((u
 		printf("No disk.\n\n");
 		return 1;
 	}
-	ret = DISK->GetLabel(buff);
+	ret = DISK->GetLabel(cwd[0], buff, NULL);
 	printf(" Volume name: %s\n", (buff[0] ? buff : "none"));
 	if (path == 0)
 	{
