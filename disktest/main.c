@@ -25,11 +25,8 @@ typedef struct
 
 tWindow* OpenWindow(int left, int top, int width, int height, int color)
 {
-	if (left == -1 && top == -1)
-	{
-		left = 40 - (width >> 1);
-		top = 12 - (height >> 1);
-	}
+	if (left == -1) left = 40 - (width >> 1);
+	if (top == -1) top = 12 - (height >> 1);
 	tWindow *win = (tWindow*)malloc(sizeof(tWindow));
 	width += 2;
 	height++;
@@ -42,8 +39,12 @@ tWindow* OpenWindow(int left, int top, int width, int height, int color)
 	unsigned short c;
 	for (int i = 0; i < height; i++)
 	{
+		if (i + top < 0) continue;
+		if (i + top >= 30) break;
 		for (int j = 0; j < width; j++)
 		{
+			if (j + left < 0) continue;
+			if (j + left >= 80) break;
 			short o = ((i + top) * 80) + j + left;
 			*b++ = TEXTMAP[o];
 			if (i == 0 || i == height - 2)
@@ -95,8 +96,12 @@ void CloseWindow(tWindow* win)
 	unsigned short* b = win->bits;
 	for (int i = 0; i < win->height; i++)
 	{
+		if (i + win->top < 0) continue;
+		if (i + win->top >= 30) break;
 		for (int j = 0; j < win->width; j++)
 		{
+			if (j + win->left < 0) continue;
+			if (j + win->left >= 80) break;
 			short o = ((i + win->top) * 80) + j + win->left;
 			TEXTMAP[o] = *b++;
 		}
