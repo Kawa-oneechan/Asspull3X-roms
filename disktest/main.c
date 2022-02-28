@@ -8,7 +8,7 @@ extern char *strrchr(const char *, int32_t);
 #define MAXFILES 512
 
 #define WIDTH 39
-#define HEIGHT 21
+#define HEIGHT 24
 
 void WaitForKey()
 {
@@ -157,6 +157,26 @@ void DrawPanel(int left, int top, int width, int height, int color)
 	}
 }
 
+void DrawKeys(char** keys)
+{
+	short o = 29 * 80;
+	for (int i = 0; i < 10; i++)
+	{
+		if (i < 9)
+			TEXTMAP[o++] = (('1' + i) << 8) | 0x1B;
+		else
+		{
+			TEXTMAP[o++] = ('1' << 8) | 0x1B;
+			TEXTMAP[o++] = ('0' << 8) | 0x1B;
+		}
+		for (int j = 0; j < 6; j++)
+		{
+			TEXTMAP[o++] = (keys[i][j] << 8) | 0x1F;
+		}
+		TEXTMAP[o++] = 0x201F;
+	}
+}
+
 void PrintComma(long n)
 {
     long n2 = 0;
@@ -181,13 +201,12 @@ void PrintComma(long n)
     }
 }
 
-//char filenames[MAXFILES][16] = {0};
 char* filenames[2] = { 0 };
-int32_t fileCt[2] = { 0 };
+int fileCt[2] = { 0 };
 
 void Populate(const char* path, int side, const char* pattern)
 {
-	int32_t ret;
+	int ret;
 	DIR dir;
 	FILEINFO info;
 	fileCt[side] = 0;
@@ -279,7 +298,20 @@ tryOpenDir:
 
 void SelectFile(const char* path1, const char* path2, const char* pattern, char* selection, int32_t(*onSelect)(char*))
 {
-	int32_t index[2] = { 0 }, lastIndex[2] = { 0 }, redraw = 1, scroll[2] = { 0 }, currentDrive[2];
+	static const char* keys[] = {
+		"Help  ",
+		"User  ",
+		"View  ",
+		"Edit  ",
+		"Copy  ",
+		"RenMov",
+		"Mkdir ",
+		"Delete",
+		"Menu  ",
+		"Quit  ",
+	};
+
+	int index[2] = { 0 }, lastIndex[2] = { 0 }, redraw = 1, scroll[2] = { 0 }, currentDrive[2];
 	FILEINFO info;
 	char currDirs[2][4][MAXPATH], workPath[2][MAXPATH];
 	char filePath[2][MAXPATH];
@@ -361,22 +393,22 @@ void SelectFile(const char* path1, const char* path2, const char* pattern, char*
 				if (s == 1 && path2 == 0)
 					break;
 				curFN = &filenames[s][scroll[s] * 16];
-				for (int32_t i = 0; i < fileCt[s] && i < FILESSHOWN; i++)
+				for (int i = 0; i < fileCt[s] && i < FILESSHOWN; i++)
 				{
 					TEXT->SetCursorPosition(1 + o, i + 1);
-					TEXT->SetTextColor(8, cs == s ? 15 : 7);
-					if (index[s] == i + scroll[s])
-						TEXT->SetTextColor(cs == s ? 9 : 1, 15);
-					printf("%-15s ", curFN);
+					TEXT->SetTextColor(8, 15);
+					if (cs == s && index[s] == i + scroll[s])
+						TEXT->SetTextColor(9, 15);
+					printf("%-12s ", curFN);
 					if (curFN[0] == '.' && curFN[1] == '.')
 					{
-						printf("     <UP>             ");
+						printf("         <UP>            ");
 						curFN += 16;
 						continue;
 					}
 					else if (curFN[1] == ':')
 					{
-						printf("   <DISK>             ");
+						printf("       <DISK>            ");
 						curFN += 16;
 						continue;
 					}
@@ -385,18 +417,20 @@ void SelectFile(const char* path1, const char* path2, const char* pattern, char*
 					strcat_s(filePath[s], MAXPATH, curFN);
 					DISK->FileStat(filePath[s], &info);
 					if (info.fattrib & AM_DIRECTORY)
-						printf("    <DIR> ");
+						printf("        <DIR> ");
 					else
-						printf("%9d ", info.fsize);
+						printf("%13d ", info.fsize);
 					int fdy = 1980 + (info.fdate >> 9);
 					int fdm = (info.fdate >> 5) & 15;
 					int fdd = info.fdate & 0x1F;
-					printf("  %02d-%02d-%02d", fdy, fdm, fdd);
+					printf(" %02d-%02d-%02d", fdy, fdm, fdd);
 					curFN += 16;
 				}
 				TEXT->SetTextColor(0, 7);
 				redraw = 0;
 			}
+
+			DrawKeys(keys);
 		}
 		else
 		{
@@ -413,11 +447,18 @@ void SelectFile(const char* path1, const char* path2, const char* pattern, char*
 					here[i] |= 0x008F;
 				}
 			}
+			o = (cs == 1 ? 0 : WIDTH + 1);
+			for (int i = 1; i < WIDTH; i++)
+			{
+				uint16_t* here = &TEXTMAP[o + ((1 + index[cs ^ 1] - scroll[cs ^ 1]) * 80)];
+				here[i] &= ~0x00FF;
+				here[i] |= 0x008F;
+			}
 		}
 
-		for (int i = 0; i < 80; i++)
-			TEXTMAP[(28 * 80) + i] = 0x2007;
-		TEXT->SetCursorPosition(0, FILESSHOWN + 2);
+//		for (int i = 0; i < 80; i++)
+//			TEXTMAP[(29 * 80) + i] = 0x2007;
+//		TEXT->SetCursorPosition(0, FILESSHOWN + 2);
 
 		curFN = &filenames[cs][index[cs] * 16];
 		//printf("%s>%s", workPath[cs], curFN);
@@ -435,7 +476,8 @@ void SelectFile(const char* path1, const char* path2, const char* pattern, char*
 				if (key == 0x0F && path2 != 0) //tab
 				{
 					cs ^= 1;
-					redraw = 1;
+					//redraw = 1;
+					break;
 				}
 				else if (key == 0xC8) //up
 				{
