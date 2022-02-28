@@ -256,7 +256,7 @@ tryOpenDir:
 		if (ret != 0 || info.fname[0] == 0) break;
 		if (info.fattrib & AM_DIRECTORY && !(info.fattrib & AM_HIDDEN))
 		{
-			strncpy(curFN, info.fname, 13);
+			strcpy_s(curFN, 13, info.fname);
 			curFN += 16;
 			fileCt[side]++;
 		}
@@ -267,7 +267,7 @@ tryOpenDir:
 	{
 		if (!(info.fattrib & AM_HIDDEN))
 		{
-			strncpy(curFN, info.fname, 13);
+			strcpy_s(curFN, 13, info.fname);
 			curFN += 16;
 			fileCt[side]++;
 		}
@@ -802,7 +802,7 @@ int32_t ShowFile(char* filePath)
 	return 2;
 }
 
-int32_t main(void)
+int main(void)
 {
 	char path[MAXPATH];
 	intoff();

@@ -258,7 +258,7 @@ const char* FileErrStr(int32_t error)
 	return FSErrors[error];
 }
 
-int GetNumDrives()
+unsigned char GetNumDrives()
 {
 	return diskDrives;
 }

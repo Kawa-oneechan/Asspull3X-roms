@@ -31,10 +31,10 @@ extern void SetBitmapMode256(int32_t);
 extern void EnableObjects(int32_t);
 extern void WaitForVBlank(void);
 extern void WaitForVBlanks(int32_t);
-extern void DmaCopy(void*, const void*, uint32_t, int32_t);
-extern void DmaClear(void*, int32_t, uint32_t, int32_t);
+extern void DmaCopy(void*, const void*, size_t, int32_t);
+extern void DmaClear(void*, int32_t, size_t, int32_t);
 extern void MidiReset(void);
-extern void RleUnpack(int8_t*, int8_t*, uint32_t);
+extern void RleUnpack(int8_t*, int8_t*, size_t);
 extern int32_t OpenFile(TFileHandle*, const char*, char);
 extern int32_t CloseFile(TFileHandle*);
 extern int32_t ReadFile(TFileHandle*, void*, uint32_t);
@@ -63,7 +63,7 @@ extern int32_t GetCurrentDir(char*, int32_t);
 extern int32_t GetLabel(char, char*, unsigned long*);
 extern int32_t GetFree(char);
 extern const char* FileErrStr(int32_t);
-extern int32_t GetNumDrives();
+extern uint8_t GetNumDrives();
 
 
 

@@ -5,7 +5,7 @@ extern IBios* interface;
 //STRINGS
 //-------
 
-int strcpy_s(char* dest, int len, const char* src)
+int strcpy_s(char* dest, size_t len, const char* src)
 {
 	int i;
 	if (!dest) return 1;
@@ -21,7 +21,7 @@ int strcpy_s(char* dest, int len, const char* src)
 	return 2;
 }
 
-int strcat_s(char* dest, int len, const char* src)
+int strcat_s(char* dest, size_t len, const char* src)
 {
 	int i, j;
 	if (!dest) return 1;
@@ -52,7 +52,7 @@ size_t strnlen_s(const char* str, size_t max)
 }
 
 //TODO: needs proper testing
-int strkitten_s(char* dest, int len, char src)
+int strkitten_s(char* dest, size_t len, char src)
 {
 	int i;
 	if (!dest) return 1;
@@ -91,7 +91,7 @@ void* memcpy(void* dst, const void* src, size_t count)
 	return(ret);
 }
 
-void* memset(void* dst, int val, size_t count)
+void* memset(void* dst, int32_t val, size_t count)
 {
 	void* start = dst;
 	while (count--)

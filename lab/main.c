@@ -100,7 +100,7 @@ void ListFiles(const char* path, int32_t mode)
 	printf("\n\t\t%8i bytes free\n\n", 1474560 - size); //assuming a formatted 3½' HD diskette.
 }
 
-int32_t main1()
+int main1()
 {
 	MISC->SetTextMode(SMODE_240 | SMODE_BOLD);
 
@@ -121,7 +121,7 @@ int32_t main1()
 	return 0;
 }
 
-int32_t main()
+int main()
 {
 	MISC->SetTextMode(SMODE_240 | SMODE_BOLD);
 	char cwd[MAX_CWD];

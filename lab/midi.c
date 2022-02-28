@@ -194,7 +194,7 @@ void UpdateMIDI()
 	//midiTrackOneDelay -= (deltaTicks);
 }
 
-int32_t main()
+int main()
 {
 	MISC->SetTextMode(SMODE_240 | SMODE_BOLD);
 	TEXT->SetCursorPosition(0, 0);

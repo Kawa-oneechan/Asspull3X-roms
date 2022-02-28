@@ -45,7 +45,7 @@ extern const uint16_t iconsPal[16];
 void FindFont();
 extern char diskToDev[16];
 
-int32_t main(void)
+int main(void)
 {
 	char biosVer[32];
 	int32_t* cartCode = (int32_t*)0x00020000;

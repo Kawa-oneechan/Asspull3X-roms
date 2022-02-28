@@ -168,7 +168,7 @@ void DrawFormat(const char* format, int32_t x, int32_t y, int32_t color, ...)
 	intoff();
 	char buffer[1024];
 	va_list args;
-	va_start(args, format);
+	va_start(args, color);
 	vsprintf(buffer, format, args);
 	char *b = buffer;
 	while(*b)

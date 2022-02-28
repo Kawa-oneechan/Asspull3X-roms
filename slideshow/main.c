@@ -42,7 +42,7 @@ void WaitForKey()
 	while (REG_KEYIN != 0) vbl();
 }
 
-int32_t main(void)
+int main(void)
 {
 
 	int ret;

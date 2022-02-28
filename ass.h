@@ -240,10 +240,10 @@ typedef struct {
 	int tm_isdst; //
 } tm;
 
-extern int strcpy_s(char*, int32_t, const char*);
-extern int strcat_s(char*, int32_t, const char*);
+extern int strcpy_s(char*, size_t, const char*);
+extern int strcat_s(char*, size_t, const char*);
 extern size_t strnlen_s(const char*, size_t);
-extern int strkitten_s(char*, int32_t, char);
+extern int strkitten_s(char*, size_t, char);
 extern void* memcpy(void*, const void*, size_t);
 extern void* memset(void*, int32_t, size_t);
 extern void* malloc(size_t);
@@ -293,10 +293,10 @@ typedef struct
 	void(*EnableObjects)(int32_t);
 	void(*WaitForVBlank)(void);
 	void(*WaitForVBlanks)(int32_t vbls);
-	void(*DmaCopy)(void* dst, const void* src, uint32_t size, int32_t step);
-	void(*DmaClear)(void* dst, int32_t src, uint32_t size, int32_t step);
+	void(*DmaCopy)(void* dst, const void* src, size_t size, int32_t step);
+	void(*DmaClear)(void* dst, int32_t src, size_t size, int32_t step);
 	void(*MidiReset)(void);
-	void(*RleUnpack)(int8_t* dst, int8_t* src, uint32_t size);
+	void(*RleUnpack)(int8_t* dst, int8_t* src, size_t size);
 } IMiscLibrary;
 
 typedef struct
@@ -325,7 +325,7 @@ typedef struct
 	int32_t(*GetCurrentDir)(char* buffer, int32_t buflen);
 	int32_t(*GetLabel)(char disk, char* buffer, unsigned long*);
 	const char*(*FileErrStr)(int32_t error);
-	int32_t(*GetNumDrives)(void);
+	uint8_t(*GetNumDrives)(void);
 	int32_t(*GetFree)(char disk);
 } IDiskLibrary;
 

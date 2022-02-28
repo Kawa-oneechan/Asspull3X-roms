@@ -5,8 +5,9 @@ extern int32_t vsprintf(char*, const char*, va_list);
 
 const ITextLibrary textLibrary =
 {
-	Write, Format, WriteChar, SetBold,
-	SetCursor, SetTextColor, ClearScreen,
+	Write, Format, WriteChar,
+	SetCursor, SetTextColor, SetBold,
+	ClearScreen,
 };
 
 #define TEXT_WIDTH 80

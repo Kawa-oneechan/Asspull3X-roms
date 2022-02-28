@@ -259,7 +259,7 @@ const TCommand commands[] =
 	{ 0, 0 }
 };
 
-int32_t main()
+int main()
 {
 	MISC->SetTextMode(SMODE_240 | SMODE_BOLD);
 	char input[MAX_INP];
