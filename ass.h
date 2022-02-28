@@ -5,24 +5,15 @@
 
 #define DEBUG
 
-#if !defined NULL
-#define NULL (void*)0
-#endif
+#include <stddef.h>
+#include <stdint.h>
+#include <stdbool.h>
+#include <stdarg.h>
 
 #ifndef DEBUG
 #define dpf(x, ...)
 #else
 extern void dpf(const char* format, ...);
-#endif
-
-#include "ass-types.h"
-
-#if !defined va_start
-typedef int8_t* va_list;
-#define _INTSIZEOF(n)	( (sizeof(n) + sizeof(int32_t) - 1) & ~(sizeof(int32_t) - 1) )
-#define va_start(ap,v)	( ap = (va_list)&(v) + _INTSIZEOF(v) )
-#define va_arg(ap,t)	( *(t *)((ap += _INTSIZEOF(t)) - _INTSIZEOF(t)) )
-#define va_end(ap)		( ap = (va_list)0 )
 #endif
 
 #define printf interface->textLibrary->Write
@@ -273,9 +264,9 @@ typedef struct
 	int(*Write)(const char* format, ...);
 	int(*Format)(char* buffer, const char* format, ...);
 	void(*WriteChar)(char ch);
-	void(*SetBold)(int32_t bold);
 	void(*SetCursorPosition)(int32_t left, int32_t top);
 	void(*SetTextColor)(int32_t back, int32_t fore);
+	void(*SetBold)(bool bold);
 	void(*ClearScreen)(void);
 } ITextLibrary;
 

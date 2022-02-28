@@ -111,7 +111,7 @@ void WriteChar(char ch)
 //...and redef it
 #define printf Write
 
-void SetBold(int32_t bold)
+void SetBold(bool bold)
 {
 	if (bold)
 		REG_SCREENMODE |= SMODE_BOLD;

@@ -1,5 +1,5 @@
 //Prototypes for library functions
-extern void SetBold(int32_t);
+extern void SetBold(bool);
 extern int Write(const char*, ...);
 //extern void WriteString(const char*);
 //extern void WriteInt(int32_t);
