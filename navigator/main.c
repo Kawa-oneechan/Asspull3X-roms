@@ -1,181 +1,12 @@
-#include "../ass.h"
-#include "../lab/std.h"
-IBios* interface;
+#include "nav.h"
 
-extern char *strrchr(const char *, int32_t);
+IBios* interface;
 
 #define MAXPATH 512
 #define MAXFILES 512
 
 #define WIDTH 39
 #define HEIGHT 24
-
-void WaitForKey()
-{
-	while (REG_KEYIN != 0) { vbl(); }
-	while (REG_KEYIN == 0) { vbl(); }
-	while (REG_KEYIN != 0) { vbl(); }
-}
-
-typedef struct
-{
-	unsigned char left, top, width, height;
-	unsigned short* bits;
-} tWindow;
-
-tWindow* OpenWindow(int left, int top, int width, int height, int color)
-{
-	if (left == -1) left = 40 - (width >> 1);
-	if (top == -1) top = 12 - (height >> 1);
-	tWindow *win = (tWindow*)malloc(sizeof(tWindow));
-	width += 2;
-	height++;
-	win->left = left;
-	win->top = top;
-	win->width = width;
-	win->height = height;
-	win->bits = (unsigned short*)malloc(sizeof(unsigned short) * (width * height));
-	unsigned short* b = win->bits;
-	unsigned short c;
-	for (int i = 0; i < height; i++)
-	{
-		if (i + top < 0) continue;
-		if (i + top >= 30) break;
-		for (int j = 0; j < width; j++)
-		{
-			if (j + left < 0) continue;
-			if (j + left >= 80) break;
-			short o = ((i + top) * 80) + j + left;
-			*b++ = TEXTMAP[o];
-			if (i == 0 || i == height - 2)
-			{
-				c = 0x9000 | color; //top or bottom edge
-				if (j == 0)
-				{
-					if (i == 0)
-						c = 0x9300 | color; //top left
-					else
-						c = 0x8C00 | color; //bottom left
-				}
-				else if (j == width - 3)
-				{
-					if (i == 0)
-						c = 0x8B00 | color; //top right
-					else
-						c = 0x9200 | color; //bottom right
-				}
-				else if (j > width - 3)
-				{
-					c = TEXTMAP[o];
-					if (i)
-						c = (c & 0xFF00) | 0x08;
-				}
-			}
-			else
-			{
-				c = 0x2000 | color; //space
-				if (i == height - 1)
-				{
-					c = TEXTMAP[o];
-					if (j > 1)
-						c = (c & 0xFF00) | 0x08;
-				}
-				else if (j == 0 || j == width - 3)
-					c = 0x8900 | color; //sides
-				else if (j > width - 3)
-					c = (TEXTMAP[o] & 0xFF00) | 0x08;
-			}
-			TEXTMAP[o] = c;
-		}
-	}
-	return win;
-}
-
-void CloseWindow(tWindow* win)
-{
-	unsigned short* b = win->bits;
-	for (int i = 0; i < win->height; i++)
-	{
-		if (i + win->top < 0) continue;
-		if (i + win->top >= 30) break;
-		for (int j = 0; j < win->width; j++)
-		{
-			if (j + win->left < 0) continue;
-			if (j + win->left >= 80) break;
-			short o = ((i + win->top) * 80) + j + win->left;
-			TEXTMAP[o] = *b++;
-		}
-	}
-	free(win->bits);
-	free(win);
-}
-
-void ShowError(const char* message)
-{
-	tWindow* win = OpenWindow(-1, -1, strlen((char*)message) + 8, 5, 0x4F);
-	TEXT->SetTextColor(4, 15);
-	TEXT->SetCursorPosition(win->left + 4, win->top + 2);
-	printf(message);
-	WaitForKey();
-	CloseWindow(win);
-}
-
-void DrawPanel(int left, int top, int width, int height, int color)
-{
-	unsigned short c;
-	for (int i = 0; i < height; i++)
-	{
-		for (int j = 0; j < width; j++)
-		{
-			short o = ((i + top) * 80) + j + left;
-			if (i == 0 || i == height - 1)
-			{
-				c = 0x9000 | color; //top or bottom edge
-				if (j == 0)
-				{
-					if (i == 0)
-						c = 0x9300 | color; //top left
-					else
-						c = 0x8C00 | color; //bottom left
-				}
-				else if (j == width - 1)
-				{
-					if (i == 0)
-						c = 0x8B00 | color; //top right
-					else
-						c = 0x9200 | color; //bottom right
-				}
-			}
-			else
-			{
-				c = 0x2000 | color; //space
-				if (j == 0 || j == width - 1)
-					c = 0x8900 | color; //sides
-			}
-			TEXTMAP[o] = c;
-		}
-	}
-}
-
-void DrawKeys(char** keys)
-{
-	short o = 29 * 80;
-	for (int i = 0; i < 10; i++)
-	{
-		if (i < 9)
-			TEXTMAP[o++] = (('1' + i) << 8) | 0x1B;
-		else
-		{
-			TEXTMAP[o++] = ('1' << 8) | 0x1B;
-			TEXTMAP[o++] = ('0' << 8) | 0x1B;
-		}
-		for (int j = 0; j < 6; j++)
-		{
-			TEXTMAP[o++] = (keys[i][j] << 8) | 0x1F;
-		}
-		TEXTMAP[o++] = 0x201F;
-	}
-}
 
 void PrintComma(long n)
 {
@@ -296,7 +127,7 @@ tryOpenDir:
 
 #define FILESSHOWN (HEIGHT-2)
 
-void SelectFile(const char* path1, const char* path2, const char* pattern, char* selection, int32_t(*onSelect)(char*))
+void SelectFile(const char* path1, const char* path2, const char* pattern, char* selection, int(*onSelect)(char*))
 {
 	static const char* keys[] = {
 		"Help  ",
@@ -346,42 +177,42 @@ void SelectFile(const char* path1, const char* path2, const char* pattern, char*
 		intoff();
 		if (redraw)
 		{
-			DrawPanel(0, 0, WIDTH + 1, FILESSHOWN + 2, 0x87);
+			DrawPanel(0, 1, WIDTH + 1, FILESSHOWN + 2, 0x87);
 			TEXT->SetTextColor(7, 8);
-			TEXT->SetCursorPosition((WIDTH / 2) - (strlen(workPath[0]) / 2) - 1, 0);
+			TEXT->SetCursorPosition((WIDTH / 2) - (strlen(workPath[0]) / 2) - 1, 1);
 			TEXT->Write(" %s ", workPath[0]);
 
 			char label[12] = { 0 };
 			unsigned long id = 0;
-			DrawPanel(0, FILESSHOWN + 1, WIDTH + 1, 4, 0x87);
-			TEXTMAP[(FILESSHOWN + 1) * 80] = 0x8F87; //|-
-			TEXTMAP[(FILESSHOWN + 1) * 80 + WIDTH] = 0x8A87; //-|
+			DrawPanel(0, FILESSHOWN + 2, WIDTH + 1, 4, 0x87);
+			TEXTMAP[(FILESSHOWN + 2) * 80] = 0x8F87; //|-
+			TEXTMAP[(FILESSHOWN + 2) * 80 + WIDTH] = 0x8A87; //-|
 			TEXT->SetTextColor(8, 7);
-			TEXT->SetCursorPosition(2, FILESSHOWN + 2);
+			TEXT->SetCursorPosition(2, FILESSHOWN + 3);
 			DISK->GetLabel(workPath[0][0], label, &id);
 			TEXT->Write("Label: %04X-%04X, %s", id >> 16, id & 0xFFFF, label[0] ? label : "no name");
 			id = DISK->GetFree(workPath[0][0]);
-			TEXT->SetCursorPosition(2, FILESSHOWN + 3);
+			TEXT->SetCursorPosition(2, FILESSHOWN + 4);
 			TEXT->Write("Space: ");
 			PrintComma(id);
 			TEXT->Write(" bytes free");
 
 			if (path2 != 0)
 			{
-				DrawPanel(WIDTH + 1, 0, WIDTH + 1, FILESSHOWN + 2, 0x87);
+				DrawPanel(WIDTH + 1, 1, WIDTH + 1, FILESSHOWN + 2, 0x87);
 				TEXT->SetTextColor(7, 8);
-				TEXT->SetCursorPosition((WIDTH / 2) - (strlen(workPath[1]) / 2) - 1 + WIDTH + 1, 0);
+				TEXT->SetCursorPosition((WIDTH / 2) - (strlen(workPath[1]) / 2) - 1 + WIDTH + 1, 1);
 				TEXT->Write(" %s ", workPath[1]);
 
-				DrawPanel(WIDTH + 1, FILESSHOWN + 1, WIDTH + 1, 4, 0x87);
-				TEXTMAP[(FILESSHOWN + 1) * 80 + WIDTH + 1] = 0x8F87; //|-
-				TEXTMAP[(FILESSHOWN + 1) * 80 + WIDTH + 1 + WIDTH] = 0x8A87; //-|
+				DrawPanel(WIDTH + 1, FILESSHOWN + 2, WIDTH + 1, 4, 0x87);
+				TEXTMAP[(FILESSHOWN + 2) * 80 + WIDTH + 1] = 0x8F87; //|-
+				TEXTMAP[(FILESSHOWN + 2) * 80 + WIDTH + 1 + WIDTH] = 0x8A87; //-|
 				TEXT->SetTextColor(8, 7);
-				TEXT->SetCursorPosition(2 + WIDTH + 1, FILESSHOWN + 2);
+				TEXT->SetCursorPosition(2 + WIDTH + 1, FILESSHOWN + 3);
 				DISK->GetLabel(workPath[1][0], label, &id);
 				TEXT->Write("Label: %04X-%04X, %s", id >> 16, id & 0xFFFF, label[0] ? label : "no name");
 				id = DISK->GetFree(workPath[1][0]);
-				TEXT->SetCursorPosition(2 + WIDTH + 1, FILESSHOWN + 3);
+				TEXT->SetCursorPosition(2 + WIDTH + 1, FILESSHOWN + 4);
 				TEXT->Write("Space: ");
 				PrintComma(id);
 				TEXT->Write(" bytes free");
@@ -395,7 +226,7 @@ void SelectFile(const char* path1, const char* path2, const char* pattern, char*
 				curFN = &filenames[s][scroll[s] * 16];
 				for (int i = 0; i < fileCt[s] && i < FILESSHOWN; i++)
 				{
-					TEXT->SetCursorPosition(1 + o, i + 1);
+					TEXT->SetCursorPosition(1 + o, i + 2);
 					TEXT->SetTextColor(8, 15);
 					if (cs == s && index[s] == i + scroll[s])
 						TEXT->SetTextColor(9, 15);
@@ -431,18 +262,19 @@ void SelectFile(const char* path1, const char* path2, const char* pattern, char*
 			}
 
 			DrawKeys(keys);
+			DrawMenu();
 		}
 		else
 		{
 			int o = (cs == 0 ? 0 : WIDTH + 1);
 			for (int i = 1; i < WIDTH; i++)
 			{
-				uint16_t* here = &TEXTMAP[o + ((1 + index[cs] - scroll[cs]) * 80)];
+				uint16_t* here = &TEXTMAP[o + ((2 + index[cs] - scroll[cs]) * 80)];
 				here[i] &= ~0x00FF;
 				here[i] |= 0x009F;
 				if (lastIndex[cs] != index[cs])
 				{
-					here = &TEXTMAP[o + ((1 + lastIndex[cs] - scroll[cs]) * 80)];
+					here = &TEXTMAP[o + ((2 + lastIndex[cs] - scroll[cs]) * 80)];
 					here[i] &= ~0x00FF;
 					here[i] |= 0x008F;
 				}
@@ -450,7 +282,7 @@ void SelectFile(const char* path1, const char* path2, const char* pattern, char*
 			o = (cs == 1 ? 0 : WIDTH + 1);
 			for (int i = 1; i < WIDTH; i++)
 			{
-				uint16_t* here = &TEXTMAP[o + ((1 + index[cs ^ 1] - scroll[cs ^ 1]) * 80)];
+				uint16_t* here = &TEXTMAP[o + ((2 + index[cs ^ 1] - scroll[cs ^ 1]) * 80)];
 				here[i] &= ~0x00FF;
 				here[i] |= 0x008F;
 			}
@@ -627,221 +459,33 @@ void SelectFile(const char* path1, const char* path2, const char* pattern, char*
 						}
 					}
 				}
-				break;
-			}
-		}
-	}
-}
+				else if (key == 0x3B) //F1
+					ShowError("F1 not implemented yet");
+				else if (key == 0x3C) //F2
+					ShowError("F2 not implemented yet");
+				else if (key == 0x3D) //F3
+					ShowError("F3 not implemented yet");
+				else if (key == 0x3E) //F4
+					ShowError("F4 not implemented yet");
+				else if (key == 0x3F) //F5
+					ShowError("F5 not implemented yet");
+				else if (key == 0x40) //F6
+					ShowError("F6 not implemented yet");
+				else if (key == 0x41) //F7
+					ShowError("F7 not implemented yet");
+				else if (key == 0x42) //F8
+					ShowError("F8 not implemented yet");
+				else if (key == 0x43) //F9
+					OpenMenu();
+				else if (key == 0x44) //F10
+					ShowError("F10 not implemented yet");
 
-int32_t StartApp(char* filePath)
-{
-	void(*entry)(void) = (void*)0x01002020;
-	FILEINFO nfo;
-	DISK->FileStat(filePath, &nfo);
-	FILE file;
-	DISK->OpenFile(&file, filePath, FA_READ);
-	DISK->ReadFile(&file, (void*)0x01002000, nfo.fsize);
-	TEXT->ClearScreen();
-	entry();
-	WaitForKey();
-	return 2;
-}
-
-int32_t ShowPic(char* filePath)
-{
-	FILEINFO nfo;
-	DISK->FileStat(filePath, &nfo);
-	int32_t size = nfo.fsize;
-
-	TEXT->SetCursorPosition(0, 12);
-
-	TImageFile* image = malloc(size);
-	if (image == NULL)
-	{
-		ShowError("Failed to malloc.");
-		return 2;
-	}
-	FILE file;
-	DISK->OpenFile(&file, filePath, FA_READ);
-	DISK->ReadFile(&file, (void*)image, nfo.fsize);
-	DISK->CloseFile(&file);
-	if (image->BitDepth != 4 && image->BitDepth != 8)
-	{
-		ShowError("Weird bitdepth, not happening.");
-		return 2;
-	}
-	DRAW->DisplayPicture(image);
-	free(image);
-	WaitForKey();
-	return 2;
-}
-
-int32_t ShowText(char* filePath)
-{
-	int i, j, scroll = 0, lineCt = 0, redraw = 1;
-
-	FILEINFO nfo;
-	DISK->FileStat(filePath, &nfo);
-	int32_t size = nfo.fsize;
-
-	intoff();
-
-	unsigned char* fileText = malloc(size);
-	FILE file;
-	DISK->OpenFile(&file, filePath, FA_READ);
-	DISK->ReadFile(&file, (void*)fileText, nfo.fsize);
-	DISK->CloseFile(&file);
-
-	unsigned char* fullText = malloc(size + 1024);
-	unsigned char *b = fileText;
-	unsigned char *c = fullText;
-	i = 0;
-	while (*b != 0)
-	{
-		if (*b == '\r')
-			b++;
-		else if (*b == '\n')
-		{
-			*c++ = *b++;
-			lineCt++;
-			i = 0;
-		}
-		else
-		{
-			*c++ = *b++;
-			i++;
-			if (i == 80)
-			{
-				*c++ = '\n';
-				lineCt++;
-				i = 0;
-			}
-		}
-	}
-
-	free(fileText);
-
-	b = fullText;
-	TEXT->ClearScreen();
-
-	while(1)
-	{
-		intoff();
-		if (redraw)
-		{
-			TEXT->SetTextColor(0, 7);
-			TEXT->ClearScreen();
-			TEXT->SetTextColor(1, 11);
-			for (j = 0; j < 80; j++)
-				TEXTMAP[j] = 0x1B;
-			printf(" %s \t%d/%d $%x, $%x", filePath, scroll, lineCt, b, b - fullText);
-			intoff();
-			c = b;
-			int row = 1;
-			int col = 0;
-			while (row < 29 && *c != 0)
-			{
-				if (*c == '\n' && col < 80)
-				{
-					TEXTMAP[(row * 80) + col] = 0x0F04;
-					row++;
-					col = 0;
-				}
-				else if (col == 80)
-				{
-					row++;
-					col = 0;
-				}
 				else
-					TEXTMAP[(row * 80) + (col++)] = (*c << 8) | 0x07;
-				c++;
-			}
-			redraw = 0;
-		}
-
-		unsigned short key = REG_KEYIN;
-		//vbl();
-		if ((key & 0xFF) > 0)
-		{
-			while(1) { if (REG_KEYIN == 0) break; }
-
-			/*if (key == 0xCB) //left
-			{
-				if (scroll > 0)
-				{
-					scroll -= 10;
-					if (scroll < 0)
-						scroll = 0;
-					redraw = 1;
-				}
-			}
-			else if (key == 0xCD) //right
-			{
-				if (scroll + MAXLINESSHOWN < lineCt)
-				{
-					scroll += 10;
-					redraw = 1;
-				}
-			}
-			else*/ if (key == 0xC8) //up
-			{
-				if (scroll > 0)
-				{
-					b -= 2;
-					while (b >= fullText && *b != '\n')
-						b--;
-					b++;
-					scroll--;
-					if (b < fullText)
-					{
-						b = fullText;
-						scroll = 0;
-					}
-					redraw = 1;
-				}
-			}
-			else if (key == 0xD0) //down
-			{
-				if (scroll < lineCt - 26)
-				{
-					while (b < fullText + size && *b != '\n')
-						b++;
-					b++;
-					scroll++;
-					redraw = 1;
-				}
-			}
-			else if (key == 0x01) //esc
+					printf("0x%X", key);
 				break;
-			else
-				printf("%x", key);
+			}
 		}
 	}
-	free(fullText);
-	return 2;
-}
-
-int32_t ShowFile(char* filePath)
-{
-	char* ext = strrchr(filePath, '.') + 1;
-	if (!strcmp(ext, "TXT"))
-		ShowText(filePath);
-	else if (!strcmp(ext, "API"))
-		ShowPic(filePath);
-	else if (!strcmp(ext, "APP"))
-		StartApp(filePath);
-	else
-	{
-		char msg[64];
-		sprintf(msg, "Unknown file type \"%s\".", ext);
-		ShowError(msg);
-		return 3;
-	}
-	intoff();
-	TEXT->SetTextColor(0, 7);
-	MISC->SetTextMode(SMODE_240 | SMODE_BOLD);
-	DRAW->ResetPalette();
-	return 2;
 }
 
 int main(void)

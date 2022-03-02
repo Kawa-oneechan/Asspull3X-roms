@@ -7,7 +7,7 @@ extern IBios* interface;
 
 int strcpy_s(char* dest, size_t len, const char* src)
 {
-	int i;
+	size_t i;
 	if (!dest) return 1;
 	if (len == 0) return 1;
 	if (!src)
@@ -23,7 +23,7 @@ int strcpy_s(char* dest, size_t len, const char* src)
 
 int strcat_s(char* dest, size_t len, const char* src)
 {
-	int i, j;
+	size_t i, j;
 	if (!dest) return 1;
 	if (len == 0) return 1;
 	if (!src)
@@ -54,7 +54,7 @@ size_t strnlen_s(const char* str, size_t max)
 //TODO: needs proper testing
 int strkitten_s(char* dest, size_t len, char src)
 {
-	int i;
+	size_t i;
 	if (!dest) return 1;
 	if (len == 0) return 1;
 	if (!src)
