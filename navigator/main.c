@@ -178,33 +178,38 @@ void SelectFile(const char* path1, const char* path2, const char* pattern, char*
 		intoff();
 		if (redraw)
 		{
-			DrawPanel(0, 1, WIDTH + 1, FILESSHOWN + 2, CLR_PANEL);
-			TEXT->SetTextColor(SplitColor(CLR_PANELSEL));
-			TEXT->SetCursorPosition((WIDTH / 2) - (strlen(workPath[0]) / 2) - 1, 1);
-			TEXT->Write(" %s ", workPath[0]);
+			if (redraw == 1 || (redraw == 2 && cs == 0))
+			{
+				DrawPanel(0, 1, WIDTH + 1, FILESSHOWN + 2, CLR_PANEL);
+				TEXT->SetTextColor(SplitColor(CLR_PANELSEL));
+				TEXT->SetCursorPosition((WIDTH / 2) - (strlen(workPath[0]) / 2) - 1, 1);
+				TEXT->Write(" %s ", workPath[0]);
 
-			char label[12] = { 0 };
-			unsigned long id = 0;
-			DrawPanel(0, FILESSHOWN + 2, WIDTH + 1, 4, CLR_PANEL);
-			TEXTMAP[(FILESSHOWN + 2) * 80] = 0x8F00 | CLR_PANEL; //|-
-			TEXTMAP[(FILESSHOWN + 2) * 80 + WIDTH] = 0x8A00 | CLR_PANEL; //-|
-			TEXT->SetTextColor(SplitColor(CLR_PANEL));
-			TEXT->SetCursorPosition(2, FILESSHOWN + 3);
-			DISK->GetLabel(workPath[0][0], label, &id);
-			TEXT->Write("Label: %04X-%04X, %s", id >> 16, id & 0xFFFF, label[0] ? label : "no name");
-			id = DISK->GetFree(workPath[0][0]);
-			TEXT->SetCursorPosition(2, FILESSHOWN + 4);
-			TEXT->Write("Space: ");
-			PrintComma(id);
-			TEXT->Write(" bytes free");
+				char label[12] = { 0 };
+				unsigned long id = 0;
+				DrawPanel(0, FILESSHOWN + 2, WIDTH + 1, 4, CLR_PANEL);
+				TEXTMAP[(FILESSHOWN + 2) * 80] = 0x8F00 | CLR_PANEL; //|-
+				TEXTMAP[(FILESSHOWN + 2) * 80 + WIDTH] = 0x8A00 | CLR_PANEL; //-|
+				TEXT->SetTextColor(SplitColor(CLR_PANEL));
+				TEXT->SetCursorPosition(2, FILESSHOWN + 3);
+				DISK->GetLabel(workPath[0][0], label, &id);
+				TEXT->Write("Label: %04X-%04X, %s", id >> 16, id & 0xFFFF, label[0] ? label : "no name");
+				id = DISK->GetFree(workPath[0][0]);
+				TEXT->SetCursorPosition(2, FILESSHOWN + 4);
+				TEXT->Write("Space: ");
+				PrintComma(id);
+				TEXT->Write(" bytes free");
+			}
 
-			if (path2 != 0)
+			if (path2 != 0 && (redraw == 1 || (redraw == 2 && cs == 1)))
 			{
 				DrawPanel(WIDTH + 1, 1, WIDTH + 1, FILESSHOWN + 2, CLR_PANEL);
 				TEXT->SetTextColor(SplitColor(CLR_PANELSEL));
 				TEXT->SetCursorPosition((WIDTH / 2) - (strlen(workPath[1]) / 2) - 1 + WIDTH + 1, 1);
 				TEXT->Write(" %s ", workPath[1]);
 
+				char label[12] = { 0 };
+				unsigned long id = 0;
 				DrawPanel(WIDTH + 1, FILESSHOWN + 2, WIDTH + 1, 4, CLR_PANEL);
 				TEXTMAP[(FILESSHOWN + 2) * 80 + WIDTH + 1] = 0x8F00 | CLR_PANEL; //|-
 				TEXTMAP[(FILESSHOWN + 2) * 80 + WIDTH + 1 + WIDTH] = 0x8A00 | CLR_PANEL; //-|
@@ -221,6 +226,8 @@ void SelectFile(const char* path1, const char* path2, const char* pattern, char*
 
 			for (int s = 0; s < 2; s++)
 			{
+				if (redraw == 2 && cs != s)
+					continue;
 				int o = (s == 0 ? 0 : WIDTH + 1);
 				if (s == 1 && path2 == 0)
 					break;
@@ -494,9 +501,8 @@ void SelectFile(const char* path1, const char* path2, const char* pattern, char*
 					OpenMenu();
 				else if (key == 0x44) //F10
 					ShowError("F10 not implemented yet");
-
-				else
-					printf("0x%X", key);
+//				else
+//					printf("0x%X", key);
 				break;
 			}
 		}
