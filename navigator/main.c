@@ -135,16 +135,16 @@ void SelectFile(const char* path1, const char* path2, const char* pattern, char*
 {
 	//Note: these are PLACEHOLDERS
 	static const char* keys[] = {
-		"Help  ",
-		"User  ",
+		"Left  ",
+		"Right ",
 		"View  ",
 		"Edit  ",
 		"Copy  ",
 		"RenMov",
 		"Mkdir ",
 		"Delete",
-		"Menu  ",
-		"Quit  ",
+		"Print ",
+		"PullDn",
 	};
 
 	int index[2] = { 0 }, lastIndex[2] = { 0 }, redraw = 1, scroll[2] = { 0 }, currentDrive[2];
@@ -276,8 +276,11 @@ void SelectFile(const char* path1, const char* path2, const char* pattern, char*
 				redraw = 0;
 			}
 
-			DrawKeys(keys);
-			DrawMenu();
+			if (redraw < 2)
+			{
+				DrawKeys(keys);
+				DrawMenu();
+			}
 		}
 		else
 		{
@@ -502,25 +505,25 @@ void SelectFile(const char* path1, const char* path2, const char* pattern, char*
 				}
 #endif
 				else if (key == 0x3B) //F1
-					ShowError("F1 not implemented yet");
+					ShowError("Disk switching not implemented yet.");
 				else if (key == 0x3C) //F2
-					ShowError("F2 not implemented yet");
+					ShowError("Disk switching not implemented yet.");
 				else if (key == 0x3D) //F3
-					ShowError("F3 not implemented yet");
+					ShowError("Viewer implemented but not hooked up yet.");
 				else if (key == 0x3E) //F4
-					ShowError("F4 not implemented yet");
+					ShowError("Editor unlikely to be implemented.");
 				else if (key == 0x3F) //F5
-					ShowError("F5 not implemented yet");
+					ShowError("File copying not implemented yet.");
 				else if (key == 0x40) //F6
-					ShowError("F6 not implemented yet");
+					ShowError("Renaming and moving not implemented yet.");
 				else if (key == 0x41) //F7
-					ShowError("F7 not implemented yet");
+					ShowError("Directory creating not implemented yet.");
 				else if (key == 0x42) //F8
-					ShowError("F8 not implemented yet");
+					ShowError("File deleting not implemented yet.");
 				else if (key == 0x43) //F9
-					OpenMenu();
+					ShowError("File printing not implemented yet.");
 				else if (key == 0x44) //F10
-					ShowError("F10 not implemented yet");
+					OpenMenu();
 //				else
 //					printf("0x%X", key);
 				break;
