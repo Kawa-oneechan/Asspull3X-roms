@@ -38,8 +38,8 @@ extern const uint16_t iconsPal[16];
 	(((hf) & 1) << 26) |						\
 	(((dh) & 1) << 25) |						\
 	(((dw) & 1) << 24) |						\
-	(((vp) & 0x7FF) << 12) |					\
-	(((hp) & 0x7FF) << 0)						\
+	(((vp) & 0xFFF) << 12) |					\
+	(((hp) & 0xFFF) << 0)						\
 )
 
 void FindFont();
