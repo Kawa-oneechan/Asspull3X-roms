@@ -2,6 +2,8 @@
 
 IBios* interface;
 
+#define DRIVESINLIST 0
+
 #define MAXPATH 512
 #define MAXFILES 512
 
@@ -51,6 +53,7 @@ void Populate(const char* path, int side, const char* pattern)
 	}
 	curFN = filenames[side];
 
+#if DRIVESINLIST
 	//Always add other drives
 	int numDrives = DISK->GetNumDrives();
 	for (int i = 0; i < numDrives; i++)
@@ -59,6 +62,7 @@ void Populate(const char* path, int side, const char* pattern)
 		curFN += 16;
 		fileCt[side]++;
 	}
+#endif
 
 tryOpenDir:
 	ret = DISK->OpenDir(&dir, path);
@@ -147,6 +151,7 @@ void SelectFile(const char* path1, const char* path2, const char* pattern, char*
 	FILEINFO info;
 	char currDirs[2][4][MAXPATH], workPath[2][MAXPATH];
 	char filePath[2][MAXPATH];
+	int maxDrives = DISK->GetNumDrives();
 	char* curFN;
 	int cs = 0;
 
@@ -245,12 +250,14 @@ void SelectFile(const char* path1, const char* path2, const char* pattern, char*
 						curFN += 16;
 						continue;
 					}
+#if DRIVESINLIST
 					else if (curFN[1] == ':')
 					{
 						printf("       <DISK>            ");
 						curFN += 16;
 						continue;
 					}
+#endif
 					strcpy_s(filePath[s], MAXPATH, workPath[s]);
 					if (filePath[s][strnlen_s(filePath[s], MAXPATH) - 1] != '\\') strkitten_s(filePath[s], MAXPATH, '\\');
 					strcat_s(filePath[s], MAXPATH, curFN);
@@ -420,6 +427,7 @@ void SelectFile(const char* path1, const char* path2, const char* pattern, char*
 							}
 						}
 					}
+#if DRIVESINLIST
 					else if (curFN[1] == ':')
 					{
 						currentDrive[cs] = curFN[0] - 'A';
@@ -429,6 +437,7 @@ void SelectFile(const char* path1, const char* path2, const char* pattern, char*
 						redraw = 1;
 						index[cs] = 0;
 					}
+#endif
 					else
 					{
 						strcpy_s(filePath[cs], MAXPATH, workPath[cs]);
@@ -481,6 +490,17 @@ void SelectFile(const char* path1, const char* path2, const char* pattern, char*
 						}
 					}
 				}
+#if !DRIVESINLIST
+				else if (key >= 2 && key < maxDrives + 2)
+				{
+					currentDrive[cs] = key - 2;
+					strcpy_s(filePath[cs], MAXPATH, currDirs[cs][currentDrive[cs]]);
+					strcpy_s(workPath[cs], MAXPATH, filePath[cs]);
+					Populate(workPath[cs], cs, pattern);
+					redraw = 2;
+					index[cs] = 0;
+				}
+#endif
 				else if (key == 0x3B) //F1
 					ShowError("F1 not implemented yet");
 				else if (key == 0x3C) //F2
