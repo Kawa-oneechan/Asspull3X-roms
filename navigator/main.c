@@ -391,6 +391,8 @@ void SelectFile(const char* path1, const char* path2, const char* pattern, char*
 					if (curFN[0] == '.' && curFN[1] == '.')
 					{
 						char *lastSlash = strrchr(workPath[cs], '\\');
+						char justLeft[16] = { 0 };
+						strcpy_s(justLeft, 16, lastSlash + 1);
 						int32_t lsPos = lastSlash - workPath[cs];
 						workPath[cs][lsPos] = 0;
 						if (workPath[cs][0] == 0) strcpy_s(workPath[cs], MAXPATH, "\\");
@@ -398,6 +400,18 @@ void SelectFile(const char* path1, const char* path2, const char* pattern, char*
 						Populate(workPath[cs], cs, pattern);
 						redraw = 1;
 						index[cs] = 0;
+						for (int r = 0; r < fileCt[cs]; r++)
+						{
+							if (!strcmp(&filenames[cs][r * 16], justLeft))
+							{
+								//DISK->FileStat(&filenames[cs][r * 16], &info);
+								//if (info.fattrib & AM_DIRECTORY)
+								{
+									index[cs] = r;
+									break;
+								}
+							}
+						}
 					}
 					else if (curFN[1] == ':')
 					{
