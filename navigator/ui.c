@@ -121,7 +121,7 @@ void CloseWindow(tWindow* win)
 void ShowError(const char* message)
 {
 	tWindow* win = OpenWindow(-1, -1, strlen((char*)message) + 8, 5, 0x4F);
-	TEXT->SetTextColor(4, 15);
+	TEXT->SetTextColor(SplitColor(0x4F));
 	TEXT->SetCursorPosition(win->left + 4, win->top + 2);
 	printf(message);
 	WaitForKey();
@@ -171,17 +171,17 @@ void DrawKeys(const char** keys)
 	for (int i = 0; i < 10; i++)
 	{
 		if (i < 9)
-			TEXTMAP[o++] = (('1' + i) << 8) | 0x1B;
+			TEXTMAP[o++] = (('1' + i) << 8) | CLR_KEYNUM;
 		else
 		{
-			TEXTMAP[o++] = ('1' << 8) | 0x1B;
-			TEXTMAP[o++] = ('0' << 8) | 0x1B;
+			TEXTMAP[o++] = ('1' << 8) | CLR_KEYNUM;
+			TEXTMAP[o++] = ('0' << 8) | CLR_KEYNUM;
 		}
 		for (int j = 0; j < 6; j++)
 		{
-			TEXTMAP[o++] = (keys[i][j] << 8) | 0x1F;
+			TEXTMAP[o++] = (keys[i][j] << 8) | CLR_KEYTEXT;
 		}
-		TEXTMAP[o++] = 0x201F;
+		TEXTMAP[o++] = 0x2000 | CLR_KEYNUM;
 	}
 }
 
@@ -192,11 +192,11 @@ void DrawMenu()
 	for (int i = 0; i < NUMMENUS; i++)
 	{
 		menuLefts[i] = o;
-		TEXTMAP[o++] = 0x201F;
+		TEXTMAP[o++] = 0x2000 | CLR_MENUBAR;
 		c = menuBar[i].title;
 		while (*c)
-			TEXTMAP[o++] = (*c++ << 8) | 0x1F;
-		TEXTMAP[o++] = 0x201F;
+			TEXTMAP[o++] = (*c++ << 8) | CLR_MENUBAR;
+		TEXTMAP[o++] = 0x2000 | CLR_MENUBAR;
 
 		for (int j = 0; j < menuBar[i].numItems; j++)
 		{
@@ -206,7 +206,7 @@ void DrawMenu()
 		}
 	}
 	for (; o < 80;)
-		TEXTMAP[o++] = 0x201F;
+		TEXTMAP[o++] = 0x2000 | CLR_MENUBAR;
 }
 
 void Highlight(char left, char top, char width, unsigned char color)
@@ -222,30 +222,34 @@ void DropMenu(int c)
 {
 	if (menuWindow != NULL)
 		CloseWindow(menuWindow);
-	menuWindow = OpenWindow(menuLefts[c], 1, menuWidths[c] + 4, menuBar[c].numItems + 2, 0x1F);
+	menuWindow = OpenWindow(menuLefts[c], 1, menuWidths[c] + 4, menuBar[c].numItems + 2, CLR_MENU);
 	for (int i = 0; i < menuBar[c].numItems; i++)
 	{
 		if (menuBar[c].items[i].title[0] == '-')
 		{
 			short o = ((2 + i) * 80) + menuLefts[c];
-			TEXTMAP[o++] = 0x8F1F; //|-
+			TEXTMAP[o++] = 0x8F00 | CLR_MENU; //|-
 			for (int j = 0; j < menuWidths[c] + 2; j++)
-				TEXTMAP[o++] = 0x901F; //--
-			TEXTMAP[o] = 0x8A1F; //-|
+				TEXTMAP[o++] = 0x9000 | CLR_MENU; //--
+			TEXTMAP[o] = 0x8A00 | CLR_MENU; //-|
 			continue;
 		}
-		TEXT->SetTextColor(1, menuBar[c].items[i].state == 0 ? 15 : 7);
+		if (menuBar[c].items[i].state == 0)
+			TEXT->SetTextColor(SplitColor(CLR_MENUITEM));
+		else
+			TEXT->SetTextColor(SplitColor(CLR_MENUDIS));
+
 		TEXT->SetCursorPosition(menuLefts[c] + 2, 2 + i);
 		TEXT->Write(menuBar[c].items[i].title);
 	}
-	Highlight(menuLefts[c] + 1, 2, menuWidths[c] + 2, 0x9F);
+	Highlight(menuLefts[c] + 1, 2, menuWidths[c] + 2, CLR_MENUSEL);
 }
 
 void OpenMenu()
 {
 	int cm = 0;
 	int ci = 0;
-	Highlight(menuLefts[cm], 0, strlen(menuBar[cm].title) + 2, 0x9F);
+	Highlight(menuLefts[cm], 0, strlen(menuBar[cm].title) + 2, CLR_MENUSEL);
 	DropMenu(cm);
 	while (1)
 	{
@@ -257,37 +261,37 @@ void OpenMenu()
 
 			if (key == 0xCB) //left
 			{
-				Highlight(menuLefts[cm], 0, strlen(menuBar[cm].title) + 2, 0x1F);
+				Highlight(menuLefts[cm], 0, strlen(menuBar[cm].title) + 2, CLR_MENUBAR);
 				if (cm == 0) cm = NUMMENUS;
 				cm--;
 				ci = 0;
-				Highlight(menuLefts[cm], 0, strlen(menuBar[cm].title) + 2, 0x9F);
+				Highlight(menuLefts[cm], 0, strlen(menuBar[cm].title) + 2, CLR_MENUSEL);
 				DropMenu(cm);
 			}
 			else if (key == 0xCD) //right
 			{
-				Highlight(menuLefts[cm], 0, strlen(menuBar[cm].title) + 2, 0x1F);
+				Highlight(menuLefts[cm], 0, strlen(menuBar[cm].title) + 2, CLR_MENUBAR);
 				cm++;
 				ci = 0;
 				if (cm == NUMMENUS) cm = 0;
-				Highlight(menuLefts[cm], 0, strlen(menuBar[cm].title) + 2, 0x9F);
+				Highlight(menuLefts[cm], 0, strlen(menuBar[cm].title) + 2, CLR_MENUSEL);
 				DropMenu(cm);
 			}
 			else if (key == 0xC8) //up
 			{
-				Highlight(menuLefts[cm] + 1, 2 + ci, menuWidths[cm] + 2, 0x1F);
+				Highlight(menuLefts[cm] + 1, 2 + ci, menuWidths[cm] + 2, CLR_MENUITEM);
 				if (ci == 0) ci = menuBar[cm].numItems;
 				ci--;
 				if (menuBar[cm].items[ci].state & 1) ci--;
-				Highlight(menuLefts[cm] + 1, 2 + ci, menuWidths[cm] + 2, 0x9F);
+				Highlight(menuLefts[cm] + 1, 2 + ci, menuWidths[cm] + 2, CLR_MENUSEL);
 			}
 			else if (key == 0xD0) //down
 			{
-				Highlight(menuLefts[cm] + 1, 2 + ci, menuWidths[cm] + 2, 0x1F);
+				Highlight(menuLefts[cm] + 1, 2 + ci, menuWidths[cm] + 2, CLR_MENUITEM);
 				ci++;
 				if (menuBar[cm].items[ci].state & 1) ci++;
 				if (ci == menuBar[cm].numItems) ci = 0;
-				Highlight(menuLefts[cm] + 1, 2 + ci, menuWidths[cm] + 2, 0x9F);
+				Highlight(menuLefts[cm] + 1, 2 + ci, menuWidths[cm] + 2, CLR_MENUSEL);
 			}
 		}
 	}

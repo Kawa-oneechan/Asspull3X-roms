@@ -45,6 +45,20 @@ int ShowPic(char* filePath)
 
 int ShowText(char* filePath)
 {
+	//Note: these are PLACEHOLDERS
+	static const char* keys[] = {
+		"Help  ",
+		"Unwrap",
+		"      ",
+		"Hex   ",//"ASCII "
+		"      ",
+		"      ",
+		"Search",
+		"Viewer",
+		"Print ",
+		"Quit  ",
+	};
+
 	int i, j, scroll = 0, lineCt = 0, redraw = 1;
 
 	FILEINFO nfo;
@@ -96,21 +110,21 @@ int ShowText(char* filePath)
 		intoff();
 		if (redraw)
 		{
-			TEXT->SetTextColor(0, 7);
+			TEXT->SetTextColor(SplitColor(CLR_VIEWBACK));
 			TEXT->ClearScreen();
-			TEXT->SetTextColor(1, 11);
+			TEXT->SetTextColor(SplitColor(CLR_VIEWSTAT));
 			for (j = 0; j < 80; j++)
-				TEXTMAP[j] = 0x1B;
+				TEXTMAP[j] = CLR_VIEWSTAT;
 			printf(" %s \t%d/%d $%x, $%x", filePath, scroll, lineCt, b, b - fullText);
 			intoff();
 			c = b;
 			int row = 1;
 			int col = 0;
-			while (row < 29 && *c != 0)
+			while (row < 28 && *c != 0)
 			{
 				if (*c == '\n' && col < 80)
 				{
-					TEXTMAP[(row * 80) + col] = 0x0F04;
+					//TEXTMAP[(row * 80) + col] = 0x0F04;
 					row++;
 					col = 0;
 				}
@@ -120,9 +134,10 @@ int ShowText(char* filePath)
 					col = 0;
 				}
 				else
-					TEXTMAP[(row * 80) + (col++)] = (*c << 8) | 0x07;
+					TEXTMAP[(row * 80) + (col++)] = (*c << 8) | CLR_VIEWBACK;
 				c++;
 			}
+			DrawKeys(keys);
 			redraw = 0;
 		}
 
@@ -178,10 +193,26 @@ int ShowText(char* filePath)
 					redraw = 1;
 				}
 			}
-			else if (key == 0x01) //esc
+			else if (key == 0x3B) //F1
+				ShowError("F1 not implemented yet");
+			else if (key == 0x3C) //F2
+				ShowError("F2 not implemented yet");
+			else if (key == 0x3D) //F3
+				ShowError("F3 not implemented yet");
+			else if (key == 0x3E) //F4
+				ShowError("F4 not implemented yet");
+			else if (key == 0x3F) //F5
+				ShowError("F5 not implemented yet");
+			else if (key == 0x40) //F6
+				ShowError("F6 not implemented yet");
+			else if (key == 0x41) //F7
+				ShowError("F7 not implemented yet");
+			else if (key == 0x42) //F8
+				ShowError("F8 not implemented yet");
+			else if (key == 0x43) //F9
+				ShowError("F9 not implemented yet");
+			else if (key == 0x44 || key == 0x01) //F10 or Escape
 				break;
-			else
-				printf("%x", key);
 		}
 	}
 	free(fullText);

@@ -129,6 +129,7 @@ tryOpenDir:
 
 void SelectFile(const char* path1, const char* path2, const char* pattern, char* selection, int(*onSelect)(char*))
 {
+	//Note: these are PLACEHOLDERS
 	static const char* keys[] = {
 		"Help  ",
 		"User  ",
@@ -177,17 +178,17 @@ void SelectFile(const char* path1, const char* path2, const char* pattern, char*
 		intoff();
 		if (redraw)
 		{
-			DrawPanel(0, 1, WIDTH + 1, FILESSHOWN + 2, 0x87);
-			TEXT->SetTextColor(7, 8);
+			DrawPanel(0, 1, WIDTH + 1, FILESSHOWN + 2, CLR_PANEL);
+			TEXT->SetTextColor(SplitColor(CLR_PANELSEL));
 			TEXT->SetCursorPosition((WIDTH / 2) - (strlen(workPath[0]) / 2) - 1, 1);
 			TEXT->Write(" %s ", workPath[0]);
 
 			char label[12] = { 0 };
 			unsigned long id = 0;
-			DrawPanel(0, FILESSHOWN + 2, WIDTH + 1, 4, 0x87);
-			TEXTMAP[(FILESSHOWN + 2) * 80] = 0x8F87; //|-
-			TEXTMAP[(FILESSHOWN + 2) * 80 + WIDTH] = 0x8A87; //-|
-			TEXT->SetTextColor(8, 7);
+			DrawPanel(0, FILESSHOWN + 2, WIDTH + 1, 4, CLR_PANEL);
+			TEXTMAP[(FILESSHOWN + 2) * 80] = 0x8F00 | CLR_PANEL; //|-
+			TEXTMAP[(FILESSHOWN + 2) * 80 + WIDTH] = 0x8A00 | CLR_PANEL; //-|
+			TEXT->SetTextColor(SplitColor(CLR_PANEL));
 			TEXT->SetCursorPosition(2, FILESSHOWN + 3);
 			DISK->GetLabel(workPath[0][0], label, &id);
 			TEXT->Write("Label: %04X-%04X, %s", id >> 16, id & 0xFFFF, label[0] ? label : "no name");
@@ -199,15 +200,15 @@ void SelectFile(const char* path1, const char* path2, const char* pattern, char*
 
 			if (path2 != 0)
 			{
-				DrawPanel(WIDTH + 1, 1, WIDTH + 1, FILESSHOWN + 2, 0x87);
-				TEXT->SetTextColor(7, 8);
+				DrawPanel(WIDTH + 1, 1, WIDTH + 1, FILESSHOWN + 2, CLR_PANEL);
+				TEXT->SetTextColor(SplitColor(CLR_PANELSEL));
 				TEXT->SetCursorPosition((WIDTH / 2) - (strlen(workPath[1]) / 2) - 1 + WIDTH + 1, 1);
 				TEXT->Write(" %s ", workPath[1]);
 
-				DrawPanel(WIDTH + 1, FILESSHOWN + 2, WIDTH + 1, 4, 0x87);
-				TEXTMAP[(FILESSHOWN + 2) * 80 + WIDTH + 1] = 0x8F87; //|-
-				TEXTMAP[(FILESSHOWN + 2) * 80 + WIDTH + 1 + WIDTH] = 0x8A87; //-|
-				TEXT->SetTextColor(8, 7);
+				DrawPanel(WIDTH + 1, FILESSHOWN + 2, WIDTH + 1, 4, CLR_PANEL);
+				TEXTMAP[(FILESSHOWN + 2) * 80 + WIDTH + 1] = 0x8F00 | CLR_PANEL; //|-
+				TEXTMAP[(FILESSHOWN + 2) * 80 + WIDTH + 1 + WIDTH] = 0x8A00 | CLR_PANEL; //-|
+				TEXT->SetTextColor(SplitColor(CLR_PANEL));
 				TEXT->SetCursorPosition(2 + WIDTH + 1, FILESSHOWN + 3);
 				DISK->GetLabel(workPath[1][0], label, &id);
 				TEXT->Write("Label: %04X-%04X, %s", id >> 16, id & 0xFFFF, label[0] ? label : "no name");
@@ -227,9 +228,9 @@ void SelectFile(const char* path1, const char* path2, const char* pattern, char*
 				for (int i = 0; i < fileCt[s] && i < FILESSHOWN; i++)
 				{
 					TEXT->SetCursorPosition(1 + o, i + 2);
-					TEXT->SetTextColor(8, 15);
+					TEXT->SetTextColor(SplitColor(CLR_PANELITEM));
 					if (cs == s && index[s] == i + scroll[s])
-						TEXT->SetTextColor(9, 15);
+						TEXT->SetTextColor(SplitColor(CLR_PANELSEL));
 					printf("%-12s ", curFN);
 					if (curFN[0] == '.' && curFN[1] == '.')
 					{
@@ -271,12 +272,12 @@ void SelectFile(const char* path1, const char* path2, const char* pattern, char*
 			{
 				uint16_t* here = &TEXTMAP[o + ((2 + index[cs] - scroll[cs]) * 80)];
 				here[i] &= ~0x00FF;
-				here[i] |= 0x009F;
+				here[i] |= CLR_PANELSEL;
 				if (lastIndex[cs] != index[cs])
 				{
 					here = &TEXTMAP[o + ((2 + lastIndex[cs] - scroll[cs]) * 80)];
 					here[i] &= ~0x00FF;
-					here[i] |= 0x008F;
+					here[i] |= CLR_PANELITEM;
 				}
 			}
 			o = (cs == 1 ? 0 : WIDTH + 1);
@@ -284,7 +285,7 @@ void SelectFile(const char* path1, const char* path2, const char* pattern, char*
 			{
 				uint16_t* here = &TEXTMAP[o + ((2 + index[cs ^ 1] - scroll[cs ^ 1]) * 80)];
 				here[i] &= ~0x00FF;
-				here[i] |= 0x008F;
+				here[i] |= CLR_PANELITEM;
 			}
 		}
 
