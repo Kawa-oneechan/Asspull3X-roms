@@ -253,7 +253,7 @@ void SelectFile(const char* path1, const char* path2, const char* pattern, char*
 	FILEINFO info;
 	char currDirs[2][4][MAXPATH], workPath[2][MAXPATH];
 	char filePath[2][MAXPATH];
-	int views[2] = { 0, 1 };
+	int views[2] = { 0, 0 };
 	char* curFN;
 	int cs = 0;
 
@@ -381,6 +381,8 @@ void SelectFile(const char* path1, const char* path2, const char* pattern, char*
 						curFN += 16;
 						if (cs == s && index[s] == i + scroll[s])
 							Highlight(o, i + 2, WIDTH + 1, CLR_PANELSEL);
+						if (cs == s && lastIndex[s] != index[s] && lastIndex[s] == i + scroll[s])
+							Highlight(o, i + 2, WIDTH + 1, CLR_PANELITEM);
 					}
 				}
 				else if (views[s] == 1)
@@ -443,7 +445,8 @@ void SelectFile(const char* path1, const char* path2, const char* pattern, char*
 				}
 				else if (key == 0x0F && views[cs ^ 1] == 0) //tab
 				{
-					Highlight(cs ? WIDTH + 1 : 0, index[cs] + 2, WIDTH + 1, CLR_PANELITEM);
+					if (views[cs ^ 1] == 0)
+						Highlight(cs ? WIDTH + 1 : 0, index[cs] + 2, WIDTH + 1, CLR_PANELITEM);
 					cs ^= 1;
 					redraw = 2;
 					break;
@@ -611,7 +614,8 @@ void SelectFile(const char* path1, const char* path2, const char* pattern, char*
 						strcpy_s(filePath[d], MAXPATH, currDirs[d][currentDrive[d]]);
 						strcpy_s(workPath[d], MAXPATH, filePath[d]);
 						Populate(workPath[d], d, pattern);
-						redraw = (cs == d) ? 2 : 1;
+						redraw = 2;
+						DrawPanel(cs ? WIDTH + 1 : 0, 1, WIDTH + 1, FILESSHOWN + 5, CLR_PANEL);
 						index[d] = 0;
 					}
 				}
