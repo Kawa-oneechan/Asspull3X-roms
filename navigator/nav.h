@@ -16,6 +16,7 @@
 #define CLR_MENUSEL 0x9F
 #define CLR_KEYNUM 0x8E
 #define CLR_KEYTEXT 0x8F
+#define CLR_DIALOG 0x7F
 #define CLR_VIEWBACK 0x07
 #define CLR_VIEWSTAT 0x1B
 #else
@@ -31,6 +32,7 @@
 #define CLR_MENUSEL 0x0F
 #define CLR_KEYNUM 0x07
 #define CLR_KEYTEXT 0x30
+#define CLR_DIALOG 0x7F
 #define CLR_VIEWBACK 0x1B
 #define CLR_VIEWSTAT 0x31
 #endif
@@ -54,6 +56,7 @@ typedef struct
 typedef struct
 {
 	char* title;
+	char scan;
 	char numItems;
 	const tMenuItem* items;
 } tMenu;
@@ -63,6 +66,7 @@ extern tWindow* OpenWindow(int left, int top, int width, int height, int color);
 extern void CloseWindow(tWindow* win);
 extern void ShowError(const char* message);
 extern void DrawPanel(int left, int top, int width, int height, int color);
+extern void Highlight(char left, char top, char width, unsigned char color);
 extern void DrawKeys(const char** keys);
 extern void DrawMenu();
 extern void OpenMenu();

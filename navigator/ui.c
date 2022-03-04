@@ -3,52 +3,52 @@
 #define NUMMENUS 4
 
 const tMenuItem leftMenu[] = {
-	{ "~Files", 0, 2, 101 },
-	{ "~Info", 0, 1, 102 },
-	{ "~Preview", 0, 1, 103  },
-	{ "Director~y info", 0, 1, 104 },
-	{ "~On/off           Ctrl-F1", 0, 1, 105 },
+	{ "~Files", 33, 2, 101 },
+	{ "~Info", 23, 1, 102 },
+	{ "~Preview", 25, 1, 103  },
+	{ "Director~y info", 21, 1, 104 },
+	{ "~On/off           Ctrl-F1", 24, 1, 105 },
 	{ "-", 0, 1, 0 },
-	{ "~Drive\x98                F1", 0, 0, 106 },
+	{ "~Drive\x98                F1", 32, 0, 106 },
 };
 
 const tMenuItem filesMenu[] = {
-	{ "~View             F2", 0, 0, 11 },
-	{ "~Edit             F3", 0, 0, 12 },
-	{ "~Copy             F5", 0, 0, 13 },
-	{ "~Rename or Move   F6", 0, 0, 14 },
-	{ "~Make directory   F7", 0, 0, 15 },
-	{ "~Delete           F8", 0, 0, 16 },
-	{ "~Print            F9", 0, 0, 17 },
-	{ "File ~attributes", 0, 0, 18 },
+	{ "~View             F2", 47, 0, 11 },
+	{ "~Edit             F3", 18, 0, 12 },
+	{ "~Copy             F5", 46, 0, 13 },
+	{ "~Rename or Move   F6", 19, 0, 14 },
+	{ "~Make directory   F7", 50, 0, 15 },
+	{ "~Delete           F8", 32, 0, 16 },
+	{ "~Print            F9", 25, 0, 17 },
+	{ "File ~attributes", 30, 0, 18 },
 };
 
 const tMenuItem commandsMenu[] = {
-	{ "~Swap panels        Ctrl-U", 0, 0, 31 },
+	{ "~Swap panels        Ctrl-U", 31, 0, 31 },
 	{ "-", 0, 1, 0 },
-	{ "~Copy diskette\x98", 0, 0, 32 },
-	{ "~Format diskette\x98", 0, 0, 33 },
-	{ "~Label disk\x98", 0, 0, 34 },
+	{ "~Copy diskette\x98", 46, 0, 32 },
+	{ "~Format diskette\x98", 33, 0, 33 },
+	{ "~Label disk\x98", 38, 0, 34 },
 	{ "-", 0, 1, 0 },
-	{ "Confi~guration", 0, 0, 35 },
+	{ "Confi~guration", 34, 0, 35 },
 };
 
 const tMenuItem rightMenu[] = {
-	{ "~Files", 0, 2, 201 },
-	{ "~Info", 0, 1, 202 },
-	{ "~Preview", 0, 1, 203  },
-	{ "Director~y info", 0, 1, 204 },
-	{ "~On/off           Ctrl-F2", 0, 1, 205 },
+	{ "~Files", 33, 2, 201 },
+	{ "~Info", 23, 1, 202 },
+	{ "~Preview", 25, 1, 203  },
+	{ "Director~y info", 21, 1, 204 },
+	{ "~On/off           Ctrl-F2", 24, 1, 205 },
 	{ "-", 0, 1, 0 },
-	{ "~Drive\x98                F2", 0, 0, 206 },
+	{ "~Drive\x98                F2", 32, 0, 206 },
 };
 
 const tMenu menuBar[] =
 {
-	{ "~Left", 7, leftMenu },
-	{ "~Files", 8, filesMenu },
-	{ "~Commands", 7, commandsMenu },
-	{ "~Right", 7, rightMenu },
+	{ "~Left", 38, 7, leftMenu },
+	{ "~Files", 33, 8, filesMenu },
+	{ "~Commands", 46, 7, commandsMenu },
+	{ "~Right", 19, 7, rightMenu },
 };
 char menuLefts[NUMMENUS], menuWidths[NUMMENUS];
 tWindow* menuWindow = NULL;

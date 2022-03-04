@@ -2,13 +2,12 @@
 
 IBios* interface;
 
-#define DRIVESINLIST 0
-
 #define MAXPATH 512
 #define MAXFILES 512
 
 #define WIDTH 39
 #define HEIGHT 24
+#define FILESSHOWN (HEIGHT-2)
 
 void PrintComma(long n)
 {
@@ -52,17 +51,6 @@ void Populate(const char* path, int side, const char* pattern)
 		filenames[side] = (char*)malloc(MAXFILES * 16);
 	}
 	curFN = filenames[side];
-
-#if DRIVESINLIST
-	//Always add other drives
-	int numDrives = DISK->GetNumDrives();
-	for (int i = 0; i < numDrives; i++)
-	{
-		sprintf(curFN, "%c:", 'A' + i);
-		curFN += 16;
-		fileCt[side]++;
-	}
-#endif
 
 tryOpenDir:
 	ret = DISK->OpenDir(&dir, path);
@@ -129,7 +117,61 @@ tryOpenDir:
 	}
 }
 
-#define FILESSHOWN (HEIGHT-2)
+int SwitchDrive(int which, int now)
+{
+	const unsigned short abcd[] = { 30, 48, 46, 32 };
+	int numDrives = DISK->GetNumDrives();
+	tWindow* win = OpenWindow((WIDTH >> 1) - 2 + (WIDTH * which), 8, 8, numDrives + 2, CLR_DIALOG);
+	for (int i = 0; i < numDrives; i++)
+	{
+		short o = ((win->top + 1 + i) * 80) + win->left + 2;
+		TEXTMAP[o++] = (('A' + i) << 8) | CLR_DIALOG;
+		TEXTMAP[o++] = (':' << 8) | CLR_DIALOG;
+	}
+	int ret = now;
+	Highlight(win->left + 1, win->top + 1 + ret, win->width - 4, 0x90);
+	while (1)
+	{
+		unsigned short key = REG_KEYIN;
+		intoff();
+		if ((key & 0xFF) > 0)
+		{
+			while(1) { if (REG_KEYIN == 0) break; }
+			for (int i = 0; i < numDrives; i++)
+			{
+				if (key == abcd[i])
+				{
+					CloseWindow(win);
+					return i;
+				}
+			}
+			if (key == 0xC8) //up
+			{
+				Highlight(win->left + 1, win->top + 1 + ret, win->width - 4, CLR_DIALOG);
+				if (ret == 0) ret = numDrives;
+				ret--;
+				Highlight(win->left + 1, win->top + 1 + ret, win->width - 4, 0x90);
+			}
+			else if (key == 0xD0) //down
+			{
+				Highlight(win->left + 1, win->top + 1 + ret, win->width - 4, CLR_DIALOG);
+				ret++;
+				if (ret == numDrives) ret = 0;
+				Highlight(win->left + 1, win->top + 1 + ret, win->width - 4, 0x90);
+			}
+			else if (key == 0x1C) //enter
+			{
+				CloseWindow(win);
+				return ret;
+			}
+			else if (key == 0x01) //escape
+			{
+				CloseWindow(win);
+				return now;
+			}
+		}
+	}
+}
 
 void SelectFile(const char* path1, const char* path2, const char* pattern, char* selection, int(*onSelect)(char*))
 {
@@ -175,8 +217,8 @@ void SelectFile(const char* path1, const char* path2, const char* pattern, char*
 	}
 
 	MISC->SetTextMode(SMODE_BOLD | SMODE_240);
-	TEXT->SetTextColor(0, 7);
-	TEXT->ClearScreen();
+	//TEXT->SetTextColor(0, 7);
+	//TEXT->ClearScreen();
 
 	for(;;)
 	{
@@ -250,14 +292,6 @@ void SelectFile(const char* path1, const char* path2, const char* pattern, char*
 						curFN += 16;
 						continue;
 					}
-#if DRIVESINLIST
-					else if (curFN[1] == ':')
-					{
-						printf("       <DISK>            ");
-						curFN += 16;
-						continue;
-					}
-#endif
 					strcpy_s(filePath[s], MAXPATH, workPath[s]);
 					if (filePath[s][strnlen_s(filePath[s], MAXPATH) - 1] != '\\') strkitten_s(filePath[s], MAXPATH, '\\');
 					strcat_s(filePath[s], MAXPATH, curFN);
@@ -430,17 +464,6 @@ void SelectFile(const char* path1, const char* path2, const char* pattern, char*
 							}
 						}
 					}
-#if DRIVESINLIST
-					else if (curFN[1] == ':')
-					{
-						currentDrive[cs] = curFN[0] - 'A';
-						strcpy_s(filePath[cs], MAXPATH, currDirs[cs][currentDrive[cs]]);
-						strcpy_s(workPath[cs], MAXPATH, filePath[cs]);
-						Populate(workPath[cs], cs, pattern);
-						redraw = 1;
-						index[cs] = 0;
-					}
-#endif
 					else
 					{
 						strcpy_s(filePath[cs], MAXPATH, workPath[cs]);
@@ -493,21 +516,16 @@ void SelectFile(const char* path1, const char* path2, const char* pattern, char*
 						}
 					}
 				}
-#if !DRIVESINLIST
-				else if (key >= 2 && key < maxDrives + 2)
+				else if (key == 0x3B || key == 0x3C) //F1 or F2
 				{
-					currentDrive[cs] = key - 2;
-					strcpy_s(filePath[cs], MAXPATH, currDirs[cs][currentDrive[cs]]);
-					strcpy_s(workPath[cs], MAXPATH, filePath[cs]);
-					Populate(workPath[cs], cs, pattern);
-					redraw = 2;
-					index[cs] = 0;
+					int d = key - 0x3B;
+					currentDrive[d] = SwitchDrive(d, currentDrive[d]);
+					strcpy_s(filePath[d], MAXPATH, currDirs[d][currentDrive[d]]);
+					strcpy_s(workPath[d], MAXPATH, filePath[d]);
+					Populate(workPath[d], d, pattern);
+					redraw = (cs == d) ? 2 : 1;
+					index[d] = 0;
 				}
-#endif
-				else if (key == 0x3B) //F1
-					ShowError("Disk switching not implemented yet.");
-				else if (key == 0x3C) //F2
-					ShowError("Disk switching not implemented yet.");
 				else if (key == 0x3D) //F3
 					ShowError("Viewer implemented but not hooked up yet.");
 				else if (key == 0x3E) //F4
