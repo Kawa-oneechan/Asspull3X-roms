@@ -2,6 +2,8 @@
 
 IBios* interface;
 
+extern const unsigned char iconsTiles[];
+
 #define MAXPATH 512
 #define MAXFILES 512
 
@@ -120,11 +122,33 @@ tryOpenDir:
 int SwitchDrive(int which, int now)
 {
 	const unsigned short abcd[] = { 30, 48, 46, 32 };
-	int numDrives = DISK->GetNumDrives();
-	tWindow* win = OpenWindow((WIDTH >> 1) - 2 + (WIDTH * which), 8, 8, numDrives + 2, CLR_DIALOG);
+	static int numDrives = -1;
+	static char driveTypes[4];
+
+	if (numDrives == -1)
+	{
+		numDrives = 0;
+		unsigned char* devices = (unsigned char*)0x02000000;
+		for (char i = 0; i < 16; i++)
+		{
+			if (*(short*)devices == 0x0144)
+			{
+				if (numDrives < 4)
+					driveTypes[numDrives] = *(char*)devices[5];
+				numDrives++;
+			}
+			devices += 0x8000;
+		}
+	}
+
+	tWindow* win = OpenWindow((WIDTH >> 1) - 2 + (WIDTH * which), 8, 9, numDrives + 2, CLR_DIALOG);
 	for (int i = 0; i < numDrives; i++)
 	{
+		short icon = ((0xB9 + (driveTypes[i] << 1)) << 8) | CLR_DIALOG;
 		short o = ((win->top + 1 + i) * 80) + win->left + 2;
+		TEXTMAP[o++] = icon;
+		TEXTMAP[o++] = icon + 0x100;
+		o++;
 		TEXTMAP[o++] = (('A' + i) << 8) | CLR_DIALOG;
 		TEXTMAP[o++] = (':' << 8) | CLR_DIALOG;
 	}
@@ -193,7 +217,6 @@ void SelectFile(const char* path1, const char* path2, const char* pattern, char*
 	FILEINFO info;
 	char currDirs[2][4][MAXPATH], workPath[2][MAXPATH];
 	char filePath[2][MAXPATH];
-	int maxDrives = DISK->GetNumDrives();
 	char* curFN;
 	int cs = 0;
 
@@ -227,16 +250,17 @@ void SelectFile(const char* path1, const char* path2, const char* pattern, char*
 		{
 			if (redraw == 1 || (redraw == 2 && cs == 0))
 			{
-				DrawPanel(0, 1, WIDTH + 1, FILESSHOWN + 2, CLR_PANEL);
-				TEXT->SetTextColor(SplitColor(CLR_PANELSEL));
+				DrawPanel(0, 1, WIDTH + 1, FILESSHOWN + 5, CLR_PANEL);
+				TEXT->SetTextColor(SplitColor(CLR_PANEL));
 				TEXT->SetCursorPosition((WIDTH / 2) - (strlen(workPath[0]) / 2) - 1, 1);
 				TEXT->Write(" %s ", workPath[0]);
 
 				char label[12] = { 0 };
 				unsigned long id = 0;
-				DrawPanel(0, FILESSHOWN + 2, WIDTH + 1, 4, CLR_PANEL);
-				TEXTMAP[(FILESSHOWN + 2) * 80] = 0x8F00 | CLR_PANEL; //|-
-				TEXTMAP[(FILESSHOWN + 2) * 80 + WIDTH] = 0x8A00 | CLR_PANEL; //-|
+				TEXTMAP[(FILESSHOWN + 2) * 80] = 0xBD00 | CLR_PANEL; //|-
+				for (int i = 0; i < WIDTH - 1; i++)
+					TEXTMAP[(FILESSHOWN + 2) * 80 + 1 + i] = 0x9000 | CLR_PANEL; //--
+				TEXTMAP[(FILESSHOWN + 2) * 80 + WIDTH] = 0xBE00 | CLR_PANEL; //-|
 				TEXT->SetTextColor(SplitColor(CLR_PANEL));
 				TEXT->SetCursorPosition(2, FILESSHOWN + 3);
 				DISK->GetLabel(workPath[0][0], label, &id);
@@ -250,16 +274,17 @@ void SelectFile(const char* path1, const char* path2, const char* pattern, char*
 
 			if (path2 != 0 && (redraw == 1 || (redraw == 2 && cs == 1)))
 			{
-				DrawPanel(WIDTH + 1, 1, WIDTH + 1, FILESSHOWN + 2, CLR_PANEL);
-				TEXT->SetTextColor(SplitColor(CLR_PANELSEL));
+				DrawPanel(WIDTH + 1, 1, WIDTH + 1, FILESSHOWN + 5, CLR_PANEL);
+				TEXT->SetTextColor(SplitColor(CLR_PANEL));
 				TEXT->SetCursorPosition((WIDTH / 2) - (strlen(workPath[1]) / 2) - 1 + WIDTH + 1, 1);
 				TEXT->Write(" %s ", workPath[1]);
 
 				char label[12] = { 0 };
 				unsigned long id = 0;
-				DrawPanel(WIDTH + 1, FILESSHOWN + 2, WIDTH + 1, 4, CLR_PANEL);
-				TEXTMAP[(FILESSHOWN + 2) * 80 + WIDTH + 1] = 0x8F00 | CLR_PANEL; //|-
-				TEXTMAP[(FILESSHOWN + 2) * 80 + WIDTH + 1 + WIDTH] = 0x8A00 | CLR_PANEL; //-|
+				TEXTMAP[(FILESSHOWN + 2) * 80 + WIDTH + 1] = 0xBD00 | CLR_PANEL; //|-
+				for (int i = 0; i < WIDTH - 1; i++)
+					TEXTMAP[(FILESSHOWN + 2) * 80 + WIDTH + 2 + i] = 0x9000 | CLR_PANEL; //--
+				TEXTMAP[(FILESSHOWN + 2) * 80 + WIDTH + 1 + WIDTH] = 0xBE00 | CLR_PANEL; //-|
 				TEXT->SetTextColor(SplitColor(CLR_PANEL));
 				TEXT->SetCursorPosition(2 + WIDTH + 1, FILESSHOWN + 3);
 				DISK->GetLabel(workPath[1][0], label, &id);
@@ -281,25 +306,46 @@ void SelectFile(const char* path1, const char* path2, const char* pattern, char*
 				curFN = &filenames[s][scroll[s] * 16];
 				for (int i = 0; i < fileCt[s] && i < FILESSHOWN; i++)
 				{
-					TEXT->SetCursorPosition(1 + o, i + 2);
-					TEXT->SetTextColor(SplitColor(CLR_PANELITEM));
-					if (cs == s && index[s] == i + scroll[s])
-						TEXT->SetTextColor(SplitColor(CLR_PANELSEL));
-					printf("%-12s ", curFN);
-					if (curFN[0] == '.' && curFN[1] == '.')
-					{
-						printf("         <UP>            ");
-						curFN += 16;
-						continue;
-					}
 					strcpy_s(filePath[s], MAXPATH, workPath[s]);
 					if (filePath[s][strnlen_s(filePath[s], MAXPATH) - 1] != '\\') strkitten_s(filePath[s], MAXPATH, '\\');
 					strcat_s(filePath[s], MAXPATH, curFN);
 					DISK->FileStat(filePath[s], &info);
-					if (info.fattrib & AM_DIRECTORY)
-						printf("        <DIR> ");
+					char icon[3] = "  ";
+					if (curFN[0] == '.' && curFN[1] == '.')
+					{
+						//Leave it.
+					}
+					else if (info.fattrib & AM_DIRECTORY)
+					{
+						icon[0] = 0xB2;
+						icon[1] = 0xB3;
+					}
 					else
-						printf("%13d ", info.fsize);
+					{
+						icon[0] = 0xB4;
+						icon[1] = 0xB5;
+						char* ext = strrchr((const char*)filePath, '.') + 1;
+						if (!strcmp(ext, "APP"))
+						{
+							icon[0] = 0xB6;
+							icon[1] = 0xB7;
+						}
+					}
+					TEXT->SetCursorPosition(1 + o, i + 2);
+					TEXT->SetTextColor(SplitColor(CLR_PANELITEM));
+					if (cs == s && index[s] == i + scroll[s])
+						TEXT->SetTextColor(SplitColor(CLR_PANELSEL));
+					printf("%s %-12s ", icon, curFN);
+					if (curFN[0] == '.' && curFN[1] == '.')
+					{
+						printf("      <UP>            ");
+						curFN += 16;
+						continue;
+					}
+					if (info.fattrib & AM_DIRECTORY)
+						printf("     <DIR> ");
+					else
+						printf("%10d ", info.fsize);
 					int fdy = 1980 + (info.fdate >> 9);
 					int fdm = (info.fdate >> 5) & 15;
 					int fdd = info.fdate & 0x1F;
@@ -373,7 +419,7 @@ void SelectFile(const char* path1, const char* path2, const char* pattern, char*
 						{
 							scroll[cs] -= FILESSHOWN;
 							if (scroll[cs] < 0) scroll[cs] = 0;
-							redraw = 1;
+							redraw = 2;
 							break;
 						}
 					}
@@ -383,7 +429,7 @@ void SelectFile(const char* path1, const char* path2, const char* pattern, char*
 						if (fileCt[cs] > FILESSHOWN)
 						{
 							scroll[cs] = fileCt[cs] - FILESSHOWN;
-							redraw = 1;
+							redraw = 2;
 						}
 						else
 							scroll[cs] = 0;
@@ -400,7 +446,7 @@ void SelectFile(const char* path1, const char* path2, const char* pattern, char*
 						{
 							scroll[cs] += 1;
 							if (scroll[cs] + FILESSHOWN > fileCt[cs]) scroll[cs] = fileCt[cs] - FILESSHOWN;
-							redraw = 1;
+							redraw = 2;
 							break;
 						}
 					}
@@ -418,7 +464,7 @@ void SelectFile(const char* path1, const char* path2, const char* pattern, char*
 					scroll[cs] -= FILESSHOWN;
 					if (index[cs] < 0) index[cs] = 0;
 					if (scroll[cs] < 0) scroll[cs] = 0;
-					redraw = 1;
+					redraw = 2;
 					break;
 				}
 				else if (key == 0xD1) //page down
@@ -434,7 +480,7 @@ void SelectFile(const char* path1, const char* path2, const char* pattern, char*
 							scroll[cs] -= FILESSHOWN - 1;
 						}
 					}
-					redraw = 1;
+					redraw = 2;
 					break;
 				}
 				else if (key == 0x1C) //enter
@@ -449,7 +495,7 @@ void SelectFile(const char* path1, const char* path2, const char* pattern, char*
 						if (workPath[cs][0] == 0) strcpy_s(workPath[cs], MAXPATH, "\\");
 						strcpy_s(currDirs[cs][currentDrive[cs]], MAXPATH, workPath[cs]);
 						Populate(workPath[cs], cs, pattern);
-						redraw = 1;
+						redraw = 2;
 						index[cs] = 0;
 						for (int r = 0; r < fileCt[cs]; r++)
 						{
@@ -475,7 +521,7 @@ void SelectFile(const char* path1, const char* path2, const char* pattern, char*
 							strcpy_s(workPath[cs], MAXPATH, filePath[cs]);
 							strcpy_s(currDirs[cs][currentDrive[cs]], MAXPATH, workPath[cs]);
 							Populate(workPath[cs], cs, pattern);
-							redraw = 1;
+							redraw = 2;
 							index[cs] = 0;
 						}
 						else
@@ -519,12 +565,17 @@ void SelectFile(const char* path1, const char* path2, const char* pattern, char*
 				else if (key == 0x3B || key == 0x3C) //F1 or F2
 				{
 					int d = key - 0x3B;
-					currentDrive[d] = SwitchDrive(d, currentDrive[d]);
-					strcpy_s(filePath[d], MAXPATH, currDirs[d][currentDrive[d]]);
-					strcpy_s(workPath[d], MAXPATH, filePath[d]);
-					Populate(workPath[d], d, pattern);
-					redraw = (cs == d) ? 2 : 1;
-					index[d] = 0;
+					int oD = currentDrive[d];
+					int nD = SwitchDrive(d, oD);
+					if (oD != nD)
+					{
+						currentDrive[d] = nD;
+						strcpy_s(filePath[d], MAXPATH, currDirs[d][currentDrive[d]]);
+						strcpy_s(workPath[d], MAXPATH, filePath[d]);
+						Populate(workPath[d], d, pattern);
+						redraw = (cs == d) ? 2 : 1;
+						index[d] = 0;
+					}
 				}
 				else if (key == 0x3D) //F3
 					ShowError("Viewer implemented but not hooked up yet.");
@@ -556,6 +607,7 @@ int main(void)
 	intoff();
 	MISC->SetTextMode(SMODE_240 | SMODE_BOLD);
 	DRAW->ResetPalette();
+	MISC->DmaCopy(TEXTFONT + 0x2A00, (int8_t*)&iconsTiles, 512, DMA_BYTE);
 	REG_CARET = 0;
 	while(1)
 	{

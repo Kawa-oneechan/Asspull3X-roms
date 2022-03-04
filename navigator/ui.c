@@ -86,20 +86,20 @@ tWindow* OpenWindow(int left, int top, int width, int height, int color)
 			*b++ = TEXTMAP[o];
 			if (i == 0 || i == height - 2)
 			{
-				c = 0x9000 | color; //top or bottom edge
+				c = (i == 0 ? 0xA100 : 0xA600) | color; //top or bottom edge
 				if (j == 0)
 				{
 					if (i == 0)
-						c = 0x9300 | color; //top left
+						c = 0xA400 | color; //top left
 					else
-						c = 0x8C00 | color; //bottom left
+						c = 0xA500 | color; //bottom left
 				}
 				else if (j == width - 3)
 				{
 					if (i == 0)
-						c = 0x8B00 | color; //top right
+						c = 0xA200 | color; //top right
 					else
-						c = 0x9200 | color; //bottom right
+						c = 0xA300 | color; //bottom right
 				}
 				else if (j > width - 3)
 				{
@@ -118,7 +118,7 @@ tWindow* OpenWindow(int left, int top, int width, int height, int color)
 						c = (c & 0xFF00) | 0x08;
 				}
 				else if (j == 0 || j == width - 3)
-					c = 0x8900 | color; //sides
+					c = (j == 0 ? 0xA000 : 0xA700) | color; //sides
 				else if (j > width - 3)
 					c = (TEXTMAP[o] & 0xFF00) | 0x08;
 			}
@@ -165,29 +165,33 @@ void DrawPanel(int left, int top, int width, int height, int color)
 		for (int j = 0; j < width; j++)
 		{
 			short o = ((i + top) * 80) + j + left;
-			if (i == 0 || i == height - 1)
+			if (i == 0)
 			{
-				c = 0x9000 | color; //top or bottom edge
+				c = 0x8300 | color; //top edge
+			}
+			else if (i == height - 1)
+			{
+				c = (i == 0 ? 0xA100 : 0xA600) | color; //bottom edge
 				if (j == 0)
 				{
 					if (i == 0)
-						c = 0x9300 | color; //top left
+						c = 0xA400 | color; //top left
 					else
-						c = 0x8C00 | color; //bottom left
+						c = 0xA500 | color; //bottom left
 				}
 				else if (j == width - 1)
 				{
 					if (i == 0)
-						c = 0x8B00 | color; //top right
+						c = 0xA200 | color; //top right
 					else
-						c = 0x9200 | color; //bottom right
+						c = 0xA300 | color; //bottom right
 				}
 			}
 			else
 			{
 				c = 0x2000 | color; //space
 				if (j == 0 || j == width - 1)
-					c = 0x8900 | color; //sides
+					c = (j == 0 ? 0xA000 : 0xA700) | color; //sides
 			}
 			TEXTMAP[o] = c;
 		}
