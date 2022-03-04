@@ -1,7 +1,5 @@
 #include "nav.h"
 
-#define NUMMENUS 4
-
 const tMenuItem leftMenu[] = {
 	{ "~Files", 33, 2, 101 },
 	{ "~Info", 23, 1, 102 },
@@ -50,7 +48,9 @@ const tMenu menuBar[] =
 	{ "~Commands", 46, 7, commandsMenu },
 	{ "~Right", 19, 7, rightMenu },
 };
+
 char menuLefts[NUMMENUS], menuWidths[NUMMENUS];
+
 tWindow* menuWindow = NULL;
 
 void WaitForKey()
@@ -280,10 +280,10 @@ void DropMenu(int c)
 		if (menuBar[c].items[i].title[0] == '-')
 		{
 			short o = ((2 + i) * 80) + menuLefts[c];
-			TEXTMAP[o++] = 0x8F00 | CLR_MENU; //|-
+			TEXTMAP[o++] = 0xBD00 | CLR_MENU; //|-
 			for (int j = 0; j < menuWidths[c] + 4; j++)
 				TEXTMAP[o++] = 0x9000 | CLR_MENU; //--
-			TEXTMAP[o] = 0x8A00 | CLR_MENU; //-|
+			TEXTMAP[o] = 0xBE00 | CLR_MENU; //-|
 			continue;
 		}
 		short o = ((2 + i) * 80) + menuLefts[c] + 3;
@@ -305,9 +305,8 @@ void DropMenu(int c)
 	Highlight(menuLefts[c] + 1, 2, menuWidths[c] + 4, CLR_MENUSEL);
 }
 
-void OpenMenu()
+void OpenMenu(int cm)
 {
-	int cm = 0;
 	int ci = 0;
 	Highlight(menuLefts[cm], 0, myStrLen(menuBar[cm].title) + 4, CLR_MENUSEL);
 	DropMenu(cm);

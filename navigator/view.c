@@ -48,18 +48,19 @@ int ShowText(char* filePath)
 	//Note: these are PLACEHOLDERS
 	static const char* keys[] = {
 		"Help  ",
-		"Unwrap",
-		"      ",
-		"Hex   ",//"ASCII "
+		"Hidden",
 		"      ",
 		"      ",
-		"Search",
-		"Viewer",
-		"Print ",
+		"      ",
+		"      ",
+		"      ",
+		"      ",
+		"      ",
 		"Quit  ",
 	};
 
 	int i, j, scroll = 0, lineCt = 0, redraw = 1;
+	bool hidden = false;
 
 	FILEINFO nfo;
 	DISK->FileStat(filePath, &nfo);
@@ -72,8 +73,10 @@ int ShowText(char* filePath)
 	DISK->OpenFile(&file, filePath, FA_READ);
 	DISK->ReadFile(&file, (void*)fileText, nfo.fsize);
 	DISK->CloseFile(&file);
+	fileText[size] = 0;
 
 	unsigned char* fullText = malloc(size + 1024);
+	memset(fullText, 0, size + 1024);
 	unsigned char *b = fileText;
 	unsigned char *c = fullText;
 	i = 0;
@@ -103,6 +106,8 @@ int ShowText(char* filePath)
 	free(fileText);
 
 	b = fullText;
+
+	TEXT->SetTextColor(SplitColor(CLR_VIEWBACK));
 	TEXT->ClearScreen();
 
 	while(1)
@@ -110,21 +115,23 @@ int ShowText(char* filePath)
 		intoff();
 		if (redraw)
 		{
-			TEXT->SetTextColor(SplitColor(CLR_VIEWBACK));
-			TEXT->ClearScreen();
 			TEXT->SetTextColor(SplitColor(CLR_VIEWSTAT));
 			for (j = 0; j < 80; j++)
 				TEXTMAP[j] = CLR_VIEWSTAT;
+			TEXT->SetCursorPosition(0, 0);
 			printf(" %s \t%d/%d $%x, $%x", filePath, scroll, lineCt, b, b - fullText);
 			intoff();
 			c = b;
 			int row = 1;
 			int col = 0;
-			while (row < 28 && *c != 0)
+			while (row < 29 && *c != 0)
 			{
 				if (*c == '\n' && col < 80)
 				{
-					//TEXTMAP[(row * 80) + col] = 0x0F04;
+					if (hidden)
+						TEXTMAP[(row * 80) + col++] = 0x0F04;
+					for (; col < 80; col++)
+						TEXTMAP[(row * 80) + col] = 0x2004;
 					row++;
 					col = 0;
 				}
@@ -184,7 +191,7 @@ int ShowText(char* filePath)
 			}
 			else if (key == 0xD0) //down
 			{
-				if (scroll < lineCt - 26)
+				if (scroll < lineCt - 28)
 				{
 					while (b < fullText + size && *b != '\n')
 						b++;
@@ -196,7 +203,10 @@ int ShowText(char* filePath)
 			else if (key == 0x3B) //F1
 				ShowError("F1 not implemented yet");
 			else if (key == 0x3C) //F2
-				ShowError("F2 not implemented yet");
+			{
+				hidden = !hidden;
+				redraw = 1;
+			}
 			else if (key == 0x3D) //F3
 				ShowError("F3 not implemented yet");
 			else if (key == 0x3E) //F4

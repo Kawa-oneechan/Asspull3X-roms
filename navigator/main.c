@@ -134,7 +134,7 @@ int SwitchDrive(int which, int now)
 			if (*(short*)devices == 0x0144)
 			{
 				if (numDrives < 4)
-					driveTypes[numDrives] = *(char*)devices[5];
+					driveTypes[numDrives] = *(char*)&devices[5];
 				numDrives++;
 			}
 			devices += 0x8000;
@@ -197,6 +197,42 @@ int SwitchDrive(int which, int now)
 	}
 }
 
+void InfoPanel(int panel, char* workPath, char* filename)
+{
+	char filePath[MAXPATH];
+	FILEINFO info;
+	int o = (panel == 0 ? 0 : WIDTH + 1);
+
+	strcpy_s(filePath, MAXPATH, workPath);
+	if (filePath[strnlen_s(filePath, MAXPATH) - 1] != '\\') strkitten_s(filePath, MAXPATH, '\\');
+	strcat_s(filePath, MAXPATH, filename);
+	DISK->FileStat(filePath, &info);
+
+	char t[20][37] = { 0 };
+	int i = 0;
+
+	if (filename[0] == '.' && filename[1] == '.')
+		sprintf(t[0], "Go up one directory");
+	else
+	{
+		sprintf(t[i++], "@%s", filename);
+		sprintf(t[i++], "File");
+		if (info.fattrib & AM_READONLY) sprintf(t[i++], "Read-only");
+		if (info.fattrib & AM_HIDDEN) sprintf(t[i++], "Hidden");
+		if (info.fattrib & AM_SYSTEM) sprintf(t[i++], "System");
+		if (info.fattrib & AM_DIRECTORY) sprintf(t[i - 1], "Directory");
+		if (info.fattrib & AM_ARCHIVE) sprintf(t[i++], "Archive");
+		sprintf(t[i++], "0x%02X", info.fattrib);
+	}
+
+	for (i = 0; i < 20; i++)
+	{
+		TEXT->SetCursorPosition(o + 2, 3 + i);
+		TEXT->SetTextColor(CLR_PANEL >> 4, t[i][0] == '@' ? 14 : (CLR_PANEL & 0x0F));
+		printf("%-37s", t[i] + (t[i][0] == '@' ? 1 : 0));
+	}
+}
+
 void SelectFile(const char* path1, const char* path2, const char* pattern, char* selection, int(*onSelect)(char*))
 {
 	//Note: these are PLACEHOLDERS
@@ -217,6 +253,7 @@ void SelectFile(const char* path1, const char* path2, const char* pattern, char*
 	FILEINFO info;
 	char currDirs[2][4][MAXPATH], workPath[2][MAXPATH];
 	char filePath[2][MAXPATH];
+	int views[2] = { 0, 1 };
 	char* curFN;
 	int cs = 0;
 
@@ -246,112 +283,114 @@ void SelectFile(const char* path1, const char* path2, const char* pattern, char*
 	for(;;)
 	{
 		intoff();
+		vbl();
 		if (redraw)
 		{
-			if (redraw == 1 || (redraw == 2 && cs == 0))
+			if (redraw < 2)
 			{
 				DrawPanel(0, 1, WIDTH + 1, FILESSHOWN + 5, CLR_PANEL);
-				TEXT->SetTextColor(SplitColor(CLR_PANEL));
-				TEXT->SetCursorPosition((WIDTH / 2) - (strlen(workPath[0]) / 2) - 1, 1);
-				TEXT->Write(" %s ", workPath[0]);
-
-				char label[12] = { 0 };
-				unsigned long id = 0;
-				TEXTMAP[(FILESSHOWN + 2) * 80] = 0xBD00 | CLR_PANEL; //|-
-				for (int i = 0; i < WIDTH - 1; i++)
-					TEXTMAP[(FILESSHOWN + 2) * 80 + 1 + i] = 0x9000 | CLR_PANEL; //--
-				TEXTMAP[(FILESSHOWN + 2) * 80 + WIDTH] = 0xBE00 | CLR_PANEL; //-|
-				TEXT->SetTextColor(SplitColor(CLR_PANEL));
-				TEXT->SetCursorPosition(2, FILESSHOWN + 3);
-				DISK->GetLabel(workPath[0][0], label, &id);
-				TEXT->Write("Label: %04X-%04X, %s", id >> 16, id & 0xFFFF, label[0] ? label : "no name");
-				id = DISK->GetFree(workPath[0][0]);
-				TEXT->SetCursorPosition(2, FILESSHOWN + 4);
-				TEXT->Write("Space: ");
-				PrintComma(id);
-				TEXT->Write(" bytes free");
-			}
-
-			if (path2 != 0 && (redraw == 1 || (redraw == 2 && cs == 1)))
-			{
 				DrawPanel(WIDTH + 1, 1, WIDTH + 1, FILESSHOWN + 5, CLR_PANEL);
-				TEXT->SetTextColor(SplitColor(CLR_PANEL));
-				TEXT->SetCursorPosition((WIDTH / 2) - (strlen(workPath[1]) / 2) - 1 + WIDTH + 1, 1);
-				TEXT->Write(" %s ", workPath[1]);
-
-				char label[12] = { 0 };
-				unsigned long id = 0;
-				TEXTMAP[(FILESSHOWN + 2) * 80 + WIDTH + 1] = 0xBD00 | CLR_PANEL; //|-
-				for (int i = 0; i < WIDTH - 1; i++)
-					TEXTMAP[(FILESSHOWN + 2) * 80 + WIDTH + 2 + i] = 0x9000 | CLR_PANEL; //--
-				TEXTMAP[(FILESSHOWN + 2) * 80 + WIDTH + 1 + WIDTH] = 0xBE00 | CLR_PANEL; //-|
-				TEXT->SetTextColor(SplitColor(CLR_PANEL));
-				TEXT->SetCursorPosition(2 + WIDTH + 1, FILESSHOWN + 3);
-				DISK->GetLabel(workPath[1][0], label, &id);
-				TEXT->Write("Label: %04X-%04X, %s", id >> 16, id & 0xFFFF, label[0] ? label : "no name");
-				id = DISK->GetFree(workPath[1][0]);
-				TEXT->SetCursorPosition(2 + WIDTH + 1, FILESSHOWN + 4);
-				TEXT->Write("Space: ");
-				PrintComma(id);
-				TEXT->Write(" bytes free");
 			}
 
 			for (int s = 0; s < 2; s++)
 			{
+				int o = (s == 0 ? 0 : WIDTH + 1);
 				if (redraw == 2 && cs != s)
 					continue;
-				int o = (s == 0 ? 0 : WIDTH + 1);
-				if (s == 1 && path2 == 0)
-					break;
-				curFN = &filenames[s][scroll[s] * 16];
-				for (int i = 0; i < fileCt[s] && i < FILESSHOWN; i++)
+
+				if (views[s] == 0)
 				{
-					strcpy_s(filePath[s], MAXPATH, workPath[s]);
-					if (filePath[s][strnlen_s(filePath[s], MAXPATH) - 1] != '\\') strkitten_s(filePath[s], MAXPATH, '\\');
-					strcat_s(filePath[s], MAXPATH, curFN);
-					DISK->FileStat(filePath[s], &info);
-					char icon[3] = "  ";
-					if (curFN[0] == '.' && curFN[1] == '.')
+					TEXT->SetTextColor(SplitColor(CLR_PANEL));
+					TEXT->SetCursorPosition(o + (WIDTH / 2) - (strlen(workPath[s]) / 2), 1);
+					TEXT->Write(" %s ", workPath[s]);
+
+					char label[12] = { 0 };
+					unsigned long id = 0;
+					TEXTMAP[(FILESSHOWN + 2) * 80 + o] = 0xBD00 | CLR_PANEL; //|-
+					for (int i = 0; i < WIDTH - 1; i++)
+						TEXTMAP[(FILESSHOWN + 2) * 80 + o + i + 1] = 0x9000 | CLR_PANEL; //--
+					TEXTMAP[(FILESSHOWN + 2) * 80 + o + WIDTH] = 0xBE00 | CLR_PANEL; //-|
+					TEXT->SetTextColor(SplitColor(CLR_PANEL));
+					TEXT->SetCursorPosition(2 + o + 1, FILESSHOWN + 3);
+					DISK->GetLabel(workPath[s][0], label, &id);
+					TEXT->Write("Label: %04X-%04X, %s", id >> 16, id & 0xFFFF, label[0] ? label : "no name");
+					id = DISK->GetFree(workPath[s][0]);
+					TEXT->SetCursorPosition(2 + o, FILESSHOWN + 4);
+					TEXT->Write("Space: ");
+					PrintComma(id);
+					TEXT->Write(" bytes free");
+
+					curFN = &filenames[s][scroll[s] * 16];
+					for (int i = 0; i < FILESSHOWN; i++)
 					{
-						//Leave it.
-					}
-					else if (info.fattrib & AM_DIRECTORY)
-					{
-						icon[0] = 0xB2;
-						icon[1] = 0xB3;
-					}
-					else
-					{
-						icon[0] = 0xB4;
-						icon[1] = 0xB5;
-						char* ext = strrchr((const char*)filePath, '.') + 1;
-						if (!strcmp(ext, "APP"))
+						intoff();
+						if (i >= fileCt[s])
 						{
-							icon[0] = 0xB6;
-							icon[1] = 0xB7;
+							TEXT->SetCursorPosition(1 + o, i + 2);
+							TEXT->SetTextColor(SplitColor(CLR_PANELITEM));
+							printf("%38c", ' ');
+							continue;
 						}
-					}
-					TEXT->SetCursorPosition(1 + o, i + 2);
-					TEXT->SetTextColor(SplitColor(CLR_PANELITEM));
-					if (cs == s && index[s] == i + scroll[s])
-						TEXT->SetTextColor(SplitColor(CLR_PANELSEL));
-					printf("%s %-12s ", icon, curFN);
-					if (curFN[0] == '.' && curFN[1] == '.')
-					{
-						printf("      <UP>            ");
+
+						strcpy_s(filePath[s], MAXPATH, workPath[s]);
+						if (filePath[s][strnlen_s(filePath[s], MAXPATH) - 1] != '\\') strkitten_s(filePath[s], MAXPATH, '\\');
+						strcat_s(filePath[s], MAXPATH, curFN);
+						DISK->FileStat(filePath[s], &info);
+						char icon[3] = "  ";
+						if (curFN[0] == '.' && curFN[1] == '.')
+						{
+							//Leave it.
+						}
+						else if (info.fattrib & AM_DIRECTORY)
+						{
+							icon[0] = 0xB2;
+							icon[1] = 0xB3;
+						}
+						else
+						{
+							icon[0] = 0xB4;
+							icon[1] = 0xB5;
+							char* ext = strrchr((const char*)filePath, '.') + 1;
+							if (!strcmp(ext, "APP"))
+							{
+								icon[0] = 0xB6;
+								icon[1] = 0xB7;
+							}
+						}
+						TEXT->SetCursorPosition(1 + o, i + 2);
+						TEXT->SetTextColor(SplitColor(CLR_PANELITEM));
+						//if (cs == s && index[s] == i + scroll[s])
+						//	TEXT->SetTextColor(SplitColor(CLR_PANELSEL));
+						printf("%s %-12s ", icon, curFN);
+						if (curFN[0] == '.' && curFN[1] == '.')
+						{
+							printf("      <UP>            ");
+							curFN += 16;
+							if (cs == s && index[s] == i + scroll[s])
+								Highlight(o, i + 2, WIDTH + 1, CLR_PANELSEL);
+							continue;
+						}
+						if (info.fattrib & AM_DIRECTORY)
+							printf("     <DIR> ");
+						else
+							printf("%10d ", info.fsize);
+						int fdy = 1980 + (info.fdate >> 9);
+						int fdm = (info.fdate >> 5) & 15;
+						int fdd = info.fdate & 0x1F;
+						printf(" %02d-%02d-%02d", fdy, fdm, fdd);
 						curFN += 16;
-						continue;
+						if (cs == s && index[s] == i + scroll[s])
+							Highlight(o, i + 2, WIDTH + 1, CLR_PANELSEL);
 					}
-					if (info.fattrib & AM_DIRECTORY)
-						printf("     <DIR> ");
-					else
-						printf("%10d ", info.fsize);
-					int fdy = 1980 + (info.fdate >> 9);
-					int fdm = (info.fdate >> 5) & 15;
-					int fdd = info.fdate & 0x1F;
-					printf(" %02d-%02d-%02d", fdy, fdm, fdd);
-					curFN += 16;
 				}
+				else if (views[s] == 1)
+				{
+					TEXT->SetTextColor(SplitColor(CLR_PANEL));
+					TEXT->SetCursorPosition(o + (WIDTH / 2) - 2 + 1, 1);
+					TEXT->Write(" Info ");
+					InfoPanel(s, workPath[s ^ 1], &filenames[s ^ 1][index[s ^ 1] * 16]);
+				}
+
 				TEXT->SetTextColor(0, 7);
 				redraw = 0;
 			}
@@ -365,48 +404,48 @@ void SelectFile(const char* path1, const char* path2, const char* pattern, char*
 		else
 		{
 			int o = (cs == 0 ? 0 : WIDTH + 1);
-			for (int i = 1; i < WIDTH; i++)
+			Highlight(o, 2 + lastIndex[cs] - scroll[cs], WIDTH + 1, CLR_PANELITEM);
+			if (lastIndex[cs] != index[cs])
 			{
-				uint16_t* here = &TEXTMAP[o + ((2 + index[cs] - scroll[cs]) * 80)];
-				here[i] &= ~0x00FF;
-				here[i] |= CLR_PANELSEL;
-				if (lastIndex[cs] != index[cs])
-				{
-					here = &TEXTMAP[o + ((2 + lastIndex[cs] - scroll[cs]) * 80)];
-					here[i] &= ~0x00FF;
-					here[i] |= CLR_PANELITEM;
-				}
+				Highlight(o, 2 + index[cs] - scroll[cs], WIDTH + 1, CLR_PANELSEL);
+				if (views[cs ^ 1] == 1)
+					InfoPanel(cs ^ 1, workPath[cs], &filenames[cs][index[cs] * 16]);
 			}
 			o = (cs == 1 ? 0 : WIDTH + 1);
-			for (int i = 1; i < WIDTH; i++)
-			{
-				uint16_t* here = &TEXTMAP[o + ((2 + index[cs ^ 1] - scroll[cs ^ 1]) * 80)];
-				here[i] &= ~0x00FF;
-				here[i] |= CLR_PANELITEM;
-			}
+			Highlight(o, 2 + index[cs ^ 1] - scroll[cs ^ 1], WIDTH + 1, CLR_PANELITEM);
 		}
-
-//		for (int i = 0; i < 80; i++)
-//			TEXTMAP[(29 * 80) + i] = 0x2007;
-//		TEXT->SetCursorPosition(0, FILESSHOWN + 2);
-
 		curFN = &filenames[cs][index[cs] * 16];
-		//printf("%s>%s", workPath[cs], curFN);
-		//printf("side %d, index %d, scroll %d, fileCt %d", cs, index[cs], scroll[cs], fileCt[cs]);
-		vbl();
+
+		//TODO: command prompt here?
+		//TEXT->SetCursorPosition(0, 28);
+		//printf("%s>%s", workPath[cs], "lol");
 
 		while(1)
 		{
+			vbl();
 			unsigned short key = REG_KEYIN;
 			intoff();
 			if ((key & 0xFF) > 0)
 			{
 				while(1) { if (REG_KEYIN == 0) break; }
 
-				if (key == 0x0F && path2 != 0) //tab
+				if (key & 0x200)
 				{
+					key &= 0xFF;
+					for (int i = 0; i < NUMMENUS; i++)
+					{
+						if (key == menuBar[i].scan)
+						{
+							OpenMenu(i);
+							break;
+						}
+					}
+				}
+				else if (key == 0x0F && views[cs ^ 1] == 0) //tab
+				{
+					Highlight(cs ? WIDTH + 1 : 0, index[cs] + 2, WIDTH + 1, CLR_PANELITEM);
 					cs ^= 1;
-					//redraw = 1;
+					redraw = 2;
 					break;
 				}
 				else if (key == 0xC8) //up
@@ -540,8 +579,7 @@ void SelectFile(const char* path1, const char* path2, const char* pattern, char*
 								}
 								int32_t ret = onSelect(filePath[cs]);
 								Populate(workPath[0], 0, pattern);
-								if (path2 != 0)
-									Populate(workPath[1], 1, pattern);
+								Populate(workPath[1], 1, pattern);
 								if (ret == 1)
 								{
 									if (selection) strcpy_s(selection, MAXPATH, (const char*)filePath[cs]);
@@ -592,7 +630,7 @@ void SelectFile(const char* path1, const char* path2, const char* pattern, char*
 				else if (key == 0x43) //F9
 					ShowError("File printing not implemented yet.");
 				else if (key == 0x44) //F10
-					OpenMenu();
+					OpenMenu(0);
 //				else
 //					printf("0x%X", key);
 				break;
