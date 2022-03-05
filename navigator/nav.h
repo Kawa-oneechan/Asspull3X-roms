@@ -50,7 +50,7 @@ typedef struct
 	char* title;
 	char scan;
 	char state;
-	char code;
+	short code;
 } tMenuItem;
 
 typedef struct
@@ -61,6 +61,7 @@ typedef struct
 	const tMenuItem* items;
 } tMenu;
 extern const tMenu menuBar[];
+extern tMenuItem leftMenu[], rightMenu[];
 #define NUMMENUS 4
 
 extern void WaitForKey();
@@ -71,11 +72,11 @@ extern void DrawPanel(int left, int top, int width, int height, int color);
 extern void Highlight(char left, char top, char width, unsigned char color);
 extern void DrawKeys(const char** keys);
 extern void DrawMenu();
-extern void OpenMenu(int num);
+extern char OpenMenu(int num);
 
 extern int StartApp(char* filePath);
 extern int ShowPic(char* filePath);
 extern int ShowText(char* filePath);
-extern int ShowFile(char* filePath);
+extern int ShowFile(char* filePath, bool allowRun);
 
 extern char *strrchr(const char *, int);

@@ -229,14 +229,14 @@ int ShowText(char* filePath)
 	return 2;
 }
 
-int ShowFile(char* filePath)
+int ShowFile(char* filePath, bool allowRun)
 {
 	char* ext = strrchr(filePath, '.') + 1;
 	if (!strcmp(ext, "TXT"))
 		ShowText(filePath);
 	else if (!strcmp(ext, "API"))
 		ShowPic(filePath);
-	else if (!strcmp(ext, "APP"))
+	else if (!strcmp(ext, "APP") && allowRun)
 		StartApp(filePath);
 	else
 	{

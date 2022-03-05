@@ -438,7 +438,8 @@ void SelectFile(const char* path1, const char* path2, const char* pattern, char*
 					{
 						if (key == menuBar[i].scan)
 						{
-							OpenMenu(i);
+							key = OpenMenu(i);
+							goto HandleMenu;
 							break;
 						}
 					}
@@ -620,21 +621,93 @@ void SelectFile(const char* path1, const char* path2, const char* pattern, char*
 					}
 				}
 				else if (key == 0x3D) //F3
-					ShowError("Viewer implemented but not hooked up yet.");
+				{ key = 11; goto HandleMenu; }
 				else if (key == 0x3E) //F4
-					ShowError("Editor unlikely to be implemented.");
+				{ key = 12; goto HandleMenu; }
 				else if (key == 0x3F) //F5
-					ShowError("File copying not implemented yet.");
+				{ key = 13; goto HandleMenu; }
 				else if (key == 0x40) //F6
-					ShowError("Renaming and moving not implemented yet.");
+				{ key = 14; goto HandleMenu; }
 				else if (key == 0x41) //F7
-					ShowError("Directory creating not implemented yet.");
+				{ key = 15; goto HandleMenu; }
 				else if (key == 0x42) //F8
-					ShowError("File deleting not implemented yet.");
+				{ key = 16; goto HandleMenu; }
 				else if (key == 0x43) //F9
-					ShowError("File printing not implemented yet.");
+				{ key = 17; goto HandleMenu; }
 				else if (key == 0x44) //F10
-					OpenMenu(0);
+				{
+					key = OpenMenu(0);
+HandleMenu:
+					if (key > 100)
+					{
+						int side = 0;
+						if (key > 110)
+						{
+							side = 1;
+							key -= 10;
+						}
+						key -= 100;
+						tMenuItem* m =  side ? rightMenu : leftMenu;
+						tMenuItem* m2 = side ? leftMenu : rightMenu;
+						switch (key)
+						{
+							case 1: //Files view
+							case 2: //Info view
+								views[side] = key - 1;
+								m[0].state = 0;
+								m[1].state = 0;
+								m[2].state = 0;
+								m[3].state = 0;
+								m[key - 1].state = 2;
+								if (views[side] != 0)
+								{
+									cs = side ^ 1;
+									m2[1].state = 1;
+									m2[2].state = 1;
+									m2[3].state = 1;
+								}
+								else
+								{
+									m2[1].state = 0;
+									m2[2].state = 0;
+									m2[3].state = 0;
+								}
+								break;
+						}
+						redraw = 1;
+					}
+					else
+					{
+						switch (key)
+						{
+							case 11: //View
+								ShowFile(curFN, false);
+								redraw = 1;
+								break;
+							case 12: //Edit
+								ShowError("Editor unlikely to be implemented.");
+								break;
+							case 13: //Copy
+								ShowError("File copying not implemented yet.");
+								break;
+							case 14: //RenMov
+								ShowError("Renaming and moving not implemented yet.");
+								break;
+							case 15: //Mkdir
+								ShowError("Directory creating not implemented yet.");
+								break;
+							case 16: //Delete
+								ShowError("File deleting not implemented yet.");
+								break;
+							case 17: //Print
+								ShowError("File printing not implemented yet.");
+								break;
+							case 18: //Attrib
+								ShowError("Changing attributes not implemented yet.");
+								break;
+						}
+					}
+				}
 //				else
 //					printf("0x%X", key);
 				break;

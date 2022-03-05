@@ -1,8 +1,8 @@
 #include "nav.h"
 
-const tMenuItem leftMenu[] = {
+tMenuItem leftMenu[] = {
 	{ "~Files", 33, 2, 101 },
-	{ "~Info", 23, 1, 102 },
+	{ "~Info", 23, 0, 102 },
 	{ "~Preview", 25, 1, 103  },
 	{ "Director~y info", 21, 1, 104 },
 	{ "~On/off           Ctrl-F1", 24, 1, 105 },
@@ -31,14 +31,14 @@ const tMenuItem commandsMenu[] = {
 	{ "Confi~guration", 34, 0, 35 },
 };
 
-const tMenuItem rightMenu[] = {
-	{ "~Files", 33, 2, 201 },
-	{ "~Info", 23, 1, 202 },
-	{ "~Preview", 25, 1, 203  },
-	{ "Director~y info", 21, 1, 204 },
-	{ "~On/off           Ctrl-F2", 24, 1, 205 },
+tMenuItem rightMenu[] = {
+	{ "~Files", 33, 2, 111 },
+	{ "~Info", 23, 0, 112 },
+	{ "~Preview", 25, 1, 113  },
+	{ "Director~y info", 21, 1, 114 },
+	{ "~On/off           Ctrl-F2", 24, 1, 115 },
 	{ "-", 0, 1, 0 },
-	{ "~Drive\x98                F2", 32, 0, 206 },
+	{ "~Drive\x98                F2", 32, 0, 116 },
 };
 
 const tMenu menuBar[] =
@@ -305,7 +305,7 @@ void DropMenu(int c)
 	Highlight(menuLefts[c] + 1, 2, menuWidths[c] + 4, CLR_MENUSEL);
 }
 
-void OpenMenu(int cm)
+char OpenMenu(int cm)
 {
 	int ci = 0;
 	Highlight(menuLefts[cm], 0, myStrLen(menuBar[cm].title) + 4, CLR_MENUSEL);
@@ -351,6 +351,12 @@ void OpenMenu(int cm)
 				while (menuBar[cm].items[ci].state & 1) ci++;
 				if (ci == menuBar[cm].numItems) ci = 0;
 				Highlight(menuLefts[cm] + 1, 2 + ci, menuWidths[cm] + 4, CLR_MENUSEL);
+			}
+			else if (key == 0x1C || key == 0x01) //enter or escape
+			{
+				Highlight(menuLefts[cm], 0, myStrLen(menuBar[cm].title) + 4, CLR_MENUBAR);
+				CloseWindow(menuWindow);
+				return (key == 0x1C) ? menuBar[cm].items[ci].code : 0;
 			}
 		}
 	}
