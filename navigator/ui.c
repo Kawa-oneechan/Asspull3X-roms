@@ -356,6 +356,7 @@ char OpenMenu(int cm)
 			{
 				Highlight(menuLefts[cm], 0, myStrLen(menuBar[cm].title) + 4, CLR_MENUBAR);
 				CloseWindow(menuWindow);
+				menuWindow = NULL;
 				return (key == 0x1C) ? menuBar[cm].items[ci].code : 0;
 			}
 		}

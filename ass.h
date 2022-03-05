@@ -320,6 +320,7 @@ typedef struct
 	int32_t(*UnlinkFile)(const char* path);
 	int32_t(*RenameFile)(const char* from, const char* to);
 	int32_t(*FileTouch)(const char* path, TFileInfo* dt);
+	int32_t(*FileAttrib)(const char* path, char attrib);
 	int32_t(*MakeDir)(const char* path);
 	int32_t(*ChangeDir)(const char* path);
 	int32_t(*GetCurrentDir)(char* buffer, int32_t buflen);

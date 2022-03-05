@@ -13,9 +13,9 @@ const IDiskLibrary diskLibrary =
 	OpenDir, CloseDir, ReadDir,
 	FindFirst, FindNext, FileStat,
 	UnlinkFile, RenameFile, FileTouch,
-	MakeDir, ChangeDir, GetCurrentDir,
-	GetLabel, FileErrStr, GetNumDrives,
-	GetFree
+	FileAttrib, MakeDir, ChangeDir,
+	GetCurrentDir, GetLabel, FileErrStr,
+	GetNumDrives, GetFree
 };
 
 FATFS FatFs[FF_VOLUMES] = { 0 };
@@ -36,7 +36,7 @@ extern int32_t f_mkdir (const char* path);
 extern int32_t f_unlink (const char* path);
 extern int32_t f_rename (const char* path_old, const char* path_new);
 extern int32_t f_stat (const char* path, FILEINFO* fno);
-//extern int32_t f_chmod (const char* path, char attr, char mask);
+extern int32_t f_chmod (const char* path, char attr, char mask);
 extern int32_t f_utime (const char* path, const FILEINFO* fno);
 extern int32_t f_chdir (const char* path);
 //extern int32_t f_chdrive (const char* path);
@@ -192,6 +192,11 @@ int32_t FileTouch(const char* path, TFileInfo* dt)
 	return 0;
 }
 #endif
+
+int32_t FileAttrib(const char* path, char attrib)
+{
+	return f_chmod(path, attrib, 0xFF);
+}
 
 int32_t MakeDir(const char* path)
 {

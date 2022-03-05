@@ -57,6 +57,7 @@ extern int32_t FileStat(const char*, TFileInfo*);
 extern int32_t UnlinkFile(const char*);
 extern int32_t RenameFile(const char*, const char*);
 extern int32_t FileTouch(const char*, TFileInfo*);
+extern int32_t FileAttrib(const char* path, char attrib);
 extern int32_t MakeDir(const char*);
 extern int32_t ChangeDir(const char*);
 extern int32_t GetCurrentDir(char*, int32_t);

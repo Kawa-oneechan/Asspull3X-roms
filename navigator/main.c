@@ -144,7 +144,7 @@ int SwitchDrive(int which, int now)
 	tWindow* win = OpenWindow((WIDTH >> 1) - 2 + (WIDTH * which), 8, 9, numDrives + 2, CLR_DIALOG);
 	for (int i = 0; i < numDrives; i++)
 	{
-		short icon = ((0xB9 + (driveTypes[i] << 1)) << 8) | CLR_DIALOG;
+		short icon = ((0xB9 + (driveTypes[i] << 1)) << 8) | ((CLR_DIALOG >> 4) << 4);
 		short o = ((win->top + 1 + i) * 80) + win->left + 2;
 		TEXTMAP[o++] = icon;
 		TEXTMAP[o++] = icon + 0x100;
@@ -197,6 +197,62 @@ int SwitchDrive(int which, int now)
 	}
 }
 
+int ChangeAttributes(char* filePath)
+{
+	FILEINFO info;
+	DISK->FileStat(filePath, &info);
+	const unsigned char attribs[] = { AM_READONLY, AM_HIDDEN, AM_SYSTEM, AM_ARCHIVE };
+	const char* const names[] = { "Read-only", "Hidden", "System", "Archive" };
+	tWindow* win = OpenWindow(-1, -1, 20, 6, CLR_DIALOG);
+	for (int i = 0; i < 4; i++)
+	{
+		TEXT->SetTextColor(CLR_DIALOG >> 4, 0);
+		TEXT->SetCursorPosition(win->left + 2, win->top + 1 + i);
+		if (info.fattrib & attribs[i])
+			printf("\xAA\xAC\xAD ");
+		else
+			printf("\xAA\xAB\xAD ");
+		TEXT->SetTextColor(SplitColor(CLR_DIALOG));
+		printf(names[i]);
+	}
+	Highlight(win->left + 2,  win->top + 1, win->width - 6, 0x90);
+
+	int tab = 0;
+	while (1)
+	{
+		vbl();
+		unsigned short key = REG_KEYIN;
+		intoff();
+		if ((key & 0xFF) > 0)
+		{
+			while(1) { if (REG_KEYIN == 0) break; }
+			if (key == 0x0F) //tab
+			{
+				Highlight(win->left + 2,  win->top + 1 + tab, win->width - 6, CLR_DIALOG);
+				tab++;
+				if (tab == 4) tab = 6;
+				if (tab == 6) tab = 0;
+				Highlight(win->left + 2,  win->top + 1 + tab, win->width - 6, 0x90);
+			}
+			else if (key == 0x39) //space
+			{
+				info.fattrib ^= attribs[tab];
+				TEXT->SetTextColor(9, 0);
+				TEXT->SetCursorPosition(win->left + 3, win->top + 1 + tab);
+				TEXT->WriteChar(info.fattrib & attribs[tab] ? '\xAC' : '\xAB');
+			}
+			else if (key == 0x1C || key == 0x01) //enter or escape
+			{
+				if (key == 0x1C)
+					DISK->FileAttrib(filePath, info.fattrib);
+				CloseWindow(win);
+				return key == 0x1C;
+			}
+		}
+	}
+	return 0;
+}
+
 void InfoPanel(int panel, char* workPath, char* filename)
 {
 	char filePath[MAXPATH];
@@ -216,11 +272,13 @@ void InfoPanel(int panel, char* workPath, char* filename)
 	else
 	{
 		sprintf(t[i++], "@%s", filename);
-		sprintf(t[i++], "File");
+		if (info.fattrib & AM_DIRECTORY)
+			sprintf(t[i++], "Directory");
+		else
+			sprintf(t[i++], "File");
 		if (info.fattrib & AM_READONLY) sprintf(t[i++], "Read-only");
 		if (info.fattrib & AM_HIDDEN) sprintf(t[i++], "Hidden");
 		if (info.fattrib & AM_SYSTEM) sprintf(t[i++], "System");
-		if (info.fattrib & AM_DIRECTORY) sprintf(t[i - 1], "Directory");
 		if (info.fattrib & AM_ARCHIVE) sprintf(t[i++], "Archive");
 		sprintf(t[i++], "0x%02X", info.fattrib);
 	}
@@ -703,7 +761,7 @@ HandleMenu:
 								ShowError("File printing not implemented yet.");
 								break;
 							case 18: //Attrib
-								ShowError("Changing attributes not implemented yet.");
+								ChangeAttributes(curFN);
 								break;
 						}
 					}
