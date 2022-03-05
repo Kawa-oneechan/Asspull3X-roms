@@ -226,12 +226,18 @@ int ChangeAttributes(char* filePath)
 		if ((key & 0xFF) > 0)
 		{
 			while(1) { if (REG_KEYIN == 0) break; }
-			if (key == 0x0F) //tab
+			if (key == 0xC8) //up
+			{
+				Highlight(win->left + 2,  win->top + 1 + tab, win->width - 6, CLR_DIALOG);
+				if (tab == 0) tab = 4;
+				tab--;
+				Highlight(win->left + 2,  win->top + 1 + tab, win->width - 6, 0x90);
+			}
+			else if (key == 0xD0 || key == 0x0F) //down or tab
 			{
 				Highlight(win->left + 2,  win->top + 1 + tab, win->width - 6, CLR_DIALOG);
 				tab++;
-				if (tab == 4) tab = 6;
-				if (tab == 6) tab = 0;
+				if (tab == 4) tab = 0;
 				Highlight(win->left + 2,  win->top + 1 + tab, win->width - 6, 0x90);
 			}
 			else if (key == 0x39) //space
