@@ -203,19 +203,19 @@ int ChangeAttributes(char* filePath)
 	DISK->FileStat(filePath, &info);
 	const unsigned char attribs[] = { AM_READONLY, AM_HIDDEN, AM_SYSTEM, AM_ARCHIVE };
 	const char* const names[] = { "Read-only", "Hidden", "System", "Archive" };
-	tWindow* win = OpenWindow(-1, -1, 20, 6, CLR_DIALOG);
+	tWindow* win = OpenWindow(-1, -1, 20, 7, CLR_DIALOG);
 	for (int i = 0; i < 4; i++)
 	{
 		TEXT->SetTextColor(CLR_DIALOG >> 4, 0);
-		TEXT->SetCursorPosition(win->left + 2, win->top + 1 + i);
+		TEXT->SetCursorPosition(win->left + 2, win->top + 2 + i);
 		if (info.fattrib & attribs[i])
-			printf("\xAA\xAC\xAD ");
+			printf("\xAC\xAD ");
 		else
-			printf("\xAA\xAB\xAD ");
+			printf("\xAA\xAB ");
 		TEXT->SetTextColor(SplitColor(CLR_DIALOG));
 		printf(names[i]);
 	}
-	Highlight(win->left + 2,  win->top + 1, win->width - 6, 0x90);
+	Highlight(win->left + 2,  win->top + 2, win->width - 6, 0x90);
 
 	int tab = 0;
 	while (1)
@@ -228,24 +228,24 @@ int ChangeAttributes(char* filePath)
 			while(1) { if (REG_KEYIN == 0) break; }
 			if (key == 0xC8) //up
 			{
-				Highlight(win->left + 2,  win->top + 1 + tab, win->width - 6, CLR_DIALOG);
+				Highlight(win->left + 2,  win->top + 2 + tab, win->width - 6, CLR_DIALOG);
 				if (tab == 0) tab = 4;
 				tab--;
-				Highlight(win->left + 2,  win->top + 1 + tab, win->width - 6, 0x90);
+				Highlight(win->left + 2,  win->top + 2 + tab, win->width - 6, 0x90);
 			}
 			else if (key == 0xD0 || key == 0x0F) //down or tab
 			{
-				Highlight(win->left + 2,  win->top + 1 + tab, win->width - 6, CLR_DIALOG);
+				Highlight(win->left + 2,  win->top + 2 + tab, win->width - 6, CLR_DIALOG);
 				tab++;
 				if (tab == 4) tab = 0;
-				Highlight(win->left + 2,  win->top + 1 + tab, win->width - 6, 0x90);
+				Highlight(win->left + 2,  win->top + 2 + tab, win->width - 6, 0x90);
 			}
 			else if (key == 0x39) //space
 			{
 				info.fattrib ^= attribs[tab];
 				TEXT->SetTextColor(9, 0);
-				TEXT->SetCursorPosition(win->left + 3, win->top + 1 + tab);
-				TEXT->WriteChar(info.fattrib & attribs[tab] ? '\xAC' : '\xAB');
+				TEXT->SetCursorPosition(win->left + 2, win->top + 2 + tab);
+				printf(info.fattrib & attribs[tab] ? "\xAC\xAD" : "\xAA\xAB");
 			}
 			else if (key == 0x1C || key == 0x01) //enter or escape
 			{
@@ -365,6 +365,8 @@ void SelectFile(const char* path1, const char* path2, const char* pattern, char*
 				if (views[s] == 0)
 				{
 					TEXT->SetTextColor(SplitColor(CLR_PANEL));
+					for (int i = 0; i < WIDTH - 1; i++)
+						TEXTMAP[80 + o + i + 1] = 0x8300 | CLR_PANEL; //top edge
 					TEXT->SetCursorPosition(o + (WIDTH / 2) - (strlen(workPath[s]) / 2), 1);
 					TEXT->Write(" %s ", workPath[s]);
 
