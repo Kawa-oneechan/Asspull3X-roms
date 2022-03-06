@@ -32,8 +32,8 @@ extern const uint16_t girl1Tiles[], girl1Pal[], girl1Map[];
 	(((hf) & 1) << 26) |						\
 	(((dh) & 1) << 25) |						\
 	(((dw) & 1) << 24) |						\
-	(((vp) & 0xFFF) << 12) |					\
-	(((hp) & 0xFFF) << 0)						\
+	(((vp) & 0x3FF) << 12) |					\
+	(((hp) & 0x7FF) << 0)						\
 )
 
 char map[WELL_WIDTH*WELL_HEIGHT] = {0};

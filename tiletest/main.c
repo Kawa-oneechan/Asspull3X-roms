@@ -53,10 +53,10 @@ typedef struct
 			uint32_t tall:1;
 			uint32_t wide:1;
 
-			uint32_t :3;
-			uint32_t y:9;
-			uint32_t :2;
-			uint32_t x:10;
+			int32_t :2;
+			int32_t y:10;
+			int32_t :1;
+			int32_t x:11;
 		};
 		uint32_t raw;
 	};
