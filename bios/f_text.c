@@ -120,13 +120,13 @@ void SetBold(bool bold)
 		REG_SCREENMODE &= ~SMODE_BOLD;
 }
 
-void SetCursor(int32_t left, int32_t top)
+void SetCursor(int left, int top)
 {
 	int textWidth = (REG_SCREENMODE & SMODE_320) ? 40 : 80;
 	REG_CARET = (REG_CARET & 0xC000) | ((textWidth * top) + left);
 }
 
-void SetTextColor(int32_t back, int32_t fore)
+void SetTextColor(int back, int fore)
 {
 	attribs = (back << 4) | fore;
 }

@@ -16,28 +16,28 @@ const IMiscLibrary miscLibrary =
 	RleUnpack
 };
 
-void SetTextMode(int32_t flags)
+void SetTextMode(int flags)
 {
 	REG_SCREENMODE = SMODE_TEXT | flags;
 	interface->DrawChar = 0;
 }
 
-void SetBitmapMode16(int32_t flags)
+void SetBitmapMode16(int flags)
 {
 	REG_SCREENMODE = SMODE_BMP16 | flags;
 	interface->DrawChar = (flags & SMODE_320) ? DrawChar4_320 : DrawChar4_640;
 }
 
-void SetBitmapMode256(int32_t flags)
+void SetBitmapMode256(int flags)
 {
 	REG_SCREENMODE = SMODE_BMP256 | flags;
 	interface->DrawChar = (flags & SMODE_320) ? DrawChar8_320 : DrawChar8_640;
 }
 
-void EnableObjects(int32_t enabled)
+void EnableObjects(bool enabled)
 {
 	//To be replaced with RemoveObjects
-	enabled = 0;
+	enabled = false;
 }
 
 void WaitForVBlank()
@@ -51,20 +51,20 @@ void WaitForVBlank()
 //		interface->VBlank();
 }
 
-void WaitForVBlanks(int32_t vbls)
+void WaitForVBlanks(int vbls)
 {
 	while(vbls--) WaitForVBlank();
 }
 
 //CONSIDER: Replace these with #define macros in ass.h.
-void DmaCopy(void* dst, const void* src, size_t size, int32_t step)
+void DmaCopy(void* dst, const void* src, size_t size, int step)
 {
 	REG_DMASOURCE = (int)src;
 	REG_DMATARGET = (int)dst;
 	REG_DMALENGTH = size;
 	REG_DMACONTROL = 0x07 | (step << 4);
 }
-void DmaClear(void* dst, int32_t src, size_t size, int32_t step)
+void DmaClear(void* dst, int src, size_t size, int step)
 {
 	REG_DMASOURCE = (int)src;
 	REG_DMATARGET = (int)dst;

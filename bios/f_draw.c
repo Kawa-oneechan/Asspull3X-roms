@@ -1,7 +1,7 @@
 #include "../ass.h"
 #include "funcs.h"
 
-extern int32_t vsprintf(char*, const char*, va_list);
+extern int vsprintf(char*, const char*, va_list);
 
 const IDrawingLibrary drawingLibrary =
 {
@@ -21,15 +21,15 @@ const IDrawingLibrary drawingLibrary =
 #define DRAWCHAR4(WIDTH) \
 	char* glyph = interface->DrawCharFont + (c * (interface->DrawCharHeight & 0x00FF)); \
 	char* target = (char*)MEM_VRAM + (y * (WIDTH/2)) + (x / 2); \
-	if (x % 2 == 0) { for (int32_t line = 0; line < (interface->DrawCharHeight & 0x00FF); line++) { \
-			char g = *glyph++; for (int32_t bit = 0; bit < 8; bit += 2) { \
-				int32_t p = g >> bit; \
+	if (x % 2 == 0) { for (int line = 0; line < (interface->DrawCharHeight & 0x00FF); line++) { \
+			char g = *glyph++; for (int bit = 0; bit < 8; bit += 2) { \
+				int p = g >> bit; \
 				if (p & 1) *target = (*target & 0xF0) | (color << 0); \
 				if (p & 2) *target = (*target & 0x0F) | (color << 4); \
 				target++; } target += (WIDTH/2) - 4; \
-		} }	else { for (int32_t line = 0; line < (interface->DrawCharHeight & 0x00FF); line++) { \
+		} }	else { for (int line = 0; line < (interface->DrawCharHeight & 0x00FF); line++) { \
 			char g = *glyph++; if (g & 1) *target = (*target & 0x0F) | (color << 4); \
-			for (int32_t bit = 1; bit < 7; bit += 2) { target++; int32_t p = g >> bit; \
+			for (int bit = 1; bit < 7; bit += 2) { target++; int p = g >> bit; \
 				if (p & 1) *target = (*target & 0xF0) | (color << 0); \
 				if (p & 2) *target = (*target & 0x0F) | (color << 4); \
 			} target++; if ((g >> 7) & 1) *target = (*target & 0x0F) | (color << 4); \
@@ -37,15 +37,15 @@ const IDrawingLibrary drawingLibrary =
 #define DRAWCHAR8(WIDTH) \
 	char* glyph = interface->DrawCharFont + (c * (interface->DrawCharHeight & 0x00FF)); \
 	char* target = (char*)MEM_VRAM + (y * (WIDTH)) + x; \
-	for (int32_t line = 0; line < (interface->DrawCharHeight & 0x00FF); line++) { for (int32_t bit = 0; bit < 8; bit++) { \
-			int32_t pixel = (*glyph >> bit) & 1; if (pixel == 0) continue; \
+	for (int line = 0; line < (interface->DrawCharHeight & 0x00FF); line++) { for (int bit = 0; bit < 8; bit++) { \
+			int pixel = (*glyph >> bit) & 1; if (pixel == 0) continue; \
 			target[bit] = color; \
 		}  glyph++; target += (WIDTH); }
 
-void DrawChar4_320(char c, int32_t x, int32_t y, int32_t color) { DRAWCHAR4(320) }
-void DrawChar4_640(char c, int32_t x, int32_t y, int32_t color) { DRAWCHAR4(640) }
-void DrawChar8_320(char c, int32_t x, int32_t y, int32_t color) { DRAWCHAR8(320) }
-void DrawChar8_640(char c, int32_t x, int32_t y, int32_t color) { DRAWCHAR8(640) }
+void DrawChar4_320(char c, int x, int y, int color) { DRAWCHAR4(320) }
+void DrawChar4_640(char c, int x, int y, int color) { DRAWCHAR4(640) }
+void DrawChar8_320(char c, int x, int y, int color) { DRAWCHAR8(320) }
+void DrawChar8_640(char c, int x, int y, int color) { DRAWCHAR8(640) }
 
 static const uint16_t palette[] = {
 	0x0000, 0x5400, 0x02A0, 0x56A0, 0x0015, 0x5415, 0x0115, 0x56B5,
@@ -55,7 +55,7 @@ static const uint16_t palette[] = {
 
 void ResetPalette()
 {
-	for (int32_t idx = 0; idx < 16; idx++)
+	for (int idx = 0; idx < 16; idx++)
 	{
 		PALETTE[idx] = palette[idx];
 	}
@@ -63,7 +63,7 @@ void ResetPalette()
 
 void DisplayPicture(TImageFile* picData)
 {
-	int32_t mode = -1;
+	int mode = -1;
 	if (picData->Width == 320)
 	{
 		if (picData->Height == 240 || picData->Height == 200)
@@ -89,8 +89,8 @@ void DisplayPicture(TImageFile* picData)
 		else
 			SetBitmapMode16(mode);
 	}
-	int32_t colors = (picData->BitDepth == 8) ? 256 : 16;
-	DmaCopy((void*)PALETTE, (int8_t*)((int32_t)picData + picData->ColorOffset), colors * 1, DMA_SHORT);
+	int colors = (picData->BitDepth == 8) ? 256 : 16;
+	DmaCopy((void*)PALETTE, (int8_t*)((int)picData + picData->ColorOffset), colors * 1, DMA_SHORT);
 	int8_t* source = (int8_t*)picData;
 	source += picData->ImageOffset;
 	if (picData->Flags & 1)
@@ -103,7 +103,7 @@ void DisplayPicture(TImageFile* picData)
 
 void FadeToBlack()
 {
-	for (int32_t i = 0; i < 32; i += FADESPEED)
+	for (int i = 0; i < 32; i += FADESPEED)
 	{
 		REG_SCREENFADE = i;
 		WaitForVBlank();
@@ -113,7 +113,7 @@ void FadeToBlack()
 
 void FadeFromBlack()
 {
-	for (int32_t i = 31; i >= 0; i -= FADESPEED)
+	for (int i = 31; i >= 0; i -= FADESPEED)
 	{
 		REG_SCREENFADE = i;
 		WaitForVBlank();
@@ -123,7 +123,7 @@ void FadeFromBlack()
 
 void FadeToWhite()
 {
-	for (int32_t i = 0; i < 32; i += FADESPEED)
+	for (int i = 0; i < 32; i += FADESPEED)
 	{
 		REG_SCREENFADE = 0x80 | i;
 		WaitForVBlank();
@@ -133,7 +133,7 @@ void FadeToWhite()
 
 void FadeFromWhite()
 {
-	for (int32_t i = 31; i >= 0; i -= FADESPEED)
+	for (int i = 31; i >= 0; i -= FADESPEED)
 	{
 		REG_SCREENFADE = 0x80 | i;
 		WaitForVBlank();
@@ -141,11 +141,12 @@ void FadeFromWhite()
 	REG_SCREENFADE = 0x80;
 }
 
-void DrawString(const char* str, int32_t x, int32_t y, int32_t color)
+void DrawString(const char* str, int x, int y, int color)
 {
 	if (interface->DrawChar == NULL) return;
+	int ints = REG_INTRMODE;
 	intoff();
-	int32_t sx = x;
+	int sx = x;
 	while(*str)
 	{
 		if (*str == '\n')
@@ -159,12 +160,13 @@ void DrawString(const char* str, int32_t x, int32_t y, int32_t color)
 		DrawChar(*str++, x, y, color);
 		x += 8;
 	}
-	inton();
+	REG_INTRMODE = ints;
 }
 
-void DrawFormat(const char* format, int32_t x, int32_t y, int32_t color, ...)
+void DrawFormat(const char* format, int x, int y, int color, ...)
 {
 	if (interface->DrawChar == NULL) return;
+	int ints = REG_INTRMODE;
 	intoff();
 	char buffer[1024];
 	va_list args;
@@ -177,22 +179,22 @@ void DrawFormat(const char* format, int32_t x, int32_t y, int32_t color, ...)
 		x += 8;
 	}
 	va_end(args);
-	inton();
+	REG_INTRMODE = ints;
 }
 
-void DrawChar(char ch, int32_t x, int32_t y, int32_t color)
+void DrawChar(char ch, int x, int y, int color)
 {
 	interface->DrawChar(ch, x, y, color);
 }
 
 extern int abs(int);
 
-static int32_t _getPixel8(int32_t x, int32_t y, int32_t stride, uint8_t* dest)
+static int _getPixel8(int x, int y, int stride, uint8_t* dest)
 {
 	return dest[(y * stride) + x];
 }
 
-static int32_t _getPixel4(int32_t x, int32_t y, int32_t stride, uint8_t* dest)
+static int _getPixel4(int x, int y, int stride, uint8_t* dest)
 {
 	char now = dest[(y * stride) + (x / 2)];
 	if (x % 2 == 0)
@@ -200,12 +202,12 @@ static int32_t _getPixel4(int32_t x, int32_t y, int32_t stride, uint8_t* dest)
 	return (now & 0xF0) >> 4;
 }
 
-static void _setPixel8(int32_t x, int32_t y, int32_t stride, int32_t color, uint8_t* dest)
+static void _setPixel8(int x, int y, int stride, int color, uint8_t* dest)
 {
 	dest[(y * stride) + x] = color;
 }
 
-static void _setPixel4(int32_t x, int32_t y, int32_t stride, int32_t color, uint8_t* dest)
+static void _setPixel4(int x, int y, int stride, int color, uint8_t* dest)
 {
 	char now = dest[(y * stride) + (x / 2)];
 	if (x % 2 == 0)
@@ -215,9 +217,9 @@ static void _setPixel4(int32_t x, int32_t y, int32_t stride, int32_t color, uint
 	dest[(y * stride) + (x / 2)] = now;
 }
 
-#define SWAP(A, B) { int32_t tmp = A; A = B; B = tmp; }
+#define SWAP(A, B) { int tmp = A; A = B; B = tmp; }
 
-void DrawLine(int32_t x1, int32_t y1, int32_t x2, int32_t y2, int32_t color, uint8_t* dest)
+void DrawLine(int x1, int y1, int x2, int y2, int color, uint8_t* dest)
 {
 	int8_t ints = REG_INTRMODE;
 	intoff();
@@ -226,7 +228,7 @@ void DrawLine(int32_t x1, int32_t y1, int32_t x2, int32_t y2, int32_t color, uin
 	if (REG_SCREENMODE & SMODE_320) stride /= 2;
 	if (REG_SCREENMODE & SMODE_BMP16) stride /= 2;
 
-	void(*setPixel)(int32_t,int32_t,int32_t,int32_t,uint8_t*) = _setPixel8;
+	void(*setPixel)(int,int,int,int,uint8_t*) = _setPixel8;
 	if (REG_SCREENMODE & SMODE_BMP16)
 		setPixel = _setPixel4;
 
@@ -249,10 +251,10 @@ void DrawLine(int32_t x1, int32_t y1, int32_t x2, int32_t y2, int32_t color, uin
 		return;
 	}
 
-	int32_t dy = y2 - y1;
-	int32_t dx = x2 - x1;
-	int32_t stepy = dy < 0 ? -1 : 1;
-	int32_t stepx = dx < 0 ? -1 : 1;
+	int dy = y2 - y1;
+	int dx = x2 - x1;
+	int stepy = dy < 0 ? -1 : 1;
+	int stepx = dx < 0 ? -1 : 1;
 	dy = abs(dy) << 1;
 	dx = abs(dx) << 1;
 
@@ -294,7 +296,7 @@ void DrawLine(int32_t x1, int32_t y1, int32_t x2, int32_t y2, int32_t color, uin
 
 #define _FFSTACKMAX 2048
 static uint16_t* _ffStack;
-static int32_t _ffSP = -1;
+static int _ffSP = -1;
 
 static int _ffEmpty()
 {
@@ -331,7 +333,7 @@ static inline int16_t _ffPeek()
 	return _ffStack[_ffSP];
 }
 
-void FloodFill(int32_t x, int32_t y, int32_t newColor, uint8_t* dest)
+void FloodFill(int x, int y, int newColor, uint8_t* dest)
 {
 	int8_t ints = REG_INTRMODE;
 	intoff();
@@ -345,15 +347,15 @@ void FloodFill(int32_t x, int32_t y, int32_t newColor, uint8_t* dest)
 	if (REG_SCREENMODE & SMODE_200) height = 400;
 	if (REG_SCREENMODE & SMODE_240) height /= 2;
 
-	int32_t(*getPixel)(int32_t,int32_t,int32_t,uint8_t*) = _getPixel8;
-	void(*setPixel)(int32_t,int32_t,int32_t,int32_t,uint8_t*) = _setPixel8;
+	int(*getPixel)(int,int,int,uint8_t*) = _getPixel8;
+	void(*setPixel)(int,int,int,int,uint8_t*) = _setPixel8;
 	if (REG_SCREENMODE & SMODE_BMP16)
 	{
 		getPixel = _getPixel4;
 		setPixel = _setPixel4;
 	}
 
-	int32_t oldColor = getPixel(x, y, stride, dest);
+	int oldColor = getPixel(x, y, stride, dest);
 
 	//https://lodev.org/cgtutor/floodfill.html
 

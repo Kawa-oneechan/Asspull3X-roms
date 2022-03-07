@@ -2,7 +2,7 @@
 #include "funcs.h"
 #include "ffconf.h" //for FF_VOLUMES
 
-extern int32_t vsprintf(char*, const char*, va_list);
+extern int vsprintf(char*, const char*, va_list);
 
 const IDiskLibrary diskLibrary =
 {
@@ -20,35 +20,35 @@ const IDiskLibrary diskLibrary =
 
 FATFS FatFs[FF_VOLUMES] = { 0 };
 
-extern int32_t f_open (FILE* fp, const char* path, char mode);
-extern int32_t f_close (FILE* fp);
-extern int32_t f_read (FILE* fp, void* buff, uint32_t btr, uint32_t* br);
-extern int32_t f_write (FILE* fp, const void* buff, uint32_t btw, uint32_t* bw);
-extern int32_t f_lseek (FILE* fp, int32_t ofs);
-extern int32_t f_truncate (FILE* fp);
-extern int32_t f_sync (FILE* fp);
-extern int32_t f_opendir (DIR* dp, const char* path);
-extern int32_t f_closedir (DIR* dp);
-extern int32_t f_readdir (DIR* dp, FILEINFO* fno);
-extern int32_t f_findfirst (DIR* dp, FILEINFO* fno, const char* path, const char* pattern);
-extern int32_t f_findnext (DIR* dp, FILEINFO* fno);
-extern int32_t f_mkdir (const char* path);
-extern int32_t f_unlink (const char* path);
-extern int32_t f_rename (const char* path_old, const char* path_new);
-extern int32_t f_stat (const char* path, FILEINFO* fno);
-extern int32_t f_chmod (const char* path, char attr, char mask);
-extern int32_t f_utime (const char* path, const FILEINFO* fno);
-extern int32_t f_chdir (const char* path);
-//extern int32_t f_chdrive (const char* path);
-extern int32_t f_getcwd (char* buff, uint32_t len);
-extern int32_t f_getfree (const char* path, unsigned long* nclst, FATFS** fatfs);
-extern int32_t f_getlabel (const char* path, char* label, unsigned long* vsn);
-extern int32_t f_setlabel (const char* label);
-extern int32_t f_mount (FATFS* fs, const char* path, char opt);
-//extern int32_t f_putc (char c, FILE* fp);
-//extern int32_t f_puts (const char* str, FILE* cp);
-//extern int32_t f_printf (FILE* fp, const char* str, ...);
-//extern char* f_gets (char* buff, int32_t len, FILE* fp);
+extern int f_open (FILE* fp, const char* path, char mode);
+extern int f_close (FILE* fp);
+extern int f_read (FILE* fp, void* buff, size_t btr, unsigned int* br);
+extern int f_write (FILE* fp, const void* buff, unsigned int btw, unsigned int* bw);
+extern int f_lseek (FILE* fp, int ofs);
+extern int f_truncate (FILE* fp);
+extern int f_sync (FILE* fp);
+extern int f_opendir (DIR* dp, const char* path);
+extern int f_closedir (DIR* dp);
+extern int f_readdir (DIR* dp, FILEINFO* fno);
+extern int f_findfirst (DIR* dp, FILEINFO* fno, const char* path, const char* pattern);
+extern int f_findnext (DIR* dp, FILEINFO* fno);
+extern int f_mkdir (const char* path);
+extern int f_unlink (const char* path);
+extern int f_rename (const char* path_old, const char* path_new);
+extern int f_stat (const char* path, FILEINFO* fno);
+extern int f_chmod (const char* path, char attr, char mask);
+extern int f_utime (const char* path, const FILEINFO* fno);
+extern int f_chdir (const char* path);
+//extern int f_chdrive (const char* path);
+extern int f_getcwd (char* buff, size_t len);
+extern int f_getfree (const char* path, unsigned long* nclst, FATFS** fatfs);
+extern int f_getlabel (const char* path, char* label, unsigned long* vsn);
+extern int f_setlabel (const char* label);
+extern int f_mount (FATFS* fs, const char* path, char opt);
+//extern int f_putc (char c, FILE* fp);
+//extern int f_puts (const char* str, FILE* cp);
+//extern int f_printf (FILE* fp, const char* str, ...);
+//extern char* f_gets (char* buff, size_t len, FILE* fp);
 
 
 char diskToDev[FF_VOLUMES] = { 0 };
@@ -74,39 +74,39 @@ void PrepareDiskToDevMapping()
 	}
 }
 
-int32_t OpenFile(TFileHandle* handle, const char* path, char mode)
+int OpenFile(TFileHandle* handle, const char* path, char mode)
 {
 	return f_open(handle, path, mode);
 }
 
-int32_t CloseFile(TFileHandle* handle)
+int CloseFile(TFileHandle* handle)
 {
 	return f_close(handle);
 }
 
-int32_t ReadFile(TFileHandle* handle, void* target, uint32_t length)
+int ReadFile(TFileHandle* handle, void* target, size_t length)
 {
-	uint32_t read;
+	size_t read;
 	if (length == 0)
 		length = FileSize(handle);
-	int32_t r = f_read(handle, target, length, &read);
+	int r = f_read(handle, target, length, (unsigned int*)&read);
 	if (r)
 		return -r;
 	else
 		return read;
 }
 
-int32_t WriteFile(TFileHandle* handle, void* source, uint32_t length)
+int WriteFile(TFileHandle* handle, void* source, size_t length)
 {
-	uint32_t wrote;
-	int32_t r = f_write(handle, source, length, &wrote);
+	size_t wrote;
+	int r = f_write(handle, source, length, (unsigned int*)&wrote);
 	if (r)
 		return -r;
 	else
 		return wrote;
 }
 
-int32_t SeekFile(TFileHandle* handle, uint32_t offset, int32_t origin)
+int SeekFile(TFileHandle* handle, unsigned int offset, int origin)
 {
 	if (origin == SEEK_CUR)
 		f_lseek(handle, handle->fptr + offset);
@@ -117,110 +117,110 @@ int32_t SeekFile(TFileHandle* handle, uint32_t offset, int32_t origin)
 	return handle->fptr;
 }
 
-int32_t TruncateFile(TFileHandle* handle)
+int TruncateFile(TFileHandle* handle)
 {
 	return f_truncate(handle);
 }
-int32_t FlushFile(TFileHandle* handle)
+int FlushFile(TFileHandle* handle)
 {
 	return f_sync(handle);
 }
 
-uint32_t FilePosition(TFileHandle* handle)
+unsigned int FilePosition(TFileHandle* handle)
 {
 	return handle->fptr;
 }
 
-int32_t FileEnd(TFileHandle* handle)
+bool FileEnd(TFileHandle* handle)
 {
-	return (int32_t)(handle->fptr >= handle->obj.objsize);
+	return (handle->fptr >= handle->obj.objsize);
 }
 
-uint32_t FileSize(TFileHandle* handle)
+size_t FileSize(TFileHandle* handle)
 {
 	return handle->obj.objsize;
 }
 
-int32_t OpenDir(TDirHandle* handle, const char* path)
+int OpenDir(TDirHandle* handle, const char* path)
 {
 	return f_opendir(handle, path);
 }
 
-int32_t CloseDir(TDirHandle* handle)
+int CloseDir(TDirHandle* handle)
 {
 	return f_closedir(handle);
 }
 
-int32_t ReadDir(TDirHandle* handle, TFileInfo* info)
+int ReadDir(TDirHandle* handle, TFileInfo* info)
 {
 	return f_readdir(handle, info);
 }
 
-int32_t FindFirst(TDirHandle* handle, TFileInfo* info, const char* path, const char* pattern)
+int FindFirst(TDirHandle* handle, TFileInfo* info, const char* path, const char* pattern)
 {
 	return f_findfirst(handle, info, path, pattern);
 }
 
-int32_t FindNext(TDirHandle* handle, TFileInfo* info)
+int FindNext(TDirHandle* handle, TFileInfo* info)
 {
 	return f_findnext(handle, info);
 }
 
-int32_t FileStat(const char* path, TFileInfo* info)
+int FileStat(const char* path, TFileInfo* info)
 {
 	return f_stat(path, info);
 }
 
-int32_t UnlinkFile(const char* path)
+int UnlinkFile(const char* path)
 {
 	return f_unlink(path);
 }
 
-int32_t RenameFile(const char* from, const char* to)
+int RenameFile(const char* from, const char* to)
 {
 	return f_rename(from, to);
 }
 
 #ifdef ALLOW_TOUCH
-int32_t FileTouch(const char* path, TFileInfo* dt)
+int FileTouch(const char* path, TFileInfo* dt)
 {
 	return f_utime(path, dt);
 }
 #else
-int32_t FileTouch(const char* path, TFileInfo* dt)
+int FileTouch(const char* path, TFileInfo* dt)
 {
 	return 0;
 }
 #endif
 
-int32_t FileAttrib(const char* path, char attrib)
+int FileAttrib(const char* path, char attrib)
 {
 	return f_chmod(path, attrib, 0xFF);
 }
 
-int32_t MakeDir(const char* path)
+int MakeDir(const char* path)
 {
 	return f_mkdir(path);
 }
 
-int32_t ChangeDir(const char* path)
+int ChangeDir(const char* path)
 {
 	return f_chdir(path);
 }
 
-int32_t GetCurrentDir(char* buffer, int32_t buflen)
+int GetCurrentDir(char* buffer, size_t buflen)
 {
 	return f_getcwd(buffer, buflen);
 }
 
-int32_t GetLabel(char disk, char* buffer, unsigned long* id)
+int GetLabel(char disk, char* buffer, unsigned long* id)
 {
 	char path[4] = "X:";
 	path[0] = disk;
 	return f_getlabel(path, buffer, id);
 }
 
-int32_t GetFree(char disk)
+int GetFree(char disk)
 {
 	char path[4] = "X:";
 	path[0] = disk;
@@ -257,7 +257,7 @@ static const char* const FSErrors[21] =
 	"<Invalid error number>"
 };
 
-const char* FileErrStr(int32_t error)
+const char* FileErrStr(int error)
 {
 	if (error > 19) error = 20;
 	return FSErrors[error];

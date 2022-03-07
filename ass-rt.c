@@ -91,7 +91,7 @@ void* memcpy(void* dst, const void* src, size_t count)
 	return(ret);
 }
 
-void* memset(void* dst, int32_t val, size_t count)
+void* memset(void* dst, int val, size_t count)
 {
 	void* start = dst;
 	while (count--)
@@ -126,7 +126,7 @@ void* calloc(int number, int size) { return interface->calloc(number, size); }
 //MALLOC/FREE
 //-----------
 #define ALIGN4(x) (((((x)-1)>>2)<<2)+4)
-extern int  __HEAP_START; //0x01100000 presumed.
+extern int __HEAP_START; //0x01100000 presumed.
 
 void* heap = (void*)0x01100000; //0;
 void* sbrk(int incr)
