@@ -204,6 +204,12 @@ int ChangeAttributes(char* filePath)
 	const unsigned char attribs[] = { AM_READONLY, AM_HIDDEN, AM_SYSTEM, AM_ARCHIVE };
 	const char* const names[] = { "Read-only", "Hidden", "System", "Archive" };
 	tWindow* win = OpenWindow(-1, -1, 20, 7, CLR_DIALOG);
+
+	//"The feline urge to add a disabled 'Directory' checkbox." -- Kawa, March 7, 2022
+	TEXT->SetTextColor(CLR_DIALOG >> 4, 8);
+	TEXT->SetCursorPosition(win->left + 2, win->top + 1);
+	printf("%s Directory", (info.fattrib & AM_DIRECTORY) ? "\xAC\xAD" : "\xAA\xAB");
+
 	for (int i = 0; i < 4; i++)
 	{
 		TEXT->SetTextColor(CLR_DIALOG >> 4, 0);
