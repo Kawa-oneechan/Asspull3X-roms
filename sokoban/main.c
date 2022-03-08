@@ -505,6 +505,7 @@ void CheckForDisk()
 	MISC->DmaClear((void*)MEM_VRAM, 0, 640*240/4, DMA_INT);
 
 	MISC->DmaCopy(PALETTE, (int16_t*)&diskettePal, 16, DMA_INT);
+	inton();
 	interface->VBlank = RotateTheFloppy;
 	interface->DrawCharFont = (char*)0x0E062400;
 	interface->DrawCharHeight = 0x0B10;
