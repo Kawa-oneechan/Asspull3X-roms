@@ -262,7 +262,7 @@ short ReadShort(FILE* file)
 }
 short ReadShortLE(FILE* file)
 {
-	unsigned char buffer[2];
+	uint8_t buffer[2];
 	DISK->ReadFile(file, buffer, 2);
 	return (buffer[1] << 8) | buffer[0];
 }
@@ -274,7 +274,7 @@ int ReadInt(FILE* file)
 }
 int ReadIntLE(FILE* file)
 {
-	unsigned char buffer[4];
+	uint8_t buffer[4];
 	DISK->ReadFile(file, buffer, 4);
 	return (buffer[3] << 24) | (buffer[2] << 16) | (buffer[1] << 8) | buffer[0];
 }

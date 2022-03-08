@@ -68,17 +68,17 @@ int ShowText(char* filePath)
 
 	intoff();
 
-	unsigned char* fileText = malloc(size);
+	uint8_t* fileText = malloc(size);
 	FILE file;
 	DISK->OpenFile(&file, filePath, FA_READ);
 	DISK->ReadFile(&file, (void*)fileText, nfo.fsize);
 	DISK->CloseFile(&file);
 	fileText[size] = 0;
 
-	unsigned char* fullText = malloc(size + 1024);
+	uint8_t* fullText = malloc(size + 1024);
 	memset(fullText, 0, size + 1024);
-	unsigned char *b = fileText;
-	unsigned char *c = fullText;
+	uint8_t *b = fileText;
+	uint8_t *c = fullText;
 	i = 0;
 	while (*b != 0)
 	{
@@ -148,7 +148,7 @@ int ShowText(char* filePath)
 			redraw = 0;
 		}
 
-		unsigned short key = REG_KEYIN;
+		uint16_t key = REG_KEYIN;
 		//vbl();
 		if ((key & 0xFF) > 0)
 		{

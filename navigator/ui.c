@@ -60,7 +60,7 @@ void WaitForKey()
 	while (REG_KEYIN != 0) { vbl(); }
 }
 
-tWindow* OpenWindow(int left, int top, int width, int height, int color)
+tWindow* OpenWindow(char left, char top, char width, char height, uint8_t color)
 {
 	if (left == -1) left = 40 - (width >> 1);
 	if (top == -1) top = 12 - (height >> 1);
@@ -71,9 +71,9 @@ tWindow* OpenWindow(int left, int top, int width, int height, int color)
 	win->top = top;
 	win->width = width;
 	win->height = height;
-	win->bits = (unsigned short*)malloc(sizeof(unsigned short) * (width * height));
-	unsigned short* b = win->bits;
-	unsigned short c;
+	win->bits = (uint16_t*)malloc(sizeof(uint16_t) * (width * height));
+	uint16_t* b = win->bits;
+	uint16_t c;
 	for (int i = 0; i < height; i++)
 	{
 		if (i + top < 0) continue;
@@ -82,7 +82,7 @@ tWindow* OpenWindow(int left, int top, int width, int height, int color)
 		{
 			if (j + left < 0) continue;
 			if (j + left >= 80) break;
-			short o = ((i + top) * 80) + j + left;
+			int o = ((i + top) * 80) + j + left;
 			*b++ = TEXTMAP[o];
 			if (i == 0 || i == height - 2)
 			{
@@ -130,7 +130,7 @@ tWindow* OpenWindow(int left, int top, int width, int height, int color)
 
 void CloseWindow(tWindow* win)
 {
-	unsigned short* b = win->bits;
+	uint16_t* b = win->bits;
 	for (int i = 0; i < win->height; i++)
 	{
 		if (i + win->top < 0) continue;
@@ -139,7 +139,7 @@ void CloseWindow(tWindow* win)
 		{
 			if (j + win->left < 0) continue;
 			if (j + win->left >= 80) break;
-			short o = ((i + win->top) * 80) + j + win->left;
+			int o = ((i + win->top) * 80) + j + win->left;
 			TEXTMAP[o] = *b++;
 		}
 	}
@@ -157,14 +157,14 @@ void ShowError(const char* message)
 	CloseWindow(win);
 }
 
-void DrawPanel(int left, int top, int width, int height, int color)
+void DrawPanel(char left, char top, char width, char height, uint8_t color)
 {
-	unsigned short c;
+	uint16_t c;
 	for (int i = 0; i < height; i++)
 	{
 		for (int j = 0; j < width; j++)
 		{
-			short o = ((i + top) * 80) + j + left;
+			int o = ((i + top) * 80) + j + left;
 			if (i == 0)
 			{
 				c = 0x8300 | color; //top edge
@@ -200,7 +200,7 @@ void DrawPanel(int left, int top, int width, int height, int color)
 
 void DrawKeys(const char** keys)
 {
-	short o = 29 * 80;
+	int o = 29 * 80;
 	for (int i = 0; i < 10; i++)
 	{
 		if (i < 9)
@@ -229,7 +229,7 @@ size_t myStrLen(const char* str)
 
 void DrawMenu()
 {
-	short o = 0;
+	int o = 0;
 	char* c;
 	for (int i = 0; i < NUMMENUS; i++)
 	{
@@ -261,9 +261,9 @@ void DrawMenu()
 		TEXTMAP[o++] = 0x2000 | CLR_MENUBAR;
 }
 
-void Highlight(char left, char top, char width, unsigned char color)
+void Highlight(char left, char top, char width, uint8_t color)
 {
-	short o = (top * 80) + left;
+	int o = (top * 80) + left;
 	for (int i = 0; i < width; i++, o++)
 	{
 		TEXTMAP[o] = (TEXTMAP[o] & ~0x00F0) | (color & 0xF0);
@@ -279,14 +279,14 @@ void DropMenu(int c)
 	{
 		if (menuBar[c].items[i].title[0] == '-')
 		{
-			short o = ((2 + i) * 80) + menuLefts[c];
+			int o = ((2 + i) * 80) + menuLefts[c];
 			TEXTMAP[o++] = 0xBD00 | CLR_MENU; //|-
 			for (int j = 0; j < menuWidths[c] + 4; j++)
 				TEXTMAP[o++] = 0x9000 | CLR_MENU; //--
 			TEXTMAP[o] = 0xBE00 | CLR_MENU; //-|
 			continue;
 		}
-		short o = ((2 + i) * 80) + menuLefts[c] + 3;
+		int o = ((2 + i) * 80) + menuLefts[c] + 3;
 		if (menuBar[c].items[i].state & 2)
 			TEXTMAP[o - 2] = 0x1000 | CLR_MENUITEM;
 
@@ -312,7 +312,7 @@ char OpenMenu(int cm)
 	DropMenu(cm);
 	while (1)
 	{
-		unsigned short key = REG_KEYIN;
+		uint16_t key = REG_KEYIN;
 		intoff();
 		if ((key & 0xFF) > 0)
 		{

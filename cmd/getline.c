@@ -56,7 +56,7 @@ int getc(FILE* stream)
 		DISK->ReadFile(stream, buffer, 1);
 		return buffer[0];
 	}
-	unsigned short key = 0;
+	uint16_t key = 0;
 	while (1)
 	{
 		key = REG_KEYIN;

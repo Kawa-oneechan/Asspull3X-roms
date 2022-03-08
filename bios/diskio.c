@@ -2,10 +2,10 @@
 #include "ff.h"
 
 //Keeping this separate from ass.h because you REALLY have no business here!
-#define DEVS ((unsigned char*)0x02000000)
+#define DEVS ((uint8_t*)0x02000000)
 #define DEVSIZE 0x8000
 #define DISKRAM &device[0x200]
-#define REG_DISKSECTOR *(unsigned short*)(&device[0x002])
+#define REG_DISKSECTOR *(uint16_t*)(&device[0x002])
 #define REG_DISKCONTROL device[0x004]
 #define REG_DISKTRACKS device[0x010]
 #define REG_DISKHEADS device[0x012]
@@ -14,11 +14,11 @@
 #define DCTL_ERROR		2
 #define DCTL_READNOW	4
 #define DCTL_WRITENOW	8
-#define REG_DMASOURCE	*(volatile unsigned long*)(0x0D000100)
-#define REG_DMATARGET	*(volatile unsigned long*)(0x0D000104)
-#define REG_DMALENGTH	*(volatile unsigned long*)(0x0D000108)
-#define REG_DMACONTROL	*(volatile unsigned char*)(0x0D00010A)
-#define REG_TIMET		*(volatile long long*)(0x0D00060)
+#define REG_DMASOURCE	*(volatile uint32_t*)(0x0D000100)
+#define REG_DMATARGET	*(volatile uint32_t*)(0x0D000104)
+#define REG_DMALENGTH	*(volatile uint32_t*)(0x0D000108)
+#define REG_DMACONTROL	*(volatile uint8_t*)(0x0D00010A)
+#define REG_TIMET		*(volatile int64_t*)(0x0D00060)
 
 /*
 DSTATUS disk_status(BYTE driveNo) __attribute__ ((weak, alias ("disk_initialize")));
@@ -50,15 +50,15 @@ DSTATUS disk_status(BYTE driveNo) __attribute__ ((weak, alias ("disk_initialize"
 #define isleap(y) ((((y) % 4) == 0 && ((y) % 100) != 0) || ((y) % 400) == 0)
 DWORD get_fattime(void)
 {
-	const long long lcltime = REG_TIMET;
+	const uint64_t lcltime = REG_TIMET;
 	if (lcltime == 0)
 		return ((DWORD)(FF_NORTC_YEAR - 1980) << 25 | (DWORD)FF_NORTC_MON << 21 | (DWORD)FF_NORTC_MDAY << 16);
 
 	int hours, mins, secs;
-	long days, rem;
+	int32_t days, rem;
 	int era, year;
-	unsigned erayear, yearday, month, day;
-	unsigned long eraday;
+	uint32_t erayear, yearday, month, day;
+	uint32_t eraday;
 
 	days = lcltime / ((SECSPERMIN * MINSPERHOUR) * HOURSPERDAY) + EPOCH_ADJUSTMENT_DAYS;
 	rem = lcltime % SECSPERDAY;
@@ -115,7 +115,7 @@ extern int diskDrives;
 
 DSTATUS disk_initialize(BYTE driveNo)
 {
-	unsigned char* device = DEVS + (diskToDev[driveNo] * DEVSIZE);
+	uint8_t* device = DEVS + (diskToDev[driveNo] * DEVSIZE);
 	if (REG_DISKCONTROL & DCTL_PRESENT)
 		return 0;
 	return STA_NOINIT; //STA_NODISK?
@@ -123,7 +123,7 @@ DSTATUS disk_initialize(BYTE driveNo)
 
 DSTATUS disk_status(BYTE driveNo)
 {
-	unsigned char* device = DEVS + (diskToDev[driveNo] * DEVSIZE);
+	uint8_t* device = DEVS + (diskToDev[driveNo] * DEVSIZE);
 	if (REG_DISKCONTROL & DCTL_PRESENT)
 		return 0;
 	return STA_NOINIT; //STA_NODISK?
@@ -131,7 +131,7 @@ DSTATUS disk_status(BYTE driveNo)
 
 DRESULT disk_read(BYTE driveNo, BYTE *buff, DWORD sector, UINT count)
 {
-	unsigned char* device = DEVS + (diskToDev[driveNo] * DEVSIZE);
+	uint8_t* device = DEVS + (diskToDev[driveNo] * DEVSIZE);
 	while(count--)
 	{
 		REG_DISKSECTOR = sector++;
@@ -149,7 +149,7 @@ DRESULT disk_read(BYTE driveNo, BYTE *buff, DWORD sector, UINT count)
 
 DRESULT disk_write(BYTE driveNo, const BYTE *buff, DWORD sector, UINT count)
 {
-	unsigned char* device = DEVS + (diskToDev[driveNo] * DEVSIZE);
+	uint8_t* device = DEVS + (diskToDev[driveNo] * DEVSIZE);
 	while(count--)
 	{
 		REG_DISKSECTOR = sector++;
@@ -165,7 +165,7 @@ DRESULT disk_write(BYTE driveNo, const BYTE *buff, DWORD sector, UINT count)
 
 DRESULT disk_ioctl(BYTE driveNo, BYTE ctrl, void *buff)
 {
-	unsigned char* device = DEVS + (diskToDev[driveNo] * DEVSIZE);
+	uint8_t* device = DEVS + (diskToDev[driveNo] * DEVSIZE);
 	if (!(REG_DISKCONTROL & DCTL_PRESENT))
 		return RES_NOTRDY;
 	switch (ctrl)

@@ -27,15 +27,15 @@ typedef struct
 {
 	char changed;
 	char buttons;
-	short x, y;
-	short oldX, oldY;
+	int16_t x, y;
+	int16_t oldX, oldY;
 	char oldButtons;
 } TMouseState;
 TMouseState MouseState;
 
 void HandleMouse()
 {
-	short rm = REG_MOUSE;
+	int16_t rm = REG_MOUSE;
 	int rawX = rm & 0x1F;
 	int rawY = (rm >> 7) & 0x1F;
 	if (rm & 0x40)   rawX = -rawX;
@@ -84,7 +84,7 @@ void MouseTest()
 	while (REG_KEYIN != 0) { vbl(); }
 
 	MouseState.x = 136; MouseState.y = 104;
-	const short colors[] = { 0x0000, 0x2223, 0x5184, 0x1A9E };
+	const uint16_t colors[] = { 0x0000, 0x2223, 0x5184, 0x1A9E };
 
 	DRAW->DisplayPicture((TImageFile*)&bmp320x240x4);
 	MISC->DmaCopy(PALETTE + 256, PALETTE, 16, DMA_SHORT);

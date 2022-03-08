@@ -41,23 +41,23 @@
 
 typedef struct
 {
-	unsigned char left, top, width, height;
-	unsigned short* bits;
+	uint8_t left, top, width, height;
+	uint16_t* bits;
 } tWindow;
 
 typedef struct
 {
 	char* title;
-	char scan;
-	char state;
-	short code;
+	uint8_t scan;
+	uint8_t state;
+	int16_t code;
 } tMenuItem;
 
 typedef struct
 {
 	char* title;
-	char scan;
-	char numItems;
+	uint8_t scan;
+	uint8_t numItems;
 	const tMenuItem* items;
 } tMenu;
 extern const tMenu menuBar[];
@@ -65,11 +65,11 @@ extern tMenuItem leftMenu[], rightMenu[];
 #define NUMMENUS 4
 
 extern void WaitForKey();
-extern tWindow* OpenWindow(int left, int top, int width, int height, int color);
+extern tWindow* OpenWindow(char left, char top, char width, char height, uint8_t color);
 extern void CloseWindow(tWindow* win);
 extern void ShowError(const char* message);
-extern void DrawPanel(int left, int top, int width, int height, int color);
-extern void Highlight(char left, char top, char width, unsigned char color);
+extern void DrawPanel(char left, char top, char width, char height, uint8_t color);
+extern void Highlight(char left, char top, char width, uint8_t color);
 extern void DrawKeys(const char** keys);
 extern void DrawMenu();
 extern char OpenMenu(int num);

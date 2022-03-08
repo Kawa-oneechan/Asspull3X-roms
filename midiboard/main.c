@@ -3,7 +3,7 @@
 IBios* interface;
 
 extern const TImageFile piano;
-extern const unsigned char tinyFont[576];
+extern const uint8_t tinyFont[576];
 
 static const char sctopit[] = {
 //   0   1   2   3   4   5   6   7   8   9   a   b   c   d   e   f
@@ -222,7 +222,7 @@ int main(void)
 	MIDI_PROGRAM(1, program);
 	while(1)
 	{
-		unsigned short key = REG_KEYIN;
+		uint16_t key = REG_KEYIN;
 
 		if ((key & 0xFF) > 0)
 		{

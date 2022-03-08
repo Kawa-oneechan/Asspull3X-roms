@@ -116,7 +116,7 @@ int memcmp(const void* dst, const void* src, size_t count)
 
 /*#ifndef BIOS
 #warning USING MALLOC WRAPPERS
-void* malloc(unsigned int size) { return interface->malloc(size); }
+void* malloc(size_t size) { return interface->malloc(size); }
 void free(void *p) { interface->free(p); }
 void* calloc(int number, int size) { return interface->calloc(number, size); }
 #else
@@ -139,13 +139,13 @@ void* sbrk(int incr)
 	}
 	prev_heap = heap;
 
-	if (((unsigned int)heap + incr) >= 0x01400000)
+	if (((uint32_t)heap + incr) >= 0x01400000)
 	{
 		return prev_heap;
 	}
 
 	heap += incr;
-	return prev_heap; //(void*)ALIGN4((unsigned int)prev_heap);
+	return prev_heap; //(void*)ALIGN4((uint32_t)prev_heap);
 }
 void* brk(void* new_heap)
 {
@@ -155,7 +155,7 @@ void* brk(void* new_heap)
 }
 
 typedef struct malloc_block_meta {
-	unsigned int size;
+	uint32_t size;
 	struct malloc_block_meta* next;
 	int free;
 } malloc_block_meta;
@@ -255,7 +255,7 @@ void* realloc(void* ptr, size_t size)
 
 void* calloc(size_t nelem, size_t elsize)
 {
-	unsigned int size = nelem * elsize; //TODO: check for overflow.
+	size_t size = nelem * elsize; //TODO: check for overflow.
 	void* ptr = malloc(size);
 	memset(ptr, 0, size);
 	return ptr;
@@ -317,11 +317,11 @@ char* asctime(const tm *timeptr)
 tm* gmtime(const time_t* timer)
 {
 	tm* res = &__gmtime_res;
-	long days, rem;
+	int32_t days, rem;
 	const time_t lcltime = *timer;
 	int era, weekday, year;
-	unsigned erayear, yearday, month, day;
-	unsigned long eraday;
+	uint32_t erayear, yearday, month, day;
+	uint32_t eraday;
 
 	days = lcltime / SECSPERDAY + EPOCH_ADJUSTMENT_DAYS;
 	rem = lcltime % SECSPERDAY;

@@ -11,13 +11,13 @@ extern const uint16_t diskettePal[];
 extern const uint16_t hdma1[];
 extern const char * const levels[];
 
-extern const unsigned short imfData1[], imfData2[], imfData3[], imfData4[], imfData5[];
-extern const unsigned char jingleSound[];
-extern const unsigned char slideSound[];
-extern const unsigned char stepSound[];
-const unsigned char * const sounds[] = { 0, jingleSound, slideSound, stepSound };
+extern const uint16_t imfData1[], imfData2[], imfData3[], imfData4[], imfData5[];
+extern const uint8_t jingleSound[];
+extern const uint8_t slideSound[];
+extern const uint8_t stepSound[];
+const uint8_t * const sounds[] = { 0, jingleSound, slideSound, stepSound };
 
-extern int IMF_LoadSong(const unsigned short *sauce, int loop);
+extern int IMF_LoadSong(const uint16_t *sauce, bool loop);
 extern void IMF_Play();
 
 char *levelPack;
@@ -66,7 +66,7 @@ char *thisLevel;
 
 int levelNum = 0;
 int moves, seconds, minutes;
-long long lastTimeT;
+int64_t lastTimeT;
 
 char map[BOUNDS*BOUNDS] = {0};
 int playerX = 0, playerY = 0;
@@ -131,7 +131,7 @@ void victoryDance()
 	int tile = 256 + 96;
 
 	//shut up
-	IMF_LoadSong(0, 0);
+	IMF_LoadSong(0, false);
 
 	OBJECTS_A[0] = OBJECTA_BUILD(tile, 0, 1, 0);
 	for (int i = 0; i < 32; i++) vbl();
@@ -428,7 +428,7 @@ void nextLevel()
 	drawStatus();
 	loadBackground();
 	DRAW->FadeFromWhite();
-	IMF_LoadSong(imfData2, 1);
+	IMF_LoadSong(imfData2, true);
 	lastTimeT = REG_TIMET;
 }
 
@@ -438,12 +438,12 @@ void PlaySound(int id)
 	if (id == 1)
 	{
 		PCMOFFSET[1] = soundData + 4;
-		PCMLENGTH[1] = *(unsigned int*)soundData;
+		PCMLENGTH[1] = *(uint32_t*)soundData;
 	}
 	else
 	{
 		PCMOFFSET[0] = soundData + 4;
-		PCMLENGTH[0] = *(unsigned int*)soundData;
+		PCMLENGTH[0] = *(uint32_t*)soundData;
 	}
 }
 
@@ -456,7 +456,7 @@ void WaitForKey()
 
 int getc()
 {
-	unsigned short key = 0;
+	uint16_t key = 0;
 	while (1)
 	{
 		key = REG_KEYIN;

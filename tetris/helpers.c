@@ -1,11 +1,11 @@
 #include "../ass.h"
 #include "helpers.h"
-extern void srand(unsigned int seed);
-extern unsigned int rand();
+extern void srand(uint32_t seed);
+extern uint32_t rand();
 
-void shuffle_array(char *array, unsigned int nelements)
+void shuffle_array(char *array, size_t nelements)
 {
-	unsigned int i, j, tmp;
+	uint32_t i, j, tmp;
 
 	for (i = 0; i < nelements; i++)
 	{
@@ -16,17 +16,17 @@ void shuffle_array(char *array, unsigned int nelements)
 	}
 }
 
-int is_in_array(int target, const int *array, unsigned int nelements)
+int is_in_array(int target, const int *array, size_t nelements)
 {
-	for (unsigned i = 0; i < nelements; i++)
+	for (uint32_t i = 0; i < nelements; i++)
 		if (array[i] == target)
 			return 1;
 
 	return 0;
 }
 
-void set_array(int value, int *array, unsigned int nelements)
+void set_array(int value, int *array, size_t nelements)
 {
-	for (unsigned i = 0; i < nelements; i++)
+	for (uint32_t i = 0; i < nelements; i++)
 		array[i] = value;
 }

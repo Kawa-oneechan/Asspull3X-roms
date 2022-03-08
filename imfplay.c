@@ -1,16 +1,16 @@
-#include "../ass.h"
+#include "ass.h"
 
 #define BYTESWAP(x) x = ((x & 0xFF00) >> 8) | ((x & 0xFF) << 8);
 
-static const unsigned short *imfdata;
-static const unsigned short *_imfptr;
-static unsigned short _imfwait, _imfsize;
-static int imfLoop;
-static unsigned long _imfticks=0;
+static const uint16_t *imfdata;
+static const uint16_t *_imfptr;
+static uint16_t _imfwait, _imfsize;
+static bool imfLoop = true;
+static uint32_t _imfticks = 0;
 
 static void IMF_Service()
 {
-	unsigned short value;
+	uint16_t value;
 
 	if (!_imfptr)
 		return;
@@ -48,7 +48,7 @@ void IMF_Play()
 	for (int i = 0; i < 16; i++) IMF_Service();
 }
 
-int IMF_LoadSong(const unsigned short *sauce, int loop)
+int IMF_LoadSong(const uint16_t *sauce, bool loop)
 {
 	imfdata = sauce;
 	if (imfdata)
@@ -57,6 +57,10 @@ int IMF_LoadSong(const unsigned short *sauce, int loop)
 		_imfwait = 0;
 		_imfsize = (*_imfptr++) & 0xFCFF;
 		BYTESWAP(_imfsize);
+	}
+	else
+	{
+		_imfptr = 0;
 	}
 	imfLoop = loop;
 	return 0;

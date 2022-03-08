@@ -55,29 +55,29 @@ enum state
 
 typedef struct
 {
-	unsigned char* graphics;
-	short* palette;
-	short* metatiles;
+	uint8_t* graphics;
+	int16_t* palette;
+	int16_t* metatiles;
 } Tileset;
 
 typedef struct
 {
-	unsigned char width, height;
-	unsigned char* map;
+	uint8_t width, height;
+	uint8_t* map;
 	Tileset* tileset;
-	unsigned char* entities;
+	uint8_t* entities;
 } Map;
 
 typedef struct
 {
-	unsigned char x, y;
-	unsigned char oid;
-	unsigned char facing;
-	unsigned char state;
-	unsigned char counter[4];
-	unsigned char palette;
-	char* tileset;
-	unsigned char* script;
+	uint8_t x, y;
+	uint8_t oid;
+	uint8_t facing;
+	uint8_t state;
+	uint8_t counter[4];
+	uint8_t palette;
+	int8_t* tileset;
+	uint8_t* script;
 	void* motor;
 } MapEntity;
 
@@ -90,15 +90,15 @@ int cameraTX, cameraTY, lastCameraTX, lastCameraTY;
 int dialogueBoxIsOpen, dialoguePortrait;
 
 char playerName[16] = "Farrah";
-unsigned int scriptVariables[256] =
+uint32_t scriptVariables[256] =
 {
-	0, 0, (unsigned int)&playerName
+	0, 0, (uint32_t)&playerName
 };
 
 const char xdisp[] = { 0, -1, 0, 1 };
 const char ydisp[] = { 1, 0, -1, 0 };
 
-const unsigned char cursorTiles[] =
+const uint8_t cursorTiles[] =
 {
 	0x00,0x00,0x30,0x33,0x00,0x00,0x23,0x22,0x00,0x30,0x26,0x62,0x30,0x30,0x22,0x22,
 	0x63,0x63,0x22,0x22,0x23,0x24,0x22,0x22,0x23,0x24,0x22,0x22,0x63,0x64,0x22,0x22,
@@ -119,7 +119,7 @@ void drawTile(int x, int y, int tileNum)
 {
 	x &= 31;
 	y &= 31;
-	short* tile = map->tileset->metatiles + (tileNum * 9);
+	int16_t* tile = map->tileset->metatiles + (tileNum * 9);
 	int pos = ((y * 2) * 64) + (x * 2);
 
 	MAP1[pos +  0] = tile[1] + 256;
@@ -472,15 +472,15 @@ int doMenu(int left, int top, char* options, int num)
 #define MAXSTACK 250
 #define MAXPRINTBUFFER 250
 
-void runScript(unsigned char* code, int entityID)
+void runScript(uint8_t* code, int entityID)
 {
-	unsigned char* pc = code;
-	unsigned int acc = 0;
-	unsigned int stack[MAXSTACK] = { 0 };
+	uint8_t* pc = code;
+	uint32_t acc = 0;
+	uint32_t stack[MAXSTACK] = { 0 };
 	char printBuffer[MAXPRINTBUFFER] = { 0 };
 	int stackSize = 0;
 	int argc = 0;
-	unsigned char cmd;
+	uint8_t cmd;
 	while (*pc != 0xFF)
 	{
 		cmd = *pc++;
@@ -685,7 +685,7 @@ void entityPlayerMotor(MapEntity *entity)
 }
 
 //I don't understand half the shit Cearn did here.
-void id_sort_shell(int keys[], unsigned char ids[], int count)
+void id_sort_shell(int keys[], uint8_t ids[], int count)
 {
 	int ii, inc, jj, id0;
 	int key0;
@@ -709,7 +709,7 @@ void id_sort_shell(int keys[], unsigned char ids[], int count)
 void updateAndDraw()
 {
 	int keys[MAXENTITIES];
-	unsigned char ids[MAXENTITIES];
+	uint8_t ids[MAXENTITIES];
 	int count = 0;
 	for(int i = 0; i < map->entities[0]; i++)
 	{
@@ -798,8 +798,8 @@ int main(void)
 	MISC->DmaCopy(TILESET + 0x6000, (int8_t*)&fontTiles, 0x80, DMA_INT);
 	MISC->DmaClear(TILESET+ 0x6400, 0x88888888, 0x5D0, DMA_INT);
 //	MISC->DmaCopy(TILESET + 0x6400, (int8_t*)&uiTiles + 0x400, 0x5D0, DMA_INT);
-	REG_BLITSOURCE = (long)fontTiles + 0x400;
-	REG_BLITTARGET = (long)TILESET + 0x6400;
+	REG_BLITSOURCE = (int32_t)fontTiles + 0x400;
+	REG_BLITTARGET = (int32_t)TILESET + 0x6400;
 	REG_BLITLENGTH = 0x1740;
 	REG_BLITKEY = 0;
 	REG_BLITCONTROL = BLIT_COPY | 0xC0 | BLIT_COLORKEY;
@@ -818,7 +818,7 @@ int main(void)
 	map = (Map*)testMap;
 	MISC->DmaCopy(TILESET + 0x2000, map->tileset->graphics, 0x1000, DMA_INT);
 	MISC->DmaCopy(PALETTE, map->tileset->palette, 72, DMA_INT);
-	unsigned char* data = map->entities + 1;
+	uint8_t* data = map->entities + 1;
 	for (int i = 0; i < map->entities[0]; i++)
 	{
 		MapEntity* me = &entities[i];
@@ -830,9 +830,9 @@ int main(void)
 		me->counter[1] = 0;
 		me->counter[2] = 0;
 		me->counter[3] = 0;
-		me->tileset = (char*)sprites[data[0]];
+		me->tileset = (int8_t*)sprites[data[0]];
 		me->palette = spritePals[data[0]];
-		me->script = (unsigned char*)*(long*)(&data[6]);
+		me->script = (uint8_t*)*(int32_t*)(&data[6]);
 		switch (data[4])
 		{
 			case 255:

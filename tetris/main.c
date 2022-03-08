@@ -10,7 +10,7 @@ extern const uint16_t tilesTiles[], farahTiles[], logoTiles[];
 extern const uint16_t tilesPal[], farahPal[];
 extern const uint16_t backgroundMap[];
 
-extern const unsigned short imfData1[];
+extern const uint16_t imfData1[];
 
 #define OBJECTA_BUILD(t,b,e,p)	\
 (								\
@@ -68,26 +68,26 @@ static const uint32_t objectsB[] = {
 	0,
 };
 
-const unsigned char * const sounds[] = { 0 };
+const uint8_t * const sounds[] = { 0 };
 
-extern int IMF_LoadSong(const unsigned short *sauce,  int loop);
+extern int IMF_LoadSong(const uint16_t *sauce, bool loop);
 extern void IMF_Play();
 
 void PlaySound(int id)
 {
 	int soundData = (int)sounds[id];
 	REG_PCMOFFSET = soundData + 4;
-	REG_PCMLENGTH = *(unsigned int*)soundData;
+	REG_PCMLENGTH = *(uint32_t*)soundData;
 }
 
-unsigned int rndseed = 0xDEADBEEF;
+uint32_t rndseed = 0xDEADBEEF;
 
-void srand(unsigned int seed)
+void srand(uint32_t seed)
 {
 	rndseed = seed;
 }
 
-unsigned int rand()
+uint32_t rand()
 {
 	rndseed = (rndseed * 0x41C64E6D) + 0x6073;
 	return rndseed;
@@ -152,7 +152,7 @@ int main(void)
 	DRAW->FadeFromBlack();
 
 	inton();
-	IMF_LoadSong(imfData1, 1);
+	IMF_LoadSong(imfData1, true);
 
 	game *game = init_game();
 	do

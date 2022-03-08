@@ -5,7 +5,7 @@
 grid *create_grid(int rows, int cols)
 {
 	grid *new_grid = malloc(sizeof(*new_grid));
-	short *new_blocks = malloc(sizeof(*new_blocks) * rows * cols);
+	int16_t *new_blocks = malloc(sizeof(*new_blocks) * rows * cols);
 
 	new_grid->blocks = new_blocks;
 	new_grid->rows = rows;
@@ -34,12 +34,12 @@ int is_full_row(const grid *grid, int row)
 	return 1;
 }
 
-short get_block(const grid *grid, int row, int col)
+int16_t get_block(const grid *grid, int row, int col)
 {
 	return grid->blocks[row * grid->cols + col];
 }
 
-void fill_block(grid *grid, short content, int row, int col)
+void fill_block(grid *grid, int16_t content, int row, int col)
 {
 	grid->blocks[row * grid->cols + col] = content;
 }
@@ -63,8 +63,8 @@ void flush_grid(grid *grid)
 
 void swap_rows(grid *grid, int row1, int row2)
 {
-	short temp1;
-	short temp2;
+	int16_t temp1;
+	int16_t temp2;
 
 	for (int col = 0; col < grid->cols; col++)
 	{

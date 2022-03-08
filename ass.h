@@ -60,7 +60,7 @@ extern void dpf(const char* format, ...);
 #define REG_OPLOUT		*(int16_t*)(MEM_IO + 0x0048)
 #define REG_MOUSE		*(uint16_t*)(MEM_IO + 0x0050)
 #define REG_CARET		*(uint16_t*)(MEM_IO + 0x0054)
-#define REG_TIMET		*(signed long long*)(MEM_IO + 0x0060)
+#define REG_TIMET		*(int64_t*)(MEM_IO + 0x0060)
 #define REG_PCM1OFFSET	*(int32_t*)(MEM_IO + 0x0070)
 #define REG_PCM2OFFSET	*(int32_t*)(MEM_IO + 0x0074)
 #define REG_PCM1LENGTH	*(int32_t*)(MEM_IO + 0x0078)
@@ -227,7 +227,7 @@ typedef struct {
 //ASS-RT SUPPORT
 //--------------
 
-typedef signed long long time_t;
+typedef int64_t time_t;
 typedef struct {
 	int tm_sec;   //0-59
 	int tm_min;   //0-59
@@ -305,7 +305,7 @@ typedef struct
 	int(*CloseFile)(TFileHandle* handle);
 	int(*ReadFile)(TFileHandle* handle, void* target, size_t length);
 	int(*WriteFile)(TFileHandle* handle, void* source, size_t length);
-	int(*SeekFile)(TFileHandle* handle, unsigned int offset, int origin);
+	int(*SeekFile)(TFileHandle* handle, uint32_t offset, int origin);
 	int(*TruncateFile)(TFileHandle* handle);
 	int(*FlushFile)(TFileHandle* handle);
 	unsigned int(*FilePosition)(TFileHandle* handle);
@@ -324,9 +324,9 @@ typedef struct
 	int(*MakeDir)(const char* path);
 	int(*ChangeDir)(const char* path);
 	int(*GetCurrentDir)(char* buffer, size_t buflen);
-	int(*GetLabel)(char disk, char* buffer, unsigned long*);
+	int(*GetLabel)(char disk, char* buffer, uint32_t*);
 	const char*(*FileErrStr)(int error);
-	unsigned char(*GetNumDrives)(void);
+	uint8_t(*GetNumDrives)(void);
 	int(*GetFree)(char disk);
 } IDiskLibrary;
 

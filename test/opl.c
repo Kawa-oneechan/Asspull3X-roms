@@ -4,8 +4,8 @@ extern IBios* interface;
 extern void WaitForKey();
 
 extern void IMF_Play();
-extern int IMF_LoadSong(const unsigned short *sauce, int loop);
-extern const unsigned short imfData[];
+extern int IMF_LoadSong(const uint16_t *sauce, bool loop);
+extern const uint16_t imfData[];
 
 void ResetOPL()
 {
@@ -30,7 +30,7 @@ void OPLTest()
 
 	TEXT->SetCursorPosition(0, 2);
 	interface->VBlank = IMF_Play;
-	IMF_LoadSong(imfData, 1);
+	IMF_LoadSong(imfData, true);
 	WaitForKey();
 	interface->VBlank = 0;
 

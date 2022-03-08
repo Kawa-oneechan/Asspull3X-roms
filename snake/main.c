@@ -9,7 +9,7 @@ IBios* interface;
 #define WIDTH 40
 #define HEIGHT 30
 
-extern const uint16_t hdma1[], titleMap[];
+extern const uint16_t hdma[], titleMap[];
 extern const uint16_t tilesTiles[256];
 extern const uint16_t tilesPal[16];
 
@@ -37,7 +37,7 @@ const uint8_t beat[] = {
 uint8_t drum = 0, drum2 = 0;
 
 
-unsigned long score = 0;
+uint32_t score = 0;
 int fruitTimer = 0;
 int delay = 16;
 
@@ -50,30 +50,30 @@ pos fruit;
 
 char spaces[WIDTH * HEIGHT] = {0};
 
-unsigned int rndseed = 0xDEADBEEF;
+uint32_t rndseed = 0xDEADBEEF;
 
-void srand(unsigned int seed)
+void srand(uint32_t seed)
 {
 	rndseed = seed;
 }
 
-unsigned int rand()
+uint32_t rand()
 {
 	rndseed = (rndseed * 0x41C64E6D) + 0x6073;
 	return rndseed;
 }
 
-void ultoa(unsigned long val, char *buf)
+void ultoa(uint32_t val, char *buf)
 {
 	char *p;
 	char *firstdig;
 	char temp;
-	unsigned int digval;
+	uint8_t digval;
 	p = buf;
 	firstdig = p;
 	do
 	{
-		digval = (unsigned)(val % 10);
+		digval = (uint8_t)(val % 10);
 		val /= 10;
 		*p++ = (char)(digval + '0');
 	} while (val > 0);
@@ -319,7 +319,7 @@ int main(void)
 	MISC->DmaCopy(PALETTE, (int8_t*)&tilesPal, 16, DMA_INT);
 	MISC->DmaCopy(TILESET, (int8_t*)&tilesTiles, 1024, DMA_INT);
 	MISC->DmaClear(MAP1, 0, WIDTH * HEIGHT, 2);
-	REG_HDMASOURCE[0] = (int32_t)hdma1;
+	REG_HDMASOURCE[0] = (int32_t)hdma;
 	REG_HDMATARGET[0] = (int32_t)PALETTE;
 	REG_HDMACONTROL[0] = DMA_ENABLE | HDMA_DOUBLE | (DMA_SHORT << 4) | (0 << 8) | (480 << 20);
 	REG_MAPSET = 0x10;

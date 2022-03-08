@@ -14,7 +14,7 @@
  */
 typedef struct
 {
-        short *blocks;
+        int16_t *blocks;
         int rows;
         int cols;
 } grid;
@@ -44,12 +44,12 @@ int is_full_row(const grid *grid, int row);
 /*
  * get_block:  return a copy of the block at position row, col.
  */
-short get_block(const grid *grid, int row, int col);
+int16_t get_block(const grid *grid, int row, int col);
 
 /*
  * fill_block:  puts content and color in the block at position row, col.
  */
-void fill_block(grid *grid, short content, int row, int col);
+void fill_block(grid *grid, int16_t content, int row, int col);
 
 /*
  * flush_block:  makes block at position row, col an empty block.

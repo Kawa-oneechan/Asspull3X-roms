@@ -50,16 +50,16 @@ int main(void)
 	char biosVer[32];
 	int32_t* cartCode = (int32_t*)0x00020000;
 	void(*entry)(void)= (void*)0x00020004;
-	int32_t haveDisk = 0, hadDisk = 0;
-	int32_t showSplash = 0;
+	bool haveDisk = false, hadDisk = false;
+	bool showSplash = false;
 
 	sprintf(biosVer, "BIOS v%d.%d", (interface->biosVersion >> 8) & 0xFF, (interface->biosVersion >> 0) & 0xFF);
 	dpf(biosVer);
 
-	unsigned char* devices = (unsigned char*)0x02000000;
+	uint8_t* devices = (uint8_t*)0x02000000;
 	for (char i = 0; i < 16; i++)
 	{
-		if (*(short*)devices == 0x4C50)
+		if (*(int16_t*)devices == 0x4C50)
 		{
 			interface->LinePrinter = devices + 2;
 			break;
@@ -103,7 +103,7 @@ int main(void)
 			haveDisk = firstDisk[4] & 1;
 			if (haveDisk && !hadDisk)
 			{
-				hadDisk = 1;
+				hadDisk = true;
 				FILE file;
 				if (OpenFile(&file, "start.app", FA_READ) == 0)
 				{
@@ -126,7 +126,7 @@ int main(void)
 			}
 			else if (!haveDisk && hadDisk)
 			{
-				hadDisk = 0;
+				hadDisk = false;
 				dpf("lost disk");
 				OBJECTS_A[0] = OBJECTA_BUILD(0, 0, 1, 0); //logo
 				continue;
@@ -174,7 +174,7 @@ int main(void)
 
 		if (!showSplash)
 		{
-			showSplash = 1;
+			showSplash = true;
 			WaitForVBlank();
 			REG_SCREENFADE = 31;
 			MISC->DmaClear(TILESET, 0, 0xC000, DMA_INT);

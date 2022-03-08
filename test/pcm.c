@@ -3,7 +3,7 @@ extern IBios* interface;
 
 extern void WaitForKey();
 
-extern const unsigned char soundLoop[], soundOne[];
+extern const uint8_t soundLoop[], soundOne[];
 
 void PCMTest()
 {
@@ -13,8 +13,8 @@ void PCMTest()
 
 	TEXT->SetCursorPosition(0, 2);
 	TEXT->Write("Playing a sample on loop.");
-	PCMOFFSET[0] = (unsigned int)soundLoop + 4;
-	PCMLENGTH[0] = *(unsigned int*)soundLoop | PCM_REPEAT;
+	PCMOFFSET[0] = (uint32_t)soundLoop + 4;
+	PCMLENGTH[0] = *(uint32_t*)soundLoop | PCM_REPEAT;
 	WaitForKey();
 	PCMLENGTH[0] = 0;
 	TEXT->SetCursorPosition(0, 3);
@@ -22,25 +22,25 @@ void PCMTest()
 	WaitForKey();
 	TEXT->SetCursorPosition(0, 4);
 	TEXT->Write("Playing a sample once.");
-	PCMOFFSET[0] = (unsigned int)soundOne + 4;
-	PCMLENGTH[0] = *(unsigned int*)soundOne;
+	PCMOFFSET[0] = (uint32_t)soundOne + 4;
+	PCMLENGTH[0] = *(uint32_t*)soundOne;
 	WaitForKey();
 	TEXT->SetCursorPosition(0, 5);
 	TEXT->Write("Playing the loop again...");
-	PCMOFFSET[0] = (unsigned int)soundLoop + 4;
-	PCMLENGTH[0] = *(unsigned int*)soundLoop | PCM_REPEAT;
+	PCMOFFSET[0] = (uint32_t)soundLoop + 4;
+	PCMLENGTH[0] = *(uint32_t*)soundLoop | PCM_REPEAT;
 	WaitForKey();
 	TEXT->Write(" and a second sample on top!");
-	PCMOFFSET[1] = (unsigned int)soundOne + 4;
-	PCMLENGTH[1] = *(unsigned int*)soundOne;
+	PCMOFFSET[1] = (uint32_t)soundOne + 4;
+	PCMLENGTH[1] = *(uint32_t*)soundOne;
 	WaitForKey();
 	PCMLENGTH[0] = 0;
 	PCMLENGTH[1] = 0;
 
 	TEXT->SetCursorPosition(0, 6);
 	TEXT->Write("Playing the loop yet again but panned left...");
-	PCMOFFSET[0] = (unsigned int)soundLoop + 4;
-	PCMLENGTH[0] = *(unsigned int*)soundLoop | PCM_REPEAT;
+	PCMOFFSET[0] = (uint32_t)soundLoop + 4;
+	PCMLENGTH[0] = *(uint32_t*)soundLoop | PCM_REPEAT;
 	PCMVOLUME[0] = 255;
 	PCMVOLUME[1] = 0;
 	WaitForKey();

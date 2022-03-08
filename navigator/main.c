@@ -2,7 +2,7 @@
 
 IBios* interface;
 
-extern const unsigned char iconsTiles[];
+extern const uint8_t iconsTiles[];
 
 #define MAXPATH 512
 #define MAXFILES 512
@@ -11,9 +11,9 @@ extern const unsigned char iconsTiles[];
 #define HEIGHT 24
 #define FILESSHOWN (HEIGHT-2)
 
-void PrintComma(long n)
+void PrintComma(int32_t n)
 {
-    long n2 = 0;
+    int32_t n2 = 0;
     int scale = 1;
     if (n < 0)
     {
@@ -121,17 +121,17 @@ tryOpenDir:
 
 int SwitchDrive(int which, int now)
 {
-	const unsigned short abcd[] = { 30, 48, 46, 32 };
+	const uint16_t abcd[] = { 30, 48, 46, 32 };
 	static int numDrives = -1;
 	static char driveTypes[4];
 
 	if (numDrives == -1)
 	{
 		numDrives = 0;
-		unsigned char* devices = (unsigned char*)0x02000000;
+		uint8_t* devices = (uint8_t*)0x02000000;
 		for (char i = 0; i < 16; i++)
 		{
-			if (*(short*)devices == 0x0144)
+			if (*(int16_t*)devices == 0x0144)
 			{
 				if (numDrives < 4)
 					driveTypes[numDrives] = *(char*)&devices[5];
@@ -144,8 +144,8 @@ int SwitchDrive(int which, int now)
 	tWindow* win = OpenWindow((WIDTH >> 1) - 2 + (WIDTH * which), 8, 9, numDrives + 2, CLR_DIALOG);
 	for (int i = 0; i < numDrives; i++)
 	{
-		short icon = ((0xB9 + (driveTypes[i] << 1)) << 8) | ((CLR_DIALOG >> 4) << 4);
-		short o = ((win->top + 1 + i) * 80) + win->left + 2;
+		int16_t icon = ((0xB9 + (driveTypes[i] << 1)) << 8) | ((CLR_DIALOG >> 4) << 4);
+		int16_t o = ((win->top + 1 + i) * 80) + win->left + 2;
 		TEXTMAP[o++] = icon;
 		TEXTMAP[o++] = icon + 0x100;
 		o++;
@@ -156,7 +156,7 @@ int SwitchDrive(int which, int now)
 	Highlight(win->left + 1, win->top + 1 + ret, win->width - 4, 0x90);
 	while (1)
 	{
-		unsigned short key = REG_KEYIN;
+		uint16_t key = REG_KEYIN;
 		intoff();
 		if ((key & 0xFF) > 0)
 		{
@@ -201,7 +201,7 @@ int ChangeAttributes(char* filePath)
 {
 	FILEINFO info;
 	DISK->FileStat(filePath, &info);
-	const unsigned char attribs[] = { AM_READONLY, AM_HIDDEN, AM_SYSTEM, AM_ARCHIVE };
+	const uint8_t attribs[] = { AM_READONLY, AM_HIDDEN, AM_SYSTEM, AM_ARCHIVE };
 	const char* const names[] = { "Read-only", "Hidden", "System", "Archive" };
 	tWindow* win = OpenWindow(-1, -1, 20, 7, CLR_DIALOG);
 
@@ -227,7 +227,7 @@ int ChangeAttributes(char* filePath)
 	while (1)
 	{
 		vbl();
-		unsigned short key = REG_KEYIN;
+		uint16_t key = REG_KEYIN;
 		intoff();
 		if ((key & 0xFF) > 0)
 		{
@@ -377,7 +377,7 @@ void SelectFile(const char* path1, const char* path2, const char* pattern, char*
 					TEXT->Write(" %s ", workPath[s]);
 
 					char label[12] = { 0 };
-					unsigned long id = 0;
+					uint32_t id = 0;
 					TEXTMAP[(FILESSHOWN + 2) * 80 + o] = 0xBD00 | CLR_PANEL; //|-
 					for (int i = 0; i < WIDTH - 1; i++)
 						TEXTMAP[(FILESSHOWN + 2) * 80 + o + i + 1] = 0x9000 | CLR_PANEL; //--
@@ -497,7 +497,7 @@ void SelectFile(const char* path1, const char* path2, const char* pattern, char*
 		while(1)
 		{
 			vbl();
-			unsigned short key = REG_KEYIN;
+			uint16_t key = REG_KEYIN;
 			intoff();
 			if ((key & 0xFF) > 0)
 			{

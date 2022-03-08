@@ -43,9 +43,9 @@ typedef struct
         char next_shape;
         char next_shapes[TOT_SHAPES];
         int next_index;
-        unsigned int level;
-        unsigned int score;
-        unsigned int lines;
+        uint32_t level;
+        uint32_t score;
+        uint32_t lines;
         int delay;
         int history_moves[HISTORY_SIZE];
         int history_index;

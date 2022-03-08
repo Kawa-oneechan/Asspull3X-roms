@@ -30,7 +30,7 @@ int fputc(int c, FILE* file)
 		TEXT->WriteChar((char)c);
 		return c;
 	}
-	unsigned char _c = (unsigned char)c;
+	uint8_t _c = (uint8_t)c;
 	DISK->WriteFile(file, &_c, 1);
 	return c;
 }
@@ -58,7 +58,7 @@ int fgetc(FILE* file)
 		//DISK->ReadFile(stream, buffer, 1);
 		//return buffer[0];
 	}
-	unsigned short key = 0;
+	uint16_t key = 0;
 	while (1)
 	{
 		key = REG_KEYIN;
@@ -132,10 +132,10 @@ char* fgets(char* s, int n, FILE* file)
 	return s;
 }
 
-int fread(void* data, int size, int count, FILE* file)
+size_t fread(void* data, int size, size_t count, FILE* file)
 {
 	if (size == 0 || count == 0) return 0;
-	int ret = 0;
+	size_t ret = 0;
 	for (; ret < count; ret++)
 	{
 		if (DISK->ReadFile(file, data, size) < 0) break;
@@ -144,10 +144,10 @@ int fread(void* data, int size, int count, FILE* file)
 	return ret;
 }
 
-int fwrite(void* data, int size, int count, FILE* file)
+size_t fwrite(void* data, int size, size_t count, FILE* file)
 {
 	if (size == 0 || count == 0) return 0;
-	int ret = 0;
+	size_t ret = 0;
 	for (; ret < count; ret++)
 	{
 		if (DISK->WriteFile(file, data, size) < 0) break;

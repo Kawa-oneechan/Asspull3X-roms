@@ -3,15 +3,15 @@
 IBios* interface;
 
 #define __PLAYERS G(vicviper) G(lordbritish)
-#define G(x) extern const unsigned short x ## Tiles[], x ## Pal[];
+#define G(x) extern const uint16_t x ## Tiles[], x ## Pal[];
 __PLAYERS
 #undef G
-const unsigned short* const playerTiles[] = {
+const uint16_t* const playerTiles[] = {
 #define G(x) x ## Tiles,
 __PLAYERS
 #undef G
 };
-const unsigned short* const playerPal[] = {
+const uint16_t* const playerPal[] = {
 #define G(x) x ## Pal,
 __PLAYERS
 #undef G
@@ -26,14 +26,14 @@ extern int scroll;
 
 #include "actor.h"
 
-unsigned int rndseed = 0xDEADBEEF;
+uint32_t rndseed = 0xDEADBEEF;
 
-void srand(unsigned int seed)
+void srand(uint32_t seed)
 {
 	rndseed = seed;
 }
 
-unsigned int rand()
+uint32_t rand()
 {
 	rndseed = (rndseed * 0x41C64E6D) + 0x6073;
 	return rndseed;
@@ -41,7 +41,7 @@ unsigned int rand()
 
 void print(char* str, int x, int y, int color)
 {
-	unsigned short *t = &MAP2[(y * 64) + x];
+	uint16_t *t = &MAP2[(y * 64) + x];
 	color *= 64;
 	char *b = str;
 	while (*b)

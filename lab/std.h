@@ -20,11 +20,11 @@ extern int fputc(int c, FILE* file);
 extern int fputs(const char* s, FILE* file);
 extern int fgetc(FILE* file);
 extern int getdelim(char** linePtr, int* n, char delim, FILE* file);
-extern char* fgets(char* s, int n, FILE* file);
-extern int fread(void* data, int size, int count, FILE* file);
+extern char* fgets(char* s, size_t n, FILE* file);
+extern size_t fread(void* data, size_t size, size_t count, FILE* file);
 extern FILE* fopen(const char* filename, const char* opentype);
 extern int fclose(FILE* file);
 
 extern char * strtok_r (char *newstring, const char *delimiters, char **save_ptr);
-extern int strlen (char *s);
+extern size_t strlen (char *s);
 extern int strcmp (char *a, char *b);

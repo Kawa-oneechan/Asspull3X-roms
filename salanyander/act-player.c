@@ -1,20 +1,20 @@
 #include "../ass.h"
 #include "actor.h"
 
-extern const unsigned short* const playerTiles[];
-extern const unsigned short* const playerPal[];
+extern const uint16_t* const playerTiles[];
+extern const uint16_t* const playerPal[];
 
 typedef struct
 {
-	short type;
-	short group;
-	short x, y;
-	short oldX, oldY;
-	char pal;
-	char obj;
-	char state;
+	int16_t type;
+	int16_t group;
+	int16_t x, y;
+	int16_t oldX, oldY;
+	uint8_t pal;
+	uint8_t obj;
+	int8_t state;
 	void (*draw)(), (*think)();
-	short flameTick, swerve, intro, shotTimer;
+	int16_t flameTick, swerve, intro, shotTimer;
 } tPlayer;
 
 void DrawPlayer(int id)

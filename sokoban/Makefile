@@ -7,11 +7,6 @@ GFXAPI := title.png
 
 export TARGET :=	sokoban
 export SFILES :=	crt0.s hdma.s assets.s
-export CFILES :=	main.c levels.c imfplay.c $(GFXAPI:.png=.c) $(GFX8x8NP:.png=.c) $(GFX16x16:.png=.c) $(GFX16x32:.png=.c) $(GFX32x32NP:.png=.c) $(GFXbmp:.png=.c) ../ass-rt.c
+export CFILES :=	main.c levels.c ../imfplay.c $(GFXAPI:.png=.c) $(GFX8x8NP:.png=.c) $(GFX16x16:.png=.c) $(GFX16x32:.png=.c) $(GFX32x32NP:.png=.c) $(GFXbmp:.png=.c) ../ass-rt.c
 include ../ass_romrules
 
-$(GFX8x8NP:.png=.c) : %.c : %.png
-	$(GRIT) $< $(GRITFLAGS) !p -o$@
-
-$(GFX32x32NP:.png=.c) : %.c : %.png
-	$(GRIT) $< $(GRITFLAGS) -mw4 -mh4 !p -o$@

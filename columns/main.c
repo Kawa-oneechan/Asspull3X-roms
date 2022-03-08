@@ -45,14 +45,14 @@ static const int tilePals[] = {
 	0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 };
 
-unsigned int rndseed = 0xDEADBEEF;
+uint32_t rndseed = 0xDEADBEEF;
 
-void srand(unsigned int seed)
+void srand(uint32_t seed)
 {
 	rndseed = seed;
 }
 
-unsigned int rand()
+uint32_t rand()
 {
 	rndseed = (rndseed * 0x41C64E6D) + 0x6073;
 	return rndseed;

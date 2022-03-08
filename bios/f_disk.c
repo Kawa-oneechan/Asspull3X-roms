@@ -59,7 +59,7 @@ void PrepareDiskToDevMapping()
 	diskDrives = 0;
 	for (char i = 0; i < 16; i++)
 	{
-		if (*(short*)devices == 0x0144)
+		if (*(int16_t*)devices == 0x0144)
 		{
 			if (diskDrives < FF_VOLUMES)
 				diskToDev[diskDrives] = i;

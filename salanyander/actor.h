@@ -17,8 +17,8 @@
 	(((hp) & 0x7FF) << 0)						\
 )
 
-extern void srand(unsigned int seed);
-extern unsigned int rand();
+extern void srand(uint32_t seed);
+extern uint32_t rand();
 extern void print(char* str, int x, int y, int color);
 extern int bitTest(int* set, int bit);
 extern int bitSet(int* set, int bit);
@@ -28,21 +28,21 @@ extern int bitClear(int* set, int bit);
 
 typedef struct
 {
-	short type;
-	short group;
-	short x, y;
-	short oldX, oldY;
-	char pal;
-	char obj;
-	char state;
+	int16_t type;
+	int16_t group;
+	int16_t x, y;
+	int16_t oldX, oldY;
+	uint8_t pal;
+	uint8_t obj;
+	int8_t state;
 	void (*draw)(), (*think)();
-	short extra[16];
+	int16_t extra[16];
 } tEntity;
 
 extern tEntity entities[];
 extern int objectsUsed[];
 
-extern int Spawn(int type, int x, int y);
+extern int Spawn(int16_t type, int16_t x, int16_t y);
 extern int GetNextObjectIdx(int min, int max);
 extern int GetNextObject();
 

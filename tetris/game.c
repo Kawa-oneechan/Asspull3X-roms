@@ -1,8 +1,8 @@
 #include "../ass.h"
 #include "game.h"
-extern unsigned int rndseed;
-extern void srand(unsigned int seed);
-extern unsigned int rand();
+extern uint32_t rndseed;
+extern void srand(uint32_t seed);
+extern uint32_t rand();
 
 #define sprintf TEXT->Format
 
@@ -103,7 +103,7 @@ static void increase_score(game *game, int lines);
 
 game *init_game(void)
 {
-	srand(*(signed long long*)(MEM_IO + 0x0060)); //time(NULL));
+	srand(REG_TIMET);
 
 	game *new_game = malloc(sizeof(*new_game));
 
@@ -363,7 +363,7 @@ static int remove_full_lines(game *game)
 
 static void increase_level(game *game)
 {
-	unsigned int level = (game->lines / 10) + 1;
+	uint32_t level = (game->lines / 10) + 1;
 
 	if (level <= game->level)
 		return;

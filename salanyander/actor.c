@@ -4,7 +4,7 @@
 tEntity entities[MAXENTITIES];
 
 int objectsUsed[256/32];
-unsigned int scroll = 0;
+uint32_t scroll = 0;
 
 const void* const entityFuncs[] =
 {
