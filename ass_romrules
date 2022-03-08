@@ -13,7 +13,7 @@ GRIT		:= $(DEVKITARM)/bin/grit.exe
 
 export OFILES	:= $(SFILES:.s=.o) $(CFILES:.c=.o)
 
-GFXall = $(GFX8x8) $(GFX8x8NP) $(GFX16x8) $(GFX8x16) $(GFX16x16) $(GFX32x16) $(GFX16x32) $(GFX32x32) $(GFX32x32NP) $(GFXAPI) $(GFXbmp) $(HDMA)
+GFXall = $(GFX8x8) $(GFX8x8NP) $(GFX16x8) $(GFX8x16) $(GFX16x16)  $(GFX16x24) $(GFX32x16) $(GFX16x32) $(GFX32x32) $(GFX32x32NP) $(GFXpal) $(GFXAPI) $(GFXbmp) $(HDMA)
 GFXtoclean :=  $(GFXall:.png=.c) $(GFXall:.png=.s) $(GFXall:.png=.o) $(TILED:.json=.s)
 
 GRITFLAGS := -ftc -fh! -gB4 -gu8
@@ -77,6 +77,8 @@ $(GFX8x16:.png=.c) : %.c : %.png
 	$(GRIT) $< $(GRITFLAGS) -Mw1 -Mh2 -o$@
 $(GFX16x16:.png=.c) : %.c : %.png
 	$(GRIT) $< $(GRITFLAGS) -Mw2 -Mh2 -o$@
+$(GFX16x24:.png=.c) : %.c : %.png
+	$(GRIT) $< $(GRITFLAGS) -Mw2 -Mh3 !p -o$@
 $(GFX32x16:.png=.c) : %.c : %.png
 	$(GRIT) $< $(GRITFLAGS) -Mw4 -Mh2 -o$@
 $(GFX16x32:.png=.c) : %.c : %.png
@@ -85,6 +87,8 @@ $(GFX32x32:.png=.c) : %.c : %.png
 	$(GRIT) $< $(GRITFLAGS) -Mw4 -Mh4 -o$@
 $(GFX32x32NP:.png=.c) : %.c : %.png
 	$(GRIT) $< $(GRITFLAGS) -mw4 -mh4 !p -o$@
+$(GFXpal:.png=.c) : %.c : %.png
+	$(GRIT) $< -ftc -fh! -g! -gb -pe256
 $(GFXbmp:.png=.c) : %.c : %.png
 	$(GRIT) $< $(GRITFLAGS) -gb -o$@
 $(GFXAPI:.png=.c) : %.c : %.png

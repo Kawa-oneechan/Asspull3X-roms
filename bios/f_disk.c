@@ -106,7 +106,7 @@ int WriteFile(TFileHandle* handle, void* source, size_t length)
 		return wrote;
 }
 
-int SeekFile(TFileHandle* handle, unsigned int offset, int origin)
+int SeekFile(TFileHandle* handle, uint32_t offset, int origin)
 {
 	if (origin == SEEK_CUR)
 		f_lseek(handle, handle->fptr + offset);

@@ -39,7 +39,7 @@ extern int OpenFile(TFileHandle*, const char*, char);
 extern int CloseFile(TFileHandle*);
 extern int ReadFile(TFileHandle*, void*, size_t);
 extern int WriteFile(TFileHandle*, void*, size_t);
-extern int SeekFile(TFileHandle*, unsigned int, int);
+extern int SeekFile(TFileHandle*, uint32_t, int);
 extern int TruncateFile(TFileHandle*);
 extern int FlushFile(TFileHandle*);
 extern char* FileReadLine(TFileHandle*, char*, size_t);

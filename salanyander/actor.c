@@ -37,7 +37,7 @@ void Draw()
 	}
 }
 
-int Spawn(int type, int x, int y)
+int Spawn(int16_t type, int16_t x, int16_t y)
 {
 	for (int i = 0; i < MAXENTITIES; i++)
 	{
