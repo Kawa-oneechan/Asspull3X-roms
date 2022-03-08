@@ -86,7 +86,7 @@ $(GFX16x32:.png=.c) : %.c : %.png
 $(GFX32x32:.png=.c) : %.c : %.png
 	$(GRIT) $< $(GRITFLAGS) -Mw4 -Mh4 -o$@
 $(GFX32x32NP:.png=.c) : %.c : %.png
-	$(GRIT) $< $(GRITFLAGS) -mw4 -mh4 !p -o$@
+	$(GRIT) $< $(GRITFLAGS) -Mw4 -Mh4 !p -o$@
 $(GFXpal:.png=.c) : %.c : %.png
 	$(GRIT) $< -ftc -fh! -g! -gb -pe256
 $(GFXbmp:.png=.c) : %.c : %.png
