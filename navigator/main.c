@@ -40,7 +40,7 @@ int fileCt[2] = { 0 };
 
 void Populate(const char* path, int side, const char* pattern)
 {
-	int ret;
+	EFileError ret;
 	DIR dir;
 	FILEINFO info;
 	fileCt[side] = 0;
@@ -64,7 +64,7 @@ tryOpenDir:
 		printf("Disk error reading %s:", path);
 		TEXT->SetTextColor(1, 9);
 		TEXT->SetCursorPosition(error->left + 4, error->top + 2);
-		if (ret == 3)
+		if (ret == FE_NoDisk)
 			printf("No disk inserted?");
 		else
 			printf(DISK->FileErrStr(ret));

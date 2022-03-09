@@ -74,12 +74,12 @@ void PrepareDiskToDevMapping()
 	}
 }
 
-int OpenFile(TFileHandle* handle, const char* path, char mode)
+EFileError OpenFile(TFileHandle* handle, const char* path, char mode)
 {
 	return f_open(handle, path, mode);
 }
 
-int CloseFile(TFileHandle* handle)
+EFileError CloseFile(TFileHandle* handle)
 {
 	return f_close(handle);
 }
@@ -106,7 +106,7 @@ int WriteFile(TFileHandle* handle, void* source, size_t length)
 		return wrote;
 }
 
-int SeekFile(TFileHandle* handle, uint32_t offset, int origin)
+uint32_t SeekFile(TFileHandle* handle, uint32_t offset, int origin)
 {
 	if (origin == SEEK_CUR)
 		f_lseek(handle, handle->fptr + offset);
@@ -117,16 +117,16 @@ int SeekFile(TFileHandle* handle, uint32_t offset, int origin)
 	return handle->fptr;
 }
 
-int TruncateFile(TFileHandle* handle)
+EFileError TruncateFile(TFileHandle* handle)
 {
 	return f_truncate(handle);
 }
-int FlushFile(TFileHandle* handle)
+EFileError FlushFile(TFileHandle* handle)
 {
 	return f_sync(handle);
 }
 
-unsigned int FilePosition(TFileHandle* handle)
+uint32_t FilePosition(TFileHandle* handle)
 {
 	return handle->fptr;
 }
@@ -141,86 +141,86 @@ size_t FileSize(TFileHandle* handle)
 	return handle->obj.objsize;
 }
 
-int OpenDir(TDirHandle* handle, const char* path)
+EFileError OpenDir(TDirHandle* handle, const char* path)
 {
 	return f_opendir(handle, path);
 }
 
-int CloseDir(TDirHandle* handle)
+EFileError CloseDir(TDirHandle* handle)
 {
 	return f_closedir(handle);
 }
 
-int ReadDir(TDirHandle* handle, TFileInfo* info)
+EFileError ReadDir(TDirHandle* handle, TFileInfo* info)
 {
 	return f_readdir(handle, info);
 }
 
-int FindFirst(TDirHandle* handle, TFileInfo* info, const char* path, const char* pattern)
+EFileError FindFirst(TDirHandle* handle, TFileInfo* info, const char* path, const char* pattern)
 {
 	return f_findfirst(handle, info, path, pattern);
 }
 
-int FindNext(TDirHandle* handle, TFileInfo* info)
+EFileError FindNext(TDirHandle* handle, TFileInfo* info)
 {
 	return f_findnext(handle, info);
 }
 
-int FileStat(const char* path, TFileInfo* info)
+EFileError FileStat(const char* path, TFileInfo* info)
 {
 	return f_stat(path, info);
 }
 
-int UnlinkFile(const char* path)
+EFileError UnlinkFile(const char* path)
 {
 	return f_unlink(path);
 }
 
-int RenameFile(const char* from, const char* to)
+EFileError RenameFile(const char* from, const char* to)
 {
 	return f_rename(from, to);
 }
 
 #ifdef ALLOW_TOUCH
-int FileTouch(const char* path, TFileInfo* dt)
+EFileError FileTouch(const char* path, TFileInfo* dt)
 {
 	return f_utime(path, dt);
 }
 #else
-int FileTouch(const char* path, TFileInfo* dt)
+EFileError FileTouch(const char* path, TFileInfo* dt)
 {
-	return 0;
+	return FE_NoError;
 }
 #endif
 
-int FileAttrib(const char* path, char attrib)
+EFileError FileAttrib(const char* path, char attrib)
 {
 	return f_chmod(path, attrib, 0xFF);
 }
 
-int MakeDir(const char* path)
+EFileError MakeDir(const char* path)
 {
 	return f_mkdir(path);
 }
 
-int ChangeDir(const char* path)
+EFileError ChangeDir(const char* path)
 {
 	return f_chdir(path);
 }
 
-int GetCurrentDir(char* buffer, size_t buflen)
+EFileError GetCurrentDir(char* buffer, size_t buflen)
 {
 	return f_getcwd(buffer, buflen);
 }
 
-int GetLabel(char disk, char* buffer, unsigned long* id)
+EFileError GetLabel(char disk, char* buffer, unsigned long* id)
 {
 	char path[4] = "X:";
 	path[0] = disk;
 	return f_getlabel(path, buffer, id);
 }
 
-int GetFree(char disk)
+uint32_t GetFree(char disk)
 {
 	char path[4] = "X:";
 	path[0] = disk;
@@ -257,7 +257,7 @@ static const char* const FSErrors[21] =
 	"<Invalid error number>"
 };
 
-const char* FileErrStr(int error)
+const char* FileErrStr(EFileError error)
 {
 	if (error > 19) error = 20;
 	return FSErrors[error];

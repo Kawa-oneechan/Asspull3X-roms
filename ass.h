@@ -223,6 +223,29 @@ typedef struct {
 #define AM_DIRECTORY		0x10
 #define AM_ARCHIVE			0x20
 
+typedef enum {
+	FE_NoError, //0. Succeeded
+	FE_DiskError, //1. Hard error in IO layer
+	FE_IntError, //2. Assert fail
+	FE_NoDisk, //3. Drive cannot work -- no disk?
+	FE_NoFile, //4. File not found
+	FE_NoPath, //5. Path not found
+	FE_InvalidPath, //6. Invalid path name format
+	FE_Denied, //7. Access denied or directory full
+	FE_Denied2, //8. Access denied
+	FE_InvalidHnd, //9. Invalid handle
+	FE_Protected, //10. Drive is write-protected
+	FE_InvalidDrive, //11. Invalid drive number
+	FE_NotEnabled, //12. No work area
+	FE_NoFS, //13. No FAT file system
+	FE_MKFSAbort, //14. Format aborted
+	FE_Timeout, //15. Timed out
+	FE_Locked, //16. File is in use
+	FE_NoLFN, //17. Not enough space for LFN buffer
+	FE_TooMany, //18. Too many open files
+	FE_InvalidParm, //19. Parameter is invalid
+} EFileError;
+
 //--------------
 //ASS-RT SUPPORT
 //--------------
@@ -301,33 +324,33 @@ typedef struct
 
 typedef struct
 {
-	int(*OpenFile)(TFileHandle* handle, const char* path, char mode);
-	int(*CloseFile)(TFileHandle* handle);
+	EFileError(*OpenFile)(TFileHandle* handle, const char* path, char mode);
+	EFileError(*CloseFile)(TFileHandle* handle);
 	int(*ReadFile)(TFileHandle* handle, void* target, size_t length);
 	int(*WriteFile)(TFileHandle* handle, void* source, size_t length);
-	int(*SeekFile)(TFileHandle* handle, uint32_t offset, int origin);
-	int(*TruncateFile)(TFileHandle* handle);
-	int(*FlushFile)(TFileHandle* handle);
-	unsigned int(*FilePosition)(TFileHandle* handle);
+	uint32_t(*SeekFile)(TFileHandle* handle, uint32_t offset, int origin);
+	EFileError(*TruncateFile)(TFileHandle* handle);
+	EFileError(*FlushFile)(TFileHandle* handle);
+	uint32_t(*FilePosition)(TFileHandle* handle);
 	bool(*FileEnd)(TFileHandle* handle);
 	size_t(*FileSize)(TFileHandle* handle);
-	int(*OpenDir)(TDirHandle* handle, const char* path);
-	int(*CloseDir)(TDirHandle* handle);
-	int(*ReadDir)(TDirHandle* handle, TFileInfo* info);
-	int(*FindFirst)(TDirHandle* handle, TFileInfo* info, const char* path,const char* pattern);
-	int(*FindNext)(TDirHandle* handle, TFileInfo* info);
-	int(*FileStat)(const char* path, TFileInfo* info);
-	int(*UnlinkFile)(const char* path);
-	int(*RenameFile)(const char* from, const char* to);
-	int(*FileTouch)(const char* path, TFileInfo* dt);
-	int(*FileAttrib)(const char* path, char attrib);
-	int(*MakeDir)(const char* path);
-	int(*ChangeDir)(const char* path);
-	int(*GetCurrentDir)(char* buffer, size_t buflen);
-	int(*GetLabel)(char disk, char* buffer, uint32_t*);
-	const char*(*FileErrStr)(int error);
+	EFileError(*OpenDir)(TDirHandle* handle, const char* path);
+	EFileError(*CloseDir)(TDirHandle* handle);
+	EFileError(*ReadDir)(TDirHandle* handle, TFileInfo* info);
+	EFileError(*FindFirst)(TDirHandle* handle, TFileInfo* info, const char* path,const char* pattern);
+	EFileError(*FindNext)(TDirHandle* handle, TFileInfo* info);
+	EFileError(*FileStat)(const char* path, TFileInfo* info);
+	EFileError(*UnlinkFile)(const char* path);
+	EFileError(*RenameFile)(const char* from, const char* to);
+	EFileError(*FileTouch)(const char* path, TFileInfo* dt);
+	EFileError(*FileAttrib)(const char* path, char attrib);
+	EFileError(*MakeDir)(const char* path);
+	EFileError(*ChangeDir)(const char* path);
+	EFileError(*GetCurrentDir)(char* buffer, size_t buflen);
+	EFileError(*GetLabel)(char disk, char* buffer, uint32_t*);
+	const char*(*FileErrStr)(EFileError error);
 	uint8_t(*GetNumDrives)(void);
-	int(*GetFree)(char disk);
+	uint32_t(*GetFree)(char disk);
 } IDiskLibrary;
 
 typedef struct
