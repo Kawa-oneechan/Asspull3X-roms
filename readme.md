@@ -75,6 +75,7 @@ Normally, the A3X draws 240 or 480 lines, but by setting the bold font flag in g
 ## Acknowledgements
 * `bios` uses [*FatFS* by ChaN](http://elm-chan.org/fsw/ff/00index_e.html).
 * *Farah Furcett* character named by Screwtape.
+* Sokoban tileset by [/dev/urandom](https://devurandom.xyz).
 * Snake game ported from [an implementation by Jason Kruse](https://github.com/mnisjk/snake).
 * Tetris game ported from [an implementation by Marco Lucidi](https://github.com/MarcoLucidi01/tetris_clone).
 * IMF player based on work by K1n9 Duk3.
