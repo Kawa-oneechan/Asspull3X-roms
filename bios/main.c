@@ -119,7 +119,6 @@ int main(void)
 				}
 				else
 				{
-					dpf("not good");
 					OBJECTS_A[0] = OBJECTA_BUILD(48, 0, 1, 0); //? disk
 					continue;
 				}
@@ -127,7 +126,6 @@ int main(void)
 			else if (!haveDisk && hadDisk)
 			{
 				hadDisk = false;
-				dpf("lost disk");
 				OBJECTS_A[0] = OBJECTA_BUILD(0, 0, 1, 0); //logo
 				continue;
 			}
@@ -177,7 +175,7 @@ int main(void)
 			showSplash = true;
 			WaitForVBlank();
 			REG_SCREENFADE = 31;
-			MISC->DmaClear(TILESET, 0, 0xC000, DMA_INT);
+			MISC->DmaClear(TILESET, 0, 0x4000, DMA_INT);
 			MISC->DmaClear(OBJECTS_A, 0, 0x1000, DMA_INT);
 			DisplayPicture((TImageFile*)&splashData);
 			REG_HDMASOURCE[0] = (int32_t)hdma1;
@@ -245,7 +243,10 @@ void FindFont()
 
 void ExHandler()
 {
-	attribs = 0x4E;
+	attribs = 0x0F;
+	PALETTE[0] = 0;
+	PALETTE[15] = 0x7FFF;
+	REG_SCREENMODE = 0x20;
 	REG_CARET = 0;
 	printf("Fucked up, yo.");
 	while(1) WaitForVBlank();
@@ -254,7 +255,10 @@ void ExHandler()
 
 void AddressHandler()
 {
-	attribs = 0x4E;
+	attribs = 0x0F;
+	PALETTE[0] = 0;
+	PALETTE[15] = 0x7FFF;
+	REG_SCREENMODE = 0x20;
 	REG_CARET = 0;
 	printf("Address error!");
 	while(1) WaitForVBlank();
@@ -263,7 +267,10 @@ void AddressHandler()
 
 void InstructionHandler()
 {
-	attribs = 0x4E;
+	attribs = 0x0F;
+	PALETTE[0] = 0;
+	PALETTE[15] = 0x7FFF;
+	REG_SCREENMODE = 0x20;
 	REG_CARET = 0;
 	printf("Illegal mangrasp!");
 	while(1) WaitForVBlank();
@@ -272,7 +279,10 @@ void InstructionHandler()
 
 void ZeroHandler()
 {
-	attribs = 0x4E;
+	attribs = 0x0F;
+	PALETTE[0] = 0;
+	PALETTE[15] = 0x7FFF;
+	REG_SCREENMODE = 0x20;
 	REG_CARET = 0;
 	printf("Division by zero. Wow.");
 	while(1) WaitForVBlank();
