@@ -4,9 +4,6 @@ IBios* interface;
 
 extern const uint8_t iconsTiles[];
 
-#define MAXPATH 512
-#define MAXFILES 512
-
 #define WIDTH 39
 #define HEIGHT 24
 #define FILESSHOWN (HEIGHT-2)
@@ -33,6 +30,48 @@ void PrintComma(int32_t n)
         n2 = n2  % scale;
         printf(",%03d", n);
     }
+}
+
+void PrintBuffer(char* buffer)
+{
+	volatile char* lpt = 0;
+	for (int i = 0; i < 16; i++)
+	{
+		uint16_t signature = *(uint16_t*)(0x02000000 + (i * 0x8000));
+		if (signature == 0x4C50)
+		{
+			lpt = (char*)(0x02000002 + (i * 0x8000));
+
+			while (*buffer)
+				*lpt = *buffer++;
+
+			*lpt = 0x0A;
+			*lpt = 0x0C;
+			return;
+		}
+	}
+	ShowError("Could not find a printer.");
+}
+
+void PrintFile(char* workPath, char* filename)
+{
+	char filePath[MAXPATH];
+	strcpy_s(filePath, MAXPATH, workPath);
+	if (filePath[strnlen_s(filePath, MAXPATH) - 1] != '\\') strkitten_s(filePath, MAXPATH, '\\');
+	strcat_s(filePath, MAXPATH, filename);
+
+	FILEINFO nfo;
+	DISK->FileStat(filePath, &nfo);
+	size_t size = nfo.fsize;
+
+	char* fileText = malloc(size);
+	FILE file;
+	DISK->OpenFile(&file, filePath, FA_READ);
+	DISK->ReadFile(&file, (void*)fileText, nfo.fsize);
+	DISK->CloseFile(&file);
+	fileText[size] = 0;
+	PrintBuffer(fileText);
+	free(fileText);
 }
 
 char* filenames[2] = { 0 };
@@ -697,10 +736,10 @@ HandleMenu:
 								ShowError("File deleting not implemented yet.");
 								break;
 							case 17: //Print
-								ShowError("File printing not implemented yet.");
+								PrintFile(workPath[cs], curFN);
 								break;
 							case 18: //Attrib
-								ChangeAttributes(curFN);
+								ChangeAttributes(workPath[cs], curFN);
 								break;
 						}
 					}

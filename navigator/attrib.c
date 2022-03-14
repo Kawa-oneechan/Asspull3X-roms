@@ -1,7 +1,12 @@
 #include "nav.h"
 
-int ChangeAttributes(char* filePath)
+int ChangeAttributes(char* workPath, char* filename)
 {
+	char filePath[MAXPATH];
+	strcpy_s(filePath, MAXPATH, workPath);
+	if (filePath[strnlen_s(filePath, MAXPATH) - 1] != '\\') strkitten_s(filePath, MAXPATH, '\\');
+	strcat_s(filePath, MAXPATH, filename);
+
 	FILEINFO info;
 	DISK->FileStat(filePath, &info);
 	const uint8_t attribs[] = { AM_READONLY, AM_HIDDEN, AM_SYSTEM, AM_ARCHIVE };

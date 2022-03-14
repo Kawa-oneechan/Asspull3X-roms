@@ -76,7 +76,8 @@ extern void DrawKeys(const char** keys);
 extern void DrawMenu();
 extern char OpenMenu(int num);
 
-extern int ChangeAttributes(char* filePath);
+extern int ChangeAttributes(char* workPath, char* filename);
+extern void PrintBuffer(char* buffer);
 
 extern int StartApp(char* filePath);
 extern int ShowPic(char* filePath);
@@ -84,3 +85,6 @@ extern int ShowText(char* filePath);
 extern int ShowFile(char* filePath, bool allowRun);
 
 extern char *strrchr(const char *, int);
+
+#define MAXPATH 512
+#define MAXFILES 512

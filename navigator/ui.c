@@ -17,7 +17,7 @@ const tMenuItem filesMenu[] = {
 	{ "~Rename or Move   F6", 19, DISABLED, 14 },
 	{ "~Make directory   F7", 50, DISABLED, 15 },
 	{ "~Delete           F8", 32, DISABLED, 16 },
-	{ "~Print            F9", 25, DISABLED, 17 },
+	{ "~Print            F9", 25, 0, 17 },
 	{ "File ~attributes", 30, 0, 18 },
 };
 
