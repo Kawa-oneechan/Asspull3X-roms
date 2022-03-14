@@ -53,16 +53,17 @@ void PrintBuffer(char* buffer)
 	ShowError("Could not find a printer.");
 }
 
-void PrintFile(char* workPath, char* filename)
+void PrintFile(char* filePath)
 {
-	char filePath[MAXPATH];
-	strcpy_s(filePath, MAXPATH, workPath);
-	if (filePath[strnlen_s(filePath, MAXPATH) - 1] != '\\') strkitten_s(filePath, MAXPATH, '\\');
-	strcat_s(filePath, MAXPATH, filename);
-
 	FILEINFO nfo;
 	DISK->FileStat(filePath, &nfo);
 	size_t size = nfo.fsize;
+	if (nfo.fattrib & AM_DIRECTORY)
+	{
+		ShowError("Cannot print a directory.");
+		//TODO: list its contents, maybe?
+		return;
+	}
 
 	char* fileText = malloc(size);
 	FILE file;
@@ -468,6 +469,11 @@ void SelectFile(const char* path1, const char* path2, const char* pattern)
 		while(1)
 		{
 			vbl();
+
+			strcpy_s(filePath[cs], MAXPATH, workPath[cs]);
+			if (filePath[cs][strnlen_s(filePath[cs], MAXPATH)-1] != '\\') strkitten_s(filePath[cs], MAXPATH, '\\');
+			strcat_s(filePath[cs], MAXPATH, curFN);
+
 			uint16_t key = REG_KEYIN;
 			intoff();
 			if ((key & 0xFF) > 0)
@@ -598,9 +604,6 @@ void SelectFile(const char* path1, const char* path2, const char* pattern)
 					}
 					else
 					{
-						strcpy_s(filePath[cs], MAXPATH, workPath[cs]);
-						if (filePath[cs][strnlen_s(filePath[cs], MAXPATH)-1] != '\\') strkitten_s(filePath[cs], MAXPATH, '\\');
-						strcat_s(filePath[cs], MAXPATH, curFN);
 						DISK->FileStat(filePath[cs], &info);
 						if (info.fattrib & AM_DIRECTORY)
 						{
@@ -736,11 +739,45 @@ HandleMenu:
 								ShowError("File deleting not implemented yet.");
 								break;
 							case 17: //Print
-								PrintFile(workPath[cs], curFN);
+								PrintFile(filePath[cs]);
 								break;
 							case 18: //Attrib
-								ChangeAttributes(workPath[cs], curFN);
+								ChangeAttributes(filePath[cs]);
 								break;
+							case 31: //Swap
+							{
+								int swap1 = index[0];
+								index[0] = index[1];
+								index[1] = swap1;
+								swap1 = lastIndex[0];
+								lastIndex[0] = lastIndex[1];
+								lastIndex[1] = swap1;
+								swap1 = scroll[0];
+								scroll[0] = scroll[1];
+								scroll[1] = swap1;
+								swap1 = currentDrive[0];
+								currentDrive[0] = currentDrive[1];
+								currentDrive[1] = swap1;
+								swap1 = views[0];
+								views[0] = views[1];
+								views[1] = swap1;
+								char swap2[MAXPATH];
+								strcpy_s(swap2, MAXPATH, workPath[0]);
+								strcpy_s(workPath[0], MAXPATH, workPath[1]);
+								strcpy_s(workPath[1], MAXPATH, swap2);
+								strcpy_s(swap2, MAXPATH, filePath[0]);
+								strcpy_s(filePath[0], MAXPATH, filePath[1]);
+								strcpy_s(filePath[1], MAXPATH, swap2);
+								for (int i = 0; i < 4; i++)
+								{
+									strcpy_s(swap2, MAXPATH, currDirs[0][i]);
+									strcpy_s(currDirs[0][i], MAXPATH, currDirs[1][i]);
+									strcpy_s(currDirs[1][i], MAXPATH, swap2);
+								}
+								Populate(workPath[0], 0, pattern);
+								Populate(workPath[1], 1, pattern);
+								redraw = 2;
+							}
 						}
 					}
 				}

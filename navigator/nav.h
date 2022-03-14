@@ -76,7 +76,7 @@ extern void DrawKeys(const char** keys);
 extern void DrawMenu();
 extern char OpenMenu(int num);
 
-extern int ChangeAttributes(char* workPath, char* filename);
+extern int ChangeAttributes(char* filePath);
 extern void PrintBuffer(char* buffer);
 
 extern int StartApp(char* filePath);
