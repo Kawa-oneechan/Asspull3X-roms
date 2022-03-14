@@ -235,7 +235,7 @@ void InfoPanel(int panel, char* workPath, char* filename)
 	}
 }
 
-void SelectFile(const char* path1, const char* path2, const char* pattern, char* selection, int(*onSelect)(char*))
+void SelectFile(const char* path1, const char* path2, const char* pattern)
 {
 	//Note: these are PLACEHOLDERS
 	static const char* keys[] = {
@@ -573,42 +573,30 @@ void SelectFile(const char* path1, const char* path2, const char* pattern, char*
 						}
 						else
 						{
-							if (onSelect)
+							if (filenames[0] != 0)
 							{
-								if (filenames[0] != 0)
-								{
-									free(filenames[0]);
-									filenames[0] = 0;
-								}
-								if (filenames[1] != 0)
-								{
-									free(filenames[1]);
-									filenames[1] = 0;
-								}
-								int32_t ret = onSelect(filePath[cs]);
-								Populate(workPath[0], 0, pattern);
-								Populate(workPath[1], 1, pattern);
-								if (ret == 1)
-								{
-									if (selection) strcpy_s(selection, MAXPATH, (const char*)filePath[cs]);
-									return;
-								}
-								redraw = (ret == 2);
-								if (redraw)
-								{
-									TEXT->SetTextColor(0, 7);
-									TEXT->ClearScreen();
-								}
+								free(filenames[0]);
+								filenames[0] = 0;
 							}
-							else if (selection)
+							if (filenames[1] != 0)
 							{
-								strcpy_s(selection, MAXPATH, (const char*)filePath[cs]);
-								return;
+								free(filenames[1]);
+								filenames[1] = 0;
+							}
+							int32_t ret = ShowFile(filePath[cs], true);
+							Populate(workPath[0], 0, pattern);
+							Populate(workPath[1], 1, pattern);
+							redraw = (ret == 2);
+							if (redraw)
+							{
+								TEXT->SetTextColor(0, 7);
+								TEXT->ClearScreen();
 							}
 						}
 					}
 				}
 				else if (key == 0x3B || key == 0x3C) //F1 or F2
+ChangeDisk:
 				{
 					int d = key - 0x3B;
 					int oD = currentDrive[d];
@@ -662,13 +650,13 @@ HandleMenu:
 								m[1].state = 0;
 								m[2].state = 0;
 								m[3].state = 0;
-								m[key - 1].state = 2;
+								m[key - 1].state = CHECKED;
 								if (views[side] != 0)
 								{
 									cs = side ^ 1;
-									m2[1].state = 1;
-									m2[2].state = 1;
-									m2[3].state = 1;
+									m2[1].state = DISABLED;
+									m2[2].state = DISABLED;
+									m2[3].state = DISABLED;
 								}
 								else
 								{
@@ -677,6 +665,11 @@ HandleMenu:
 									m2[3].state = 0;
 								}
 								break;
+							case 6: //Drive
+							{
+								key = 0x3B + side;
+								goto ChangeDisk;
+							}
 						}
 						redraw = 1;
 					}
@@ -722,7 +715,6 @@ HandleMenu:
 
 int main(void)
 {
-	char path[MAXPATH];
 	intoff();
 	MISC->SetTextMode(SMODE_240 | SMODE_BOLD);
 	DRAW->ResetPalette();
@@ -730,6 +722,6 @@ int main(void)
 	REG_CARET = 0;
 	while(1)
 	{
-		SelectFile("A:\\", "A:\\", "*.*", path, ShowFile);
+		SelectFile("A:\\", "A:\\", "*.*");
 	}
 }

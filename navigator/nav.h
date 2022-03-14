@@ -63,6 +63,8 @@ typedef struct
 extern const tMenu menuBar[];
 extern tMenuItem leftMenu[], rightMenu[];
 #define NUMMENUS 4
+#define DISABLED 1
+#define CHECKED 2
 
 extern void WaitForKey();
 extern tWindow* OpenWindow(char left, char top, char width, char height, uint8_t color);

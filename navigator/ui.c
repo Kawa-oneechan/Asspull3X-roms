@@ -1,42 +1,42 @@
 #include "nav.h"
 
 tMenuItem leftMenu[] = {
-	{ "~Files", 33, 2, 101 },
+	{ "~Files", 33, CHECKED, 101 },
 	{ "~Info", 23, 0, 102 },
 	{ "~Preview", 25, 1, 103  },
-	{ "Director~y info", 21, 1, 104 },
-	{ "~On/off           Ctrl-F1", 24, 1, 105 },
+	{ "Director~y info", 21, DISABLED, 104 },
+	{ "~On/off           Ctrl-F1", 24, DISABLED, 105 },
 	{ "-", 0, 1, 0 },
 	{ "~Drive\x98                F1", 32, 0, 106 },
 };
 
 const tMenuItem filesMenu[] = {
 	{ "~View             F2", 47, 0, 11 },
-	{ "~Edit             F3", 18, 0, 12 },
-	{ "~Copy             F5", 46, 0, 13 },
-	{ "~Rename or Move   F6", 19, 0, 14 },
-	{ "~Make directory   F7", 50, 0, 15 },
-	{ "~Delete           F8", 32, 0, 16 },
-	{ "~Print            F9", 25, 0, 17 },
+	{ "~Edit             F3", 18, DISABLED, 12 },
+	{ "~Copy             F5", 46, DISABLED, 13 },
+	{ "~Rename or Move   F6", 19, DISABLED, 14 },
+	{ "~Make directory   F7", 50, DISABLED, 15 },
+	{ "~Delete           F8", 32, DISABLED, 16 },
+	{ "~Print            F9", 25, DISABLED, 17 },
 	{ "File ~attributes", 30, 0, 18 },
 };
 
 const tMenuItem commandsMenu[] = {
 	{ "~Swap panels        Ctrl-U", 31, 0, 31 },
 	{ "-", 0, 1, 0 },
-	{ "~Copy diskette\x98", 46, 0, 32 },
-	{ "~Format diskette\x98", 33, 0, 33 },
-	{ "~Label disk\x98", 38, 0, 34 },
+	{ "~Copy diskette\x98", 46, DISABLED, 32 },
+	{ "~Format diskette\x98", 33, DISABLED, 33 },
+	{ "~Label disk\x98", 38, DISABLED, 34 },
 	{ "-", 0, 1, 0 },
-	{ "Confi~guration", 34, 0, 35 },
+	{ "Confi~guration", 34, DISABLED, 35 },
 };
 
 tMenuItem rightMenu[] = {
-	{ "~Files", 33, 2, 111 },
+	{ "~Files", 33, CHECKED, 111 },
 	{ "~Info", 23, 0, 112 },
-	{ "~Preview", 25, 1, 113  },
-	{ "Director~y info", 21, 1, 114 },
-	{ "~On/off           Ctrl-F2", 24, 1, 115 },
+	{ "~Preview", 25, DISABLED, 113  },
+	{ "Director~y info", 21, DISABLED, 114 },
+	{ "~On/off           Ctrl-F2", 24, DISABLED, 115 },
 	{ "-", 0, 1, 0 },
 	{ "~Drive\x98                F2", 32, 0, 116 },
 };
@@ -341,14 +341,14 @@ char OpenMenu(int cm)
 				Highlight(menuLefts[cm] + 1, 2 + ci, menuWidths[cm] + 4, CLR_MENUITEM);
 				if (ci == 0) ci = menuBar[cm].numItems;
 				ci--;
-				while (menuBar[cm].items[ci].state & 1) ci--;
+				while (menuBar[cm].items[ci].state & DISABLED) ci--;
 				Highlight(menuLefts[cm] + 1, 2 + ci, menuWidths[cm] + 4, CLR_MENUSEL);
 			}
 			else if (key == 0xD0) //down
 			{
 				Highlight(menuLefts[cm] + 1, 2 + ci, menuWidths[cm] + 4, CLR_MENUITEM);
 				ci++;
-				while (menuBar[cm].items[ci].state & 1) ci++;
+				while (menuBar[cm].items[ci].state & DISABLED) ci++;
 				if (ci == menuBar[cm].numItems) ci = 0;
 				Highlight(menuLefts[cm] + 1, 2 + ci, menuWidths[cm] + 4, CLR_MENUSEL);
 			}
