@@ -201,6 +201,7 @@ int main(void)
 {
 	REG_SCREENFADE = 31;
 	DRAW->DisplayPicture((TImageFile*)&piano);
+	intoff();
 
 	//Clear out all keys
 	for (int i = 0; i < NUMKEYS; i++)
@@ -234,26 +235,28 @@ int main(void)
 				PALETTE[KEYPALSTART - 12 + pit] = KEYON;
 				MIDI_KEYON(1, (pit + pitoff), 80);
 			}
-			else if(key == 0xD0)
+			else if (key == 0xCB)
 			{
 				if (pitoff > 0) pitoff -= 12;
 				while (REG_KEYIN == key) { vbl(); }
 			}
-			else if(key == 0xC8)
+			else if (key == 0xCD)
 			{
 				if (pitoff < 108) pitoff += 12;
 				while (REG_KEYIN == key) { vbl(); }
 			}
-			else if(key == 0xCB)
+			else if (key == 0xD0)
 			{
-				if (program > 0) program--;
+				if (program == 0) program = 128;
+				program--;
 				MIDI_PROGRAM(1, program);
 				Write(programNames[program]);
 				while (REG_KEYIN == key) { vbl(); }
 			}
-			else if(key == 0xCD)
+			else if (key == 0xC8)
 			{
-				if (program < 128) program++;
+				program++;
+				if (program == 128) program = 0;
 				MIDI_PROGRAM(1, program);
 				Write(programNames[program]);
 				while (REG_KEYIN == key) { vbl(); }
