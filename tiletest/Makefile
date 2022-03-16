@@ -1,4 +1,4 @@
-GFX8x8 := tileset.png question.png grass.png
+GFX8x8 := tileset.png tileanim.png
 GFX16x32 := farah.png
 HDMA := hdma1.png
 TILED := map.json
