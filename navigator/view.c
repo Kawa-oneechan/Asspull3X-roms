@@ -220,7 +220,7 @@ int ShowText(char* filePath)
 			else if (key == 0x42) //F8
 				ShowError("F8 not implemented yet");
 			else if (key == 0x43) //F9
-				PrintBuffer(fullText);
+				PrintBuffer((char*)fullText);
 			else if (key == 0x44 || key == 0x01) //F10 or Escape
 				break;
 		}

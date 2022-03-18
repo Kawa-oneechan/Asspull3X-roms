@@ -503,6 +503,11 @@ void SelectFile(const char* path1, const char* path2, const char* pattern)
 				}
 				else if (key == 0xC8) //up
 				{
+					if (index[cs] == 0)
+					{
+						lastIndex[cs] = 1;
+						break;
+					}
 					lastIndex[cs] = index[cs];
 					if (index[cs] > 0)
 					{
@@ -530,6 +535,11 @@ void SelectFile(const char* path1, const char* path2, const char* pattern)
 				}
 				else if (key == 0xD0) //down
 				{
+					if (index[cs] == fileCt[cs] - 1)
+					{
+						lastIndex[cs] = -1;
+						break;
+					}
 					lastIndex[cs] = index[cs];
 					if (index[cs] < fileCt[cs] - 1)
 					{
@@ -653,6 +663,8 @@ ChangeDisk:
 						DrawPanel(cs ? WIDTH + 1 : 0, 1, WIDTH + 1, FILESSHOWN + 5, CLR_PANEL);
 						index[d] = 0;
 					}
+					else
+						lastIndex[d] = -1;
 				}
 				else if (key == 0x3D) //F3
 				{ key = 11; goto HandleMenu; }
