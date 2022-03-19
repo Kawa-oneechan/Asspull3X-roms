@@ -43,9 +43,7 @@ int LoadFile(const char* path, char** buffer, int32_t len)
 
 void WaitForKey()
 {
-	while (REG_KEYIN != 0);
-	while (REG_KEYIN == 0);
-	while (REG_KEYIN != 0);
+	while (INP_KEYIN == 0) { vbl(); }
 }
 
 int32_t StartApp(char* filePath)

@@ -21,15 +21,13 @@ void WaitForKey()
 	int spin = 0;
 	for (int i = 0; i < 26; i++)
 		TEXTMAP[(29 * 80) + i] = 0x07 | (prompt[i] << 8);
-	while (REG_KEYIN != 0) { vbl(); }
-	while (REG_KEYIN == 0)
+	while (INP_KEYIN == 0)
 	{
 		TEXTMAP[(29 * 80) + 29] = 0x0E | (spinner[((spin++) >> 4) % 11] << 8);
 		TEXTMAP[(29 * 80) + 28] = 0x0E | (spinner[((spin >> 4) + 1) % 11] << 8);
 		TEXTMAP[(29 * 80) + 27] = 0x0E | (spinner[((spin >> 4) + 2) % 11] << 8);
 		vbl();
 	}
-	while (REG_KEYIN != 0) { vbl(); }
 	for (int i = 0; i < 30; i++)
 		TEXTMAP[(29 * 80) + i] = 0x2007;
 }
@@ -39,13 +37,8 @@ char getchar()
 	uint16_t key = 0;
 	while (1)
 	{
-		key = REG_KEYIN;
+		key = INP_KEYIN;
 		if ((key & 0xFF) > 0)
-			break;
-	}
-	while (1)
-	{
-		if ((REG_KEYIN & 0xFF) == 0)
 			break;
 	}
 	return sctoasc[key & 0xFF];

@@ -30,11 +30,10 @@ int ChangeAttributes(char* filePath)
 	while (1)
 	{
 		vbl();
-		uint16_t key = REG_KEYIN;
+		uint16_t key = INP_KEYIN;
 		intoff();
 		if ((key & 0xFF) > 0)
 		{
-			while(1) { if (REG_KEYIN == 0) break; }
 			if (key == 0xC8) //up
 			{
 				Highlight(win->left + 2,  win->top + 2 + tab, win->width - 6, CLR_DIALOG);

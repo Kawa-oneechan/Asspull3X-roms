@@ -16,9 +16,7 @@ const TImageFile * const bitmaps[] =
 static void WaitForKey()
 {
 	DRAW->DrawString("Press any key to continue.", 0, 0, 15);
-	while (REG_KEYIN != 0) { vbl(); }
-	while (REG_KEYIN == 0) { vbl(); }
-	while (REG_KEYIN != 0) { vbl(); }
+	while (INP_KEYIN == 0) { vbl(); }
 }
 
 void GraphicsTest()

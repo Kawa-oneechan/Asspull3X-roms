@@ -71,9 +71,9 @@ const key keys[] =
 	{ 51,16, "<"     },
 	{ 56,16, ">"     },
 	{ 61,16, "/"     },
-	{  5,16, "Shift" }, //really 256
-	{ 17,19, "Alt"   }, //really 512
-	{  5,19, "Ctrl"  }, //really 1024
+	{  0, 0, 0       },
+	{  0, 0, 0       },
+	{  0, 0, 0       },
 	{ 36,19, "Space" },
 	{  0, 0, 0       },
 	{ 15, 2, "F1"    },
@@ -96,9 +96,9 @@ const key keys[] =
 	{  0, 0, 0       },
 	{  0, 0, 0       },
 	{  0, 0, 0       },
-	{  0, 0, 0       },
-	{  0, 0, 0       },
-	{  0, 0, 0       },
+	{  5,16, "Shift" },
+	{ 17,19, "Alt"   },
+	{  5,19, "Ctrl"  },
 	//80 -- remapping from 199
 	{ 10,23, "Hm"    },
 	{ 67,23, "\x18"  }, //up
@@ -146,23 +146,25 @@ void KeyboardTest()
 
 	while (escapes < 5)
 	{
-		while (REG_KEYIN != 0) { vbl(); }
-		while (REG_KEYIN == 0) { vbl(); }
-		int theKey = REG_KEYIN;
-		if (theKey == 69) theKey = 83;
+		vbl();
+		int theKey = 0;
+		for (int i = 0; i < 100; i++)
+		{
+			if (INP_KEYMAP[i])
+			{
+				theKey = i;
+				break;
+			}
+		}
+		if (theKey == 0) continue;
+		else if (theKey == 69) theKey = 83;
 		else if (theKey == 87) theKey = 69;
 		else if (theKey == 88) theKey = 70;
-		else if (theKey == 256) theKey = 54;
-		else if (theKey == 512) theKey = 55;
-		else if (theKey == 1024) theKey = 56;
 		else if (theKey >= 199) theKey -= 119; //convert to 80
 
 		int l = keys[theKey].left;
 		int t = keys[theKey].top;
 		char* text = (char*)keys[theKey].text;
-
-		//TEXT->SetCursorPosition(0,0);
-		//printf("theKey: %d   ", theKey);
 
 		//highlight
 		{
@@ -188,7 +190,7 @@ void KeyboardTest()
 			printf(text);
 		}
 
-		while (REG_KEYIN != 0) { vbl(); }
+		while (INP_KEYMAP[theKey]) { vbl(); }
 
 		//lowlight
 		{

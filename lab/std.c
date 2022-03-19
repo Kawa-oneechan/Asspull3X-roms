@@ -81,7 +81,7 @@ int fgetc(FILE* file)
 	uint16_t key = 0;
 	while (1)
 	{
-		key = REG_KEYIN;
+		key = INP_KEYIN;
 		if (key & 0xFF)
 			break;
 		vbl();
@@ -89,7 +89,7 @@ int fgetc(FILE* file)
 	}
 	while (1)
 	{
-		if ((REG_KEYIN & 0xFF) == 0)
+		if ((INP_KEYIN & 0xFF) == 0)
 			break;
 		vbl();
 	}

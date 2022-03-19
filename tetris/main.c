@@ -95,9 +95,7 @@ uint32_t rand()
 
 void WaitForKey()
 {
-	while (REG_KEYIN != 0) { vbl(); }
-	while (REG_KEYIN == 0 && REG_JOYPAD == 0) { vbl(); }
-	while (REG_KEYIN != 0) { vbl(); }
+	while (INP_KEYIN == 0 && REG_JOYPAD == 0) { vbl(); }
 }
 
 int main(void)

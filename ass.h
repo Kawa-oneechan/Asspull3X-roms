@@ -53,7 +53,7 @@ extern void dpf(const char* format, ...);
 #define REG_SCROLLY3	*(uint16_t*)(MEM_IO + 0x001A)
 #define REG_SCROLLX4	*(uint16_t*)(MEM_IO + 0x001C)
 #define REG_SCROLLY4	*(uint16_t*)(MEM_IO + 0x001E)
-#define REG_KEYIN		*(volatile uint16_t*)(MEM_IO + 0x0040)
+//#define REG_KEYIN		*(volatile uint16_t*)(MEM_IO + 0x0040)
 #define REG_JOYPAD1		*(volatile uint8_t*)(MEM_IO + 0x0042)
 #define REG_JOYPAD2		*(volatile uint8_t*)(MEM_IO + 0x0043)
 #define REG_MIDIOUT		*(volatile uint8_t*)(MEM_IO + 0x0044)
@@ -87,14 +87,14 @@ extern void dpf(const char* format, ...);
 #define PCMLENGTH		((int32_t*)(MEM_IO + 0x0078))
 #define PCMVOLUME		((int8_t*)(MEM_IO + 0x0080))
 
+#define INP_KEYIN		*(volatile uint8_t*)(0x02000000 + 0x0002)
+#define INP_KEYSHIFT	*(volatile uint8_t*)(0x02000000 + 0x0003)
+#define INP_KEYMAP		((volatile uint8_t*)(0x02000000 + 0x0040))
 #define REG_JOYPAD		REG_JOYPAD1
 #define REG_PCMOFFSET	REG_PCM1OFFSET
 #define REG_PCMLENGTH	REG_PCM1LENGTH
 #define REG_PCMVOLUMEL	REG_PCM1VOLUMEL
 #define REG_PCMVOLUMER	REG_PCM1VOLUMER
-
-//Deprecated
-#define REG_DEBUGOUT	*interface->LinePrinter
 
 #define DMA_BYTE 0
 #define DMA_SHORT 1

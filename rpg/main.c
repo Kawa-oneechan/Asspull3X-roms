@@ -323,9 +323,7 @@ void entityWalk(MapEntity *entity, int facing)
 
 void waitForActionKey()
 {
-	while (REG_KEYIN != 0) vbl();
-	while (REG_KEYIN == 0) vbl();
-	while (REG_KEYIN != KEY_ACTION) vbl();
+	while (INP_KEYIN != KEY_ACTION) vbl();
 }
 
 void saySomething(char *what, int flags)
@@ -399,7 +397,7 @@ void saySomething(char *what, int flags)
 
 	if (flags & 1)
 	{
-		while (REG_KEYIN != 0) vbl();
+		while (INP_KEYIN != 0) vbl();
 		return;
 	}
 
@@ -413,7 +411,7 @@ void saySomething(char *what, int flags)
 		vbl();
 	}
 	MISC->DmaClear(MAP4, 0, WIDTH * 8, DMA_INT);
-	while (REG_KEYIN != 0) vbl();
+	while (INP_KEYIN != 0) vbl();
 }
 
 int doMenu(int left, int top, char* options, int num)
@@ -446,7 +444,7 @@ int doMenu(int left, int top, char* options, int num)
 		OBJECTS_B[255] = OBJECTB_BUILD(((left + 1) * 8) - 4, ((top + 1 + (choice * 2)) * 8) + ((REG_TICKCOUNT / 32) % 2), 0, 0, 0, 0, 1, 0);
 		OBJECTS_B[254] = OBJECTB_BUILD(((left + 1) * 8) - 4, (top + 2 + (choice * 2)) * 8, 0, 0, 0, 0, 1, 0);
 		vbl();
-		lastInput = REG_KEYIN;
+		lastInput = INP_KEYIN;
 		if (REG_JOYPAD & 1) lastInput = KEY_UP;
 		else if (REG_JOYPAD & 4) lastInput = KEY_DOWN;
 		switch (lastInput)
@@ -461,7 +459,7 @@ int doMenu(int left, int top, char* options, int num)
 				break;
 		}
 		if (lastInput)
-			while (REG_KEYIN != 0) vbl();
+			while (INP_KEYIN != 0) vbl();
 	}
 	OBJECTS_A[255] = 0;
 	OBJECTS_A[254] = 0;
@@ -854,11 +852,11 @@ int main(void)
 		updateAndDraw();
 		{
 			vbl();
-			lastInput = REG_KEYIN;
-			if (REG_JOYPAD & 1) lastInput = KEY_UP;
-			else if (REG_JOYPAD & 2) lastInput = KEY_RIGHT;
-			else if (REG_JOYPAD & 4) lastInput = KEY_DOWN;
-			else if (REG_JOYPAD & 8) lastInput = KEY_LEFT;
+			lastInput = INP_KEYIN;
+			if (REG_JOYPAD & 1 || INP_KEYMAP[0xC8]) lastInput = KEY_UP;
+			else if (REG_JOYPAD & 2 || INP_KEYMAP[0xCD]) lastInput = KEY_RIGHT;
+			else if (REG_JOYPAD & 4 || INP_KEYMAP[0xD0]) lastInput = KEY_DOWN;
+			else if (REG_JOYPAD & 8 || INP_KEYMAP[0xCB]) lastInput = KEY_LEFT;
 		}
 	}
 }

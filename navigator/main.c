@@ -196,11 +196,10 @@ int SwitchDrive(int which, int now)
 	Highlight(win->left + 1, win->top + 1 + ret, win->width - 4, 0x90);
 	while (1)
 	{
-		uint16_t key = REG_KEYIN;
+		uint16_t key = INP_KEYIN;
 		intoff();
 		if ((key & 0xFF) > 0)
 		{
-			while(1) { if (REG_KEYIN == 0) break; }
 			for (int i = 0; i < numDrives; i++)
 			{
 				if (key == abcd[i])
@@ -474,12 +473,10 @@ void SelectFile(const char* path1, const char* path2, const char* pattern)
 			if (filePath[cs][strnlen_s(filePath[cs], MAXPATH)-1] != '\\') strkitten_s(filePath[cs], MAXPATH, '\\');
 			strcat_s(filePath[cs], MAXPATH, curFN);
 
-			uint16_t key = REG_KEYIN;
+			uint16_t key = INP_KEYIN;
 			intoff();
 			if ((key & 0xFF) > 0)
 			{
-				while(1) { if (REG_KEYIN == 0) break; }
-
 				if (key & 0x200)
 				{
 					key &= 0xFF;

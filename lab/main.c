@@ -5,8 +5,7 @@ IBios* interface;
 
 void WaitForKey()
 {
-	while (REG_KEYIN == 0) { vbl(); }
-	while (REG_KEYIN != 0) { vbl(); }
+	while (INP_KEYIN == 0) { vbl(); }
 }
 
 #define MAX_CWD 256
@@ -97,7 +96,7 @@ void ListFiles(const char* path, int32_t mode)
 	}
 	ret = DISK->CloseDir(&dir);
 	printf("\n\t\t%8i bytes used", size);
-	printf("\n\t\t%8i bytes free\n\n", 1474560 - size); //assuming a formatted 3½' HD diskette.
+	printf("\n\t\t%8i bytes free\n\n", 1474560 - size); //assuming a formatted 3ï¿½' HD diskette.
 }
 
 int main1()

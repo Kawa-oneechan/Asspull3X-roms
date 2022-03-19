@@ -291,7 +291,6 @@ void loadFromCode(const char* source)
 		map[i] = EXTERIOR;
 	while ((ch = *source++))
 	{
-		//REG_DEBUGOUT = ch;
 		type = -1;
 		switch (ch)
 		{
@@ -355,7 +354,6 @@ void loadFromCode(const char* source)
 			wasDigit = 0;
 		}
 	}
-	//REG_DEBUGOUT = '\n';
 }
 
 void load(const char* source)
@@ -449,9 +447,7 @@ void PlaySound(int id)
 
 void WaitForKey()
 {
-	while (REG_KEYIN != 0) { vbl(); }
-	while (REG_KEYIN == 0 && REG_JOYPAD == 0) { vbl(); }
-	while (REG_KEYIN != 0) { vbl(); }
+	while (INP_KEYIN == 0 && REG_JOYPAD == 0) { vbl(); }
 }
 
 int getc()
@@ -459,11 +455,10 @@ int getc()
 	uint16_t key = 0;
 	while (1)
 	{
-		key = REG_KEYIN;
+		key = INP_KEYIN;
 		if (key & 0xFF) break;
 		vbl();
 	}
-	while (REG_KEYIN != 0) { vbl(); }
 	return key;
 }
 
@@ -589,11 +584,11 @@ int main(void)
 		for (int delay = 0; delay < 12; delay++)
 		{
 			vbl();
-			in = REG_KEYIN;
-			if (REG_JOYPAD & 1) in = KEY_UP;
-			else if (REG_JOYPAD & 2) in = KEY_RIGHT;
-			else if (REG_JOYPAD & 4) in = KEY_DOWN;
-			else if (REG_JOYPAD & 8) in = KEY_LEFT;
+			in = INP_KEYIN;
+			if (REG_JOYPAD & 1 || INP_KEYMAP[0xC8]) in = KEY_UP;
+			else if (REG_JOYPAD & 2 || INP_KEYMAP[0xCD]) in = KEY_RIGHT;
+			else if (REG_JOYPAD & 4 || INP_KEYMAP[0xD0]) in = KEY_DOWN;
+			else if (REG_JOYPAD & 8 || INP_KEYMAP[0xCB]) in = KEY_LEFT;
 		}
 		if (REG_TIMET > lastTimeT)
 		{

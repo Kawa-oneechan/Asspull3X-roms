@@ -256,7 +256,7 @@ void movePlayer()
 	if (dropTimer != 0)
 	{
 		dropTimer--;
-		if (REG_KEYIN != KEY_DOWN && REG_JOYPAD != 4)
+		if (INP_KEYIN != KEY_DOWN && REG_JOYPAD != 4)
 			return;
 	}
 	dropTimer = 8;
@@ -350,9 +350,7 @@ void drawEntirity()
 
 void WaitForKey()
 {
-	while (REG_KEYIN != 0) { vbl(); }
-	while (REG_KEYIN == 0 && REG_JOYPAD == 0) { vbl(); }
-	while (REG_KEYIN != 0) { vbl(); }
+	while (INP_KEYIN == 0 && REG_JOYPAD == 0) { vbl(); }
 }
 
 int main(void)

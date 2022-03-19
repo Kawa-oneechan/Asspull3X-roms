@@ -148,12 +148,10 @@ int ShowText(char* filePath)
 			redraw = 0;
 		}
 
-		uint16_t key = REG_KEYIN;
+		uint16_t key = INP_KEYIN;
 		//vbl();
 		if ((key & 0xFF) > 0)
 		{
-			while(1) { if (REG_KEYIN == 0) break; }
-
 			/*if (key == 0xCB) //left
 			{
 				if (scroll > 0)

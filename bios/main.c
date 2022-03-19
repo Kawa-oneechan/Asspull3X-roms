@@ -81,20 +81,20 @@ int main(void)
 	if (GetNumDrives() == 0)
 	{
 		Write("No disk drive connected. Power off, or press F1 to continue.");
-		while (REG_KEYIN != 59)
+		while (INP_KEYIN != 59)
 			vbl();
 	}
 	else if (GetNumDrives() > 4)
 	{
 		Write("Too many disk drives connected. Only the first four will be accessible.\nPress F1 to continue.");
-		while (REG_KEYIN != 59)
+		while (INP_KEYIN != 59)
 			vbl();
 	}
 	FindFont();
 
 	volatile uint8_t* firstDisk = (uint8_t*)0x02000000 + (diskToDev[0] * 0x8000);
 
-	int diskLock = REG_KEYIN == 0x100;
+	int diskLock = INP_KEYSHIFT & 0x01;
 
 	while(1)
 	{
@@ -137,7 +137,7 @@ int main(void)
 			break;
 		}
 
-		if (REG_KEYIN == 59 && showSplash) //F1
+		if (INP_KEYIN == 59 && showSplash) //F1
 		{
 			OBJECTS_B[0] = OBJECTB_BUILD(-32, -32, 0, 0, 0, 0, 0, 0);
 			char about[256];
@@ -152,7 +152,7 @@ int main(void)
 			WaitForVBlanks(128);
 			const char blink[] = { 3, 4, 5, 6, 6, 6, 5, 4, 3 };
 			int blinker = 0;
-			while (!REG_KEYIN)
+			while (!INP_KEYIN)
 			{
 				if (blinker % 8 == 0)
 					DrawString("\x03", 208, 202, blink[blinker / 8]);

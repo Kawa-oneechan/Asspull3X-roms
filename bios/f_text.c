@@ -24,6 +24,7 @@ unsigned char attribs;
 __attribute((format (printf, 1, 2)))
 void dpf(const char* format, ...)
 {
+	if (interface->LinePrinter == 0) return;
 	char buffer[1024] = "[DEBUG] ";
 	int ints = REG_INTRMODE;
 	intoff();
@@ -32,9 +33,9 @@ void dpf(const char* format, ...)
 	vsprintf(buffer + 8, format, args);
 	char* b = buffer;
 	while(*b)
-		REG_DEBUGOUT = *b++;
+		*interface->LinePrinter = *b++;
 //	WriteFile(STD_PRINT, (void*)buffer, -1);
-	REG_DEBUGOUT = '\n';
+	*interface->LinePrinter = '\n';
 	va_end(args);
 	REG_INTRMODE = ints;
 }

@@ -55,9 +55,7 @@ tWindow* menuWindow = NULL;
 
 void WaitForKey()
 {
-	while (REG_KEYIN != 0) { vbl(); }
-	while (REG_KEYIN == 0) { vbl(); }
-	while (REG_KEYIN != 0) { vbl(); }
+	while (INP_KEYIN == 0) { vbl(); }
 }
 
 tWindow* OpenWindow(char left, char top, char width, char height, uint8_t color)
@@ -312,12 +310,10 @@ char OpenMenu(int cm)
 	DropMenu(cm);
 	while (1)
 	{
-		uint16_t key = REG_KEYIN;
+		uint16_t key = INP_KEYIN;
 		intoff();
 		if ((key & 0xFF) > 0)
 		{
-			while(1) { if (REG_KEYIN == 0) break; }
-
 			if (key == 0xCB) //left
 			{
 				Highlight(menuLefts[cm], 0, myStrLen(menuBar[cm].title) + 4, CLR_MENUBAR);

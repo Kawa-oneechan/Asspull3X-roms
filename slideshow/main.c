@@ -38,8 +38,7 @@ void* LoadFile(const char* path, void* buffer)
 
 void WaitForKey()
 {
-	while (REG_KEYIN == 0) vbl();
-	while (REG_KEYIN != 0) vbl();
+	while (INP_KEYIN == 0) vbl();
 }
 
 int main(void)

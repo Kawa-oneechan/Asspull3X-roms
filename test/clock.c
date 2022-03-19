@@ -69,7 +69,7 @@ reset:
 
 			TEXT->SetCursorPosition(6 + cursor, 5);
 
-			int in = REG_KEYIN;
+			int in = INP_KEYIN;
 			if (in == KEY_ENTER)
 			{
 				REG_TIMET = mktime(now_tm);
@@ -186,7 +186,6 @@ reset:
 					}
 				}
 			}
-			while(REG_KEYIN != 0) { vbl(); }
 			vbl();
 		}
 
@@ -195,9 +194,7 @@ reset:
 
 	REG_CARET = 0;
 
-	while(REG_KEYIN != 0) { vbl(); }
-
-	while(REG_KEYIN == 0)
+	while(INP_KEYIN == 0)
 	{
 		now_t = REG_TIMET;
 		now_tm = gmtime(&now_t);
@@ -210,6 +207,4 @@ reset:
 
 		Spinner();
 	}
-
-	while(REG_KEYIN != 0) { vbl(); }
 }

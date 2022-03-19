@@ -65,8 +65,7 @@ void MouseTest()
 
 	MouseState.x = 160; MouseState.y = 120;
 
-	while (REG_KEYIN != 0) { vbl(); }
-	while (REG_KEYIN == 0)
+	while (INP_KEYIN == 0)
 	{
 		HandleMouse();
 		if (MouseState.changed)
@@ -81,8 +80,6 @@ void MouseTest()
 		vbl();
 	}
 
-	while (REG_KEYIN != 0) { vbl(); }
-
 	MouseState.x = 136; MouseState.y = 104;
 	const uint16_t colors[] = { 0x0000, 0x2223, 0x5184, 0x1A9E };
 
@@ -95,7 +92,7 @@ void MouseTest()
 	OBJECTS_A[1] = OBJECTA_BUILD(256, 0, 1, 0);
 	OBJECTS_B[1] = OBJECTB_BUILD(MouseState.x + 0, MouseState.y + 0, 0, 0, 0, 0, 1, 0);
 
-	while (REG_KEYIN == 0)
+	while (INP_KEYIN == 0)
 	{
 		HandleMouse();
 		if (MouseState.changed)
@@ -106,7 +103,6 @@ void MouseTest()
 		}
 		vbl();
 	}
-	while (REG_KEYIN != 0) { vbl(); }
 	OBJECTS_A[0] = OBJECTS_A[1] = 0; //hide the cursor
 	DRAW->ResetPalette();
 	MISC->SetTextMode(SMODE_240 | SMODE_BOLD);
