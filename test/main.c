@@ -51,6 +51,7 @@ extern void KeyboardTest();
 extern void MouseTest();
 extern void JoypadTest();
 extern void ClockTest();
+extern void MIDITest();
 extern void PCMTest();
 extern void OPLTest();
 
@@ -78,7 +79,7 @@ const void* const optionFuncs[] =
 	JoypadTest,
 	ClockTest,
 	0,
-	0, //MIDITest
+	MIDITest,
 	PCMTest,
 	OPLTest
 };
