@@ -6,8 +6,8 @@ extern const uint16_t tilesTiles[], tilesPal[];
 extern const uint16_t fontTiles[];
 extern const uint16_t playerTiles[], playerPal[];
 extern const uint16_t backsTiles[], backPals[];
-extern const uint8_t disketteBitmap[];
-extern const uint16_t diskettePal[];
+extern const uint16_t disketteTiles[], diskettePal[];
+extern const TImageFile diskbg[];
 extern const uint16_t hdma1[];
 extern const char * const levels[];
 
@@ -464,16 +464,27 @@ int getc()
 
 void RotateTheFloppy()
 {
-	static int frame = 0, timer = 0;
+	static int frame = 0, timer = 0, bop = 0;
+	const char bops[] = { 1, 2, 1 , 0 };
 	if (timer == 0)
 	{
-		REG_BLITSOURCE = (uint32_t)&disketteBitmap[frame * 0x200];
-		REG_BLITTARGET = MEM_VRAM + (96 * 320) + 24;
-		REG_BLITLENGTH = 0x200;
-		REG_BLITCONTROL = BLIT_COPY | BLIT_BYTE | BLIT_STRIDESKIP | BLIT_SOURCESTRIDE(16) | BLIT_TARGETSTRIDE(320);
+		MISC->DmaCopy(TILESET, (int8_t*)&disketteTiles + (0x800 * frame), 0x400, DMA_INT);
+
+		OBJECTS_B[0] = OBJECTB_BUILD(128, 49 + bops[bop], 1, 1, 0, 0, 1, 0);
+		OBJECTS_B[1] = OBJECTB_BUILD(128 + 32, 49 + bops[bop], 1, 1, 0, 0, 1, 0);
+		OBJECTS_B[2] = OBJECTB_BUILD(128, 49 + bops[bop] + 32, 1, 1, 0, 0, 1, 0);
+		OBJECTS_B[3] = OBJECTB_BUILD(128 + 32, 49 + bops[bop] + 32, 1, 1, 0, 0, 1, 0);
 
 		frame++;
-		if (frame == 8) frame = 0;
+		if (frame == 4)
+		{
+			bop++;
+			if (bop == 4) bop = 0;
+		}
+		if (frame == 8)
+		{
+			frame = 0;
+		}
 		timer = 8;
 	}
 	else
@@ -482,9 +493,6 @@ void RotateTheFloppy()
 
 void CheckForDisk()
 {
-	const char* msg =
-		"A diskette has been inserted with a level pack file on it.\n"
-		"Would you like to play that instead of the built-in pack?\n\n[Y/n]";
 	FILEINFO nfo;
 	DIR dir;
 	FILE file;
@@ -492,21 +500,15 @@ void CheckForDisk()
 	if (ret != 0) return;
 	if (nfo.fname[0] == 0) return;
 
-	REG_HDMASOURCE[0] = (int32_t)hdma1;
-	REG_HDMATARGET[0] = (int32_t)PALETTE;
-	REG_HDMACONTROL[0] = DMA_ENABLE | HDMA_DOUBLE | (DMA_SHORT << 4) | (0 << 8) | (480 << 20);
+	DRAW->DisplayPicture((TImageFile*)&diskbg);
 
-	MISC->SetBitmapMode16(SMODE_240);
-	MISC->DmaClear((void*)MEM_VRAM, 0, 640*240/4, DMA_INT);
-
-	MISC->DmaCopy(PALETTE, (int16_t*)&diskettePal, 16, DMA_INT);
+	MISC->DmaCopy(PALETTE + 256, (int16_t*)&diskettePal, 16, DMA_SHORT);
+	OBJECTS_A[0] = OBJECTA_BUILD( 0, 0, 1, 0);
+	OBJECTS_A[1] = OBJECTA_BUILD(16, 0, 1, 0);
+	OBJECTS_A[2] = OBJECTA_BUILD(32, 0, 1, 0);
+	OBJECTS_A[3] = OBJECTA_BUILD(48, 0, 1, 0);
 	inton();
 	interface->VBlank = RotateTheFloppy;
-	interface->DrawCharFont = (char*)0x0E062400;
-	interface->DrawCharHeight = 0x0B10;
-
-	DRAW->DrawString(msg, 121, 97, 9);
-	DRAW->DrawString(msg, 120, 96, 5);
 	DRAW->FadeFromWhite();
 	while (1)
 	{
@@ -517,6 +519,7 @@ void CheckForDisk()
 		{
 			DRAW->FadeToWhite();
 			REG_HDMACONTROL[0] = 0;
+			OBJECTS_A[0] = OBJECTS_A[1] = OBJECTS_A[2] = OBJECTS_A[3] = 0;
 			return;
 		}
 	}
@@ -534,6 +537,7 @@ void CheckForDisk()
 	}
 	DRAW->FadeToWhite();
 	REG_HDMACONTROL[0] = 0;
+	OBJECTS_A[0] = OBJECTS_A[1] = OBJECTS_A[2] = OBJECTS_A[3] = 0;
 }
 
 int main(void)
