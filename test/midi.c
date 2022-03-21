@@ -86,8 +86,6 @@ static void MIDI_Service()
 	{
 		value = *_midiptr++;
 		_midiwait = *_midiptr++;
-		//_midiwait /= 2;
-		//_midiwait = (_midiwait + 127) / 128;
 		if (value == 0xFFFFFFFF)
 		{
 			_midiptr = NULL;
@@ -105,7 +103,6 @@ void MIDI_Play()
 {
 	if (!_midiptr)
 		return;
-	//for (int i = 0; i < 16; i++)
 	MIDI_Service();
 }
 

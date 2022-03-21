@@ -53,12 +53,8 @@ extern void dpf(const char* format, ...);
 #define REG_SCROLLY3	*(uint16_t*)(MEM_IO + 0x001A)
 #define REG_SCROLLX4	*(uint16_t*)(MEM_IO + 0x001C)
 #define REG_SCROLLY4	*(uint16_t*)(MEM_IO + 0x001E)
-//#define REG_KEYIN		*(volatile uint16_t*)(MEM_IO + 0x0040)
-#define REG_JOYPAD1		*(volatile uint8_t*)(MEM_IO + 0x0042)
-#define REG_JOYPAD2		*(volatile uint8_t*)(MEM_IO + 0x0043)
 #define REG_MIDIOUT		*(volatile uint8_t*)(MEM_IO + 0x0044)
 #define REG_OPLOUT		*(volatile int16_t*)(MEM_IO + 0x0048)
-#define REG_MOUSE		*(uint16_t*)(MEM_IO + 0x0050)
 #define REG_CARET		*(uint16_t*)(MEM_IO + 0x0054)
 #define REG_TIMET		*(int64_t*)(MEM_IO + 0x0060)
 #define REG_PCM1OFFSET	*(int32_t*)(MEM_IO + 0x0070)
@@ -82,15 +78,22 @@ extern void dpf(const char* format, ...);
 #define REG_BLITLENGTH	*(uint32_t*)(MEM_IO + 0x020C)
 #define REG_BLITKEY		*(uint32_t*)(MEM_IO + 0x0210)
 
-#define JOYPADS			((volatile uint8_t*)(MEM_IO + 0x0042))
 #define PCMOFFSET		((int32_t*)(MEM_IO + 0x0070))
 #define PCMLENGTH		((int32_t*)(MEM_IO + 0x0078))
 #define PCMVOLUME		((int8_t*)(MEM_IO + 0x0080))
 
 #define INP_KEYIN		*(volatile uint8_t*)(0x02000000 + 0x0002)
 #define INP_KEYSHIFT	*(volatile uint8_t*)(0x02000000 + 0x0003)
+#define INP_JOYSTATES	*(uint8_t*)(0x02000000 + 0x0010)
+#define INP_JOYPAD1		*(volatile uint16_t*)(0x02000000 + 0x0012)
+#define INP_JOYSTK1H	*(volatile int8_t*)(0x02000000 + 0x0014)
+#define INP_JOYSTK1V	*(volatile int8_t*)(0x02000000 + 0x0015)
+#define INP_JOYPAD2		*(volatile uint16_t*)(0x02000000 + 0x0016)
+#define INP_JOYSTK2H	*(volatile int8_t*)(0x02000000 + 0x0017)
+#define INP_JOYSTK2V	*(volatile int8_t*)(0x02000000 + 0x0018)
+#define INP_MOUSE		*(uint16_t*)(0x02000000 + 0x0020)
 #define INP_KEYMAP		((volatile uint8_t*)(0x02000000 + 0x0040))
-#define REG_JOYPAD		REG_JOYPAD1
+
 #define REG_PCMOFFSET	REG_PCM1OFFSET
 #define REG_PCMLENGTH	REG_PCM1LENGTH
 #define REG_PCMVOLUMEL	REG_PCM1VOLUMEL
@@ -109,7 +112,7 @@ extern void dpf(const char* format, ...);
 #define SMODE_BLINK 0x10	// Specifies that instead of bright background colors, text mode cells should blink.
 #define SMODE_240 0x20		// Specifies that instead of 480 lines, the screen height should be halved to 240.
 #define SMODE_320 0x40		// Specifies that the screen width should be halved from 640 to 320.
-#define SMODE_BOLD 0x80		// Specifies that text mode should use a bold font.
+#define SMODE_BOLD 0x80		// Specifies that text mode should use a bold font.f
 #define SMODE_200 0x80		// Specifies that bitmap modes should be 200 or 400 lines.
 
 #define IMODE_DISABLE	0x80	// Enable interrupts.

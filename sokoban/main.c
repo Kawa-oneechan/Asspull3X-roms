@@ -447,7 +447,7 @@ void PlaySound(int id)
 
 void WaitForKey()
 {
-	while (INP_KEYIN == 0 && REG_JOYPAD == 0) { vbl(); }
+	while (INP_KEYIN == 0 && INP_JOYPAD1 == 0) { vbl(); }
 }
 
 int getc()
@@ -589,10 +589,10 @@ int main(void)
 		{
 			vbl();
 			in = INP_KEYIN;
-			if (REG_JOYPAD & 1 || INP_KEYMAP[0xC8]) in = KEY_UP;
-			else if (REG_JOYPAD & 2 || INP_KEYMAP[0xCD]) in = KEY_RIGHT;
-			else if (REG_JOYPAD & 4 || INP_KEYMAP[0xD0]) in = KEY_DOWN;
-			else if (REG_JOYPAD & 8 || INP_KEYMAP[0xCB]) in = KEY_LEFT;
+			if (INP_JOYPAD1 & 1 || INP_KEYMAP[0xC8]) in = KEY_UP;
+			else if (INP_JOYPAD1 & 2 || INP_KEYMAP[0xCD]) in = KEY_RIGHT;
+			else if (INP_JOYPAD1 & 4 || INP_KEYMAP[0xD0]) in = KEY_DOWN;
+			else if (INP_JOYPAD1 & 8 || INP_KEYMAP[0xCB]) in = KEY_LEFT;
 		}
 		if (REG_TIMET > lastTimeT)
 		{

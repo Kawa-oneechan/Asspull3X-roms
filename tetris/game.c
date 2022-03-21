@@ -255,10 +255,8 @@ static action get_action(int delay)
 	while (delay--)
 	{
 		vbl();
-		REG_JOYPAD = 1; //reset
-		int dpadbuts = REG_JOYPAD;
-		int extrabuts = REG_JOYPAD;
-		rndseed += dpadbuts + extrabuts;
+		int dpadbuts = INP_JOYPAD1;
+		rndseed += dpadbuts;
 
 		if (dpadbuts)
 		{
@@ -269,8 +267,7 @@ static action get_action(int delay)
 			{
 				vbl();
 				debounce--;
-				REG_JOYPAD = 1; //reset
-				if (REG_JOYPAD == 0)
+				if (INP_JOYPAD1 == 0)
 					break;
 			}
 		}
@@ -281,7 +278,7 @@ static action get_action(int delay)
 		if (dpadbuts & 4) return MOVE_DOWN;
 		if (dpadbuts & 16) return ROTATE;
 		if (dpadbuts & 32) return DROP;
-		if (extrabuts & 8) return PAUSE;
+		if (dpadbuts & 2048) return PAUSE;
 	}
 	return MOVE_DOWN;
 }
@@ -303,27 +300,18 @@ static void pause_game(game *game)
 	while (1)
 	{
 		vbl();
-		REG_JOYPAD = 1;
-		int buttons = REG_JOYPAD;
-		buttons = REG_JOYPAD;
-		if (!buttons) break;
+		if (!INP_JOYPAD1) break;
 	}
 	while (1)
 	{
 		vbl();
-		REG_JOYPAD = 1;
-		int buttons = REG_JOYPAD;
-		buttons = REG_JOYPAD;
-		if (buttons & 8) break;
+		if (INP_JOYPAD1 & 2048) break;
 	}
 	//debounce
 	while (1)
 	{
 		vbl();
-		REG_JOYPAD = 1;
-		int buttons = REG_JOYPAD;
-		buttons = REG_JOYPAD;
-		if (!buttons) break;
+		if (!INP_JOYPAD1) break;
 	}
 
 	REG_SCREENFADE = 0;

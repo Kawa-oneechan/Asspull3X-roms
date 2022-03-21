@@ -115,6 +115,16 @@ const uint8_t cursorTiles[] =
 	0x11,0x11,0x11,0x00,0x11,0x11,0x11,0x11,0x11,0x11,0x11,0x01,0x00,0x00,0x00,0x00,
 };
 
+void getInput()
+{
+	lastInput = INP_KEYIN;
+	if (INP_JOYPAD1 & 1) lastInput = KEY_UP;
+	else if (INP_JOYPAD1 & 2 ) lastInput = KEY_RIGHT;
+	else if (INP_JOYPAD1 & 4 ) lastInput = KEY_DOWN;
+	else if (INP_JOYPAD1 & 8 ) lastInput = KEY_LEFT;
+	else if (INP_JOYPAD1 & 0x20) lastInput = KEY_ACTION;
+}
+
 void drawTile(int x, int y, int tileNum)
 {
 	x &= 31;
@@ -323,7 +333,8 @@ void entityWalk(MapEntity *entity, int facing)
 
 void waitForActionKey()
 {
-	while (INP_KEYIN != KEY_ACTION) vbl();
+	while (lastInput != KEY_ACTION) { vbl(); getInput(); }
+	lastInput = 0;
 }
 
 void saySomething(char *what, int flags)
@@ -444,23 +455,22 @@ int doMenu(int left, int top, char* options, int num)
 		OBJECTS_B[255] = OBJECTB_BUILD(((left + 1) * 8) - 4, ((top + 1 + (choice * 2)) * 8) + ((REG_TICKCOUNT / 32) % 2), 0, 0, 0, 0, 1, 0);
 		OBJECTS_B[254] = OBJECTB_BUILD(((left + 1) * 8) - 4, (top + 2 + (choice * 2)) * 8, 0, 0, 0, 0, 1, 0);
 		vbl();
-		lastInput = INP_KEYIN;
-		if (REG_JOYPAD & 1) lastInput = KEY_UP;
-		else if (REG_JOYPAD & 4) lastInput = KEY_DOWN;
+		getInput();
 		switch (lastInput)
 		{
 			case KEY_UP:
 				if (choice == 0) choice = num;
 				choice--;
+				while (lastInput) { vbl(); getInput(); }
 				break;
 			case KEY_DOWN:
 				choice++;
 				if (choice == num) choice = 0;
+				while (lastInput) { vbl(); getInput(); }
 				break;
 		}
-		if (lastInput)
-			while (INP_KEYIN != 0) vbl();
 	}
+	lastInput = 0;
 	OBJECTS_A[255] = 0;
 	OBJECTS_A[254] = 0;
 	eraseWindow(left, top, len + 5, (num * 2) + 2);
@@ -850,13 +860,7 @@ int main(void)
 	for(;;)
 	{
 		updateAndDraw();
-		{
-			vbl();
-			lastInput = INP_KEYIN;
-			if (REG_JOYPAD & 1 || INP_KEYMAP[0xC8]) lastInput = KEY_UP;
-			else if (REG_JOYPAD & 2 || INP_KEYMAP[0xCD]) lastInput = KEY_RIGHT;
-			else if (REG_JOYPAD & 4 || INP_KEYMAP[0xD0]) lastInput = KEY_DOWN;
-			else if (REG_JOYPAD & 8 || INP_KEYMAP[0xCB]) lastInput = KEY_LEFT;
-		}
+		vbl();
+		getInput();
 	}
 }

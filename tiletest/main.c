@@ -142,8 +142,7 @@ int main(void)
 		while (REG_LINE < 32);
 
 		//Something to test the object structs with...
-		REG_JOYPAD = 1;
-		int dpadbuts = REG_JOYPAD;
+		int dpadbuts = INP_JOYPAD1;
 		if (dpadbuts & 4) objectsB[0].y++;
 		else if (dpadbuts & 1) objectsB[0].y--;
 		if (dpadbuts & 2) objectsB[0].x++;

@@ -27,18 +27,22 @@ void JoypadTest()
 	TEXT->SetTextColor(0, 7);
 	TEXT->ClearScreen();
 	MISC->DmaCopy(TILESET + 0x2000, (int8_t*)&pointerTiles, 0x2E0, DMA_INT);
+	MISC->DmaCopy(PALETTE + 256, PALETTE, 16, DMA_SHORT);
 	OBJECTS_A[0] = OBJECTA_BUILD(256, 0, 1, 0);
 	OBJECTS_B[0] = OBJECTB_BUILD(320, 160, 0, 0, 0, 0, 1, 0);
+
+	const char * const types[] = { "none", "digital only", "analog" };
+	printf("1. %s\n", types[INP_JOYSTATES & 0x0F]);
+	printf("2. %s\n", types[(INP_JOYSTATES >> 4) & 0x0F]);
+
 	while (1)
 	{
-		REG_JOYPAD = 1; //reset
-		int dpadbuts = REG_JOYPAD & 0xFF; //int with mask to prevent "0xFFFFFF80"
-		int extrabuts = REG_JOYPAD & 0xFF;
-		char axis1 = REG_JOYPAD;
-		char axis2 = REG_JOYPAD;
+		int buttons = INP_JOYPAD1;
+		char axis1 = INP_JOYSTK1H;
+		char axis2 = INP_JOYSTK1V;
 
-		TEXT->SetCursorPosition(0, 0);
-		printf("0x%02X 0x%02X %3d,%3d  ", dpadbuts, extrabuts, axis1, axis2);
+		TEXT->SetCursorPosition(0, 3);
+		printf("0x%04X %3d,%3d  ", buttons, axis1, axis2);
 
 		OBJECTS_B[0] = OBJECTB_BUILD(160 + (axis1 / 2), 120 + (axis2 / 2), 0, 0, 0, 0, 1, 0);
 

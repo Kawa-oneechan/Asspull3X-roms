@@ -35,7 +35,7 @@ TMouseState MouseState;
 
 void HandleMouse()
 {
-	int16_t rm = REG_MOUSE;
+	int16_t rm = INP_MOUSE;
 	int rawX = rm & 0x1F;
 	int rawY = (rm >> 7) & 0x1F;
 	if (rm & 0x40)   rawX = -rawX;

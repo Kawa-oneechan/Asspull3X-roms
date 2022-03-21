@@ -62,9 +62,7 @@ void ThinkPlayer(int id)
 	}
 	else
 	{
-		REG_JOYPAD = 1; //reset
-
-		int dpadbuts = REG_JOYPAD;
+		int dpadbuts = INP_JOYPAD1;
 
 		if (dpadbuts & 4) p->y++;
 		else if (dpadbuts & 1) p->y--;

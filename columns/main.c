@@ -256,7 +256,7 @@ void movePlayer()
 	if (dropTimer != 0)
 	{
 		dropTimer--;
-		if (INP_KEYIN != KEY_DOWN && REG_JOYPAD != 4)
+		if (INP_KEYIN != KEY_DOWN && INP_JOYPAD1 != 4)
 			return;
 	}
 	dropTimer = 8;
@@ -350,7 +350,7 @@ void drawEntirity()
 
 void WaitForKey()
 {
-	while (INP_KEYIN == 0 && REG_JOYPAD == 0) { vbl(); }
+	while (INP_KEYIN == 0 && INP_JOYPAD1 == 0) { vbl(); }
 }
 
 int main(void)
@@ -392,8 +392,7 @@ int main(void)
 		for (int delay = 0; delay < 2; delay++)
 		{
 			vbl();
-			REG_JOYPAD = 1; //reset
-			in = REG_JOYPAD;
+			in = INP_JOYPAD1;
 			rndseed += in;
 		}
 		if (in & 1) rotate();

@@ -90,7 +90,7 @@ void ultoa(uint32_t val, char *buf)
 
 void WaitForKey()
 {
-	while (INP_KEYIN == 0 && REG_JOYPAD == 0) { vbl(); }
+	while (INP_KEYIN == 0 && INP_JOYPAD1 == 0) { vbl(); }
 }
 
 void TitleMusic()
@@ -148,8 +148,7 @@ void TitleScreen()
 	while (1)
 	{
 		vbl();
-		REG_JOYPAD = 1; //reset
-		int dpadbuts = REG_JOYPAD;
+		int dpadbuts = INP_JOYPAD1;
 		int key = INP_KEYIN;
 		if ((key == KEY_UP || dpadbuts & 1) && delay < 16)
 		{
@@ -354,9 +353,8 @@ int main(void)
 					REG_OPLOUT = 0xB005;
 			}
 
-			int dpadbuts = REG_JOYPAD;
+			int dpadbuts = INP_JOYPAD1;
 			int keyIn = INP_KEYIN;
-			REG_JOYPAD = 1; //reset
 			if ((keyIn == KEY_UP || dpadbuts & 1) && key != KEY_DOWN) key = KEY_UP;
 			else if ((keyIn == KEY_DOWN || dpadbuts & 4) && key != KEY_UP) key = KEY_DOWN;
 			if ((keyIn == KEY_RIGHT || dpadbuts & 2) && key != KEY_LEFT) key = KEY_RIGHT;
