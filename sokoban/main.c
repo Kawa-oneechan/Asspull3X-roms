@@ -593,6 +593,7 @@ int main(void)
 			else if (INP_JOYPAD1 & 2 || INP_KEYMAP[0xCD]) in = KEY_RIGHT;
 			else if (INP_JOYPAD1 & 4 || INP_KEYMAP[0xD0]) in = KEY_DOWN;
 			else if (INP_JOYPAD1 & 8 || INP_KEYMAP[0xCB]) in = KEY_LEFT;
+			else if (INP_KEYMAP[0x13]) in = 0x13;
 		}
 		if (REG_TIMET > lastTimeT)
 		{
