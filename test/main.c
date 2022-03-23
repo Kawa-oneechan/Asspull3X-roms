@@ -37,6 +37,7 @@ char getchar()
 	uint16_t key = 0;
 	while (1)
 	{
+		vbl();
 		key = INP_KEYIN;
 		if ((key & 0xFF) > 0)
 			break;

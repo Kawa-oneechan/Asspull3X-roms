@@ -43,7 +43,7 @@ const key keys[] =
 	{ 61,10, "["     },
 	{ 66,10, "]"     },
 	{ 67,13, "Return"},
-	{  5,13, "Caps"  }, //unsure, I have my Windows set to use Caps like Shift
+	{  0, 0, 0       },
 	//30
 	{ 12,13, "A"     },
 	{ 17,13, "S"     },
@@ -75,7 +75,7 @@ const key keys[] =
 	{  0, 0, 0       },
 	{  0, 0, 0       },
 	{ 36,19, "Space" },
-	{  0, 0, 0       },
+	{  5,13, "Caps"  },
 	{ 15, 2, "F1"    },
 	//60
 	{ 20, 2, "F2"    },
@@ -156,6 +156,11 @@ void KeyboardTest()
 				break;
 			}
 		}
+
+		TEXT->SetCursorPosition(0, 0);
+		TEXT->SetTextColor(0, 7);
+		printf("%d  ", theKey);
+
 		if (theKey == 0) continue;
 		else if (theKey == 69) theKey = 83;
 		else if (theKey == 87) theKey = 69;
@@ -174,17 +179,17 @@ void KeyboardTest()
 		}
 
 		//hack to highlight both sides
-		if (theKey == 54)
+		if (theKey == 77)
 		{
 			TEXT->SetCursorPosition(66, t);
 			printf(text);
 		}
-		else if (theKey == 55)
+		else if (theKey == 78)
 		{
 			TEXT->SetCursorPosition(59, t);
 			printf(text);
 		}
-		else if (theKey == 56)
+		else if (theKey == 79)
 		{
 			TEXT->SetCursorPosition(71, t);
 			printf(text);
@@ -200,17 +205,17 @@ void KeyboardTest()
 		}
 
 		//hack to lowlight both sides
-		if (theKey == 54)
+		if (theKey == 77)
 		{
 			TEXT->SetCursorPosition(66, t);
 			printf(text);
 		}
-		else if (theKey == 55)
+		else if (theKey == 78)
 		{
 			TEXT->SetCursorPosition(59, t);
 			printf(text);
 		}
-		else if (theKey == 56)
+		else if (theKey == 79)
 		{
 			TEXT->SetCursorPosition(71, t);
 			printf(text);

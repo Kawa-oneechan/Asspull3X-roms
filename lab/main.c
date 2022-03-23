@@ -106,6 +106,7 @@ int main1()
 	//GETCHAR
 	while(1)
 	{
+		vbl();
 		char c = getchar();
 		printf("$%02X '%c'\n", c, c);
 		if (c == '\e') break;
