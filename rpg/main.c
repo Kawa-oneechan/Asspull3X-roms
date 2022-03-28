@@ -118,10 +118,10 @@ const uint8_t cursorTiles[] =
 void getInput()
 {
 	lastInput = INP_KEYIN;
-	if (INP_JOYPAD1 & 1) lastInput = KEY_UP;
-	else if (INP_JOYPAD1 & 2 ) lastInput = KEY_RIGHT;
-	else if (INP_JOYPAD1 & 4 ) lastInput = KEY_DOWN;
-	else if (INP_JOYPAD1 & 8 ) lastInput = KEY_LEFT;
+	if ((INP_JOYPAD1 & 1) || INP_KEYMAP[KEY_UP]) lastInput = KEY_UP;
+	else if ((INP_JOYPAD1 & 2) || INP_KEYMAP[KEY_RIGHT]) lastInput = KEY_RIGHT;
+	else if ((INP_JOYPAD1 & 4) || INP_KEYMAP[KEY_DOWN]) lastInput = KEY_DOWN;
+	else if ((INP_JOYPAD1 & 8) || INP_KEYMAP[KEY_LEFT]) lastInput = KEY_LEFT;
 	else if (INP_JOYPAD1 & 0x20) lastInput = KEY_ACTION;
 }
 
@@ -333,7 +333,8 @@ void entityWalk(MapEntity *entity, int facing)
 
 void waitForActionKey()
 {
-	while (lastInput != KEY_ACTION) { vbl(); getInput(); }
+	while (INP_KEYMAP[KEY_ACTION]) { vbl(); }
+	while (!INP_KEYMAP[KEY_ACTION]) { vbl(); }
 	lastInput = 0;
 }
 
@@ -408,7 +409,7 @@ void saySomething(char *what, int flags)
 
 	if (flags & 1)
 	{
-		while (INP_KEYIN != 0) vbl();
+		while (INP_KEYMAP[KEY_ACTION]) { vbl(); }
 		return;
 	}
 
@@ -422,7 +423,7 @@ void saySomething(char *what, int flags)
 		vbl();
 	}
 	MISC->DmaClear(MAP4, 0, WIDTH * 8, DMA_INT);
-	while (INP_KEYIN != 0) vbl();
+	while (INP_KEYMAP[KEY_ACTION]) { vbl(); }
 }
 
 int doMenu(int left, int top, char* options, int num)
@@ -450,6 +451,7 @@ int doMenu(int left, int top, char* options, int num)
 
 	int choice = 0;
 	lastInput = 0;
+	while (INP_KEYMAP[KEY_ACTION]) { vbl(); }
 	while (lastInput != KEY_ACTION)
 	{
 		OBJECTS_B[255] = OBJECTB_BUILD(((left + 1) * 8) - 4, ((top + 1 + (choice * 2)) * 8) + ((REG_TICKCOUNT / 32) % 2), 0, 0, 0, 0, 1, 0);
