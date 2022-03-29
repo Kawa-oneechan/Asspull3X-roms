@@ -290,15 +290,114 @@ void* calloc(size_t nelem, size_t elsize)
 
 tm __gmtime_res;
 
+static const char wday_name[][4] = {
+	"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"
+};
+static const char mon_name[][4] = {
+	"Jan", "Feb", "Mar", "Apr", "May", "Jun",
+	"Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+};
+static const char wday_nameF[][10] = {
+	"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"
+};
+static const char mon_nameF[][10] = {
+	"January", "February", "March", "April", "May", "June",
+	"July", "August", "September", "October", "November", "December"
+};
+
+size_t strftime(char *str, size_t count, const char *format, const tm *time)
+{
+	const char *f = format;
+	char *s = str;
+	int len = 0;
+
+	while(*f && count)
+	{
+		if (*f == '%')
+		{
+			f++;
+			if (*f == '%')
+			{
+				*s++ = '%';
+				*s = 0;
+				count--;
+			}
+			else
+			{
+				switch (*f)
+				{
+					case 'n':
+						*s++ = '\n';
+						count--;
+						break;
+					case 't':
+						*s++ = '\t';
+						count--;
+						break;
+					case 'Y':
+						len = TEXT->Format(s, "%d", time->tm_year + YEAR_BASE);
+						goto next;
+					case 'y':
+						len = TEXT->Format(s, "%d", time->tm_year + YEAR_BASE);
+						len -= 2;
+						s[0] = s[2];
+						s[1] = s[3];
+						goto next;
+					case 'b':
+					case 'h':
+						len = TEXT->Format(s, "%s", mon_name[time->tm_mon]);
+						goto next;
+					case 'B':
+						len = TEXT->Format(s, "%s", mon_nameF[time->tm_mon]);
+						goto next;
+					case 'm':
+						len = TEXT->Format(s, "%02d", time->tm_mon + 1);
+						goto next;
+					case 'd':
+						len = TEXT->Format(s, "%02d", time->tm_mday);
+						goto next;
+					case 'e':
+						len = TEXT->Format(s, "%.2d", time->tm_mday);
+						goto next;
+					case 'j':
+						len = TEXT->Format(s, "%.3d", time->tm_yday);
+						goto next;
+					case 'a':
+						len = TEXT->Format(s, "%s", wday_name[time->tm_wday]);
+						goto next;
+					case 'A':
+						len = TEXT->Format(s, "%s", wday_nameF[time->tm_wday]);
+						goto next;
+					case 'c':
+						len = strftime(s, count, "%a %h %d %H:%M:%S %Y", time);
+						goto next;
+					case 'D': //never do this
+						len = strftime(s, count, "%m/%d/%y", time);
+						goto next;
+					case 'F': //always do this
+						len = strftime(s, count, "%Y-%m-%d", time);
+						goto next;
+					}
+			next:
+				s += len;
+				*s = 0;
+				count -= len;
+			}
+
+			f++;
+		}
+		else
+		{
+			*s++ = *f++;
+			*s = 0;
+			count--;
+		}
+	}
+	return s - str;
+}
+
 char* asctime_r(const tm *timeptr, char* buf)
 {
-	static const char wday_name[][4] = {
-		"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"
-	};
-	static const char mon_name[][4] = {
-		"Jan", "Feb", "Mar", "Apr", "May", "Jun",
-		"Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
-	};
 	TEXT->Format(buf, "%.3s %.3s%3d %.2d:%.2d:%.2d %d",
 		wday_name[timeptr->tm_wday],
 		mon_name[timeptr->tm_mon],
