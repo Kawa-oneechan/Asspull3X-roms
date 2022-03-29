@@ -409,8 +409,10 @@ void SelectFile(const char* path1, const char* path2, const char* pattern)
 						{
 							printf("      <UP>            ");
 							curFN += 16;
+							if (cs == s && lastIndex[s] != -1 && lastIndex[s] == i + scroll[s])
+								Highlight(o + 1, i + 2, WIDTH - 1, CLR_PANELITEM);
 							if (cs == s && index[s] == i + scroll[s])
-								Highlight(o, i + 2, WIDTH + 1, CLR_PANELSEL);
+								Highlight(o + 1, i + 2, WIDTH - 1, CLR_PANELSEL);
 							continue;
 						}
 						if (info.fattrib & AM_DIRECTORY)
@@ -422,10 +424,10 @@ void SelectFile(const char* path1, const char* path2, const char* pattern)
 						int fdd = info.fdate & 0x1F;
 						printf(" %02d-%02d-%02d", fdy, fdm, fdd);
 						curFN += 16;
+						if (cs == s && lastIndex[s] != -1 && lastIndex[s] == i + scroll[s])
+							Highlight(o + 1, i + 2, WIDTH - 1, CLR_PANELITEM);
 						if (cs == s && index[s] == i + scroll[s])
-							Highlight(o, i + 2, WIDTH + 1, CLR_PANELSEL);
-						if (cs == s && lastIndex[s] != index[s] && lastIndex[s] == i + scroll[s])
-							Highlight(o, i + 2, WIDTH + 1, CLR_PANELITEM);
+							Highlight(o + 1, i + 2, WIDTH - 1, CLR_PANELSEL);
 					}
 				}
 				else if (views[s] == 1)
@@ -449,15 +451,16 @@ void SelectFile(const char* path1, const char* path2, const char* pattern)
 		else
 		{
 			int o = (cs == 0 ? 0 : WIDTH + 1);
-			Highlight(o, 2 + lastIndex[cs] - scroll[cs], WIDTH + 1, CLR_PANELITEM);
+			if (lastIndex[cs] != -1)
+				Highlight(o + 1, 2 + lastIndex[cs] - scroll[cs], WIDTH - 1, CLR_PANELITEM);
 			if (lastIndex[cs] != index[cs])
 			{
-				Highlight(o, 2 + index[cs] - scroll[cs], WIDTH + 1, CLR_PANELSEL);
+				Highlight(o + 1, 2 + index[cs] - scroll[cs], WIDTH - 1, CLR_PANELSEL);
 				if (views[cs ^ 1] == 1)
 					InfoPanel(cs ^ 1, workPath[cs], &filenames[cs][index[cs] * 16]);
 			}
 			o = (cs == 1 ? 0 : WIDTH + 1);
-			Highlight(o, 2 + index[cs ^ 1] - scroll[cs ^ 1], WIDTH + 1, CLR_PANELITEM);
+			Highlight(o + 1, 2 + index[cs ^ 1] - scroll[cs ^ 1], WIDTH - 1, CLR_PANELITEM);
 		}
 		curFN = &filenames[cs][index[cs] * 16];
 
@@ -559,6 +562,7 @@ void SelectFile(const char* path1, const char* path2, const char* pattern)
 				}
 				else if (key == 0xC9) //page up
 				{
+					lastIndex[cs] = index[cs];
 					index[cs] -= FILESSHOWN;
 					scroll[cs] -= FILESSHOWN;
 					if (index[cs] < 0) index[cs] = 0;
@@ -568,6 +572,7 @@ void SelectFile(const char* path1, const char* path2, const char* pattern)
 				}
 				else if (key == 0xD1) //page down
 				{
+					lastIndex[cs] = index[cs];
 					index[cs] += FILESSHOWN - 1;
 					if (index[cs] >= fileCt[cs])
 						index[cs] = fileCt[cs] - 1;
@@ -606,7 +611,9 @@ void SelectFile(const char* path1, const char* path2, const char* pattern)
 								{
 									index[cs] = r;
 									if (index[cs] >= FILESSHOWN)
+									{
 										scroll[cs] = index[cs] - FILESSHOWN + 1;
+									}
 									break;
 								}
 							}
