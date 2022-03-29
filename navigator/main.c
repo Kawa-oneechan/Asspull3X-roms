@@ -596,6 +596,7 @@ void SelectFile(const char* path1, const char* path2, const char* pattern)
 						Populate(workPath[cs], cs, pattern);
 						redraw = 2;
 						index[cs] = 0;
+						scroll[cs] = 0;
 						for (int r = 0; r < fileCt[cs]; r++)
 						{
 							if (!strcmp(&filenames[cs][r * 16], justLeft))
@@ -604,6 +605,8 @@ void SelectFile(const char* path1, const char* path2, const char* pattern)
 								//if (info.fattrib & AM_DIRECTORY)
 								{
 									index[cs] = r;
+									if (index[cs] >= FILESSHOWN)
+										scroll[cs] = index[cs] - FILESSHOWN + 1;
 									break;
 								}
 							}
@@ -619,6 +622,7 @@ void SelectFile(const char* path1, const char* path2, const char* pattern)
 							Populate(workPath[cs], cs, pattern);
 							redraw = 2;
 							index[cs] = 0;
+							scroll[cs] = 0;
 						}
 						else
 						{
