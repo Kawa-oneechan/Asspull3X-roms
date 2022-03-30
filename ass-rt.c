@@ -343,6 +343,10 @@ size_t strftime(char *str, size_t count, const char *format, const tm *time)
 						s[0] = s[2];
 						s[1] = s[3];
 						goto next;
+					case 'C':
+						len = TEXT->Format(s, "%d", time->tm_year + YEAR_BASE);
+						len -= 2;
+						goto next;
 					case 'b':
 					case 'h':
 						len = TEXT->Format(s, "%s", mon_name[time->tm_mon]);
@@ -353,20 +357,36 @@ size_t strftime(char *str, size_t count, const char *format, const tm *time)
 					case 'm':
 						len = TEXT->Format(s, "%02d", time->tm_mon + 1);
 						goto next;
+					//case 'U':
+					//case 'W':
+					//case 'V':
+					case 'j':
+						len = TEXT->Format(s, "%.3d", time->tm_yday);
+						goto next;
 					case 'd':
 						len = TEXT->Format(s, "%02d", time->tm_mday);
 						goto next;
 					case 'e':
 						len = TEXT->Format(s, "%.2d", time->tm_mday);
 						goto next;
-					case 'j':
-						len = TEXT->Format(s, "%.3d", time->tm_yday);
-						goto next;
 					case 'a':
 						len = TEXT->Format(s, "%s", wday_name[time->tm_wday]);
 						goto next;
 					case 'A':
 						len = TEXT->Format(s, "%s", wday_nameF[time->tm_wday]);
+						goto next;
+					case 'w':
+						len = TEXT->Format(s, "%d", time->tm_wday);
+						goto next;
+					case 'H':
+						len = TEXT->Format(s, "%02d", time->tm_hour);
+						goto next;
+					//case 'I':
+					case 'M':
+						len = TEXT->Format(s, "%02d", time->tm_min);
+						goto next;
+					case 'S':
+						len = TEXT->Format(s, "%02d", time->tm_sec);
 						goto next;
 					case 'c':
 						len = strftime(s, count, "%a %h %d %H:%M:%S %Y", time);
@@ -377,6 +397,13 @@ size_t strftime(char *str, size_t count, const char *format, const tm *time)
 					case 'F': //always do this
 						len = strftime(s, count, "%Y-%m-%d", time);
 						goto next;
+					case 'R':
+						len = strftime(s, count, "%H:%M", time);
+						goto next;
+					case 'T':
+						len = strftime(s, count, "%H:%M:%S", time);
+						goto next;
+					//case 'p':
 					}
 			next:
 				s += len;
