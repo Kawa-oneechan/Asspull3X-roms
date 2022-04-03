@@ -75,6 +75,94 @@ typedef struct
 } TObjectB;
 #define objectsB ((TObjectB*)OBJECTS_B)
 
+
+const uint8_t farahSprites[][6] =
+{
+	{  0, 1, 3, 4,13,14 }, //stand
+	{  2, 1, 5, 6,15,16 }, //walk 1
+	{  2, 1, 7, 8,17,18 }, //walk 2
+	{  2, 1, 9,10,19,20 }, //walk 3
+	{  2, 1, 7, 8,17,18 }, //walk 4 (2 again)
+	{  2, 1,11,10,21,22 }, //jump
+	{  2, 1,12,10,23,24 }, //fall
+	{ 27,27, 0, 1,25,26 }, //duck
+};
+
+typedef struct
+{
+	uint32_t posX;
+	uint32_t posY;
+	uint8_t state;
+	uint8_t frame;
+	uint8_t timer;
+	uint8_t flip;
+} TPlayer;
+
+TPlayer player = { 0 };
+
+void BuildPlayer()
+{
+	const char offsets[][2] = {
+		{  0, 0 }, {  8, 0 },
+		{  0, 8 }, {  8, 8 },
+		{  0,16 }, {  8,16 },
+	};
+	if (!player.flip)
+	{
+		for (int i = 0; i < 6; i++)
+		{
+			objectsA[i].tile = farahSprites[player.frame][i] + 1;
+			objectsA[i].enabled = 1;
+			objectsB[i].x = player.posX + offsets[i][0];
+			objectsB[i].y = player.posY + offsets[i][1];
+			objectsB[i].flipH = 0;
+		}
+	}
+	else
+	{
+		for (int i = 0; i < 6; i++)
+		{
+			objectsA[i].tile = farahSprites[player.frame][i ^ 1] + 1;
+			objectsA[i].enabled = 1;
+			objectsB[i].x = player.posX + offsets[i][0];
+			objectsB[i].y = player.posY + offsets[i][1];
+			objectsB[i].flipH = 1;
+		}
+	}
+}
+
+void MovePlayer()
+{
+	if (player.posY <= 180)
+	{
+		player.frame = 6;
+		player.posY++;
+	}
+	else
+	{
+		player.frame = 0;
+	}
+
+	int dpadbuts = INP_JOYPAD1;
+	if (dpadbuts & 2)
+	{
+		player.flip = 0;
+		player.posX++;
+		if (player.frame < 5)
+			player.frame = 1;
+	}
+	else if (dpadbuts & 8)
+	{
+		player.flip = 1;
+		player.posX--;
+		if (player.frame < 5)
+			player.frame = 1;
+	}
+	else
+		if (player.frame < 5)
+			player.frame = 0;
+}
+
 int main(void)
 {
 	REG_SCREENMODE = SMODE_TILE;
@@ -92,15 +180,8 @@ int main(void)
 	MISC->DmaCopy(TILESET + (32*256), (int8_t*)&tilesetTiles, 20480 / 4, DMA_INT);
 	MISC->DmaCopy(PALETTE, (int8_t*)&tilesetPal, 128, DMA_SHORT);
 
-	MISC->DmaCopy(TILESET + 32, (int8_t*)&farahTiles, 64, DMA_INT);
+	MISC->DmaCopy(TILESET + 32, (int8_t*)&farahTiles, 384, DMA_INT);
 	MISC->DmaCopy(PALETTE + 256, (int8_t*)&farahPal, 16, DMA_SHORT);
-
-	objectsA[0].tile = 1;
-	objectsA[0].enabled = 1;
-	objectsB[0].x = 152;
-	objectsB[0].y = 176;
-	objectsB[0].tall = 1;
-	objectsB[0].large = 1;
 
 	REG_MAPSET = 0x70; //just enable it, don't worry about tile offsets.
 	//REG_MAPBLEND = 0x01;
@@ -109,7 +190,7 @@ int main(void)
 		DrawStripe(i, i);
 
 	{
-		const char buffer[] = "TILE TEST - V2";
+		const char buffer[] = "TILE TEST - V3";
 		char *c = (char*)buffer;
 		int pos = 65;
 		while (*c)
@@ -125,46 +206,54 @@ int main(void)
 		}
 	}
 
-	inton();
+//	inton();
 
 	REG_SCROLLY1 = 0;
 	REG_SCROLLY2 = 0;
-	REG_SCROLLY3 = 0;
-	int scroll = 0;
-	int col = 40;
+	REG_SCROLLY3 = 3;
+//	int scroll = 0;
+//	int col = 40;
 	int animation = 0;
+
+	player.posX =  9 * 16;
+	player.posY = 2 * 16; //11 * 16;
+	player.frame = 0;
+
 	for(;;)
 	{
 		vbl();
 
 		//SMB1
-		REG_SCROLLX3 = 0;
-		while (REG_LINE < 32);
+//		REG_SCROLLX3 = 0;
+//		while (REG_LINE < 32);
 
 		//Something to test the object structs with...
-		int dpadbuts = INP_JOYPAD1;
-		if (dpadbuts & 4) objectsB[0].y++;
-		else if (dpadbuts & 1) objectsB[0].y--;
-		if (dpadbuts & 2) objectsB[0].x++;
-		else if (dpadbuts & 8) objectsB[0].x--;
+//		int dpadbuts = INP_JOYPAD1;
+//		if (dpadbuts & 4) objectsB[0].y++;
+//		else if (dpadbuts & 1) objectsB[0].y--;
+//		if (dpadbuts & 2) objectsB[0].x++;
+//		else if (dpadbuts & 8) objectsB[0].x--;
 
-		REG_SCROLLX1 = scroll;
-		REG_SCROLLX2 = scroll;
-		REG_SCROLLX3 = scroll;
-		scroll += 1;
+		MovePlayer();
+		BuildPlayer();
+
+//		REG_SCROLLX1 = scroll;
+//		REG_SCROLLX2 = scroll;
+//		REG_SCROLLX3 = scroll;
+//		scroll += 1;
 		if (REG_TICKCOUNT % 4 == 0)
 		{
 			animation++;
 			MISC->DmaCopy(TILESET + (32*0x1C0), (int8_t*)&tileanimTiles + ((animation % 8) * (32*4*16)), (8*4*16), DMA_INT);
 		}
-		if (scroll % 8 == 0)
-		{
-			col++;
-			DrawStripe(col % MAPWIDTH, col % SCREENWIDTH);
-		}
+//		if (scroll % 8 == 0)
+//		{
+//			col++;
+//			DrawStripe(col % MAPWIDTH, col % SCREENWIDTH);
+//		}
 
 		//SMB3
-		//while (REG_LINE < 400);
-		//REG_SCROLLX3 = REG_SCROLLY3 = 0;
+//		while (REG_LINE < 400);
+//		REG_SCROLLX3 = REG_SCROLLY3 = 0;
 	}
 }
