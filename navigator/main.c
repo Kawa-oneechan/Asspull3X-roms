@@ -34,21 +34,15 @@ void PrintComma(int32_t n)
 
 void PrintBuffer(char* buffer)
 {
-	volatile char* lpt = 0;
-	for (int i = 0; i < 16; i++)
+	unsigned char* lpt = interface->LinePrinter;
+	if (lpt)
 	{
-		uint16_t signature = *(uint16_t*)(0x02000000 + (i * 0x8000));
-		if (signature == 0x4C50)
-		{
-			lpt = (char*)(0x02000002 + (i * 0x8000));
+		while (*buffer)
+			*lpt = *buffer++;
 
-			while (*buffer)
-				*lpt = *buffer++;
-
-			*lpt = 0x0A;
-			*lpt = 0x0C;
-			return;
-		}
+		*lpt = 0x0A;
+		*lpt = 0x0C;
+		return;
 	}
 	ShowError("Could not find a printer.");
 }
