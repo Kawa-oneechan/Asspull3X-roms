@@ -357,8 +357,8 @@ int main(void)
 {
 	MISC->SetTextMode(SMODE_TILE);
 	MISC->DmaCopy(TILESET, (int8_t*)&tilesTiles, 96 * 8, DMA_INT);
-	MISC->DmaCopy(PALETTE, (int16_t*)&tilesPal, 16, DMA_INT);
-	MISC->DmaCopy(PALETTE + 256, (int16_t*)&tilesPal, 16, DMA_INT);
+	MISC->DmaCopy(PALETTE, (int16_t*)&tilesPal, 32, DMA_SHORT);
+	MISC->DmaCopy(PALETTE + 256, (int16_t*)&tilesPal, 32, DMA_SHORT);
 	MISC->DmaClear(MAP1, 0, WIDTH * HEIGHT, 2);
 	MISC->DmaClear(MAP2, 0, WIDTH * HEIGHT, 2);
 	MISC->DmaClear(MAP3, 0, WIDTH * HEIGHT, 2);
@@ -367,7 +367,7 @@ int main(void)
 	REG_MAPBLEND = 0x02;
 
 	MISC->DmaCopy(TILESET + (128 * 32), (int8_t*)&girl1Tiles, 10240, DMA_INT);
-	MISC->DmaCopy(PALETTE + 128, (int16_t*)&girl1Pal, 8, DMA_INT);
+	MISC->DmaCopy(PALETTE + 128, (int16_t*)&girl1Pal, 16, DMA_SHORT);
 	PALETTE[0] = girl1Pal[0];
 	for (uint32_t i = 1, t = 0; i < 29; i++)
 	{
