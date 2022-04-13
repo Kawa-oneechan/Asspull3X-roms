@@ -1,6 +1,8 @@
 #include "../ass.h"
 IBios* interface;
 
+#define SRAM ((uint8_t*)(0x00FE0000))
+
 static const char sctoasc[256] = {
 	0,0,'1','2','3','4','5','6','7','8','9','0','-','=',0,0,
 	'q','w','e','r','t','y','u','i','o','p','[',']',0,0,'a','s',
@@ -104,6 +106,11 @@ int main(void)
 		TEXT->WriteChar('\xD7');
 		TEXT->SetTextColor(0, 7);
 		TEXT->Write(" testing suite.\n");
+
+		int timesRan = SRAM[8];
+		timesRan++;
+		SRAM[8] = timesRan;
+		TEXT->Write("Times ran: %d.\n", timesRan);
 
 		for (int i = 0; i < NUMOPTS; i++)
 		{

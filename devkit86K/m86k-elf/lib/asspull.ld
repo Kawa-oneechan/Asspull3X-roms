@@ -30,8 +30,8 @@ __DYNAMIC  =  0;
 
 MEMORY
 {
-    rom (rx) : ORIGIN = 0x00020000, LENGTH = 0x00400000
-    ram (wx) : ORIGIN = 0x01001000, LENGTH = 0x00400000
+    rom (rx) : ORIGIN = 0x00020000, LENGTH = 0x00FC0000
+    ram (wx) : ORIGIN = 0x01001000, LENGTH = 0x003FF000
 }
 
 /*
@@ -80,6 +80,8 @@ SECTIONS
     *(.lit)
   } > rom
   _stext = SIZEOF (.text);
+
+  PROVIDE(__SRAM_START = 0x00FE0000 );
 
   .data 0x01001000 :
   AT ( ADDR (.text) + SIZEOF (.text) )
