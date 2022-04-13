@@ -174,6 +174,7 @@ void TitleScreen()
 #define MAXSNAKEBITS 1024
 pos snakeBits[MAXSNAKEBITS];
 int headCursor = 0, tailCursor = 0;
+int headDir;
 
 void Tile(int y, int x, uint16_t tile)
 {
@@ -231,17 +232,17 @@ void GameOver()
 	REG_OPLOUT = 0xB201;
 }
 
-int InBounds(pos position)
+static int InBounds(pos position)
 {
 	return position.y < HEIGHT - 1 && position.y > 0 && position.x < WIDTH - 1 && position.x > 0;
 }
 
-int CoordinateToIndex(pos position)
+static int CoordinateToIndex(pos position)
 {
 	return WIDTH * position.y + position.x;
 }
 
-pos IndexToCoordinate(int index)
+static pos IndexToCoordinate(int index)
 {
 	int x = index % WIDTH;
 	int y = index / WIDTH;
@@ -290,12 +291,65 @@ void MovePlayer(pos head)
 		pos *tail = &snakeBits[tailCursor];
 		tailCursor++;
 		if (tailCursor == MAXSNAKEBITS) tailCursor = 0;
-		spaces[CoordinateToIndex(*tail)] = 0;
-		Tile(tail->y, tail->x, 0);
+		if (tail->x)
+		{
+			spaces[CoordinateToIndex(*tail)] = 0;
+			Tile(tail->y, tail->x, 0);
+		}
 	}
 
 	//Draw the new head
-	Tile(head.y, head.x, 96);
+	//Tile(head.y, head.x, 96);
+
+	const uint16_t headDirs[] =  { 96, 9, 11, 8, 10 };
+	pos *here, *next;
+	uint16_t lastDir = 0;
+	for (int i = tailCursor; i < headCursor; i = (i + 1) % MAXSNAKEBITS)
+	{
+		here = &snakeBits[i];
+		next = &snakeBits[(i + 1) % MAXSNAKEBITS];
+		uint16_t there = MAP1[(here->y * 64) + here->x];
+		uint16_t tnext = 96;
+		if (next->x > here->x) // going right
+		{
+			if (there == 2) //||
+				there = (lastDir == 2) ? 6 : 4; //|_ or .-
+			lastDir = 1;
+			tnext = 3; //==
+			if (i == tailCursor)
+				there = 12;
+		}
+		else if (next->y > here->y) // going down
+		{
+			if (there == 3) //==
+				there = (lastDir == 1) ? 5 : 4; //-. or .-
+			lastDir = 2;
+			tnext = 2; //||
+			if (i == tailCursor)
+				there = 14;
+		}
+		else if (next->x < here->x) // going left
+		{
+			if (there == 2) //||
+				there = (lastDir == 2) ? 7 : 5; //_| or -.
+			lastDir = 3;
+			tnext = 3; //==
+			if (i == tailCursor)
+				there = 13;
+		}
+		else if (next->y < here->y) // going up
+		{
+			if (there == 3) //==
+				there = (lastDir == 1) ? 7 : 6; //_| or |_
+			lastDir = 4;
+			tnext = 2; //||
+			if (i == tailCursor)
+				there = 15;
+		}
+		if (here->x) Tile(here->y, here->x, there);
+		if (next->x) Tile(next->y, next->x, tnext);
+	}
+	Tile(head.y, head.x, headDirs[headDir]);
 
 	char buffer[25];
 	ultoa(score, buffer);
@@ -308,6 +362,9 @@ void ClearBoard()
 		spaces[i] = 0;
 	for (int i = 0; i < 64 * 32; i++)
 		MAP1[i] = 0;
+	for (int i = 0; i < MAXSNAKEBITS; i++)
+		snakeBits[i].x = snakeBits[i].y = 0;
+	REG_SCREENFADE = 0;
 }
 
 int main(void)
@@ -330,7 +387,7 @@ int main(void)
 	{
 		ClearBoard();
 		int key = KEY_RIGHT;
-		headCursor = 0;
+		headCursor = 4;
 		tailCursor = 0;
 		DrawBoard();
 		PlaceAndDrawFruit();
@@ -361,17 +418,21 @@ int main(void)
 			else if ((keyIn == KEY_LEFT || dpadbuts & 8) && key != KEY_RIGHT) key = KEY_LEFT;
 			switch(key)
 			{
-				case KEY_DOWN:
-					head.y++;
-					break;
 				case KEY_RIGHT:
+					headDir = 1;
 					head.x++;
 					break;
-				case KEY_UP:
-					head.y--;
+				case KEY_DOWN:
+					headDir = 2;
+					head.y++;
 					break;
 				case KEY_LEFT:
+					headDir = 3;
 					head.x--;
+					break;
+				case KEY_UP:
+					headDir = 4;
+					head.y--;
 					break;
 			}
 			if (!InBounds(head))
