@@ -89,6 +89,9 @@ const void* const optionFuncs[] =
 
 int main(void)
 {
+	int timesRan = SRAM[8];
+	timesRan++;
+	SRAM[8] = timesRan;
 	while (1)
 	{
 		DRAW->ResetPalette();
@@ -107,9 +110,6 @@ int main(void)
 		TEXT->SetTextColor(0, 7);
 		TEXT->Write(" testing suite.\n");
 
-		int timesRan = SRAM[8];
-		timesRan++;
-		SRAM[8] = timesRan;
 		TEXT->Write("Times ran: %d.\n", timesRan);
 
 		for (int i = 0; i < NUMOPTS; i++)
