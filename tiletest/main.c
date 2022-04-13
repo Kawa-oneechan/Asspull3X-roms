@@ -4,10 +4,36 @@ IBios* interface;
 #define MAPWIDTH 130
 #define SCREENWIDTH 64
 
+#define F2I(x) (x >> 8)
+#define I2F(x,y) ((x << 8) + y)
+
 extern const uint16_t tilesetPal[], tilesetTiles[], hdma1[];
+extern const uint16_t map16[];
 extern const uint16_t farahPal[], farahTiles[];
 extern const uint16_t tileanimTiles[];
 extern const uint16_t bg1Map[], bg2Map[], levelMap[];
+
+const uint16_t palAnim[] =
+{
+	0x7708,0x7FFF,0x1084,0x1BDF,0x027F,0x0139,0x1ADA,0x0DF3,0x050D,0x671B,0x4A34,0x2D4D,0x3FFF,0x45BF,0x20D4,0x2D3A,
+	0x7708,0x7FFF,0x1084,0x4BFF,0x1F5F,0x0D9C,0x2B5E,0x1E77,0x1170,0x7E97,0x6DB0,0x54EA,0x3FFF,0x45BF,0x20D4,0x2D3A,
+	0x7708,0x7FFF,0x1084,0x4BFF,0x1F5F,0x0D9C,0x2B5E,0x1E77,0x1170,0x477F,0x3298,0x15B1,0x3FFF,0x45BF,0x20D4,0x2D3A,
+	0x7708,0x7FFF,0x1084,0x7FFF,0x4BFF,0x19FF,0x3BDF,0x2EFB,0x1DD3,0x671B,0x4A34,0x2D4D,0x3FFF,0x45BF,0x20D4,0x2D3A,
+	0x7708,0x7FFF,0x1084,0x7FFF,0x4BFF,0x19FF,0x3BDF,0x2EFB,0x1DD3,0x7E97,0x6DB0,0x54EA,0x3FFF,0x45BF,0x20D4,0x2D3A,
+	0x7708,0x7FFF,0x1084,0x7FFF,0x4BFF,0x19FF,0x3BDF,0x2EFB,0x1DD3,0x477F,0x3298,0x15B1,0x3FFF,0x45BF,0x20D4,0x2D3A,
+};
+
+void DrawTile(int x, int y, int num, uint16_t* map)
+{
+	x &= 31;
+	y &= 31;
+	int pos = ((y * 2) * 64) + (x * 2);
+
+	map[pos +  0] = map16[(num * 4) + 0] + 256;
+	map[pos +  1] = map16[(num * 4) + 1] + 256;
+	map[pos + 64] = map16[(num * 4) + 2] + 256;
+	map[pos + 65] = map16[(num * 4) + 3] + 256;
+}
 
 void DrawStripe(int source, int target)
 {
@@ -96,6 +122,8 @@ typedef struct
 	uint8_t frame;
 	uint8_t timer;
 	uint8_t flip;
+	int16_t impY;
+	uint8_t grounded;
 } TPlayer;
 
 TPlayer player = { 0 };
@@ -133,40 +161,103 @@ void BuildPlayer()
 
 void MovePlayer()
 {
-	if (player.posY <= 180)
+	player.posY += F2I(player.impY);
+	player.impY += 16;
+	if (player.impY > I2F(8,0))
+		player.impY = I2F(8,0);
+	if (player.impY > 0)
 	{
+		player.state = 3;
 		player.frame = 6;
-		player.posY++;
 	}
-	else
+	if (player.impY > 0 && player.posY >= 184)
 	{
+		player.posY = 184;
+		player.grounded = 1;
+		player.impY = 0;
+		player.state = 0;
 		player.frame = 0;
 	}
 
 	int dpadbuts = INP_JOYPAD1;
+	if (dpadbuts & 0x10)
+	{
+		if (player.state < 2 && player.grounded)
+		{
+			player.impY = -I2F(2,-32);
+			player.state = 2;
+			player.frame = 5;
+			player.grounded = 0;
+		}
+	}
 	if (dpadbuts & 2)
 	{
 		player.flip = 0;
 		player.posX++;
-		if (player.frame < 5)
-			player.frame = 1;
+		if (player.state < 2)
+		{
+			player.state = 1;
+			player.timer++;
+			player.frame = 1 + ((player.timer / 8) % 4);
+		}
 	}
 	else if (dpadbuts & 8)
 	{
 		player.flip = 1;
 		player.posX--;
-		if (player.frame < 5)
-			player.frame = 1;
+		if (player.state < 2)
+		{
+			player.state = 1;
+			player.timer++;
+			player.frame = 1 + ((player.timer / 8) % 4);
+		}
 	}
 	else
-		if (player.frame < 5)
-			player.frame = 0;
+	{
+		player.timer = 0;
+	}
+
+	MAP3[0] = player.state + 256 + 0x1000;
+	MAP3[2] = player.grounded + 256 + 0x1000;
+}
+
+void BarnDoorsIn()
+{
+	REG_WINLEFT = 160;
+	REG_WINRIGHT = 160;
+	REG_WINMASK = 1 | 2 | 4 | 8 | 16 | 32;
+	REG_SCREENFADE = 0;
+	vbl();
+	for (int i = 0; i <= 160; i += 2)
+	{
+		REG_WINLEFT = 160 - i;
+		REG_WINRIGHT = 160 + i;
+		vbl();
+	}
+	REG_WINMASK = 0;
+}
+
+void BarnDoorsOut()
+{
+	REG_WINLEFT = 0;
+	REG_WINRIGHT = 320;
+	REG_WINMASK = 1 | 2 | 4 | 8 | 16 | 32;
+	REG_SCREENFADE = 0;
+	vbl();
+	for (int i = 0; i <= 160; i += 2)
+	{
+		REG_WINLEFT = i;
+		REG_WINRIGHT = 319 - i;
+		vbl();
+	}
+	REG_SCREENFADE = 31;
+	REG_WINMASK = 0;
 }
 
 int main(void)
 {
 	REG_SCREENMODE = SMODE_TILE;
-	REG_SCREENFADE = 0;
+	REG_SCREENFADE = 31;
 
 	intoff();
 
@@ -186,8 +277,17 @@ int main(void)
 	REG_MAPSET = 0x70; //just enable it, don't worry about tile offsets.
 	//REG_MAPBLEND = 0x01;
 
-	for (int i = 0; i < SCREENWIDTH; i++)
-		DrawStripe(i, i);
+	//for (int i = 0; i < SCREENWIDTH; i++)
+	//	DrawStripe(i, i);
+	MISC->DmaClear(MAP1, 0, 0x4000, DMA_SHORT);
+	for (int i = 0; i < 20; i++)
+	{
+		DrawTile(i, 13, 0x41, MAP1);
+		DrawTile(i, 14, 0x42, MAP1);
+	}
+	for (int j = 0, k = 0; j < 12; j++)
+		for (int i = 0; i < 16 && k < 0xAF; i++, k++)
+			DrawTile(i, j, k, MAP1);
 
 	{
 		const char buffer[] = "TILE TEST - V3";
@@ -210,14 +310,21 @@ int main(void)
 
 	REG_SCROLLY1 = 0;
 	REG_SCROLLY2 = 0;
-	REG_SCROLLY3 = 3;
+	REG_SCROLLY3 = 0;
 //	int scroll = 0;
 //	int col = 40;
 	int animation = 0;
+	MISC->DmaCopy(TILESET + (32*0x1C0), (int8_t*)&tileanimTiles + ((animation % 8) * (32*4*16)), (8*4*16), DMA_INT);
 
 	player.posX =  9 * 16;
 	player.posY = 2 * 16; //11 * 16;
 	player.frame = 0;
+	player.impY = 2 << 8;
+	BuildPlayer();
+
+//	BarnDoorsIn();
+//	BarnDoorsOut();
+	REG_SCREENFADE = 0;
 
 	for(;;)
 	{
@@ -241,10 +348,11 @@ int main(void)
 //		REG_SCROLLX2 = scroll;
 //		REG_SCROLLX3 = scroll;
 //		scroll += 1;
-		if (REG_TICKCOUNT % 4 == 0)
+		if (REG_TICKCOUNT % 8 == 0)
 		{
 			animation++;
 			MISC->DmaCopy(TILESET + (32*0x1C0), (int8_t*)&tileanimTiles + ((animation % 8) * (32*4*16)), (8*4*16), DMA_INT);
+			MISC->DmaCopy(PALETTE + 16, (int8_t*)&palAnim + ((animation % 6) * 32), 16, DMA_SHORT);
 		}
 //		if (scroll % 8 == 0)
 //		{
