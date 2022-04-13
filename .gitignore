@@ -33,3 +33,4 @@ Debug
 *.api
 *.img.bin
 *.pal.bin
+*.srm
