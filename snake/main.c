@@ -151,10 +151,12 @@ void TitleScreen()
 		int key = INP_KEYIN;
 		if ((key == KEY_UP || dpadbuts & 1) && delay < 16)
 		{
+			while (INP_KEYIN || INP_JOYPAD1) vbl();
 			delay++;
 		}
 		else if ((key == KEY_DOWN || dpadbuts & 4) && delay > 1)
 		{
+			while (INP_KEYIN || INP_JOYPAD1) vbl();
 			delay--;
 		}
 		else if (key == 0x1C || dpadbuts & 16)
@@ -260,12 +262,12 @@ void PlaceAndDrawFruit()
 	Tile(fruit.y, fruit.x, 1);
 }
 
-void MovePlayer(pos head)
+bool MovePlayer(pos head)
 {
 	//Check if we ran into ourself
 	int idx = CoordinateToIndex(head);
 	if (spaces[idx])
-		GameOver();
+		return true;
 	spaces[idx] = 1; //Mark the space as occupied
 
 	snakeBits[headCursor].x = head.x;
@@ -358,8 +360,7 @@ void MovePlayer(pos head)
 	ultoa(score, buffer);
 	Write(HEIGHT - 1, 7, buffer);
 
-	ultoa(headCursor, buffer);
-	Write(0, 7, buffer);
+	return false;
 }
 
 void ClearBoard()
@@ -461,7 +462,11 @@ int main(void)
 				else if (drum == 3)
 					drum = 0;
 
-				MovePlayer(head);
+				if (MovePlayer(head))
+				{
+					GameOver();
+					break;
+				}
 			}
 		}
 	}
