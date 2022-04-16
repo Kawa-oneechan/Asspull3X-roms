@@ -39,7 +39,7 @@ uint8_t drum = 0, drum2 = 0;
 
 uint32_t score = 0;
 int fruitTimer = 0;
-int delay = 16;
+int delay = 10;
 
 typedef struct
 {
@@ -141,7 +141,6 @@ void TitleScreen()
 
 	WaitForKey();
 
-	delay = 10;
 	for (int i = 14; i < 28; i++)
 		Tile(14, i, 0);
 	Write(14, 15, "SPEED");
@@ -186,7 +185,7 @@ void Write(int y, int x, char* str)
 	char *b = str;
 	while (*b)
 	{
-		Tile(y, x++, *b);
+		Tile(y, x++, *b | 0x1000);
 		b++;
 	}
 }
@@ -198,24 +197,24 @@ void DrawBoard()
 	for (i = 0; i < WIDTH * HEIGHT; i++)
 		MAP1[i] = 0;
 
-	Tile(0, 0, 16);
-	Tile(0, WIDTH - 1, 17);
-	Tile(HEIGHT - 1, 0, 18);
-	Tile(HEIGHT - 1, WIDTH - 1, 19);
+	Tile(0, 0, 16 | 0x1000);
+	Tile(0, WIDTH - 1, 17 | 0x1000);
+	Tile(HEIGHT - 1, 0, 18 | 0x1000);
+	Tile(HEIGHT - 1, WIDTH - 1, 19 | 0x1000);
 	for (i = 1; i < HEIGHT - 1; i++)
 	{
-		Tile(i, 0, 21);
-		Tile(i, WIDTH - 1, 21);
+		Tile(i, 0, 21 | 0x1000);
+		Tile(i, WIDTH - 1, 21 | 0x1000);
 	}
 	for (i = 1; i < WIDTH - 1; i++)
 	{
-		Tile(0, i, 20);
-		Tile(HEIGHT - 1, i, 20);
+		Tile(0, i, 20 | 0x1000);
+		Tile(HEIGHT - 1, i, 20 | 0x1000);
 	}
 
 	for (i = 3; i < 7; i++)
-		Tile(HEIGHT - 1, i, i - 3 + 97);
-	Tile(HEIGHT -1, 7, '0');
+		Tile(HEIGHT - 1, i, (i - 3 + 97) | 0x1000);
+	Tile(HEIGHT -1, 7, '0' | 0x1000);
 }
 
 void GameOver()
@@ -272,7 +271,7 @@ void MovePlayer(pos head)
 	snakeBits[headCursor].x = head.x;
 	snakeBits[headCursor].y = head.y;
 	headCursor++;
-	if (headCursor == MAXSNAKEBITS) headCursor = 0;
+	headCursor %= MAXSNAKEBITS;
 
 	score += 10;
 
@@ -289,13 +288,14 @@ void MovePlayer(pos head)
 	{
 		//Handle the tail
 		pos *tail = &snakeBits[tailCursor];
-		tailCursor++;
-		if (tailCursor == MAXSNAKEBITS) tailCursor = 0;
 		if (tail->x)
 		{
 			spaces[CoordinateToIndex(*tail)] = 0;
 			Tile(tail->y, tail->x, 0);
 		}
+		tail->x = tail->y = 0;
+		tailCursor++;
+		tailCursor %= MAXSNAKEBITS;
 	}
 
 	//Draw the new head
@@ -304,10 +304,13 @@ void MovePlayer(pos head)
 	const uint16_t headDirs[] =  { 96, 9, 11, 8, 10 };
 	pos *here, *next;
 	uint16_t lastDir = 0;
-	for (int i = tailCursor; i < headCursor; i = (i + 1) % MAXSNAKEBITS)
+	for (int i = tailCursor; i < headCursor; i++)
 	{
+		int j = i + 1;
+		i %= MAXSNAKEBITS;
+		j %= MAXSNAKEBITS;
 		here = &snakeBits[i];
-		next = &snakeBits[(i + 1) % MAXSNAKEBITS];
+		next = &snakeBits[j];
 		uint16_t there = MAP1[(here->y * 64) + here->x];
 		uint16_t tnext = 96;
 		if (next->x > here->x) // going right
@@ -354,6 +357,9 @@ void MovePlayer(pos head)
 	char buffer[25];
 	ultoa(score, buffer);
 	Write(HEIGHT - 1, 7, buffer);
+
+	ultoa(headCursor, buffer);
+	Write(0, 7, buffer);
 }
 
 void ClearBoard()
@@ -395,7 +401,7 @@ int main(void)
 		snakeBits[headCursor].x = head.x;
 		snakeBits[headCursor].y = head.y;
 		headCursor++;
-		if (headCursor == MAXSNAKEBITS) headCursor = 0;
+		headCursor %= MAXSNAKEBITS;
 
 		DRAW->FadeFromBlack();
 
