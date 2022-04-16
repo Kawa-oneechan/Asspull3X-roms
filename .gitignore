@@ -34,3 +34,4 @@ Debug
 *.img.bin
 *.pal.bin
 *.srm
+*/desktop.ini
