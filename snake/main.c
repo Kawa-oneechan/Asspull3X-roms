@@ -9,9 +9,9 @@ IBios* interface;
 #define WIDTH 40
 #define HEIGHT 30
 
-extern const uint16_t hdma[], titleMap[];
-extern const uint16_t tilesTiles[256];
-extern const uint16_t tilesPal[16];
+extern const uint16_t titleMap[], bgMap[];
+extern const uint16_t tilesTiles[256], bgTiles[256];
+extern const uint16_t tilesPal[16], bgPal[16];
 
 const uint16_t oplSetup[] = {
 //fupp, apple, F1
@@ -126,7 +126,7 @@ void Write(int, int, char*);
 void TitleScreen()
 {
 	REG_SCREENFADE = 31;
-	uint16_t* dst = MAP1;
+	uint16_t* dst = MAP2;
 	uint16_t* src = (uint16_t*)titleMap;
 	for (int line = 0; line < 30; line++)
 	{
@@ -179,7 +179,7 @@ int headDir;
 
 void Tile(int y, int x, uint16_t tile)
 {
-	MAP1[(y * 64) + x] = tile;
+	MAP2[(y * 64) + x] = tile;
 }
 
 void Write(int y, int x, char* str)
@@ -197,7 +197,7 @@ void DrawBoard()
 	int i;
 
 	for (i = 0; i < WIDTH * HEIGHT; i++)
-		MAP1[i] = 0;
+		MAP2[i] = 0;
 
 	Tile(0, 0, 16 | 0x1000);
 	Tile(0, WIDTH - 1, 17 | 0x1000);
@@ -313,7 +313,7 @@ bool MovePlayer(pos head)
 		j %= MAXSNAKEBITS;
 		here = &snakeBits[i];
 		next = &snakeBits[j];
-		uint16_t there = MAP1[(here->y * 64) + here->x];
+		uint16_t there = MAP2[(here->y * 64) + here->x];
 		uint16_t tnext = 96;
 		if (next->x > here->x) // going right
 		{
@@ -368,7 +368,7 @@ void ClearBoard()
 	for (int i = 0; i < WIDTH * HEIGHT; i++)
 		spaces[i] = 0;
 	for (int i = 0; i < 64 * 32; i++)
-		MAP1[i] = 0;
+		MAP2[i] = 0;
 	for (int i = 0; i < MAXSNAKEBITS; i++)
 		snakeBits[i].x = snakeBits[i].y = 0;
 	REG_SCREENFADE = 0;
@@ -377,16 +377,25 @@ void ClearBoard()
 int main(void)
 {
 	MISC->SetTextMode(SMODE_TILE | SMODE_320 | SMODE_240);
-	MISC->DmaCopy(PALETTE, (int8_t*)&tilesPal, 16, DMA_INT);
+	MISC->DmaCopy(PALETTE, (int8_t*)&tilesPal, 32, DMA_SHORT);
+	MISC->DmaCopy(PALETTE + 32, (int8_t*)&bgPal, 16, DMA_SHORT);
 	MISC->DmaCopy(TILESET, (int8_t*)&tilesTiles, 1024, DMA_INT);
+	MISC->DmaCopy(TILESET + 0x2000, (int8_t*)&bgTiles, 256, DMA_INT);
 	MISC->DmaClear(MAP1, 0, WIDTH * HEIGHT, 2);
-	REG_HDMASOURCE[0] = (int32_t)hdma;
-	REG_HDMATARGET[0] = (int32_t)PALETTE;
-	REG_HDMACONTROL[0] = DMA_ENABLE | HDMA_DOUBLE | (DMA_SHORT << 4) | (0 << 8) | (480 << 20);
-	REG_MAPSET = 0x10;
+	MISC->DmaClear(MAP2, 0, WIDTH * HEIGHT, 2);
+	REG_MAPSET = 0x30;
 
 	for (int i = 0; i < 10 * 6; i++)
 		REG_OPLOUT = oplSetup[i];
+
+	uint16_t* dst = MAP1;
+	uint16_t* src = (uint16_t*)bgMap;
+	for (int line = 0; line < 30; line++)
+	{
+		for (int row = 0; row < 40; row++)
+			*dst++ = (*src++ | 0x2000) + 256;
+		dst += 24;
+	}
 
 	TitleScreen();
 
