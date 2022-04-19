@@ -24,20 +24,20 @@ void drawWindow(int l, int t, int w, int h)
 {
 	for (int i = t + 1; i < t + h - 1; i++)
 	{
-		MAP4[(i * 64) + l] = 0xF30A;
-		MAP4[(i * 64) + l + w - 1] = 0xF30C;
+		MAP4[(i * 64) + l] = 0xF00A;
+		MAP4[(i * 64) + l + w - 1] = 0xF00C;
 		for (int j = l + 1; j < l + w - 1; j++)
-			MAP4[(i * 64) + j] = 0xF301;
+			MAP4[(i * 64) + j] = 0xF001;
 	}
 	for (int i = l + 1; i < l + w - 1; i++)
 	{
-		MAP4[(t * 64) + i] = 0xF30B;
-		MAP4[((t + h - 1) * 64) + i] = 0xF30D;
+		MAP4[(t * 64) + i] = 0xF00B;
+		MAP4[((t + h - 1) * 64) + i] = 0xF00D;
 	}
-	MAP4[(t * 64) + l] = 0xF306;
-	MAP4[(t * 64) + l + w - 1] = 0xF307;
-	MAP4[((t + h - 1) * 64) + l] = 0xF308;
-	MAP4[((t + h - 1) * 64) + l + w - 1] = 0xF309;
+	MAP4[(t * 64) + l] = 0xF006;
+	MAP4[(t * 64) + l + w - 1] = 0xF007;
+	MAP4[((t + h - 1) * 64) + l] = 0xF008;
+	MAP4[((t + h - 1) * 64) + l + w - 1] = 0xF009;
 }
 
 void eraseWindow(int l, int t, int w, int h)
@@ -64,7 +64,7 @@ void drawString(int x, int y, const char* string)
 			continue;
 		}
 		t = (*c - ' ' + 16) * 2;
-		t |= 0xF300;
+		t |= 0xF000;
 		MAP4[pos +  0] = t;
 		MAP4[pos + 64] = t + 1;
 		pos++;
@@ -84,14 +84,15 @@ int main(void)
 
 //	MISC->DmaCopy(TILESET + 0x6000, (int8_t*)&fontTiles, 0x700, DMA_INT);
 
-	MISC->DmaCopy(TILESET + 0x6000, (int8_t*)&fontTiles, 0x80, DMA_INT);
-	MISC->DmaClear(TILESET+ 0x6400, 0x88888888, 0x5D0, DMA_INT);
+	MISC->DmaCopy(TILESET + 0xC000, (int8_t*)&fontTiles, 0x80, DMA_INT);
+	MISC->DmaClear(TILESET+ 0xC400, 0x88888888, 0x5D0, DMA_INT);
 //	MISC->DmaCopy(TILESET + 0x6400, (int8_t*)&uiTiles + 0x400, 0x5D0, DMA_INT);
 	REG_BLITSOURCE = (int32_t)fontTiles + 0x400;
-	REG_BLITTARGET = (int32_t)TILESET + 0x6400;
+	REG_BLITTARGET = (int32_t)TILESET + 0xC400;
 	REG_BLITLENGTH = 0x1740;
 	REG_BLITKEY = 0;
 	REG_BLITCONTROL = BLIT_COPY | 0xC0 | BLIT_COLORKEY;
+	REG_MAPSHIFT = 0xC0;
 
 	MISC->DmaCopy(PALETTE + 256, (int16_t*)spritepalPal, 48, DMA_INT);
 

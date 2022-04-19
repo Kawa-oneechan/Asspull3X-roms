@@ -45,6 +45,7 @@ extern void dpf(const char* format, ...);
 #define REG_SCREENFADE	*(int8_t*)(MEM_IO + 0x0008)
 #define REG_MAPSET		*(uint8_t*)(MEM_IO + 0x0009)
 #define REG_MAPBLEND	*(uint8_t*)(MEM_IO + 0x000A)
+#define REG_MAPSHIFT	*(uint8_t*)(MEM_IO + 0x000B)
 #define REG_SCROLLX1	*(uint16_t*)(MEM_IO + 0x0010)
 #define REG_SCROLLY1	*(uint16_t*)(MEM_IO + 0x0012)
 #define REG_SCROLLX2	*(uint16_t*)(MEM_IO + 0x0014)
