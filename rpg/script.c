@@ -84,7 +84,7 @@ void saySomething(char *what, int flags)
 				c++;
 				continue;
 			}
-			int t = (*c - ' ' + 16) * 2;
+			uint16_t t = ((unsigned char)*c - 16) * 2;
 			t |= 0xF000;
 			MAP4[(sy * 64) + sx +  0] = t;
 			MAP4[(sy * 64) + sx + 64] = t + 1;

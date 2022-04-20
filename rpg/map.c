@@ -17,24 +17,24 @@ void drawTile(int x, int y, int tileNum)
 	int16_t* tile = map->tileset->metatiles + (tileNum * 9);
 	int pos = ((y * 2) * 64) + (x * 2);
 
-	MAP1[pos +  0] = tile[1] + 256;
-	MAP1[pos +  1] = tile[2] + 256;
-	MAP1[pos + 64] = tile[3] + 256;
-	MAP1[pos + 65] = tile[4] + 256;
+	MAP1[pos +  0] = tile[1];
+	MAP1[pos +  1] = tile[2];
+	MAP1[pos + 64] = tile[3];
+	MAP1[pos + 65] = tile[4];
 
 	if (tile[0] & 0x2000)
 	{
-		MAP3[pos +  0] = tile[5] + 256;
-		MAP3[pos +  1] = tile[6] + 256;
-		MAP3[pos + 64] = tile[7] + 256;
-		MAP3[pos + 65] = tile[8] + 256;
+		MAP3[pos +  0] = tile[5];
+		MAP3[pos +  1] = tile[6];
+		MAP3[pos + 64] = tile[7];
+		MAP3[pos + 65] = tile[8];
 	}
 	else
 	{
-		MAP2[pos +  0] = tile[5] + 256;
-		MAP2[pos +  1] = tile[6] + 256;
-		MAP2[pos + 64] = tile[7] + 256;
-		MAP2[pos + 65] = tile[8] + 256;
+		MAP2[pos +  0] = tile[5];
+		MAP2[pos +  1] = tile[6];
+		MAP2[pos + 64] = tile[7];
+		MAP2[pos + 65] = tile[8];
 	}
 }
 
@@ -296,7 +296,8 @@ void updateAndDraw()
 void loadMap(Map* newMap)
 {
 	map = newMap;
-	MISC->DmaCopy(TILESET + 0x2000, map->tileset->graphics, 0x1000, DMA_INT);
+	//MISC->DmaClear(TILESET + 0x4000, 0x04040404, 0x2000, DMA_INT);
+	MISC->DmaCopy(TILESET + 0x4000, map->tileset->graphics, 0x2000, DMA_INT);
 	MISC->DmaCopy(PALETTE, map->tileset->palette, 72, DMA_INT);
 	uint8_t* data = map->entities + 1;
 	for (int i = 0; i < map->entities[0]; i++)

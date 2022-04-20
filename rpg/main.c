@@ -85,14 +85,14 @@ int main(void)
 //	MISC->DmaCopy(TILESET + 0x6000, (int8_t*)&fontTiles, 0x700, DMA_INT);
 
 	MISC->DmaCopy(TILESET + 0xC000, (int8_t*)&fontTiles, 0x80, DMA_INT);
-	MISC->DmaClear(TILESET+ 0xC400, 0x88888888, 0x5D0, DMA_INT);
+	MISC->DmaClear(TILESET+ 0xC400, 0x88888888, 0x3800 / 4, DMA_INT);
 //	MISC->DmaCopy(TILESET + 0x6400, (int8_t*)&uiTiles + 0x400, 0x5D0, DMA_INT);
 	REG_BLITSOURCE = (int32_t)fontTiles + 0x400;
 	REG_BLITTARGET = (int32_t)TILESET + 0xC400;
-	REG_BLITLENGTH = 0x1740;
+	REG_BLITLENGTH = 0x3800;
 	REG_BLITKEY = 0;
 	REG_BLITCONTROL = BLIT_COPY | 0xC0 | BLIT_COLORKEY;
-	REG_MAPSHIFT = 0xC0;
+	REG_MAPSHIFT = 0xD5;
 
 	MISC->DmaCopy(PALETTE + 256, (int16_t*)spritepalPal, 48, DMA_INT);
 
