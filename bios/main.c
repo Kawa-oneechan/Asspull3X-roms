@@ -1,7 +1,7 @@
 #include "../ass.h"
 #include "../ass-midi.h"
 
-#define EXTENSIVE
+//#define EXTENSIVE
 
 #ifdef printf
 #undef printf
