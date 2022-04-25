@@ -65,7 +65,7 @@ extern uint8_t GetNumDrives();
 
 
 
-extern void DrawChar4_320(char, int, int, int);
-extern void DrawChar4_640(char, int, int, int);
-extern void DrawChar8_320(char, int, int, int);
-extern void DrawChar8_640(char, int, int, int);
+extern void DrawChar4_320(unsigned char, int, int, int);
+extern void DrawChar4_640(unsigned char, int, int, int);
+extern void DrawChar8_320(unsigned char, int, int, int);
+extern void DrawChar8_640(unsigned char, int, int, int);

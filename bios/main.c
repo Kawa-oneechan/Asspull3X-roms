@@ -1,7 +1,7 @@
 #include "../ass.h"
 #include "../ass-midi.h"
 
-//#define EXTENSIVE
+#define EXTENSIVE
 
 #ifdef printf
 #undef printf
@@ -57,26 +57,31 @@ int main(void)
 	void(*entry)(void)= (void*)0x00020004;
 	bool haveDisk = false, hadDisk = false;
 	bool showSplash = false;
+	const char bop[] = { 0, 0, 0, 1, 1, 2, 3, 3, 4, 4, 4, 3, 3, 2, 1, 1 };
 
 	sprintf(biosVer, "BIOS v%d.%d", (interface->biosVersion >> 8) & 0xFF, (interface->biosVersion >> 0) & 0xFF);
 
 	DmaCopy(TEXTFONT, (int8_t*)&fontTiles, 0xC00, DMA_INT);
 	ResetPalette();
+	MidiReset();
 	REG_SCREENMODE = SMODE_TEXT | SMODE_240 | SMODE_BOLD;
 	//REG_CARET = 0x8000;
+
+	REG_CARET = 80 + 2;
 	attribs = 0x0B;
 	Write("Asspull \x96\xD7 %s\n\n", biosVer);
-	((char*)TEXTMAP)[17] = 0x0C;
-	((char*)TEXTMAP)[19] = 0x09;
+	((char*)TEXTMAP)[17 + 160 + 4] = 0x0C;
+	((char*)TEXTMAP)[19 + 160 + 4] = 0x09;
 	attribs = 0x07;
 
 #ifdef EXTENSIVE
 	{
-		Write("Memory\n\x90\x90\x90\x90\x90\x90\n");
+		REG_CARET = 80 * 3;
+		Write("  Memory\n  \x90\x90\x90\x90\x90\x90\n");
 		uint8_t* memTest = (uint8_t*)0x01000000;
 		while (memTest < (uint8_t*)0x01400000)
 		{
-			REG_CARET = 80 * 4;
+			REG_CARET = (80 * 5) + 2;
 			Write("0x%08X...", memTest);
 			*memTest = 42;
 			vbl();
@@ -97,16 +102,19 @@ int main(void)
 
 #ifdef EXTENSIVE
 	{
-		Write("Devices\n\x90\x90\x90\x90\x90\x90\x90\n");
+		REG_CARET = 80 * 7;
+		Write("  Devices\n  \x90\x90\x90\x90\x90\x90\x90\n");
 		uint8_t* devices = (uint8_t*)0x02000000;
-		for (char i = 0; i < 15; i++)
+		for (char i = 0; i < 16; i++)
 		{
+			REG_CARET = (80 * ((i % 8) + 9)) + ((i / 8) * 30) + 2;
+			Write("%2d. ", i);
 			if (i == 0)
-				Write("%2d. Input controller\n", i);
+				Write("Input controller");
 			else if (*(int16_t*)devices == 0x4C50)
 			{
 				interface->LinePrinter = devices + 2;
-				Write("%2d. Line printer\n", i);
+				Write("Line printer");
 			}
 			else if (*(int16_t*)devices == 0x0144)
 			{
@@ -114,16 +122,15 @@ int main(void)
 				{
 					if (diskToDev[j] == i)
 					{
-						Write("%2d. %s drive %c:\n", i, *(char*)&devices[5] ? "Hard disk" : "Diskette", 'A' + j);
+						Write("%s drive %c:", *(char*)&devices[5] ? "Hard disk" : "Diskette", 'A' + j);
 						break;
 					}
 				}
 			}
 			else
-				Write("%2d. ----\n", i);
+				Write("----");
 			devices += 0x8000;
 		}
-		Write("\n");
 	}
 #else
 	uint8_t* devices = (uint8_t*)0x02000000;
@@ -138,15 +145,17 @@ int main(void)
 	}
 #endif
 
+	REG_CARET = 80 * 18;
+
 	if (GetNumDrives() == 0)
 	{
-		Write("No disk drive connected. Power off, or press F1 to continue.\n\n");
+		Write("  No disk drive connected. Power off, or press F1 to continue.\n\n");
 		while (INP_KEYIN != 59)
 			vbl();
 	}
 	else if (GetNumDrives() > 4)
 	{
-		Write("Too many disk drives connected. Only the first four will be accessible.\nPress F1 to continue.\n\n");
+		Write("  Too many disk drives connected. Only the first four will be accessible.\n  Press F1 to continue.\n\n");
 		while (INP_KEYIN != 59)
 			vbl();
 	}
@@ -212,7 +221,7 @@ int main(void)
 			char about[256];
 			interface->DrawCharFont = (char*)0x0E060400;
 			interface->DrawCharHeight = 0x0808;
-			sprintf(about, "  ASSPULL \x96\xD7\n\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\n%s\nCode by Kawa\n" __DATE__, biosVer);
+			sprintf(about, "\x93\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x8B\n\x89 ASSPULL \x96\xD7 \x89\n\x8C\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x92\n%s\nCode by Kawa\n" __DATE__, biosVer);
 			for (int i = 2; i <= 6; i++)
 			{
 				DrawString(about, 104, 130, i);
@@ -263,6 +272,7 @@ int main(void)
 		}
 		else
 		{
+			OBJECTS_B[0] = OBJECTB_BUILD(144, 152 + bop[(REG_TICKCOUNT / 16) % 16], 1, 1, 0, 0, 1, 0);
 			WaitForVBlank();
 		}
 		continue;

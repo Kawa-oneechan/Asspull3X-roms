@@ -42,10 +42,10 @@ const IDrawingLibrary drawingLibrary =
 			target[bit] = color; \
 		}  glyph++; target += (WIDTH); }
 
-void DrawChar4_320(char c, int x, int y, int color) { DRAWCHAR4(320) }
-void DrawChar4_640(char c, int x, int y, int color) { DRAWCHAR4(640) }
-void DrawChar8_320(char c, int x, int y, int color) { DRAWCHAR8(320) }
-void DrawChar8_640(char c, int x, int y, int color) { DRAWCHAR8(640) }
+void DrawChar4_320(unsigned char c, int x, int y, int color) { DRAWCHAR4(320) }
+void DrawChar4_640(unsigned char c, int x, int y, int color) { DRAWCHAR4(640) }
+void DrawChar8_320(unsigned char c, int x, int y, int color) { DRAWCHAR8(320) }
+void DrawChar8_640(unsigned char c, int x, int y, int color) { DRAWCHAR8(640) }
 
 static const uint16_t palette[] = {
 	0x0000, 0x5400, 0x02A0, 0x56A0, 0x0015, 0x5415, 0x0115, 0x56B5,
