@@ -20,27 +20,6 @@ unsigned char attribs;
 #undef printf
 #endif
 
-#ifdef DEBUG
-__attribute((format (printf, 1, 2)))
-void dpf(const char* format, ...)
-{
-	if (interface->LinePrinter == 0) return;
-	char buffer[1024] = "[DEBUG] ";
-	int ints = REG_INTRMODE;
-	intoff();
-	va_list args;
-	va_start(args, format);
-	vsprintf(buffer + 8, format, args);
-	char* b = buffer;
-	while(*b)
-		*interface->LinePrinter = *b++;
-//	WriteFile(STD_PRINT, (void*)buffer, -1);
-	*interface->LinePrinter = '\n';
-	va_end(args);
-	REG_INTRMODE = ints;
-}
-#endif
-
 void ScrollIfNeeded()
 {
 	int cursorPos = REG_CARET & 0x3FFF;

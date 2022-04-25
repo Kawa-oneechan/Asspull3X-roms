@@ -17,7 +17,6 @@ int32_t midiRow;
 uint8_t GetMIDIByte(int32_t track)
 {
 	uint8_t ret = *midiTrackOnePos;
-	//dpf("[GetMIDIByte: %x]", ret);
 	midiTrackOnePos++;
 	return ret;
 }
@@ -34,7 +33,6 @@ uint32_t GetDelta()
 			val = (val << 7) + ((c = GetMIDIByte(0)) & 0x7F);
 		} while (c & 0x80);
 	}
-	//dpf("[delta= %d]", val);
 	return val;
 }
 

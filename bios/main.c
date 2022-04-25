@@ -54,7 +54,6 @@ int main(void)
 	bool showSplash = false;
 
 	sprintf(biosVer, "BIOS v%d.%d", (interface->biosVersion >> 8) & 0xFF, (interface->biosVersion >> 0) & 0xFF);
-	dpf(biosVer);
 
 	uint8_t* devices = (uint8_t*)0x02000000;
 	for (char i = 0; i < 16; i++)
@@ -72,7 +71,7 @@ int main(void)
 	REG_SCREENMODE = SMODE_TEXT | SMODE_240 | SMODE_BOLD;
 	//REG_CARET = 0x8000;
 	attribs = 0x0B;
-	Write("Asspull \x96\xD7 %s\n\n");
+	Write("Asspull \x96\xD7 %s\n\n", biosVer);
 	((char*)TEXTMAP)[17] = 0x0C;
 	((char*)TEXTMAP)[19] = 0x09;
 	attribs = 0x07;
@@ -80,13 +79,13 @@ int main(void)
 	PrepareDiskToDevMapping();
 	if (GetNumDrives() == 0)
 	{
-		Write("No disk drive connected. Power off, or press F1 to continue.");
+		Write("No disk drive connected. Power off, or press F1 to continue.\n\n");
 		while (INP_KEYIN != 59)
 			vbl();
 	}
 	else if (GetNumDrives() > 4)
 	{
-		Write("Too many disk drives connected. Only the first four will be accessible.\nPress F1 to continue.");
+		Write("Too many disk drives connected. Only the first four will be accessible.\nPress F1 to continue.\n\n");
 		while (INP_KEYIN != 59)
 			vbl();
 	}
@@ -141,7 +140,7 @@ int main(void)
 		{
 			OBJECTS_B[0] = OBJECTB_BUILD(-32, -32, 0, 0, 0, 0, 0, 0);
 			char about[256];
-			interface->DrawCharFont = (char*)0x0E060C00;
+			interface->DrawCharFont = (char*)0x0E060400;
 			interface->DrawCharHeight = 0x0808;
 			sprintf(about, "  ASSPULL \x96\xD7\n\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\n%s\nCode by Kawa\n" __DATE__, biosVer);
 			for (int i = 2; i <= 6; i++)
@@ -233,8 +232,7 @@ void FindFont()
 		fontName[0] = 'A' + i;
 		if (OpenFile(&file, fontName, FA_READ) == 0)
 		{
-			dpf("Found custom font.");
-			ReadFile(&file, (void*)TEXTFONT, 0);
+			ReadFile(&file, (void*)TEXTFONT, 0x3000);
 			CloseFile(&file);
 			return;
 		}

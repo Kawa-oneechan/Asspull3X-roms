@@ -10,12 +10,6 @@
 #include <stdbool.h>
 #include <stdarg.h>
 
-#ifndef DEBUG
-#define dpf(x, ...)
-#else
-extern void dpf(const char* format, ...);
-#endif
-
 #define printf interface->textLibrary->Write
 #define vbl interface->miscLibrary->WaitForVBlank
 #define intoff() REG_INTRMODE |= IMODE_DISABLE
