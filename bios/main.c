@@ -1,6 +1,8 @@
 #include "../ass.h"
 #include "../ass-midi.h"
 
+//#define EXTENSIVE
+
 #ifdef printf
 #undef printf
 #define printf Write
@@ -16,6 +18,8 @@ extern void PrepareDiskToDevMapping();
 IBios* interface = (IBios*)(0x01000000);
 
 extern int8_t attribs;
+
+extern char diskToDev[];
 
 extern const uint16_t hdma1[], hdma2[];
 extern const uint16_t fontTiles[];
@@ -43,6 +47,7 @@ extern const uint16_t iconsPal[16];
 )
 
 void FindFont();
+void Jingle();
 extern char diskToDev[16];
 
 int main(void)
@@ -55,17 +60,6 @@ int main(void)
 
 	sprintf(biosVer, "BIOS v%d.%d", (interface->biosVersion >> 8) & 0xFF, (interface->biosVersion >> 0) & 0xFF);
 
-	uint8_t* devices = (uint8_t*)0x02000000;
-	for (char i = 0; i < 16; i++)
-	{
-		if (*(int16_t*)devices == 0x4C50)
-		{
-			interface->LinePrinter = devices + 2;
-			break;
-		}
-		devices += 0x8000;
-	}
-
 	DmaCopy(TEXTFONT, (int8_t*)&fontTiles, 0xC00, DMA_INT);
 	ResetPalette();
 	REG_SCREENMODE = SMODE_TEXT | SMODE_240 | SMODE_BOLD;
@@ -76,7 +70,74 @@ int main(void)
 	((char*)TEXTMAP)[19] = 0x09;
 	attribs = 0x07;
 
+#ifdef EXTENSIVE
+	{
+		Write("Memory\n\x90\x90\x90\x90\x90\x90\n");
+		uint8_t* memTest = (uint8_t*)0x01000000;
+		while (memTest < (uint8_t*)0x01400000)
+		{
+			REG_CARET = 80 * 4;
+			Write("0x%08X...", memTest);
+			*memTest = 42;
+			vbl();
+			if (*memTest != 42)
+			{
+				attribs = 0x0C;
+				Write(" something's up.");
+				while (1) vbl();
+			}
+			memTest += 1024 * 32;
+		}
+		attribs = 0x0A;
+		Write(" okay!\n\n");
+		attribs = 0x07;
+	}
+#endif
 	PrepareDiskToDevMapping();
+
+#ifdef EXTENSIVE
+	{
+		Write("Devices\n\x90\x90\x90\x90\x90\x90\x90\n");
+		uint8_t* devices = (uint8_t*)0x02000000;
+		for (char i = 0; i < 15; i++)
+		{
+			if (i == 0)
+				Write("%2d. Input controller\n", i);
+			else if (*(int16_t*)devices == 0x4C50)
+			{
+				interface->LinePrinter = devices + 2;
+				Write("%2d. Line printer\n", i);
+			}
+			else if (*(int16_t*)devices == 0x0144)
+			{
+				for (int j = 0; j < 4; j++)
+				{
+					if (diskToDev[j] == i)
+					{
+						Write("%2d. %s drive %c:\n", i, *(char*)&devices[5] ? "Hard disk" : "Diskette", 'A' + j);
+						break;
+					}
+				}
+			}
+			else
+				Write("%2d. ----\n", i);
+			devices += 0x8000;
+		}
+		Write("\n");
+	}
+#else
+	uint8_t* devices = (uint8_t*)0x02000000;
+	for (char i = 0; i < 15; i++)
+	{
+		if (*(int16_t*)devices == 0x4C50)
+		{
+			interface->LinePrinter = devices + 2;
+			break;
+		}
+		devices += 0x8000;
+	}
+#endif
+
 	if (GetNumDrives() == 0)
 	{
 		Write("No disk drive connected. Power off, or press F1 to continue.\n\n");
@@ -89,15 +150,24 @@ int main(void)
 		while (INP_KEYIN != 59)
 			vbl();
 	}
+#ifdef EXTENSIVE
+	else
+	{
+		FindFont();
+		WaitForVBlanks(1);
+		Jingle();
+	}
+#else
 	FindFont();
+#endif
+
+	FadeToBlack();
 
 	volatile uint8_t* firstDisk = (uint8_t*)0x02000000 + (diskToDev[0] * 0x8000);
 
-	int diskLock = INP_KEYSHIFT & 0x01;
-
 	while(1)
 	{
-		if (!diskLock && *cartCode != 0x41535321) //ASS!
+		if (*cartCode != 0x41535321) //ASS!
 		{
 			haveDisk = firstDisk[4] & 1;
 			if (haveDisk && !hadDisk)
@@ -200,10 +270,15 @@ int main(void)
 
 	if (showSplash)
 	{
+#ifndef EXTENSIVE
+		Jingle();
+		MidiReset();
+#else
 		MidiReset();
 		MIDI_PROGRAM(1, MIDI_GUITARFRETNOISE);
 		MIDI_KEYON(1, MIDI_C4, 80);
 		WaitForVBlanks(256);
+#endif
 		FadeToBlack();
 	}
 	if (entry == (void*)0x00020004)
@@ -237,6 +312,25 @@ void FindFont()
 			return;
 		}
 	}
+}
+
+void Jingle()
+{
+	MIDI_PROGRAM(1, MIDI_GLOCKENSPIEL);
+	MIDI_CONTROL(1, 91, 0);
+	MIDI_KEYON(1, MIDI_G6, 100);
+	MIDI_CONTROL(1, 93, 0);
+	WaitForVBlanks(10);
+	MIDI_KEYOFF(1, MIDI_G6, 100);
+	MIDI_KEYON(1, MIDI_D6, 100);
+	WaitForVBlanks(10);
+	MIDI_KEYOFF(1, MIDI_D6, 100);
+	MIDI_KEYON(1, MIDI_A6, 100);
+	WaitForVBlanks(10);
+	MIDI_KEYOFF(1, MIDI_A6, 100);
+	MIDI_KEYON(1, MIDI_B6, 100);
+	WaitForVBlanks(50);
+	//MIDI_KEYOFF(1, MIDI_B6, 100);
 }
 
 void ExHandler()
