@@ -224,7 +224,7 @@ int main(void)
 	while(1)
 	{
 		uint16_t key = 0;
-		for (int i = 0; i < 100; i++)
+		for (int i = 0; i < 255; i++)
 		{
 			if (INP_KEYMAP[i])
 			{
@@ -246,12 +246,12 @@ int main(void)
 			else if (key == 0xCB)
 			{
 				if (pitoff > 0) pitoff -= 12;
-				while (INP_KEYIN == key) { vbl(); }
+				while (INP_KEYMAP[key]) { vbl(); }
 			}
 			else if (key == 0xCD)
 			{
 				if (pitoff < 108) pitoff += 12;
-				while (INP_KEYIN == key) { vbl(); }
+				while (INP_KEYMAP[key]) { vbl(); }
 			}
 			else if (key == 0xD0)
 			{
@@ -259,7 +259,7 @@ int main(void)
 				program--;
 				MIDI_PROGRAM(1, program);
 				Write(programNames[program]);
-				while (INP_KEYIN == key) { vbl(); }
+				while (INP_KEYMAP[key]) { vbl(); }
 			}
 			else if (key == 0xC8)
 			{
@@ -267,7 +267,7 @@ int main(void)
 				if (program == 128) program = 0;
 				MIDI_PROGRAM(1, program);
 				Write(programNames[program]);
-				while (INP_KEYIN == key) { vbl(); }
+				while (INP_KEYMAP[key]) { vbl(); }
 			}
 		}
 		else if (lastPit > -1)
