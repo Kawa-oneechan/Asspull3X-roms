@@ -1,7 +1,7 @@
 #include "../ass.h"
 extern IBios* interface;
 
-extern const uint16_t pointerTiles[];
+extern const uint16_t pointerTiles[], pointerPal[];
 extern const TImageFile bmp320x240x4;
 
 #define OBJECTA_BUILD(t,b,e,p)	\
@@ -84,9 +84,9 @@ void MouseTest()
 	const uint16_t colors[] = { 0x0000, 0x2223, 0x5184, 0x1A9E };
 
 	DRAW->DisplayPicture((TImageFile*)&bmp320x240x4);
-	MISC->DmaCopy(PALETTE + 256, PALETTE, 16, DMA_SHORT);
 	DRAW->DrawString("Mouse test\nPress any key when satisfied.", 0, 0, 15);
 	MISC->DmaCopy(TILESET + 0x2000, (int8_t*)&pointerTiles, 0x2E0, DMA_INT);
+	MISC->DmaCopy(PALETTE + 256, pointerPal, 16, DMA_SHORT);
 	OBJECTS_A[0] = OBJECTA_BUILD(256, 1, 1, 1);
 	OBJECTS_B[0] = OBJECTB_BUILD(MouseState.x + 2, MouseState.y + 2, 0, 0, 0, 0, 1, 0);
 	OBJECTS_A[1] = OBJECTA_BUILD(256, 0, 1, 0);
