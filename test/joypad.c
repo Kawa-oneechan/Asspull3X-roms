@@ -29,9 +29,10 @@ void JoypadTest()
 	MISC->SetBitmapMode16(SMODE_320 | SMODE_240);
 	MISC->DmaClear(BITMAP, 0, 160 * 240, DMA_BYTE);
 
-	MISC->DmaCopy(TILESET + 0x2000, (int8_t*)&pointerTiles, 0x400, DMA_SHORT);
+	MISC->DmaCopy(TILESET + 0x2000, (int8_t*)&pointerTiles, 0x480, DMA_SHORT);
 	MISC->DmaCopy(PALETTE + 256, pointerPal, 16, DMA_SHORT);
-	OBJECTS_A[0] = OBJECTA_BUILD(260, 0, 1, 0);
+
+	OBJECTS_A[0] = OBJECTA_BUILD(260, 0, (INP_JOYSTATES & 0x0F) > 1, 0);
 	OBJECTS_B[0] = OBJECTB_BUILD(320, 160, 0, 0, 0, 0, 1, 0);
 
 	OBJECTS_B[1] = OBJECTB_BUILD(200, 104, 0, 0, 0, 0, 1, 0);
@@ -44,13 +45,13 @@ void JoypadTest()
 	OBJECTS_B[7] = OBJECTB_BUILD( 88,  88, 0, 0, 0, 0, 1, 0);
 	OBJECTS_B[8] = OBJECTB_BUILD(104,  72, 0, 0, 0, 0, 1, 0);
 
-	OBJECTS_B[9] = OBJECTB_BUILD( 96,  48, 0, 0, 0, 0, 1, 0);
-	OBJECTS_B[10]= OBJECTB_BUILD(208,  48, 0, 0, 0, 0, 1, 0);
+	OBJECTS_B[9] = OBJECTB_BUILD( 88,  48, 1, 0, 0, 0, 1, 0);
+	OBJECTS_B[10]= OBJECTB_BUILD(200,  48, 1, 0, 0, 0, 1, 0);
 	OBJECTS_B[11]= OBJECTB_BUILD(144,  80, 0, 0, 0, 0, 1, 0);
 	OBJECTS_B[12]= OBJECTB_BUILD(160,  80, 0, 0, 0, 0, 1, 0);
 
-	OBJECTS_A[13]= OBJECTA_BUILD(312,  9, 1, 0);
-	OBJECTS_A[14]= OBJECTA_BUILD(316,  9, 1, 0);
+	OBJECTS_A[13]= OBJECTA_BUILD(320,  9, 1, 0);
+	OBJECTS_A[14]= OBJECTA_BUILD(324,  9, 1, 0);
 	OBJECTS_B[13]= OBJECTB_BUILD(144,  96, 0, 0, 0, 0, 1, 0);
 	OBJECTS_B[14]= OBJECTB_BUILD(160,  96, 0, 0, 0, 0, 1, 0);
 
@@ -90,9 +91,9 @@ void JoypadTest()
 		OBJECTS_A[7] = OBJECTA_BUILD(292, (buttons & 0x08) ? 0 : 1, 1, 0);
 
 		OBJECTS_A[9] = OBJECTA_BUILD(296, (buttons & 0x100) ? 0 : 1, 1, 0);
-		OBJECTS_A[10]= OBJECTA_BUILD(300, (buttons & 0x200) ? 0 : 1, 1, 0);
-		OBJECTS_A[11]= OBJECTA_BUILD(304, (buttons & 0x400) ? 0 : 1, 1, 0);
-		OBJECTS_A[12]= OBJECTA_BUILD(308, (buttons & 0x800) ? 0 : 1, 1, 0);
+		OBJECTS_A[10]= OBJECTA_BUILD(304, (buttons & 0x200) ? 0 : 1, 1, 0);
+		OBJECTS_A[11]= OBJECTA_BUILD(312, (buttons & 0x400) ? 0 : 1, 1, 0);
+		OBJECTS_A[12]= OBJECTA_BUILD(316, (buttons & 0x800) ? 0 : 1, 1, 0);
 
 		vbl();
 	}
