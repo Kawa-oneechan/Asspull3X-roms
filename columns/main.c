@@ -336,7 +336,7 @@ void drawFrame(int l, int t, int r, int b)
 	{
 		for (int j = t+1; j < b; j++)
 		{
-			MAP2[i + j * 64] = 90;
+			MAP1[i + j * 64] |= 0x1000;
 		}
 	}
 }
@@ -346,6 +346,21 @@ void drawEntirity()
 	drawFrame(13, 2, 26, 27);
 	drawFrame(28, 2, 34, 17);
 	draw();
+}
+
+void darken(uint16_t* what, uint8_t amount)
+{
+	while (amount--)
+	{
+		uint8_t r = (*what >> 0) & 0x1F;
+		uint8_t g = (*what >> 5) & 0x1F;
+		uint8_t b = (*what >> 10) & 0x1F;
+		r = ((r - 12 < 0) ? 0 : r - 12);
+		g = ((g - 12 < 0) ? 0 : g - 12);
+		b = ((b - 12 < 0) ? 0 : b - 12);
+		*what = (r << 0) | (g << 5) | (b << 10);
+		what++;
+	}
 }
 
 void WaitForKey()
@@ -364,15 +379,17 @@ int main(void)
 	MISC->DmaClear(MAP3, 0, WIDTH * HEIGHT, 2);
 	MISC->DmaClear(MAP4, 0, WIDTH * HEIGHT, 2);
 	REG_MAPSET = 0xB0;
-	REG_MAPBLEND = 0x02;
+	REG_MAPSHIFT = 0x01;
 
-	MISC->DmaCopy(TILESET + (128 * 32), (int8_t*)&girl1Tiles, 10240, DMA_INT);
+	MISC->DmaCopy(TILESET + (513 * 32), (int8_t*)&girl1Tiles, 0x2800, DMA_INT);
 	MISC->DmaCopy(PALETTE + 128, (int16_t*)&girl1Pal, 16, DMA_SHORT);
+	MISC->DmaCopy(PALETTE + 144, (int16_t*)&girl1Pal, 16, DMA_SHORT);
+	darken(&PALETTE[9*16], 16);
 	PALETTE[0] = girl1Pal[0];
-	for (uint32_t i = 1, t = 0; i < 29; i++)
+	for (uint32_t i = 1, t = 1; i < 29; i++)
 	{
 		for (int j = 4; j < 36; j++, t++)
-			MAP1[j + i * 64] = (t + 128) | 0x8000;
+			MAP1[j + i * 64] = t | 0x8000;
 	}
 
 	for (int i = 1; i < WELL_WIDTH; i++)
