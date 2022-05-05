@@ -2,7 +2,7 @@
 IBios* interface;
 
 extern const uint16_t tilesTiles[], tilesPal[];
-extern const uint16_t girl1Tiles[], girl1Pal[], girl1Map[];
+extern const uint16_t girl1Tiles[], girl1Pal[], girl1map[];
 
 #define WELL_WIDTH 6
 #define WELL_HEIGHT 12
@@ -60,7 +60,7 @@ uint32_t rand()
 
 void drawTile(int col, int row, int tile)
 {
-	int pos = (row * 128) + (col * 2) + (14 + 3 * 64);
+	int pos = (row * 128) + (col * 2) + (11 + 3 * 64);
 	int pal = tilePals[tile] << 12;
 	int t = pal | (tile * 4);
 	MAP4[pos] = t + 0;
@@ -86,7 +86,7 @@ void place(int col, int row, int tile)
 void dropNew()
 {
 	for (int i = 0; i < 3; i++)
-		current[i] = 1 + (rand() % 3);
+		current[i] = 1 + (rand() % 6);
 
 	//don't cheapen out on me here
 	while (current[0] == current[1] && current[1] == current[2])
@@ -306,7 +306,7 @@ void drawPlayer()
 	int x = currentX * 16;
 	int y = currentY * 16;
 	y += currentSub;
-	x += 14 * 8;
+	x += 11 * 8;
 	y += 3  * 8;
 	for (int i = 0; i < 3; i++)
 	{
@@ -343,8 +343,8 @@ void drawFrame(int l, int t, int r, int b)
 
 void drawEntirity()
 {
-	drawFrame(13, 2, 26, 27);
-	drawFrame(28, 2, 34, 17);
+	drawFrame(10, 2, 23, 27);
+	drawFrame(25, 2, 34, 17);
 	draw();
 }
 
@@ -355,9 +355,9 @@ void darken(uint16_t* what, uint8_t amount)
 		uint8_t r = (*what >> 0) & 0x1F;
 		uint8_t g = (*what >> 5) & 0x1F;
 		uint8_t b = (*what >> 10) & 0x1F;
-		r = ((r - 12 < 0) ? 0 : r - 12);
-		g = ((g - 12 < 0) ? 0 : g - 12);
-		b = ((b - 12 < 0) ? 0 : b - 12);
+		r = ((r - 16 < 0) ? 0 : r - 16);
+		g = ((g - 16 < 0) ? 0 : g - 16);
+		b = ((b - 5 < 0) ? 0 : b - 5);
 		*what = (r << 0) | (g << 5) | (b << 10);
 		what++;
 	}
@@ -381,22 +381,26 @@ int main(void)
 	REG_MAPSET = 0xB0;
 	REG_MAPSHIFT = 0x01;
 
-	MISC->DmaCopy(TILESET + (513 * 32), (int8_t*)&girl1Tiles, 0x2800, DMA_INT);
+	MISC->DmaCopy(TILESET + (512 * 32), (int8_t*)&girl1Tiles, 0x2800, DMA_INT);
 	MISC->DmaCopy(PALETTE + 128, (int16_t*)&girl1Pal, 16, DMA_SHORT);
 	MISC->DmaCopy(PALETTE + 144, (int16_t*)&girl1Pal, 16, DMA_SHORT);
 	darken(&PALETTE[9*16], 16);
 	PALETTE[0] = girl1Pal[0];
-	for (uint32_t i = 1, t = 1; i < 29; i++)
+
+	uint16_t* dst = MAP1;
+	uint16_t* src = (uint16_t*)girl1map;
+	for (int line = 0; line < 30; line++)
 	{
-		for (int j = 4; j < 36; j++, t++)
-			MAP1[j + i * 64] = t | 0x8000;
+		for (int row = 0; row < 40; row++)
+			*dst++ = *src++ | 0x8000;
+		dst += 24;
 	}
 
-	for (int i = 1; i < WELL_WIDTH; i++)
-	{
-		place(i, WELL_HEIGHT - 1, i + 1);
-		place(i, WELL_HEIGHT - 2, ((i + 1) % 6) + 1);
-	}
+//	for (int i = 1; i < WELL_WIDTH; i++)
+//	{
+//		place(i, WELL_HEIGHT - 1, i + 1);
+//		place(i, WELL_HEIGHT - 2, ((i + 1) % 6) + 1);
+//	}
 
 	drawEntirity();
 	dropNew();
