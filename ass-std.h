@@ -13,8 +13,8 @@ extern int fputs(const char* s, FILE* file);
 extern int fgetc(FILE* file);
 extern int getdelim(char** linePtr, int* n, char delim, FILE* file);
 extern char* fgets(char* s, int n, FILE* file);
-extern int fread(void* data, int size, int count, FILE* file);
-extern int fwrite(void* data, int size, int count, FILE* file);
+extern size_t fread(void* data, int size, size_t count, FILE* file);
+extern size_t fwrite(void* data, int size, size_t count, FILE* file);
 extern FILE* fopen(const char* filename, const char* opentype);
 extern int fclose(FILE* file);
 
@@ -24,7 +24,7 @@ extern int fclose(FILE* file);
 #define getc(file) fgetc(file)
 #define getchar() fgetc(STDIN)
 #define getline(l,n,f) getdelim(l,n,'\n',f)
-#define gets(s,n) fgets(s,n,STDIN)
+#define gets_s(s,n) fgets(s,n,STDIN)
 #define feof(f) DISK->FileEnd(f)
 #define ftell(f) DISK->FilePosition(f)
 #define fseek(f,o,w) DISK->SeekFile(f,o,w)

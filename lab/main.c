@@ -1,5 +1,5 @@
 #include "../ass.h"
-#include "std.h"
+#include "../ass-std.h"
 
 IBios* interface;
 
@@ -99,7 +99,7 @@ void ListFiles(const char* path, int32_t mode)
 	printf("\n\t\t%8i bytes free\n\n", 1474560 - size); //assuming a formatted 3�' HD diskette.
 }
 
-int main1()
+int main()
 {
 	MISC->SetTextMode(SMODE_240 | SMODE_BOLD);
 
@@ -107,8 +107,8 @@ int main1()
 	while(1)
 	{
 		vbl();
-		char c = getchar();
-		printf("$%02X '%c'\n", c, c);
+		unsigned char c = getchar();
+		//printf("$%02X '%c'\n", c, c);
 		if (c == '\e') break;
 	}
 
@@ -121,7 +121,7 @@ int main1()
 	return 0;
 }
 
-int main()
+int main2()
 {
 	MISC->SetTextMode(SMODE_240 | SMODE_BOLD);
 	char cwd[MAX_CWD];
