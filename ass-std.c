@@ -98,8 +98,8 @@ int fgetc(FILE* file)
 				return altcode;
 			}
 		}
-		key = INP_KEYIN;
-		if ((key & 0xFF) > 0)
+		key = INP_KEYIN & 0xFF;
+		if (key > 0)
 			break;
 	}
 	while (1)
@@ -164,6 +164,12 @@ char* fgets(char* s, int n, FILE* file)
 	while(--n)
 	{
 		c = fgetc(file);
+		if (c == '\x1B')
+		{
+			//eat the esc
+			n++;
+			continue;
+		}
 		if (c == '\n' || c == EOF)
 			break;
 		if (c == '\b' && file == STDIN)
