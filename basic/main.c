@@ -1,38 +1,34 @@
+#ifdef WIN32
+#include <stdio.h>
+#include <stdbool.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+#include <windows.h>
+#else
 #include "../ass.h"
 #include "../ass-std.h"
 IBios* interface;
-
-int isalpha(int c)
-{
-	return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z');
-}
-
-char* strcpy(char* s2, const char* s1)
-{
-	int l = strlen((char*)s1);
-	memcpy(s2, s1, l + 1);
-	s2[l + 1] = 0;
-	return s2;
-}
-
-char* _strdup(const char* s1)
-{
-	int l = strlen((char*)s1);
-	char* s2 = malloc(l + 1);
-	memcpy(s2, s1, l + 1);
-	s2[l + 1] = 0;
-	return s2;
-}
-
-int atoi(char* str)
-{
-	int res = 0;
-	for (int i = 0; str[i] != '\0'; ++i)
-		res = res * 10 + str[i] - '0';
-	return res;
-}
+#endif
 
 #define MAXSTRING 255
+
+#ifdef WIN32
+#define _rand() rand()
+#else
+long rndseed = 0xDEADBEEF;
+
+void srand(long seed)
+{
+	rndseed = seed;
+}
+
+long _rand()
+{
+	rndseed = (rndseed * 0x41C64E6D) + 0x6073;
+	return rndseed;
+}
+#endif
 
 typedef struct line
 {
@@ -72,11 +68,13 @@ bool CmdCls();
 bool CmdColor();
 bool CmdLocate();
 bool CmdGoto();
+bool CmdPoke();
 
 bool FncChr();
 bool FncAsc();
 bool FncLen();
 bool FncAbs();
+bool FncRnd();
 
 enum commandTypes
 {
@@ -85,7 +83,7 @@ enum commandTypes
 
 typedef struct command
 {
-	bool(*handler)(void);
+	bool(*handler)();
 	const char name[15];
 	char type;
 } command;
@@ -109,7 +107,7 @@ const command newCommands[] = {
 	{ CmdLocate, "LOCATE", COMMAND }, //8F
 
 	{ CmdGoto, "GOTO", COMMAND }, //90
-	{ 0,{ 0 }, 0 }, //91
+	{ CmdPoke, "POKE", COMMAND }, //91
 	{ 0,{ 0 }, 0 }, //92
 	{ 0,{ 0 }, 0 }, //93
 	{ 0,{ 0 }, 0 }, //94
@@ -148,7 +146,7 @@ const command newCommands[] = {
 	{ FncAbs, "ABS", INTFUNC }, //B3
 	{ 0, "CSRLIN", INTFUNC }, //B4
 	{ 0, "POS", INTFUNC }, //B5
-	{ 0,{ 0 }, 0 }, //B6
+	{ FncRnd, "RND", INTFUNC }, //B6
 	{ 0,{ 0 }, 0 }, //B7
 	{ 0,{ 0 }, 0 }, //B8
 	{ 0,{ 0 }, 0 }, //B9
@@ -175,7 +173,6 @@ const command newCommands[] = {
 	{ 0,{ 0 }, 0 }, //CD
 	{ 0,{ 0 }, 0 }, //CE
 	{ 0,{ 0 }, 0 }, //CF
-
 
 	{ 0,{ 0 }, 0 }, //D0
 	{ 0,{ 0 }, 0 }, //D1
@@ -229,27 +226,28 @@ const command newCommands[] = {
 	{ 0,{ 0 }, 0 }, //FF
 };
 
-bool(*commands[])(void) = {
+bool(*commands[])() = {
 	0, CmdEnd, /* FOR */ 0, /* NEXT */ 0,
 	CmdPrint, CmdInput, CmdLet, /* REM */ 0,
 	CmdRun, CmdNew, CmdList, CmdLoad,
 	CmdSave, CmdCls, CmdColor, CmdLocate,
-	CmdGoto,
+	CmdGoto, CmdPoke,
 };
-bool(*functions[])(void) = {
+bool(*functions[])() = {
 	FncChr, FncAsc, FncLen, FncAbs,
+	0, 0, FncRnd,
 };
 const char* cmdNames[] = {
 	"", "END", "FOR", "NEXT",
 	"PRINT", "INPUT", "LET", "REM",
 	"RUN", "NEW", "LIST", "LOAD",
 	"SAVE", "CLS", "COLOR", "LOCATE",
-	"GOTO",
+	"GOTO", "POKE",
 	NULL
 };
 const char* fncNames[] = {
 	"CHR$", "ASC", "LEN", "ABS",
-	"CSRLIN", "POS",
+	"CSRLIN", "POS", "RND",
 	NULL
 };
 const char expNames[] = {
@@ -291,13 +289,12 @@ bool SyntaxError(const char* message)
 	errdOut = true;
 	if (thisLineNum != -1)
 	{
-		printf("%s on line %d.\n", message, thisLineNum);
+		printf("\n%s on line %d.\n", message, thisLineNum);
 	}
 	else
 	{
-		printf("%s.\n", message);
+		printf("\n%s.\n", message);
 	}
-	getchar();
 	return false;
 }
 
@@ -669,12 +666,22 @@ bool FncAbs()
 	return true;
 }
 
+bool FncRnd()
+{
+	if (!Anticipate('(')) return SyntaxError("Expected '('");
+	int range = ExpectExpression();
+	intVars[26] = _rand() % range;
+	if (intVars[26] < 0) intVars[26] = -intVars[26];
+	if (!Anticipate(')')) return SyntaxError("Expected ')'");
+	return true;
+}
+
 bool Command()
 {
 	unsigned char c = *ptr;
 	if (c == '?') c = PRINT;
 	ptr++;
-	bool(*func)(void) = commands[c - FIRSTCOMMAND];
+	bool(*func)() = commands[c - FIRSTCOMMAND];
 	if (func)
 		return func();
 	return false;
@@ -683,8 +690,8 @@ bool Command()
 int Function()
 {
 	unsigned char c = *ptr++;
-	bool(*func)(void) = functions[c - FIRSTFUNC];
-	if (func && fncNames[c - FIRSTFUNC][strlen(fncNames[c - FIRSTFUNC]) - 1] != '$')
+	bool(*func)() = functions[c - FIRSTFUNC];
+	if (func && fncNames[c - FIRSTFUNC][strlen((char*)fncNames[c - FIRSTFUNC]) - 1] != '$')
 		return func() ? 1 : 0;
 	else
 		return func() ? 2 : 0;
@@ -709,12 +716,9 @@ bool CmdList()
 		printf("No program!\n");
 		return false;
 	}
-	//sptr ptr = code;
 	line* thisLine = firstLine;
 	while (true)
 	{
-		//short nextLineOffset = *(short*)ptr; ptr += 2;
-		//short thisLine = *(short*)ptr; ptr += 2;
 		if (thisLine->lineNo < from)
 		{
 			thisLine = thisLine->nextLine;
@@ -722,7 +726,7 @@ bool CmdList()
 				break;
 			continue;
 		}
-		printf("%-4d ", thisLine->lineNo); //thisLine);
+		printf("%-4d ", thisLine->lineNo);
 		sptr ptr = thisLine->lineTokens;
 		while (true)
 		{
@@ -733,8 +737,8 @@ bool CmdList()
 				printf(fncNames[c - FIRSTFUNC]);
 			else if (c >= 0x20 && c < FIRSTCOMMAND)
 				printf("%c", c);
-			else if (c >= 0x11 && c <= 0x1B)
-				printf("%d", c - 0x11);
+			else if (c >= FIRSTSMALLINT && c <= FIRSTSMALLINT + 10)
+				printf("%d", c - FIRSTSMALLINT);
 			else if (c == ONEBYTEINT)
 			{
 				printf("%i", *(char*)(ptr + 1));
@@ -780,7 +784,7 @@ bool CmdLoad()
 	*fn = 0;
 
 	FILE* f = fopen(file, "rb");
-	if (f == 0)
+	if (f != 0)
 	{
 		CmdNew();
 		line* previousLine = 0;
@@ -825,7 +829,7 @@ bool CmdSave()
 	*fn = 0;
 
 	FILE* f = fopen(file, "wb");
-	if (f == 0)
+	if (f != 0)
 	{
 		line* thisLine = firstLine;
 		unsigned short offset = 0;
@@ -853,7 +857,19 @@ bool CmdSave()
 
 bool CmdCls()
 {
+#ifdef WIN32
+	COORD tl = { 0,0 };
+	CONSOLE_SCREEN_BUFFER_INFO s;
+	HANDLE console = GetStdHandle(STD_OUTPUT_HANDLE);
+	GetConsoleScreenBufferInfo(console, &s);
+	DWORD written, cells = s.dwSize.X * s.dwSize.Y;
+	FillConsoleOutputCharacter(console, ' ', cells, tl, &written);
+	FillConsoleOutputAttribute(console, attribs, cells, tl, &written);
+	SetConsoleCursorPosition(console, tl);
+#else
 	TEXT->ClearScreen();
+#endif
+	return true;
 }
 
 bool CmdColor()
@@ -875,14 +891,27 @@ bool CmdColor()
 	}
 	attribs = fg | (bg << 4);
 
+#ifdef WIN32
+	HANDLE console = GetStdHandle(STD_OUTPUT_HANDLE);
+	SetConsoleTextAttribute(console, attribs);
+#else
 	TEXT->SetTextColor(bg, fg);
+#endif
 	return true;
 }
 
 bool CmdLocate()
 {
-	short row = 1; //info.dwCursorPosition.X + 1;
-	short col = 1; //info.dwCursorPosition.Y + 1;
+#ifdef WIN32
+	HANDLE console = GetStdHandle(STD_OUTPUT_HANDLE);
+	CONSOLE_SCREEN_BUFFER_INFO info;
+	GetConsoleScreenBufferInfo(console, &info);
+	short row = info.dwCursorPosition.X + 1;
+	short col = info.dwCursorPosition.Y + 1;
+#else
+	short row = 1;
+	short col = 1;
+#endif
 	if (!Anticipate(','))
 	{
 		row = ExpectExpression();
@@ -895,7 +924,12 @@ bool CmdLocate()
 		col = ExpectExpression();
 		if (col < 1 || col > 80) return SyntaxError("Value out of range");
 	}
+#ifdef WIN32
+	COORD pos = { col - 1, row - 1 };
+	SetConsoleCursorPosition(console, pos);
+#else
 	TEXT->SetCursorPosition(col - 1, row - 1);
+#endif
 	return true;
 }
 
@@ -905,6 +939,7 @@ bool CmdGoto()
 		return SyntaxError("GOTO not available in immediate mode");
 	int target = ExpectExpression();
 	if (errdOut) return false;
+	//printf("[GOTO: target = %d]", target);
 	line* thisLine = firstLine;
 	while (thisLine->lineNo != target)
 	{
@@ -918,6 +953,30 @@ bool CmdGoto()
 	currentLine = thisLine;
 	ptr = currentLine->lineTokens;
 	return true;
+}
+
+bool CmdPoke()
+{
+#ifdef WIN32
+	int ptr = ExpectExpression();
+	if (Anticipate(','))
+	{
+		int val = ExpectExpression();
+		return true;
+	}
+	else
+		return SyntaxError("Syntax error");
+#else
+	int ptr = ExpectExpression() + MEM_IO;
+	if (Anticipate(','))
+	{
+		int val = ExpectExpression();
+		*(char*)ptr = val;
+		return true;
+	}
+	else
+		return SyntaxError("Syntax error");
+#endif
 }
 
 int Compile(const char* input, sptr output)
@@ -961,7 +1020,7 @@ int Compile(const char* input, sptr output)
 					for (int i = 0; i < FIRSTFUNC - FIRSTCOMMAND; i++)
 					{
 						if (cmdNames[i] == NULL) break;
-						if (strcmp(cmdNames[i], token) == 0)
+						if (strcmp((char*)cmdNames[i], token) == 0)
 							cmdFound = i;
 					}
 					if (cmdFound >= 0)
@@ -975,7 +1034,7 @@ int Compile(const char* input, sptr output)
 						for (int i = 0; i < 16; i++)
 						{
 							if (fncNames[i] == NULL) break;
-							if (strcmp(fncNames[i], token) == 0)
+							if (strcmp((char*)fncNames[i], token) == 0)
 								cmdFound = i;
 						}
 						if (cmdFound >= 0)
@@ -1057,7 +1116,7 @@ emitNum:
 int CompileLine(const char* directInput)
 {
 	//It's a numbered command.
-	char* input = _strdup(directInput);
+	char* input = strdup(directInput);
 	char* toCompile = input;
 	for (int i = 0; i < 5; i++)
 	{
@@ -1154,8 +1213,6 @@ int RunLine()
 		{
 			if (!Command())
 			{
-				printf("Program halted.\n");
-				getchar();
 				return 1;
 			}
 		}
@@ -1247,20 +1304,26 @@ int Save(const char* file)
 
 }
 
+#ifdef WIN32
+int main(int argc, char* argv[])
+{
+	Direct("COLOR 14: PRINT \"A3X BASIC (win32 v.)\": COLOR 7");
+#else
 int main()
 {
+	intoff();
 	MISC->SetTextMode(SMODE_240 | SMODE_BOLD);
 	REG_CARET = 0x8000;
 	TEXT->SetTextColor(0, 7);
 	TEXT->ClearScreen();
-	TEXT->SetTextColor(0, 14);
-	printf("A3X BASIC v0.1\n");
-	TEXT->SetTextColor(0, 7);
+	Direct("COLOR 14: PRINT \"A3X BASIC\": COLOR 7");
+#endif
 
-	Direct("print \"Hello, world!\"");
+
+	//Direct("print \"Hello, world!\"");
 	//CompileLine("10 let b = 1337");
 	//CompileLine("20 print b");
-	Direct("print 42 * 10");
+	//Direct("print 42 * 10");
 	//List(20, 0);
 	//CmdRun();
 	//Direct("input b");
@@ -1281,18 +1344,6 @@ int main()
 	{
 		printf(">");
 		gets_s(directInput, MAXSTRING);
-		/*
-		if (_strcmpi(directInput, "RUN") == 0)
-		{
-			CmdRun();
-			continue;
-		}
-		if (_strcmpi(directInput, "LIST") == 0)
-		{
-			List(0, 0);
-			continue;
-		}
-		*/
 		if (isdigit(directInput[0]))
 		{
 			CompileLine(directInput);
