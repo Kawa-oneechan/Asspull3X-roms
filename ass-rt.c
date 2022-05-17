@@ -75,6 +75,57 @@ int strkitten_s(char* dest, size_t len, char src)
 	return 2;
 }
 
+int isalpha(int c)
+{
+	return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z');
+}
+
+int isdigit(int c)
+{
+	return (c >= '0' && c <= '9');
+}
+
+int isupper(int c)
+{
+	return (c >= 'A' && c <= 'Z');
+}
+
+int toupper(int c)
+{
+	return (c >= 'a' && c <= 'z') ? (c - 'a' + 'A') : c;
+}
+
+int tolower(int c)
+{
+	return (c >= 'A' && c <= 'Z') ? (c - 'A' + 'a') : c;
+}
+
+char* strcpy(char* s2, const char* s1)
+{
+	int l = strnlen_s((char*)s1, 1024);
+	memcpy(s2, s1, l + 1);
+	s2[l + 1] = 0;
+	return s2;
+}
+
+char* strdup(const char* s1)
+{
+	int l = strnlen_s((char*)s1, 1024);
+	char* s2 = malloc(l + 1);
+	memcpy(s2, s1, l + 1);
+	s2[l + 1] = 0;
+	return s2;
+}
+
+int atoi(char* str)
+{
+	int res = 0;
+	for (int i = 0; str[i] != '\0'; ++i)
+		res = res * 10 + str[i] - '0';
+	return res;
+}
+
+
 //------
 //MEMCPY
 //------
