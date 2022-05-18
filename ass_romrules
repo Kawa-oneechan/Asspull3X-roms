@@ -25,7 +25,7 @@ GRITFLAGS := -ftc -fh! -gu8
 MAPFILE		:= $(TARGET).map
 
 ARCH    	:= -m68000
-SPECS		:= -specs=asspull.specs
+SPECS		:= -B ../devkit68K/m68k-elf/lib -specs=asspull.specs
 
 INCLUDE		:= -I toolinclude
 LIBPATHS	:=
