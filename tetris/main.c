@@ -76,8 +76,8 @@ extern void IMF_Play();
 void PlaySound(int id)
 {
 	int soundData = (int)sounds[id];
-	REG_PCMOFFSET = soundData + 4;
-	REG_PCMLENGTH = *(uint32_t*)soundData;
+	REG_PCM1OFFSET = soundData + 4;
+	REG_PCM1LENGTH = *(uint32_t*)soundData;
 }
 
 uint32_t rndseed = 0xDEADBEEF;

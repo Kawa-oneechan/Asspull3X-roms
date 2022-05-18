@@ -1,5 +1,5 @@
 #include "../ass.h"
-#include "../lab/std.h"
+#include "../ass-std.h"
 
 //#define NORTON
 
