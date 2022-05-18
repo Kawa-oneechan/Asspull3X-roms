@@ -1,6 +1,6 @@
 # Asspull IIIx
 ## ROM source archive
-This repository contains the full source for the *Asspull IIIx* ROM files — the BIOS and boot firmware, and a handful of functionality tests. They can be built in [devkitPro](https://devkitpro.org/)... is what I would *like* to say but I must've misremembered where I got devkit68K from. So grab [this copy](http://helmet.kafuka.org/devkit68k.rar) and unpack it in your devkitPro directory or whatever, and make sure you `set DEVKIT68K=/c/devkitPro/devkit68K` (or wherever you put it). That *should* set you up well enough.
+This repository contains the full source for the *Asspull IIIx* ROM files — the BIOS and boot firmware, and a handful of functionality tests. They can be built in [devkitPro](https://devkitpro.org/)... is what I would *like* to say but I must've misremembered where I got devkit68K from. So grab [this copy](http://helmet.kafuka.org/devkit68k.rar) and unpack it in your devkitPro directory or whatever, and make sure you `set DEVKIT68K=/opt/devkitPro/devkit68K` (to match what devkitPro put). That *should* set you up well enough. If you don't have devkitPro installed, you don't actually need any of the specific kits, just the base system. A copy of grit is included in the devkit68K archive and I'm thinking of writing my own anyway. For that matter, you'll also need Python 3.8 or later installed.
 
 ### `_disk1_` and `_disk2_`
 These two folders are the source for `disk1.img` and `disk2.img`, as built with the included copy of `bfi.exe`.
