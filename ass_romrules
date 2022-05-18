@@ -9,7 +9,7 @@ IMG2ASS		:= python ../img2ass.py
 HDMA2ASS	:= python ../hdma2ass.py
 TILED2ASS 	:= python ../tiled2ass.py
 ASSFIX		:= python ../assfix.py 
-GRIT		:= $(DEVKITARM)/bin/grit.exe
+GRIT		:= grit.exe
 
 export OFILES	:= $(SFILES:.s=.o) $(CFILES:.c=.o)
 
@@ -55,7 +55,7 @@ all:	clean $(TARGET).elf
 
 clean:
 	rm -f $(OFILES) $(MAPFILE) $(TARGET).elf $(GFXtoclean)
-	# ../$(TARGET).ap3
+#	 ../$(TARGET).ap3
 
 # --- ROM compilation ---
 %.o : %.c

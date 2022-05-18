@@ -7,7 +7,7 @@ OBJCOPY		:= $(CROSS)objcopy
 
 IMG2ASS		:= python ../img2ass.py
 HDMA2ASS	:= python ../hdma2ass.py
-GRIT		:= $(DEVKITARM)/bin/grit.exe
+GRIT		:= grit.exe
 
 TARGET		:= ass-bios
 
