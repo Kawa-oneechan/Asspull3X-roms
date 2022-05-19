@@ -51,12 +51,16 @@ int Write(const char* format, ...)
 	va_start(args, format);
 	vsprintf(buffer, format, args);
 	char *b = buffer;
+	int len = 0;
 	while (*b)
+	{
 		WriteChar(*b++);
+		len++;
+	}
 	va_end(args);
 	REG_CARET |= caret;
 	REG_INTRMODE = ints;
-	return buffer - b;
+	return len;
 }
 
 __attribute((format (printf, 2, 3)))

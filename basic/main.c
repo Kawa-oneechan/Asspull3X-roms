@@ -43,10 +43,10 @@ bool Command();
 int Function();
 
 bool errdOut;
-sptr ptr;
+sptr ptr, errPos;
 line* firstLine;
 line* currentLine;
-int thisLineNum;
+int thisLineNum, errCol;
 char stringVars[27][MAXSTRING+1];
 int intVars[27];
 
@@ -54,6 +54,7 @@ bool SyntaxError(const char* message);
 int ExpectNumber();
 int ExpectExpression();
 void SkipWhite();
+bool List(int from, int to);
 
 bool CmdEnd();
 bool CmdPrint();
@@ -268,6 +269,16 @@ bool SyntaxError(const char* message)
 	{
 		printf("\n%s.\n", message);
 	}
+	errCol = -1;
+	List(-1, 0);
+	if (errCol >= -1)
+	{
+		for (int i = 0; i < errCol; i++)
+		{
+			printf("-");
+		}
+		printf("^\n");
+	}
 	return false;
 }
 
@@ -276,6 +287,11 @@ int ExpectNumber()
 	SkipWhite();
 	bool neg = false;
 	int ret = 0;
+	if (*ptr == '\"')
+	{
+		SyntaxError("Expected a number");
+		return 0;
+	}
 	if (*ptr == MINUS)
 	{
 		neg = true;
@@ -691,62 +707,7 @@ bool CmdList()
 		ptr++;
 		to = ExpectNumber();
 	}
-
-	if (firstLine == 0)
-	{
-		printf("No program!\n");
-		return false;
-	}
-	line* thisLine = firstLine;
-	while (true)
-	{
-		if (thisLine->lineNo < from)
-		{
-			thisLine = thisLine->nextLine;
-			if (to > from && thisLine->lineNo > to)
-				break;
-			continue;
-		}
-		printf("%-4d ", thisLine->lineNo);
-		sptr ptr = thisLine->lineTokens;
-		while (true)
-		{
-			unsigned char c = *ptr;
-			if (c >= FIRSTCOMMAND)
-				printf(newCommands[c - FIRSTCOMMAND].name);
-			else if (c >= 0x20 && c < FIRSTCOMMAND)
-				printf("%c", c);
-			else if (c >= FIRSTSMALLINT && c <= FIRSTSMALLINT + 10)
-				printf("%d", c - FIRSTSMALLINT);
-			else if (c == ONEBYTEINT)
-			{
-				printf("%i", *(char*)(ptr + 1));
-				ptr += 1;
-			}
-			else if (c == TWOBYTEINT)
-			{
-				printf("%i", *(short*)(ptr + 1));
-				ptr += 2;
-			}
-			else if (c == EOL)
-			{
-				//if (nextLineOffset == 0)
-				if (thisLine->nextLine == 0)
-				{
-					printf("\n");
-					return true;
-				}
-				else
-				{
-					printf("\n");
-					thisLine = thisLine->nextLine;
-					break;
-				}
-			}
-			ptr++;
-		}
-	}
-	return true;
+	return List(from, to);
 }
 
 bool CmdLoad()
@@ -886,6 +847,7 @@ bool CmdColor()
 	if (!Anticipate(','))
 	{
 		fg = ExpectExpression();
+		if (errdOut) return false;
 		if (fg < 0 || fg > 15) return SyntaxError("Value out of range");
 	}
 	else
@@ -893,6 +855,7 @@ bool CmdColor()
 	if (Anticipate(','))
 	{
 		bg = ExpectExpression();
+		if (errdOut) return false;
 		if (bg < 0 || bg > 15) return SyntaxError("Value out of range");
 	}
 	attribs = fg | (bg << 4);
@@ -1204,7 +1167,7 @@ int RunLine()
 	{
 		unsigned char c = *ptr;
 		if (c == '?') c = PRINT;
-		if (c >= FIRSTCOMMAND && newCommands[c - FIRSTCOMMAND].type == COMMAND)
+		if (c >= FIRSTCOMMAND)
 		{
 			if (!Command())
 			{
@@ -1229,10 +1192,12 @@ int RunLine()
 
 int Direct(const char* directInput)
 {
-	unsigned char directCode[MAXSTRING + 1];
-	Compile(directInput, directCode);
-	ptr = directCode;
-	thisLineNum = -1;
+	//unsigned char directCode[MAXSTRING + 1];
+	line directLine = { 0 };
+	directLine.lineNo = thisLineNum = -1;
+	Compile(directInput, directLine.lineTokens);
+	currentLine = &directLine;
+	ptr = directLine.lineTokens;
 	return RunLine();
 }
 
@@ -1278,9 +1243,74 @@ bool CmdNew()
 
 bool List(int from, int to)
 {
-	char t[64];
-	sprintf(t, "LIST %d-%d", from, to);
-	Direct(t);
+	if (firstLine == 0 && from != -1)
+	{
+		printf("No program!\n");
+		return false;
+	}
+	line* thisLine = firstLine;
+	if (from == -1)
+	{
+		thisLine = currentLine;
+	}
+	while (true)
+	{
+		if (thisLine->lineNo < from)
+		{
+			thisLine = thisLine->nextLine;
+			if (to > from && thisLine->lineNo > to)
+				break;
+			continue;
+		}
+		errPos = ptr;
+		int errColTrack = 1;
+		if (from != -1)
+		{
+			printf("%-4d ", thisLine->lineNo);
+			errColTrack = 6;
+		}
+		sptr ptr = thisLine->lineTokens;
+		while (true)
+		{
+			unsigned char c = *ptr;
+			if (ptr < errPos)
+			{
+				errCol = errColTrack;
+			}
+			if (c >= FIRSTCOMMAND)
+				errColTrack += printf(newCommands[c - FIRSTCOMMAND].name);
+			else if (c >= 0x20 && c < FIRSTCOMMAND)
+				errColTrack += printf("%c", c);
+			else if (c >= FIRSTSMALLINT && c <= FIRSTSMALLINT + 10)
+				errColTrack += printf("%d", c - FIRSTSMALLINT);
+			else if (c == ONEBYTEINT)
+			{
+				errColTrack += printf("%i", *(char*)(ptr + 1));
+				ptr += 1;
+			}
+			else if (c == TWOBYTEINT)
+			{
+				errColTrack += printf("%i", *(short*)(ptr + 1));
+				ptr += 2;
+			}
+			else if (c == EOL)
+			{
+				//if (nextLineOffset == 0)
+				if (thisLine->nextLine == 0)
+				{
+					printf("\n");
+					return true;
+				}
+				else
+				{
+					printf("\n");
+					thisLine = thisLine->nextLine;
+					break;
+				}
+			}
+			ptr++;
+		}
+	}
 	return true;
 }
 
@@ -1314,6 +1344,8 @@ int main()
 	Direct("COLOR 14: PRINT \"A3X BASIC\": COLOR 7");
 #endif
 	//We use the BASIC interpreter to announce the BASIC interpreter :3
+
+	//Direct("COLOR \"inducing an error\"");
 
 	//Direct("print \"Hello, world!\"");
 	//CompileLine("10 let b = 1337");
