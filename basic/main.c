@@ -78,6 +78,7 @@ bool FncRnd();
 
 enum commandTypes
 {
+	INVALID,
 	COMMAND, INTFUNC, STRFUNC, EXPR
 };
 
@@ -224,34 +225,6 @@ const command newCommands[] = {
 	{ 0,{ 0 }, 0 }, //FD
 	{ 0,{ 0 }, 0 }, //FE
 	{ 0,{ 0 }, 0 }, //FF
-};
-
-bool(*commands[])() = {
-	0, CmdEnd, /* FOR */ 0, /* NEXT */ 0,
-	CmdPrint, CmdInput, CmdLet, /* REM */ 0,
-	CmdRun, CmdNew, CmdList, CmdLoad,
-	CmdSave, CmdCls, CmdColor, CmdLocate,
-	CmdGoto, CmdPoke,
-};
-bool(*functions[])() = {
-	FncChr, FncAsc, FncLen, FncAbs,
-	0, 0, FncRnd,
-};
-const char* cmdNames[] = {
-	"", "END", "FOR", "NEXT",
-	"PRINT", "INPUT", "LET", "REM",
-	"RUN", "NEW", "LIST", "LOAD",
-	"SAVE", "CLS", "COLOR", "LOCATE",
-	"GOTO", "POKE",
-	NULL
-};
-const char* fncNames[] = {
-	"CHR$", "ASC", "LEN", "ABS",
-	"CSRLIN", "POS", "RND",
-	NULL
-};
-const char expNames[] = {
-	'>', '=', '<', '+', '-', '*', '/', '\\', 0
 };
 
 enum byteCodes {
@@ -681,20 +654,28 @@ bool Command()
 	unsigned char c = *ptr;
 	if (c == '?') c = PRINT;
 	ptr++;
-	bool(*func)() = commands[c - FIRSTCOMMAND];
-	if (func)
-		return func();
+	command* cmd = &newCommands[c - FIRSTCOMMAND];
+	if (cmd->handler == 0)
+		return SyntaxError("Expected a command");
+	else if (cmd->type == COMMAND)
+		return cmd->handler();
+	else
+		return SyntaxError("Expected a command");
 	return false;
 }
 
 int Function()
 {
 	unsigned char c = *ptr++;
-	bool(*func)() = functions[c - FIRSTFUNC];
-	if (func && fncNames[c - FIRSTFUNC][strlen((char*)fncNames[c - FIRSTFUNC]) - 1] != '$')
-		return func() ? 1 : 0;
+	command* cmd = &newCommands[c - FIRSTCOMMAND];
+	if (cmd->handler == 0)
+		return SyntaxError("Expected a function");
+	else if (cmd->type == INTFUNC)
+		return cmd->handler() ? 1 : 0;
+	else if (cmd->type == STRFUNC)
+		return cmd->handler() ? 2 : 0;
 	else
-		return func() ? 2 : 0;
+		return SyntaxError("Expected a function");
 	return 0;
 }
 
@@ -731,10 +712,8 @@ bool CmdList()
 		while (true)
 		{
 			unsigned char c = *ptr;
-			if (c >= FIRSTCOMMAND && c < FIRSTFUNC)
-				printf(cmdNames[c - FIRSTCOMMAND]);
-			if (c >= FIRSTFUNC && c < FIRSTEXP)
-				printf(fncNames[c - FIRSTFUNC]);
+			if (c >= FIRSTCOMMAND)
+				printf(newCommands[c - FIRSTCOMMAND].name);
 			else if (c >= 0x20 && c < FIRSTCOMMAND)
 				printf("%c", c);
 			else if (c >= FIRSTSMALLINT && c <= FIRSTSMALLINT + 10)
@@ -815,7 +794,11 @@ bool CmdLoad()
 	}
 	else
 	{
+#ifdef WIN32
+		printf("Could not open %s.\n", file);
+#else
 		printf("Could not open %s: %s\n", file, DISK->FileErrStr((int)f));
+#endif
 		return false;
 	}
 	fclose(f);
@@ -867,7 +850,11 @@ bool CmdSave()
 	}
 	else
 	{
+#ifdef WIN32
+		printf("Could not open %s.\n", file);
+#else
 		printf("Could not open %s: %s\n", file, DISK->FileErrStr((int)f));
+#endif
 		return false;
 	}
 	fclose(f);
@@ -1036,11 +1023,15 @@ int Compile(const char* input, sptr output)
 						input++;
 					}
 					int cmdFound = -1;
-					for (int i = 0; i < FIRSTFUNC - FIRSTCOMMAND; i++)
+					for (int i = 0; i < 128; i++)
 					{
-						if (cmdNames[i] == NULL) break;
-						if (strcmp((char*)cmdNames[i], token) == 0)
+						command* cmd = &newCommands[i];
+						if (cmd->name[0] == 0)
+							continue;
+						if (!strcmp(cmd->name, token))
+						{
 							cmdFound = i;
+						}
 					}
 					if (cmdFound >= 0)
 					{
@@ -1048,41 +1039,26 @@ int Compile(const char* input, sptr output)
 						tok = token;
 						*ptr++ = FIRSTCOMMAND + cmdFound;
 					}
-					else
-					{
-						for (int i = 0; i < 16; i++)
-						{
-							if (fncNames[i] == NULL) break;
-							if (strcmp((char*)fncNames[i], token) == 0)
-								cmdFound = i;
-						}
-						if (cmdFound >= 0)
-						{
-							memset(token, 0, sizeof(token));
-							tok = token;
-							*ptr++ = FIRSTFUNC + cmdFound;
-						}
-
-					}
 				}
 			}
 			else
 			{
 				int expFound = -1;
-				for (int i = 0; i < 16; i++)
+				for (int i = 0; i < 128; i++)
 				{
-					if (expNames[i] == 0) break;
-					if (expNames[i] == c)
+					command* cmd = &newCommands[i];
+					if (cmd->name[0] == 0)
+						continue;
+					if (!strcmp(cmd->name, token))
 					{
 						expFound = i;
-						break;
 					}
 				}
 				if (expFound >= 0)
 				{
-					*ptr++ = FIRSTEXP + expFound;
-					input++;
-					continue;
+					memset(token, 0, sizeof(token));
+					tok = token;
+					*ptr++ = FIRSTCOMMAND + expFound;
 				}
 				*ptr++ = c;
 				if (c == '\"')
@@ -1228,7 +1204,7 @@ int RunLine()
 	{
 		unsigned char c = *ptr;
 		if (c == '?') c = PRINT;
-		if (c >= FIRSTCOMMAND && c <= FIRSTFUNC)
+		if (c >= FIRSTCOMMAND && newCommands[c - FIRSTCOMMAND].type == COMMAND)
 		{
 			if (!Command())
 			{
