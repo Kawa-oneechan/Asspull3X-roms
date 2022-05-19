@@ -654,7 +654,7 @@ bool Command()
 	unsigned char c = *ptr;
 	if (c == '?') c = PRINT;
 	ptr++;
-	command* cmd = &newCommands[c - FIRSTCOMMAND];
+	const command* cmd = &newCommands[c - FIRSTCOMMAND];
 	if (cmd->handler == 0)
 		return SyntaxError("Expected a command");
 	else if (cmd->type == COMMAND)
@@ -667,7 +667,7 @@ bool Command()
 int Function()
 {
 	unsigned char c = *ptr++;
-	command* cmd = &newCommands[c - FIRSTCOMMAND];
+	const command* cmd = &newCommands[c - FIRSTCOMMAND];
 	if (cmd->handler == 0)
 		return SyntaxError("Expected a function");
 	else if (cmd->type == INTFUNC)
@@ -1025,10 +1025,10 @@ int Compile(const char* input, sptr output)
 					int cmdFound = -1;
 					for (int i = 0; i < 128; i++)
 					{
-						command* cmd = &newCommands[i];
+						const command* cmd = &newCommands[i];
 						if (cmd->name[0] == 0)
 							continue;
-						if (!strcmp(cmd->name, token))
+						if (!strcmp((char*)cmd->name, token))
 						{
 							cmdFound = i;
 						}
@@ -1046,10 +1046,10 @@ int Compile(const char* input, sptr output)
 				int expFound = -1;
 				for (int i = 0; i < 128; i++)
 				{
-					command* cmd = &newCommands[i];
+					const command* cmd = &newCommands[i];
 					if (cmd->name[0] == 0)
 						continue;
-					if (!strcmp(cmd->name, token))
+					if (!strcmp((char*)cmd->name, token))
 					{
 						expFound = i;
 					}
@@ -1313,7 +1313,7 @@ int main()
 	TEXT->ClearScreen();
 	Direct("COLOR 14: PRINT \"A3X BASIC\": COLOR 7");
 #endif
-
+	//We use the BASIC interpreter to announce the BASIC interpreter :3
 
 	//Direct("print \"Hello, world!\"");
 	//CompileLine("10 let b = 1337");
