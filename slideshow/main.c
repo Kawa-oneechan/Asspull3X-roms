@@ -5,14 +5,14 @@ void* LoadFile(const char* path, void* buffer)
 {
 	FILE file;
 	FILEINFO nfo;
-	int regs = REG_INTRMODE;
+	int8_t ints = REG_INTRMODE;
 	intoff();
 	int32_t ret = DISK->FileStat(path, &nfo);
 
 	ret = DISK->OpenFile(&file, path, FA_READ);
 	if (ret > 0)
 	{
-		REG_INTRMODE = regs;
+		REG_INTRMODE = ints;
 		return (void*)ret;
 	}
 
@@ -22,7 +22,7 @@ void* LoadFile(const char* path, void* buffer)
 		ret = DISK->ReadFile(&file, target, 1024);
 		if (ret < 0)
 		{
-			REG_INTRMODE = regs;
+			REG_INTRMODE = ints;
 			return (void*)ret;
 		}
 
@@ -32,7 +32,7 @@ void* LoadFile(const char* path, void* buffer)
 	}
 
 	DISK->CloseFile(&file);
-	REG_INTRMODE = regs;
+	REG_INTRMODE = ints;
 	return buffer;
 }
 

@@ -43,6 +43,7 @@ __attribute((format (printf, 1, 2)))
 int Write(const char* format, ...)
 {
 	char buffer[1024];
+	int8_t ints = REG_INTRMODE;
 	intoff();
 	int caret = REG_CARET & 0x8000;
 	REG_CARET &= ~0x8000;
@@ -54,7 +55,7 @@ int Write(const char* format, ...)
 		WriteChar(*b++);
 	va_end(args);
 	REG_CARET |= caret;
-	inton();
+	REG_INTRMODE = ints;
 	return buffer - b;
 }
 
