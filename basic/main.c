@@ -784,7 +784,7 @@ bool CmdLoad()
 	*fn = 0;
 
 	FILE* f = fopen(file, "rb");
-	if (f != 0)
+	if ((int)f > 20)
 	{
 		CmdNew();
 		line* previousLine = 0;
@@ -800,6 +800,13 @@ bool CmdLoad()
 				previousLine->nextLine = thisLine;
 			if (firstLine == 0)
 				firstLine = thisLine;
+			if (thisLine->lineNo == 0)
+			{
+				//BUGBUG
+				printf("<line zero bug, skipping>\n");
+				free(thisLine);
+				thisLine = 0;
+			}
 			if (nextLineAt == 0)
 				break;
 			previousLine = thisLine;
@@ -808,7 +815,7 @@ bool CmdLoad()
 	}
 	else
 	{
-		printf("Could not open %s.", file);
+		printf("Could not open %s: %s\n", file, DISK->FileErrStr((int)f));
 		return false;
 	}
 	fclose(f);
@@ -829,13 +836,20 @@ bool CmdSave()
 	*fn = 0;
 
 	FILE* f = fopen(file, "wb");
-	if (f != 0)
+	if ((int)f > 20)
 	{
 		line* thisLine = firstLine;
 		unsigned short offset = 0;
 		while (thisLine)
 		{
 			line* nextLine = thisLine->nextLine;
+			if (thisLine->lineNo == 0)
+			{
+				//BUGBUG
+				printf("<line zero bug, skipping>\n");
+				thisLine = nextLine;
+				continue;
+			}
 			unsigned short lineLen = 1;
 			for (int i = 0; i < MAXSTRING; i++, lineLen++)
 			{
@@ -850,6 +864,11 @@ bool CmdSave()
 			thisLine = nextLine;
 			offset = nextOffset;
 		}
+	}
+	else
+	{
+		printf("Could not open %s: %s\n", file, DISK->FileErrStr((int)f));
+		return false;
 	}
 	fclose(f);
 	return true;

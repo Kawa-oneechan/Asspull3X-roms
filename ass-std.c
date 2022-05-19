@@ -164,13 +164,13 @@ char* fgets(char* s, int n, FILE* file)
 	while(--n)
 	{
 		c = fgetc(file);
-		if (c == '\x1B')
+		if (c == '\x1B' && file == STDIN)
 		{
 			//eat the esc
 			n++;
 			continue;
 		}
-		if (c == '\n' || c == EOF)
+		if (((file == STDIN && c == '\n') || (file != STDIN && c == 0)) || c == EOF)
 			break;
 		if (c == '\b' && file == STDIN)
 		{
