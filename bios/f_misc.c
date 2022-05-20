@@ -47,8 +47,8 @@ void WaitForVBlank()
 //	intoff();
 //	while(REG_LINE >= 480);
 //	while(REG_LINE < 480);
-//	if (interface->VBlank)
-//		interface->VBlank();
+	if (interface->VBlank)
+		interface->VBlank();
 }
 
 void WaitForVBlanks(int vbls)

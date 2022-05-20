@@ -221,7 +221,7 @@ static void _setPixel4(int x, int y, int stride, int color, uint8_t* dest)
 
 void DrawLine(int x1, int y1, int x2, int y2, int color, uint8_t* dest)
 {
-	int8_t ints = REG_INTRMODE;
+	intpush();
 	intoff();
 
 	int stride = 640;
@@ -238,7 +238,7 @@ void DrawLine(int x1, int y1, int x2, int y2, int color, uint8_t* dest)
 			SWAP(x2, x1);
 		for (int i = x1; i <= x2; i++)
 			setPixel(i, y1, stride, color, dest);
-		REG_INTRMODE = ints;
+		intpop();
 		return;
 	}
 	if (x1 == x2)
@@ -247,7 +247,7 @@ void DrawLine(int x1, int y1, int x2, int y2, int color, uint8_t* dest)
 			SWAP(y1, y2);
 		for (int i = y1; i <= y2; i++)
 			setPixel(x1, i, stride, color, dest);
-		REG_INTRMODE = ints;
+		intpop();
 		return;
 	}
 
@@ -291,7 +291,7 @@ void DrawLine(int x1, int y1, int x2, int y2, int color, uint8_t* dest)
 		}
 	}
 
-	REG_INTRMODE = ints;
+	intpop();
 }
 
 #define _FFSTACKMAX 2048
@@ -335,7 +335,7 @@ static inline int16_t _ffPeek()
 
 void FloodFill(int x, int y, int newColor, uint8_t* dest)
 {
-	int8_t ints = REG_INTRMODE;
+	intpush();
 	intoff();
 
 	int stride = 640;
@@ -361,12 +361,12 @@ void FloodFill(int x, int y, int newColor, uint8_t* dest)
 
 	if (oldColor == newColor)
 	{
-		REG_INTRMODE = ints;
+		intpop();
 		return;
 	}
 	if (getPixel(x, y, stride, dest) != oldColor)
 	{
-		REG_INTRMODE = ints;
+		intpop();
 		return;
 	}
 
@@ -410,5 +410,5 @@ void FloodFill(int x, int y, int newColor, uint8_t* dest)
 
 	free(_ffStack);
 
-	REG_INTRMODE = ints;
+	intpop();
 }

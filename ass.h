@@ -365,7 +365,7 @@ typedef struct
 	void(*Exception)(void);
 	void(*VBlank)(void);
 	void(*reserved)(void);
-	void(*DrawChar)(char, int, int, int);
+	void(*DrawChar)(unsigned char, int, int, int);
 	ITextLibrary* textLibrary;
 	IDrawingLibrary* drawingLibrary;
 	IMiscLibrary* miscLibrary;
