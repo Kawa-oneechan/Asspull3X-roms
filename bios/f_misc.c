@@ -83,7 +83,7 @@ void MidiReset()
 
 void RleUnpack(int8_t* dst, int8_t* src, size_t size)
 {
-	int8_t ints = REG_INTRMODE;
+	intpush();
 	intoff();
 
 	uint8_t data = 0;
@@ -107,5 +107,5 @@ void RleUnpack(int8_t* dst, int8_t* src, size_t size)
 		size--;
 	}
 
-	REG_INTRMODE = ints;
+	intpop();
 }

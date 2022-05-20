@@ -144,7 +144,7 @@ void FadeFromWhite()
 void DrawString(const char* str, int x, int y, int color)
 {
 	if (interface->DrawChar == NULL) return;
-	int8_t ints = REG_INTRMODE;
+	intpush();
 	intoff();
 	int sx = x;
 	while(*str)
@@ -160,13 +160,13 @@ void DrawString(const char* str, int x, int y, int color)
 		DrawChar(*str++, x, y, color);
 		x += 8;
 	}
-	REG_INTRMODE = ints;
+	intpop();
 }
 
 void DrawFormat(const char* format, int x, int y, int color, ...)
 {
 	if (interface->DrawChar == NULL) return;
-	int8_t ints = REG_INTRMODE;
+	intpush();
 	intoff();
 	char buffer[1024];
 	va_list args;
@@ -179,7 +179,7 @@ void DrawFormat(const char* format, int x, int y, int color, ...)
 		x += 8;
 	}
 	va_end(args);
-	REG_INTRMODE = ints;
+	intpop();
 }
 
 void DrawChar(char ch, int x, int y, int color)
