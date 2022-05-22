@@ -25,7 +25,8 @@ if im.mode != 'P':
 inPal = im.getpalette()
 outData = bytes(im.getdata())
 
-fourBits = max(outData) < 17
+truePalLength = max(outData) + 1
+fourBits = truePalLength < 17
 if args.verbose:
 	if fourBits:
 		print('Image uses only 16 colors.')
@@ -99,7 +100,8 @@ else:
 if args.verbose:
 	print(f'depth: {4 if fourBits else 8}, compressed: {1 if compressed else 0}')
 	print(f'width: {im.width}, height: {im.height}, stride: {stride}')
-	print(f'palSize: {palLength}')
+	print(f'palLength: {palLength} (true {truePalLength})')
+	print(f'palSize: {palSize}')
 	print(f'palOffset: {0x18}')
 	print(f'dataSize: {len(outData)}')
 	print(f'dataOffset: {0x18 + palSize}')
@@ -116,7 +118,10 @@ bf.write(struct.pack('>L', 0x18))
 bf.write(struct.pack('>L', 0x18 + palSize))
 
 for i in range(palLength):
-	r, g, b = inPal[(i * 3) + 0], inPal[(i * 3) + 1], inPal[(i * 3) + 2]
+	if i < truePalLength:
+		r, g, b = inPal[(i * 3) + 0], inPal[(i * 3) + 1], inPal[(i * 3) + 2]
+	else:
+		r, g, b = 0, 0, 0
 	snes = ((b >> 3) << 10) | ((g >> 3) << 5) | (r >> 3)
 	bf.write(struct.pack('>H', snes))
 
