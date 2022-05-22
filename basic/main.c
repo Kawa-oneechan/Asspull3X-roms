@@ -306,7 +306,7 @@ int ExpectNumber()
 		ptr++;
 		ret = *ptr++;
 	}
-	else if (*ptr == TWOBYTEINT)
+	else if (*ptr == TWOBYTEINT || *ptr == HEX)
 	{
 		ptr++;
 		ret = *ptr++;
@@ -955,6 +955,7 @@ int Compile(const char* input, sptr output)
 	sptr ptr = codeSoFar;
 	char* tok = token;
 	int mode = 0;
+	bool hex = false;
 	int num = 0;
 	while (*input > 0 && *input != (char)0xFE)
 	{
@@ -965,8 +966,21 @@ int Compile(const char* input, sptr output)
 			{
 				mode = 2; //NUM mode
 				num = c - '0';
+				hex = false;
 				input++;
 				continue;
+			}
+			if (c == '&')
+			{
+				unsigned char n = *(input + 1);
+				if (n == 'H')
+				{
+					mode = 2;
+					input += 2;
+					hex = true;
+					num = 0;
+					continue;
+				}
 			}
 			if (isalpha(c))
 			{
@@ -1038,12 +1052,31 @@ int Compile(const char* input, sptr output)
 		{
 			if (isdigit(c))
 			{
-				num = (num * 10) + (c - '0');
+				if (!hex)
+				{
+					num = (num * 10) + (c - '0');
+				}
+				else
+				{
+					num = (num * 16) + (c - '0');
+				}
+			}
+			else if (hex && c >= 'A' && c <= 'F')
+			{
+				num = (num * 16) + (10 + (c - 'A'));
 			}
 			else
 			{
 emitNum:
 				mode = 0; //to OUT mode
+				if (hex)
+				{
+					*ptr++ = HEX;
+					*ptr++ = num & 0xFF;
+					*ptr++ = (num >> 8) & 0xFF;
+					hex = false;
+					continue;
+				}
 				if (num <= 10)
 				{
 					*ptr++ = FIRSTSMALLINT + num;
@@ -1291,6 +1324,11 @@ bool List(int from, int to)
 			else if (c == TWOBYTEINT)
 			{
 				errColTrack += printf("%i", *(short*)(ptr + 1));
+				ptr += 2;
+			}
+			else if (c == HEX)
+			{
+				errColTrack += printf("&H%X", *(short*)(ptr + 1));
 				ptr += 2;
 			}
 			else if (c == EOL)
