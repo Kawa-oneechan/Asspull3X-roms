@@ -411,13 +411,13 @@ void nextLevel()
 		);
 		//remove the object
 		OBJECTS_B[0] = OBJECTB_BUILD(-16, -24, 0, 1, 0, 0, 1, 3);
-		DRAW->FadeFromWhite();
+		DRAW->Fade(true, true);
 		while(1);
 	}
 
 	levelNum++;
 	if (levelNum > 0)
-		DRAW->FadeToWhite();
+		DRAW->Fade(false, true);
 	loadFromCode(thisLevel);
 	while(*thisLevel++) ;
 	lastDir = 2;
@@ -425,7 +425,7 @@ void nextLevel()
 	draw();
 	drawStatus();
 	loadBackground();
-	DRAW->FadeFromWhite();
+	DRAW->Fade(true, true);
 	IMF_LoadSong(imfData2, true);
 	lastTimeT = REG_TIMET;
 }
@@ -509,7 +509,7 @@ void CheckForDisk()
 	OBJECTS_A[3] = OBJECTA_BUILD(48, 0, 1, 0);
 	inton();
 	interface->VBlank = RotateTheFloppy;
-	DRAW->FadeFromWhite();
+	DRAW->Fade(true, true);
 	while (1)
 	{
 		int key = getc();
@@ -517,7 +517,7 @@ void CheckForDisk()
 			break;
 		else if (key == 0x31) //n
 		{
-			DRAW->FadeToWhite();
+			DRAW->Fade(false, true);
 			REG_HDMACONTROL[0] = 0;
 			OBJECTS_A[0] = OBJECTS_A[1] = OBJECTS_A[2] = OBJECTS_A[3] = 0;
 			return;
@@ -535,7 +535,7 @@ void CheckForDisk()
 			*c = 0;
 		c++;
 	}
-	DRAW->FadeToWhite();
+	DRAW->Fade(false, true);
 	REG_HDMACONTROL[0] = 0;
 	OBJECTS_A[0] = OBJECTS_A[1] = OBJECTS_A[2] = OBJECTS_A[3] = 0;
 }
@@ -548,9 +548,9 @@ int main(void)
 	MISC->DmaClear(OBJECTS_A, 0, 0x1000, DMA_INT);
 
 	DRAW->DisplayPicture((TImageFile*)&title);
-	DRAW->FadeFromBlack();
+	DRAW->Fade(true, false);
 	WaitForKey();
-	DRAW->FadeToWhite();
+	DRAW->Fade(false, true);
 
 	//REG_HDMASOURCE[0] = (int32_t)hdma1;
 	//REG_HDMATARGET[0] = (int32_t)PALETTE;

@@ -134,7 +134,7 @@ void TitleScreen()
 			*dst++ = *src++;
 		dst += 24;
 	}
-	DRAW->FadeFromBlack();
+	DRAW->Fade(true, false);
 
 	interface->VBlank = TitleMusic;
 	inton();
@@ -168,7 +168,7 @@ void TitleScreen()
 	}
 
 	//interface->VBlank = 0;
-	DRAW->FadeToBlack();
+	DRAW->Fade(false, false);
 	rndseed = REG_TICKCOUNT;
 }
 
@@ -225,7 +225,7 @@ void GameOver()
 	REG_OPLOUT = 0xB221;
 //	REG_OPLOUT = 0xA357;
 //	REG_OPLOUT = 0xB321;
-	DRAW->FadeToWhite();
+	DRAW->Fade(false, true);
 	//while(1);
 	score = 0;
 	WaitForKey();
@@ -413,7 +413,7 @@ int main(void)
 		headCursor++;
 		headCursor %= MAXSNAKEBITS;
 
-		DRAW->FadeFromBlack();
+		DRAW->Fade(true, false);
 
 		while(1)
 		{

@@ -303,10 +303,7 @@ typedef struct
 {
 	void(*ResetPalette)(void);
 	void(*DisplayPicture)(TImageFile* picData);
-	void(*FadeToBlack)(void);
-	void(*FadeFromBlack)(void);
-	void(*FadeToWhite)(void);
-	void(*FadeFromWhite)(void);
+	void(*Fade)(bool in, bool toWhite);
 	void(*DrawString)(const char* str, int x, int y, int color);
 	void(*DrawFormat)(const char* format, int x, int y, int color, ...);
 	void(*DrawChar)(char ch, int x, int y, int color);

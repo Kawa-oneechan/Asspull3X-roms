@@ -104,9 +104,9 @@ int main(void)
 	DRAW->DisplayPicture((TImageFile*)&title);
 	interface->VBlank = IMF_Play;
 	inton();
-	DRAW->FadeFromBlack();
+	DRAW->Fade(true, false);
 	WaitForKey();
-	DRAW->FadeToWhite();
+	DRAW->Fade(false, true);
 
 	MISC->SetTextMode(SMODE_TILE);
 	MISC->DmaCopy(TILESET, (int8_t*)&tilesTiles, 1024, DMA_INT);
@@ -147,7 +147,7 @@ int main(void)
 		}
 	}
 
-	DRAW->FadeFromBlack();
+	DRAW->Fade(true, false);
 
 	inton();
 	IMF_LoadSong(imfData1, true);

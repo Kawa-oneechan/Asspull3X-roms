@@ -65,16 +65,16 @@ int main(void)
 		//PALETTE[15] = 0x7FFF;
 		//DRAW->DrawString(info.fname, 9, 9, 0);
 		//DRAW->DrawString(info.fname, 8, 8, 15);
-		DRAW->FadeFromBlack();
+		DRAW->Fade(true, false);
 		free(image);
 		WaitForKey();
-		DRAW->FadeToBlack();
+		DRAW->Fade(false, false);
 		ret = DISK->FindNext(&dir, &info);
 	}
 	MISC->SetTextMode(SMODE_240 | SMODE_BOLD);
 	DRAW->ResetPalette();
 	TEXT->ClearScreen();
 	printf("The end!\n");
-	DRAW->FadeFromBlack();
+	DRAW->Fade(true, false);
 	return 0;
 }

@@ -6,10 +6,8 @@ extern int vsprintf(char*, const char*, va_list);
 const IDrawingLibrary drawingLibrary =
 {
 	ResetPalette, DisplayPicture,
-	FadeToBlack, FadeFromBlack,
-	FadeToWhite, FadeFromWhite,
-	DrawString, DrawFormat, DrawChar,
-	DrawLine, FloodFill
+	Fade, DrawString, DrawFormat,
+	DrawChar, DrawLine, FloodFill
 };
 
 /* CONSIDER: We have four different copies of this routine after preprocessing.
@@ -101,44 +99,27 @@ void DisplayPicture(TImageFile* picData)
 
 #define FADESPEED 1
 
-void FadeToBlack()
+void Fade(bool in, bool toWhite)
 {
-	for (int i = 0; i < 32; i += FADESPEED)
+	char white = toWhite ? 0x80 : 0x00;
+	if (!in)
 	{
-		REG_SCREENFADE = i;
-		WaitForVBlank();
+		for (int i = 0; i < 32; i += FADESPEED)
+		{
+			REG_SCREENFADE = i | white;
+			WaitForVBlank();
+		}
+		REG_SCREENFADE = 31;
 	}
-	REG_SCREENFADE = 31;
-}
-
-void FadeFromBlack()
-{
-	for (int i = 31; i >= 0; i -= FADESPEED)
+	else
 	{
-		REG_SCREENFADE = i;
-		WaitForVBlank();
+		for (int i = 31; i >= 0; i -= FADESPEED)
+		{
+			REG_SCREENFADE = i | white;
+			WaitForVBlank();
+		}
+		REG_SCREENFADE = 0;
 	}
-	REG_SCREENFADE = 0;
-}
-
-void FadeToWhite()
-{
-	for (int i = 0; i < 32; i += FADESPEED)
-	{
-		REG_SCREENFADE = 0x80 | i;
-		WaitForVBlank();
-	}
-	REG_SCREENFADE = 0x80 | 31;
-}
-
-void FadeFromWhite()
-{
-	for (int i = 31; i >= 0; i -= FADESPEED)
-	{
-		REG_SCREENFADE = 0x80 | i;
-		WaitForVBlank();
-	}
-	REG_SCREENFADE = 0x80;
 }
 
 void DrawString(const char* str, int x, int y, int color)

@@ -213,7 +213,7 @@ int main(void)
 	interface->DrawCharHeight = 6;
 	Write(programNames[0]);
 
-	DRAW->FadeFromBlack();
+	DRAW->Fade(true, false);
 
 	int pitoff = 48;
 	int lastPit = -1;

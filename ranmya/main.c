@@ -7,6 +7,6 @@ int main(void)
 {
 	REG_SCREENFADE = 31;
 	DRAW->DisplayPicture((TImageFile*)&ranmya);
-	DRAW->FadeFromBlack();
+	DRAW->Fade(true, false);
 	while(1);
 }

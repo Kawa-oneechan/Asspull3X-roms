@@ -170,7 +170,7 @@ int main(void)
 	FindFont();
 #endif
 
-	FadeToBlack();
+	Fade(false, false);
 
 	volatile uint8_t* firstDisk = (uint8_t*)0x02000000 + (diskToDev[0] * 0x8000);
 
@@ -268,7 +268,7 @@ int main(void)
 			OBJECTS_B[0] = OBJECTB_BUILD(144, 152, 1, 1, 0, 0, 1, 0);
 			MIDI_PROGRAM(1, MIDI_SEASHORE);
 			MIDI_KEYON(1, MIDI_C4, 80);
-			FadeFromBlack();
+			Fade(true, false);
 		}
 		else
 		{
@@ -289,7 +289,7 @@ int main(void)
 		MIDI_KEYON(1, MIDI_C4, 80);
 		WaitForVBlanks(256);
 #endif
-		FadeToBlack();
+		Fade(false, false);
 	}
 	if (entry == (void*)0x00020004)
 		DmaClear((int8_t*)0x01001000, 0, 0x00200000, DMA_INT); //Reset cart's workram
