@@ -30,7 +30,7 @@ __DYNAMIC  =  0;
 
 MEMORY
 {
-    rom (rx) : ORIGIN = 0x00000000, LENGTH = 0x0000FFFF
+    rom (rx) : ORIGIN = 0x00000000, LENGTH = 0x0001FFFF
     ram (wx) : ORIGIN = 0x01000000, LENGTH = 0x00400000
 }
 
