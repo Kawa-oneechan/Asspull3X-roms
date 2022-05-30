@@ -3,7 +3,7 @@
 IBios* interface;
 
 extern const TImageFile piano;
-extern const uint8_t tinyFont[576];
+extern const uint8_t tinyTiles[576];
 
 static const char sctopit[] = {
 //   0   1   2   3   4   5   6   7   8   9   a   b   c   d   e   f
@@ -180,15 +180,18 @@ static const char* const programNames[] =
 	"Gunshot",
 };
 
-void Write(const char* str)
+void Write(int program, int pitch)
 {
+	char display[32];
+	char *str = display;
 	int x = 19, y = 184;
+	TEXT->Format(display, "%-11s %2d", programNames[program], pitch + 1);
 
 	//TODO: Make some nice #define macros for the blitter, in ass.h.
 	REG_BLITSOURCE = 11;
 	REG_BLITTARGET = 0x0E000000 + (y * 320) + x;
-	REG_BLITLENGTH = 252;
-	REG_BLITCONTROL = BLIT_SET | BLIT_BYTE | BLIT_STRIDESKIP | BLIT_SOURCESTRIDE(42) | BLIT_TARGETSTRIDE(320);
+	REG_BLITLENGTH = 348;
+	REG_BLITCONTROL = BLIT_SET | BLIT_BYTE | BLIT_STRIDESKIP | BLIT_SOURCESTRIDE(58) | BLIT_TARGETSTRIDE(320);
 
 	while(*str)
 	{
@@ -209,17 +212,17 @@ int main(void)
 		PALETTE[KEYPALSTART + i] = colors[i] ? EBONY : IVORY; //live together in perfect harmony...
 	}
 
-	interface->DrawCharFont = (char*)tinyFont;
+	interface->DrawCharFont = (char*)tinyTiles;
 	interface->DrawCharHeight = 6;
-	Write(programNames[0]);
+	int pitoff = 48;
+	int program = MIDI_ACOUSTICGRANDPIANO;
+	Write(program, pitoff / 12);
 
 	DRAW->Fade(true, false);
 
-	int pitoff = 48;
 	int lastPit = -1;
 	int lastPitOffed = -1;
 	int pit = 0;
-	int program = MIDI_ACOUSTICGRANDPIANO;
 	MIDI_PROGRAM(1, program);
 	while(1)
 	{
@@ -246,11 +249,13 @@ int main(void)
 			else if (key == 0xCB)
 			{
 				if (pitoff > 0) pitoff -= 12;
+				Write(program, pitoff / 12);
 				while (INP_KEYMAP[key]) { vbl(); }
 			}
 			else if (key == 0xCD)
 			{
 				if (pitoff < 108) pitoff += 12;
+				Write(program, pitoff / 12);
 				while (INP_KEYMAP[key]) { vbl(); }
 			}
 			else if (key == 0xD0)
@@ -258,7 +263,7 @@ int main(void)
 				if (program == 0) program = 128;
 				program--;
 				MIDI_PROGRAM(1, program);
-				Write(programNames[program]);
+				Write(program, pitoff / 12);
 				while (INP_KEYMAP[key]) { vbl(); }
 			}
 			else if (key == 0xC8)
@@ -266,7 +271,7 @@ int main(void)
 				program++;
 				if (program == 128) program = 0;
 				MIDI_PROGRAM(1, program);
-				Write(programNames[program]);
+				Write(program, pitoff / 12);
 				while (INP_KEYMAP[key]) { vbl(); }
 			}
 		}
