@@ -1,15 +1,20 @@
 # Asspull IIIx
 ## ROM source archive
-This repository contains the full source for the *Asspull IIIx* ROM files — the BIOS and boot firmware, and a handful of functionality tests. They can be built in [devkitPro](https://devkitpro.org/)... is what I would *like* to say but I must've misremembered where I got devkit68K from. So grab [this copy](http://helmet.kafuka.org/devkit68k.rar) and unpack it in your devkitPro directory or whatever, and make sure you `set DEVKIT68K=/opt/devkitPro/devkit68K` (to match what devkitPro put). That *should* set you up well enough. If you don't have devkitPro installed, you don't actually need any of the specific kits, just the base system. A copy of grit is included in the devkit68K archive and I'm thinking of writing my own anyway. For that matter, you'll also need Python 3.8 or later installed.
+This repository contains the full source for the *Asspull IIIx* ROM files — the BIOS and boot firmware, and a handful of functionality tests. They can be built in [devkitPro](https://devkitpro.org/)... is what I would *like* to say but I must've misremembered where I got devkit68K from. So grab [this copy](http://helmet.kafuka.org/devkit68k.rar) and unpack it in your devkitPro directory or whatever, and make sure you `set DEVKIT68K=/opt/devkitPro/devkit68K` (to match what devkitPro put). That *should* set you up well enough. If you don't have devkitPro installed, you don't actually need any of the specific kits, just the base system. A copy of grit is included in the devkit68K archive and I'm thinking of writing my own anyway.
+
+For that matter, you'll also need Python 3.8 or later installed, so you can use the included tools. If the graphics related tools don't work, run `pip install Pillow` and try again.
 
 ### `_disk1_` and `_disk2_`
 These two folders are the source for `disk1.img` and `disk2.img`, as built with the included copy of `bfi.exe`.
+
+### `basic`
+A work-in-progress classic BASIC interpreter. The same source file is shared between the A3X version and a Visual Studio 2015 project for ease of testing.
 
 ### `bios`
 This is the complete source of the BIOS and boot firmware. It compiles to `ass-bios.apb` ("*a*ss*p*ull *b*ios") and contains several functions available to other programs, subdivided into a couple different libraries, Amiga style.
 
 ### `cmd`
-This is an attempt to create a DOS prompt, basically, to navigate standard-issue 1.44 MB FAT floppy diskettes. It's very simple, with `cd`, `dir`, `ren`, `del`, and `show` commands. The `show` command should work on `txt` files as well as images in `api` format. `disktest` is better.
+This is an attempt to create a DOS prompt, basically, to navigate standard-issue 1.44 MB FAT floppy diskettes. It's very simple, with `cd`, `dir`, `ren`, `del`, and `show` commands. The `show` command should work on `txt` files as well as images in `api` format. `navigator` is much better, and `cmd` may be removed.
 
 ### `columns`
 It's *Columns*, and it's in development.
@@ -20,26 +25,29 @@ Contains the linker scripts and such. Merge it into devkitPro's `devkit68K` fold
 ### `devprinter`
 A small "Hello World" variant that demonstrates how to identify and use an external line printer device.
 
-### `disktest`
-A disk navigator that *might* become part of the BIOS.
-
 ### `fromdisk`
 Hello World, but as a file on a bootable diskette. It compiles straight into `_disk2_` as an `app` file ("*a*ss*p*ull *p*rogram"). The BIOS can then detect its presence.
 
 ### `helloworld`
-Much the same, but as a cart application.
+Much the same as `fromdisk`, but as a cart application.
 
 ### `lab`
 This defies description. It has been many things, all buried in comment blocks.
-
-### `ranmya`
-A more graphical Hello World featuring the *previous*, placeholder mascot. Should be updated and renamed.
 
 ### `malloctest`
 An attempt at stress-testing heap memory.
 
 ### `midipiano`
-A toy piano. Use the keyboard to play notes, change octaves with the arrow keys
+A toy piano. Use the keyboard to play notes, change octaves with the left and right arrow keys, and change instruments with the up and down arrow keys.
+
+### `navigator`
+A disk navigator, *Norton Commander*-style that *might* become part of the BIOS.
+
+### `ranmya`
+A more graphical Hello World featuring the *previous*, placeholder mascot. Should be updated and renamed.
+
+### `rpg`
+A work-in-progress JRPG framework.
 
 ### `salanyander`
 An attempt to make a Gradius-style horizontal space shooter.
@@ -48,10 +56,13 @@ An attempt to make a Gradius-style horizontal space shooter.
 Tries to display all the `api` files on the currently-inserted diskette.
 
 ### `snake`
-Your classic snake game. Not Nibbles — that would require level layouts. Maybe later?
+Your classic snake game. Not Nibbles -- that would require level layouts. Maybe later?
 
 ### `sokoban`
 The classic box pushing puzzle.
+
+### `test`
+A test suite that will eventually cover all features of the system.
 
 ### `tetris`
 It's *Tetris*, and it's in development.
