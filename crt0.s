@@ -8,9 +8,9 @@ initialize:
 	lea     0x01001000,%a1
 	move.l  #_sdata,%d0
 	lsr.l   #1,%d0
-	subq.w  #1,%d0
-2:	move.w  (%a0)+,(%a1)+
-	dbra    %d0,2b
+	bra.b   2f
+1:	move.w  (%a0)+,(%a1)+
+2:	dbra    %d0,1b
 
 	lea     0x013F0000,%a0
 	movea.l %a0,%sp
