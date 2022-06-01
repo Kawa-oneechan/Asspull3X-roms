@@ -111,7 +111,8 @@
 #define SMODE_200 0x80		// Specifies that bitmap modes should be 200 or 400 lines.
 
 #define IMODE_DISABLE	0x80	// Enable interrupts.
-#define IMODE_INVBLANK	0x04	// VBlank is triggered.
+#define IMODE_INVBLANK	0x04	// VBlank is active.
+#define IMODE_INHBLANK	0x02	// HBlank is active.
 
 #define PCM_REPEAT		0x80000000
 
@@ -361,9 +362,9 @@ typedef struct
 	long AssBang;
 	int16_t biosVersion;
 	int16_t extensions;
-	void(*Exception)(void);
-	void(*VBlank)(void);
-	void(*reserved)(void);
+	void(*Exception)(void*);
+	void(*VBlank)(void*);
+	void(*HBlank)(void*);
 	void(*DrawChar)(unsigned char, int, int, int);
 	ITextLibrary* textLibrary;
 	IDrawingLibrary* drawingLibrary;

@@ -16,6 +16,8 @@ initialize:
 	movea.l %a0,%sp
 	move.l  #0x01000000,interface
 	link.w  %a6,#-8
+
+	move    #0x2000,%sr     | enable interrupts
 	jsr     main
 3:	bra.b   3b
 

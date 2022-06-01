@@ -33,9 +33,9 @@
 	.long	nullHandler		| 25. Level 1 autovector
 	.long	nullHandler		| 26. Level 2 autovector
 	.long	nullHandler		| 27. Level 3 autovector
-	.long	nullHandler		| 28. Level 4 autovector
+	.long	HBlankHandler	| 28. Level 4 autovector
 	.long	nullHandler		| 29. Level 5 autovector
-	.long	nullHandler		| 30. Level 6 autovector
+	.long	VBlankHandler	| 30. Level 6 autovector
 	.long	nullHandler		| 31. Level 7 autovector
 	.long	nullHandler		| 32. TRAP0
 	.long	nullHandler		| 33. TRAP1
@@ -86,11 +86,31 @@ initialize:
 	movea.l	%a0,%sp			| set stack pointer to top of Work RAM
 	link.w	%a6,#-8			| set up initial stack frame
 
+	move	#0x2000,%sr		| enable interrupts
 	jsr		main			| GO!
 3:
 	bra.b	3b
 
 nullHandler:	rte			| Empty exception handler does nothing
+
+.macro IRQHandler name, offset
+\name:
+	move.l	%d0,-(%sp)
+	move.l	interface+\offset,%d0
+	tst.l	%d0
+	beq.b	1f
+	movem.l	%d1/%a0-%a1,-(%sp)	| preserve volatile registers
+	pea		(0x10,%sp)			| push exception frame pointer
+	movea.l	%d0,%a0
+	jsr		(%a0)
+	addq.l	#4,%sp
+	movem.l	(%sp)+,%d1/%a0-%a1
+1:	move.l	(%sp)+,%d0
+	rte
+.endm
+
+IRQHandler VBlankHandler, 0xC
+IRQHandler HBlankHandler, 0x10
 
 	.align 16
 
@@ -103,9 +123,9 @@ typedef struct IBios
 	long AssBang;
 	int16_t biosVersion;
 	int16_t extensions;
-	void(*Exception)(void);
-	void(*VBlank)(void);
-	void(*HBlank)(void);
+	void(*Exception)(void*);
+	void(*VBlank)(void*);
+	void(*HBlank)(void*);
 	void(*DrawChar)(char, int32_t, int32_t, int32_t);
 	ITextLibrary* textLibrary;
 	IDrawingLibrary* drawingLibrary;
