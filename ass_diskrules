@@ -25,12 +25,12 @@ GRITFLAGS := -ftc -fh! -gu8
 MAPFILE		:= $(TARGET).map
 
 ARCH		:= -m68000
-SPECS		:= -specs=asspull-disk.specs
+SPECS		:= -B ../devkit68K/m68k-elf/lib -specs=asspull-disk.specs
 
 INCLUDE		:= # -I toolinclude
 LIBPATHS	:=
 
-CFLAGS		:= $(INCLUDE) -Wall -fno-strict-aliasing -fomit-frame-pointer $(ARCH)
+CFLAGS		:= $(INCLUDE) -Wall -Os -fno-strict-aliasing -fomit-frame-pointer $(ARCH)
 ASFLAGS		:= -x assembler-with-cpp -c $(ARCH) -Wall
 LDFLAGS		:= $(ARCH) $(SPECS) $(LIBPATHS) $(LIBS)
 
@@ -41,6 +41,7 @@ LDFLAGS += -Wl,-Map $(MAPFILE) -nostartfiles
 # ---------------------------------------------------------------------
 
 ../_disk2_/$(TARGET).app : $(TARGET).elf
+	mkdir -p ../_disk2_
 	$(OBJCOPY) -O binary $< $@
 #	$(CROSS)objdump -d $(TARGET).elf > $(TARGET).txt
 

@@ -8,9 +8,9 @@ initialize:
 	lea		0x01040000,%a1
 	move.l	#_sdata,%d0
 	lsr.l	#1,%d0
-	subq.w	#1,%d0
-2:	move.w	(%a0)+,(%a1)+
-	dbra	%d0,2b
+	bra.b	2f
+1:	move.w	(%a0)+,(%a1)+
+2:	dbra	%d0,1b
 	move.l  #0x01000000,interface
 	jsr		main
 	rts
