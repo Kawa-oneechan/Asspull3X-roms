@@ -12,6 +12,8 @@ initialize:
 1:	move.w	(%a0)+,(%a1)+
 2:	dbra	%d0,1b
 	move.l  #0x01000000,interface
+
+	move	#0x2000,%sr		| enable interrupts
 	jsr		main
 	rts
 3:	bra.b	3b
