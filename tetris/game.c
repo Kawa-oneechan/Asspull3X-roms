@@ -218,7 +218,7 @@ static void update_next_shape(game *game)
 #include "tetramino.h"
 static void update_infos(game *game)
 {
-	int next_shape;
+	int next_shape = 0;
 	switch (game->next_shape)
 	{
 		case 'I': next_shape = 0; break;

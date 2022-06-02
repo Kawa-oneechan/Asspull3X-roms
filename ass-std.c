@@ -158,7 +158,7 @@ int getdelim(char** linePtr, int* n, char delim, FILE* file)
 char* fgets(char* s, int n, FILE* file)
 {
 	char* _s = s;
-	int c;
+	int c = 0;
 	char echo = __fgetc_echo;
 	__fgetc_echo = 0;
 	while(--n)

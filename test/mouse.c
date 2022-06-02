@@ -61,7 +61,7 @@ void MouseTest()
 	TEXT->ClearScreen();
 	TEXT->SetTextColor(0, 7);
 	TEXT->Write("Mouse test\nPress any key when satisfied.");
-	int tX, tY;
+	int tX = 0, tY = 0;
 
 	MouseState.x = 160; MouseState.y = 120;
 
