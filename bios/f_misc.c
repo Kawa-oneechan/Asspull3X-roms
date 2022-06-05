@@ -3,8 +3,6 @@
 
 extern int vsprintf(char*, const char*, va_list);
 
-extern int inVblank;
-
 const IMiscLibrary miscLibrary =
 {
 	SetTextMode, SetBitmapMode16,

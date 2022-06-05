@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+#define NOGDI
 #include <windows.h>
 #else
 #include "../ass.h"
