@@ -7,6 +7,7 @@ OBJCOPY		:= $(CROSS)objcopy
 
 IMG2ASS		:= python ../img2ass.py
 HDMA2ASS	:= python ../hdma2ass.py
+ASSFIX		:= python ../assfix.py 
 GRIT		:= grit.exe
 
 TARGET		:= ass-bios
@@ -43,6 +44,7 @@ LDFLAGS += -Wl,-Map $(MAPFILE) -nostartfiles
 ../$(TARGET).apb : $(TARGET).elf
 	$(OBJCOPY) -O binary $< $@
 #	$(CROSS)objdump -d $(TARGET).elf > $(TARGET).txt
+	$(ASSFIX) ../$(TARGET).apb -p
 
 $(TARGET).elf : $(OFILES) $(AFILES) Makefile $(DEPENDFILE)
 	@echo > $(MAPFILE)

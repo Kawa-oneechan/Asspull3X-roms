@@ -6,6 +6,7 @@ from pathlib import Path
 parser = argparse.ArgumentParser(description='Pad an A3X .ap3 ROM file and fix its checksum.')
 parser.add_argument('inFile', help='source .ap3 file')
 parser.add_argument('outFile', nargs='?', help='target .ap3 file')
+parser.add_argument('-p', '--pad', help='only pad, skip the checksum', action='store_true')
 parser.add_argument('-v', '--verbose', help='use verbose output', action='store_true')
 args = parser.parse_args()
 
@@ -36,13 +37,15 @@ for i in range(0x20, fileSize):
 	sum += wft[i]
 
 if args.verbose:
-	print(f'Checksum is {sum:08X}.')
+	if not args.pad:
+		print(f'Checksum is {sum:08X}.')
 	print(f'Padding from {fileSize:08X} ({fileSize // 1024} KiB) up to {padded:08X} ({padded // 1024} KiB).')
 
 with open(args.outFile, "wb") as outp:
 	outp.write(wft)
-	outp.seek(0x20)
-	outp.write(struct.pack('>L', sum))
+	if not args.pad:
+		outp.seek(0x20)
+		outp.write(struct.pack('>L', sum))
 	if padded > fileSize:
 		outp.seek(padded - 1)
 		outp.write(b'\x00')
