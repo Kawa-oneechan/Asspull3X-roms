@@ -343,50 +343,50 @@ void Jingle()
 	//MIDI_KEYOFF(1, MIDI_B6, 100);
 }
 
-void ExHandler()
+unsigned int exNum = 0;
+void ShowException(int which)
 {
+	asm("move.l	2(%sp), exNum");
+	const char text[4][20] = {
+		"Bus error",
+		"Address error",
+		"Illegal instruction",
+		"Division by zero",
+	};
+	ClearScreen();
+	REG_CARET = 0;
 	attribs = 0x0F;
 	PALETTE[0] = 0;
 	PALETTE[15] = 0x7FFF;
-	REG_SCREENMODE = 0x20;
-	REG_CARET = 0;
-	printf("Fucked up, yo.");
-	while(1) WaitForVBlank();
-	asm("rte");
+	REG_SCREENMODE = 0x20 | 0x80;
+	REG_SCREENFADE = 0;
+
+	WriteChar(0x83);
+	for (int i = 0; i < 78; i++)
+		WriteChar(0x87);
+	WriteChar(0x83);
+
+	WriteChar(0x83);
+	REG_CARET = 80 + 40 - 16;
+	Write("%20s: 0x%08X", text[which], exNum);
+	REG_CARET = 80 + 80 - 1;
+	WriteChar(0x83);
+
+	WriteChar(0x83);
+	for (int i = 0; i < 78; i++)
+		WriteChar(0x84);
+	WriteChar(0x83);
+
+	while(1)
+	{
+		PALETTE[15] = 0x7FFF;
+		WaitForVBlanks(60);
+		PALETTE[15] = 0x007F;
+		WaitForVBlanks(60);
+	}
 }
 
-void AddressHandler()
-{
-	attribs = 0x0F;
-	PALETTE[0] = 0;
-	PALETTE[15] = 0x7FFF;
-	REG_SCREENMODE = 0x20;
-	REG_CARET = 0;
-	printf("Address error!");
-	while(1) WaitForVBlank();
-	asm("rte");
-}
-
-void InstructionHandler()
-{
-	attribs = 0x0F;
-	PALETTE[0] = 0;
-	PALETTE[15] = 0x7FFF;
-	REG_SCREENMODE = 0x20;
-	REG_CARET = 0;
-	printf("Illegal mangrasp!");
-	while(1) WaitForVBlank();
-	asm("rte");
-}
-
-void ZeroHandler()
-{
-	attribs = 0x0F;
-	PALETTE[0] = 0;
-	PALETTE[15] = 0x7FFF;
-	REG_SCREENMODE = 0x20;
-	REG_CARET = 0;
-	printf("Division by zero. Wow.");
-	while(1) WaitForVBlank();
-	asm("rte");
-}
+void ExHandler() { ShowException(0); }
+void AddressHandler() { ShowException(1); }
+void InstructionHandler() { ShowException(2); }
+void ZeroHandler() { ShowException(3); }
