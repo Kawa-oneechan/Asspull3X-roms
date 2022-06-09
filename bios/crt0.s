@@ -1,13 +1,10 @@
 	.text
-	.extern ExHandler
-	.extern AddressHandler
-	.extern InstructionHandler
-	.extern ZeroHandler
+	.extern ShowException
 	.extern nullHandler
 
 	.long	0x01000000		|	0. Initial SSP
 	.long	initialize		|	1. Initial PC
-	.long	ExHandler		|	2. Bus error
+	.long	BusHandler		|	2. Bus error
 	.long	AddressHandler		|	3. Address error
 	.long	InstructionHandler	|	4. Illegal instruction
 	.long	ZeroHandler		|	5. Division by zero
@@ -91,6 +88,21 @@ initialize:
 3:
 	bra.b	3b
 
+
+| WARNING: I have no idea what I'm doing.
+.macro exHandler name, num
+\name:
+	move.l	2(%sp),%sp@-
+	pea		\num
+	jsr		ShowException
+	rte
+.endm
+
+exHandler BusHandler, 0
+exHandler AddressHandler, 1
+exHandler InstructionHandler, 2
+exHandler ZeroHandler, 3
+
 nullHandler:	rte			| Empty exception handler does nothing
 
 .macro IRQHandler name, offset
@@ -139,7 +151,7 @@ typedef struct IBios
 interface:
 	.long 0x41535321	| ASS!
 	.short 0x0003, 0	| 0.3, no extensions
-	.long ExHandler
+	.long 0
 	.long 0			| No VBlank
 	.long 0			| No HBlank
 	.long 0			| No graphical text routine

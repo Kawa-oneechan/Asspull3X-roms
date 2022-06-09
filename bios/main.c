@@ -343,10 +343,8 @@ void Jingle()
 	//MIDI_KEYOFF(1, MIDI_B6, 100);
 }
 
-unsigned int exNum = 0;
-void ShowException(int which)
+void ShowException(int which, int what)
 {
-	asm("move.l	2(%sp), exNum");
 	const char text[4][20] = {
 		"Bus error",
 		"Address error",
@@ -368,7 +366,7 @@ void ShowException(int which)
 
 	WriteChar(0x83);
 	REG_CARET = 80 + 40 - 16;
-	Write("%20s: 0x%08X", text[which], exNum);
+	Write("%20s: 0x%08X", text[which], what);
 	REG_CARET = 80 + 80 - 1;
 	WriteChar(0x83);
 
@@ -385,8 +383,3 @@ void ShowException(int which)
 		WaitForVBlanks(60);
 	}
 }
-
-void ExHandler() { ShowException(0); }
-void AddressHandler() { ShowException(1); }
-void InstructionHandler() { ShowException(2); }
-void ZeroHandler() { ShowException(3); }
