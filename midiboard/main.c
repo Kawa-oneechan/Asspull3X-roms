@@ -204,7 +204,6 @@ int main(void)
 {
 	REG_SCREENFADE = 31;
 	DRAW->DisplayPicture((TImageFile*)&piano);
-	intoff();
 
 	//Clear out all keys
 	for (int i = 0; i < NUMKEYS; i++)

@@ -41,8 +41,7 @@ void EnableObjects(bool enabled)
 void WaitForVBlank()
 {
 	long tickCount = REG_TICKCOUNT;
-	while (REG_TICKCOUNT == tickCount) { ; }
-//	intoff();
+	while (REG_TICKCOUNT == tickCount);
 //	while(REG_LINE >= 480);
 //	while(REG_LINE < 480);
 }
@@ -79,9 +78,6 @@ void MidiReset()
 
 void RleUnpack(int8_t* dst, int8_t* src, size_t size)
 {
-	intpush();
-	intoff();
-
 	uint8_t data = 0;
 	while (size)
 	{
@@ -102,6 +98,4 @@ void RleUnpack(int8_t* dst, int8_t* src, size_t size)
 		}
 		size--;
 	}
-
-	intpop();
 }

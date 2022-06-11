@@ -2,7 +2,7 @@
 	.align	2
 initialize:
 	move    #0x2700,%sr
-	move.b  #0x80,0x0D000000
+	move.b  #0x00,0x0D000000
 
 	lea     _etext,%a0
 	lea     0x01001000,%a1

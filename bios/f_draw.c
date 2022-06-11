@@ -125,8 +125,6 @@ void Fade(bool in, bool toWhite)
 void DrawString(const char* str, int x, int y, int color)
 {
 	if (interface->DrawChar == NULL) return;
-	intpush();
-	intoff();
 	int sx = x;
 	while(*str)
 	{
@@ -141,14 +139,11 @@ void DrawString(const char* str, int x, int y, int color)
 		DrawChar(*str++, x, y, color);
 		x += 8;
 	}
-	intpop();
 }
 
 void DrawFormat(const char* format, int x, int y, int color, ...)
 {
 	if (interface->DrawChar == NULL) return;
-	intpush();
-	intoff();
 	char buffer[1024];
 	va_list args;
 	va_start(args, color);
@@ -160,7 +155,6 @@ void DrawFormat(const char* format, int x, int y, int color, ...)
 		x += 8;
 	}
 	va_end(args);
-	intpop();
 }
 
 void DrawChar(char ch, int x, int y, int color)
@@ -202,9 +196,6 @@ static void _setPixel4(int x, int y, int stride, int color, uint8_t* dest)
 
 void DrawLine(int x1, int y1, int x2, int y2, int color, uint8_t* dest)
 {
-	intpush();
-	intoff();
-
 	int stride = 640;
 	if (REG_SCREENMODE & SMODE_320) stride /= 2;
 	if (REG_SCREENMODE & SMODE_BMP16) stride /= 2;
@@ -219,7 +210,6 @@ void DrawLine(int x1, int y1, int x2, int y2, int color, uint8_t* dest)
 			SWAP(x2, x1);
 		for (int i = x1; i <= x2; i++)
 			setPixel(i, y1, stride, color, dest);
-		intpop();
 		return;
 	}
 	if (x1 == x2)
@@ -228,7 +218,6 @@ void DrawLine(int x1, int y1, int x2, int y2, int color, uint8_t* dest)
 			SWAP(y1, y2);
 		for (int i = y1; i <= y2; i++)
 			setPixel(x1, i, stride, color, dest);
-		intpop();
 		return;
 	}
 
@@ -271,8 +260,6 @@ void DrawLine(int x1, int y1, int x2, int y2, int color, uint8_t* dest)
 			setPixel(x1, y1, stride, color, dest);
 		}
 	}
-
-	intpop();
 }
 
 #define _FFSTACKMAX 2048
@@ -316,9 +303,6 @@ static inline int16_t _ffPeek()
 
 void FloodFill(int x, int y, int newColor, uint8_t* dest)
 {
-	intpush();
-	intoff();
-
 	int stride = 640;
 	if (REG_SCREENMODE & SMODE_320) stride = 320;
 	int width = stride;
@@ -341,15 +325,9 @@ void FloodFill(int x, int y, int newColor, uint8_t* dest)
 	//https://lodev.org/cgtutor/floodfill.html
 
 	if (oldColor == newColor)
-	{
-		intpop();
 		return;
-	}
 	if (getPixel(x, y, stride, dest) != oldColor)
-	{
-		intpop();
 		return;
-	}
 
 	_ffStack = malloc(_FFSTACKMAX * 2);
 	_ffSP = -1;
@@ -390,6 +368,4 @@ void FloodFill(int x, int y, int newColor, uint8_t* dest)
 	}
 
 	free(_ffStack);
-
-	intpop();
 }

@@ -31,7 +31,6 @@ int ChangeAttributes(char* filePath)
 	{
 		vbl();
 		uint16_t key = INP_KEYIN;
-		intoff();
 		if ((key & 0xFF) > 0)
 		{
 			if (key == 0xC8) //up

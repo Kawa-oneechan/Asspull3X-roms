@@ -259,8 +259,6 @@ int main(void)
 	REG_SCREENMODE = SMODE_TILE;
 	REG_SCREENFADE = 31;
 
-	intoff();
-
 	MISC->DmaClear(TILESET, 0, 0x4000, DMA_INT);
 	MISC->DmaClear(OBJECTS_A, 0, 0x1000, DMA_INT);
 
@@ -305,8 +303,6 @@ int main(void)
 			pos++;
 		}
 	}
-
-//	inton();
 
 	REG_SCROLLY1 = 0;
 	REG_SCROLLY2 = 0;

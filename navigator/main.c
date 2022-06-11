@@ -80,8 +80,6 @@ void Populate(const char* path, int side, const char* pattern)
 	fileCt[side] = 0;
 	char* curFN = 0;
 
-	intoff();
-
 	if (filenames[side] == 0)
 	{
 		filenames[side] = (char*)malloc(MAXFILES * 16);
@@ -191,7 +189,6 @@ int SwitchDrive(int which, int now)
 	while (1)
 	{
 		uint16_t key = INP_KEYIN;
-		intoff();
 		if ((key & 0xFF) > 0)
 		{
 			for (int i = 0; i < numDrives; i++)
@@ -317,7 +314,6 @@ void SelectFile(const char* path1, const char* path2, const char* pattern)
 
 	for(;;)
 	{
-		intoff();
 		vbl();
 		if (redraw)
 		{
@@ -360,7 +356,6 @@ void SelectFile(const char* path1, const char* path2, const char* pattern)
 					curFN = &filenames[s][scroll[s] * 16];
 					for (int i = 0; i < FILESSHOWN; i++)
 					{
-						intoff();
 						if (i >= fileCt[s])
 						{
 							TEXT->SetCursorPosition(1 + o, i + 2);
@@ -471,7 +466,6 @@ void SelectFile(const char* path1, const char* path2, const char* pattern)
 			strcat_s(filePath[cs], MAXPATH, curFN);
 
 			uint16_t key = INP_KEYIN;
-			intoff();
 			if ((key & 0xFF) > 0)
 			{
 				if (key & 0x200)
@@ -805,7 +799,6 @@ HandleMenu:
 
 int main(void)
 {
-	intoff();
 	MISC->SetTextMode(SMODE_240 | SMODE_BOLD);
 	DRAW->ResetPalette();
 	MISC->DmaCopy(TEXTFONT + 0x2A00, (int8_t*)&iconsTiles, 512, DMA_BYTE);

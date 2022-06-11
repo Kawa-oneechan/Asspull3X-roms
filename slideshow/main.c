@@ -5,26 +5,18 @@ void* LoadFile(const char* path, void* buffer)
 {
 	FILE file;
 	FILEINFO nfo;
-	intpush();
-	intoff();
 	int32_t ret = DISK->FileStat(path, &nfo);
 
 	ret = DISK->OpenFile(&file, path, FA_READ);
 	if (ret > 0)
-	{
-		intpop();
 		return (void*)ret;
-	}
 
 	void *target = buffer;
 	for(;;)
 	{
 		ret = DISK->ReadFile(&file, target, 1024);
 		if (ret < 0)
-		{
-			intpop();
 			return (void*)ret;
-		}
 
 		target += ret;
 		if (ret < 1024)
@@ -32,7 +24,6 @@ void* LoadFile(const char* path, void* buffer)
 	}
 
 	DISK->CloseFile(&file);
-	intpop();
 	return buffer;
 }
 
@@ -47,7 +38,6 @@ int main(void)
 	int ret;
 	DIR dir;
 	FILEINFO info;
-	intoff();
 
 	TImageFile* image = NULL;
 	ret = DISK->FindFirst(&dir, &info, "0:", "*.api");

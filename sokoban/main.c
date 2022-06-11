@@ -214,7 +214,6 @@ void drawTile(int i, int j, int tile)
 void draw()
 {
 	char* here = map;
-	//intoff();
 	REG_SCROLLX1 = REG_SCROLLX2 = -8;
 	REG_SCROLLY1 = REG_SCROLLY2 = 8;
 	for (int j = 0; j < BOUNDS; j++)
@@ -507,7 +506,6 @@ void CheckForDisk()
 	OBJECTS_A[1] = OBJECTA_BUILD(16, 0, 1, 0);
 	OBJECTS_A[2] = OBJECTA_BUILD(32, 0, 1, 0);
 	OBJECTS_A[3] = OBJECTA_BUILD(48, 0, 1, 0);
-	inton();
 	interface->VBlank = RotateTheFloppy;
 	DRAW->Fade(true, true);
 	while (1)
@@ -575,7 +573,6 @@ int main(void)
 	MISC->DmaClear(MAP3, 0, WIDTH * HEIGHT, 2);
 
 	interface->VBlank = IMF_Play;
-	inton();
 
 	levelNum = -1;
 	PlaySound(1);

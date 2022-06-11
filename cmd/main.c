@@ -126,7 +126,6 @@ int32_t ShowFile(int argc, char **args)
 		printf("Unknown file type \"%s\".\n", ext);
 		WaitForKey();
 	}
-	intoff();
 	return 2;
 }
 

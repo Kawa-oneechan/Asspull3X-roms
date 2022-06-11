@@ -114,7 +114,6 @@ void MIDITest()
 	TEXT->Write("MIDI music test");
 
 	TEXT->SetCursorPosition(0, 2);
-	inton();
 	REG_MIDIOUT = 0xC0; REG_MIDIOUT = 24;
 	interface->VBlank = MIDI_Play;
 	_midiptr = mididata;

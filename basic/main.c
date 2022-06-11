@@ -1375,7 +1375,6 @@ int main(int argc, char* argv[])
 #else
 int main()
 {
-//	intoff();
 	MISC->SetTextMode(SMODE_240 | SMODE_BOLD);
 	REG_CARET = 0x8000;
 	TEXT->SetTextColor(0, 7);

@@ -43,8 +43,6 @@ __attribute((format (printf, 1, 2)))
 int Write(const char* format, ...)
 {
 	char buffer[1024];
-	intpush();
-	intoff();
 	int caret = REG_CARET & 0x8000;
 	REG_CARET &= ~0x8000;
 	va_list args;
@@ -59,7 +57,6 @@ int Write(const char* format, ...)
 	}
 	va_end(args);
 	REG_CARET |= caret;
-	intpop();
 	return len;
 }
 

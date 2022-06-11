@@ -75,8 +75,6 @@ int main(void)
 	REG_SCREENMODE = SMODE_TILE;
 	REG_SCREENFADE = 0;
 
-	intoff();
-
 	REG_MAPSET = 0x30;
 	MISC->DmaClear(TILESET, 0, 0x4000, DMA_INT);
 	MISC->DmaClear(OBJECTS_A, 0, 0x1000, DMA_INT);

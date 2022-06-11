@@ -103,7 +103,6 @@ int main(void)
 	REG_SCREENFADE = 31;
 	DRAW->DisplayPicture((TImageFile*)&title);
 	interface->VBlank = IMF_Play;
-	inton();
 	DRAW->Fade(true, false);
 	WaitForKey();
 	DRAW->Fade(false, true);
@@ -149,7 +148,6 @@ int main(void)
 
 	DRAW->Fade(true, false);
 
-	inton();
 	IMF_LoadSong(imfData1, true);
 
 	game *game = init_game();

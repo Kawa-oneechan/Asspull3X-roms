@@ -311,7 +311,6 @@ char OpenMenu(int cm)
 	while (1)
 	{
 		uint16_t key = INP_KEYIN;
-		intoff();
 		if ((key & 0xFF) > 0)
 		{
 			if (key == 0xCB) //left

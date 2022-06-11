@@ -14,8 +14,6 @@
 #define vbl interface->miscLibrary->WaitForVBlank
 #define intoff() REG_INTRMODE |= IMODE_DISABLE
 #define inton() REG_INTRMODE &= ~IMODE_DISABLE
-#define intpush() int8_t __intrs__ = REG_INTRMODE
-#define intpop() REG_INTRMODE = __intrs__
 
 //-----------------
 //ASSPULL REGISTERS

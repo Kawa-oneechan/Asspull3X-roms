@@ -137,7 +137,6 @@ void TitleScreen()
 	DRAW->Fade(true, false);
 
 	interface->VBlank = TitleMusic;
-	inton();
 
 	WaitForKey();
 

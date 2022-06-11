@@ -67,6 +67,8 @@ int main(void)
 	REG_SCREENMODE = SMODE_TEXT | SMODE_240 | SMODE_BOLD;
 	//REG_CARET = 0x8000;
 
+	inton();
+
 	REG_CARET = 80 + 2;
 	attribs = 0x0B;
 	Write("Asspull \x96\xD7 %s\n\n", biosVer);

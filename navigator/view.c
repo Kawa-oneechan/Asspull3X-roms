@@ -66,8 +66,6 @@ int ShowText(char* filePath)
 	DISK->FileStat(filePath, &nfo);
 	size_t size = nfo.fsize;
 
-	intoff();
-
 	uint8_t* fileText = malloc(size);
 	FILE file;
 	DISK->OpenFile(&file, filePath, FA_READ);
@@ -112,7 +110,6 @@ int ShowText(char* filePath)
 
 	while(1)
 	{
-		intoff();
 		if (redraw)
 		{
 			TEXT->SetTextColor(SplitColor(CLR_VIEWSTAT));
@@ -120,7 +117,6 @@ int ShowText(char* filePath)
 				TEXTMAP[j] = CLR_VIEWSTAT;
 			TEXT->SetCursorPosition(0, 0);
 			printf(" %s \t%d/%d $%x, $%x", filePath, scroll, lineCt, b, b - fullText);
-			intoff();
 			c = b;
 			int row = 1;
 			int col = 0;
@@ -243,7 +239,6 @@ int ShowFile(char* filePath, bool allowRun)
 		ShowError(msg);
 		return 3;
 	}
-	intoff();
 	TEXT->SetTextColor(0, 7);
 	MISC->SetTextMode(SMODE_240 | SMODE_BOLD);
 	DRAW->ResetPalette();
