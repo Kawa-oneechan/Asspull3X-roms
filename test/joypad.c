@@ -23,16 +23,12 @@ extern const uint16_t pointerTiles[], pointerPal[];
 
 void JoypadTest()
 {
-	//MISC->SetTextMode(SMODE_240 | SMODE_BOLD);
-	//TEXT->SetTextColor(0, 7);
-	//TEXT->ClearScreen();
 	MISC->SetBitmapMode16(SMODE_320 | SMODE_240);
 	MISC->DmaClear(BITMAP, 0, 160 * 240, DMA_BYTE);
 
 	MISC->DmaCopy(TILESET + 0x2000, (int8_t*)&pointerTiles, 0x480, DMA_SHORT);
 	MISC->DmaCopy(PALETTE + 256, pointerPal, 16, DMA_SHORT);
 
-	OBJECTS_A[0] = OBJECTA_BUILD(260, 0, (INP_JOYSTATES & 0x0F) > 1, 0);
 	OBJECTS_B[0] = OBJECTB_BUILD(320, 160, 0, 0, 0, 0, 1, 0);
 
 	OBJECTS_B[1] = OBJECTB_BUILD(200, 104, 0, 0, 0, 0, 1, 0);
@@ -57,18 +53,25 @@ void JoypadTest()
 
 	const char * const types[] = { "none", "digital only", "analog" };
 	char buffer[256] = { 0 };
-	TEXT->Format(buffer, "1. %s\n2. %s", types[INP_JOYSTATES & 0x0F], types[(INP_JOYSTATES >> 4) & 0x0F]);
-	DRAW->DrawString(buffer, 0, 0, 15);
 
+	int oldStates = -1;
 	int oldButtons = -1;
 	char oldAxis[2] = { -1, -1 };
-	while (1)
+	while (INP_KEYIN != 1)
 	{
 		int buttons = INP_JOYPAD1;
 		char axis1 = INP_JOYSTK1H;
 		char axis2 = INP_JOYSTK1V;
 
-		//TEXT->SetCursorPosition(0, 3);
+		if (oldStates != INP_JOYSTATES)
+		{
+			MISC->DmaClear(BITMAP, 0, 160 * 16, DMA_BYTE);
+			TEXT->Format(buffer, "1. %s\n2. %s", types[INP_JOYSTATES & 0x0F], types[(INP_JOYSTATES >> 4) & 0x0F]);
+			DRAW->DrawString(buffer, 0, 0, 15);
+			OBJECTS_A[0] = OBJECTA_BUILD(260, 0, (INP_JOYSTATES & 0x0F) > 1, 0);
+			oldStates = INP_JOYSTATES;
+		}
+
 		if (buttons != oldButtons || axis1 != oldAxis[0] || axis2 != oldAxis[1])
 		{
 			MISC->DmaClear(BITMAP + (160 * 24), 0, 160 * 8, DMA_BYTE);
@@ -97,5 +100,5 @@ void JoypadTest()
 
 		vbl();
 	}
-	OBJECTS_A[0] = 0; //hide the cursor
+	MISC->DmaClear(OBJECTS_A, 0, 512, DMA_BYTE);
 }
