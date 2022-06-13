@@ -142,7 +142,7 @@ int doMenu(int left, int top, char* options, int num)
 	while (lastInput != KEY_ACTION)
 	{
 		OBJECTS_B[255] = OBJECTB_BUILD(((left + 1) * 8) - 4, ((top + 1 + (choice * 2)) * 8) + ((REG_TICKCOUNT / 32) % 2), 0, 0, 0, 0, 1, 0);
-		OBJECTS_B[254] = OBJECTB_BUILD(((left + 1) * 8) - 4, (top + 2 + (choice * 2)) * 8, 0, 0, 0, 0, 1, 0);
+		OBJECTS_B[254] = OBJECTB_BUILD(((left + 1) * 8) - 4, (top + 2 + (choice * 2)) * 8, 1, 0, 0, 0, 0, 0);
 		vbl();
 		getInput();
 		switch (lastInput)
