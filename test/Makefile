@@ -1,4 +1,5 @@
-GRAPHICS := pointer.png
+GRITS := $(wildcard *.grit)
+GRAPHICS := $(GRITS:.grit=.png)
 GFXAPI := $(wildcard bmp*.png)
 
 export TARGET :=	test

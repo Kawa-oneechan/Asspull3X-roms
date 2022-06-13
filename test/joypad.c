@@ -1,7 +1,7 @@
 #include "../ass.h"
 IBios* interface;
 
-extern const uint16_t pointerTiles[], pointerPal[];
+extern const uint16_t spritesTiles[], spritesPal[];
 #define OBJECTA_BUILD(t,b,e,p)	\
 (								\
 	(((p) & 15) << 12) |		\
@@ -26,8 +26,8 @@ void JoypadTest()
 	MISC->SetBitmapMode16(SMODE_320 | SMODE_240);
 	MISC->DmaClear(BITMAP, 0, 160 * 240, DMA_BYTE);
 
-	MISC->DmaCopy(TILESET + 0x2000, (int8_t*)&pointerTiles, 0x480, DMA_SHORT);
-	MISC->DmaCopy(PALETTE + 256, pointerPal, 16, DMA_SHORT);
+	MISC->DmaCopy(TILESET + 0x2000, (int8_t*)&spritesTiles, 0x480, DMA_SHORT);
+	MISC->DmaCopy(PALETTE + 256, spritesPal, 16, DMA_SHORT);
 
 	OBJECTS_B[0] = OBJECTB_BUILD(320, 160, 0, 0, 0, 0, 1, 0);
 
