@@ -157,10 +157,6 @@ void KeyboardTest()
 			}
 		}
 
-		TEXT->SetCursorPosition(0, 0);
-		TEXT->SetTextColor(0, 7);
-		printf("%d  ", theKey);
-
 		if (theKey == 0) continue;
 		else if (theKey == 69) theKey = 83;
 		else if (theKey == 87) theKey = 69;
