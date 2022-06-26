@@ -1,4 +1,5 @@
 #include "../ass.h"
+#include "../ass-keys.h"
 #include "game.h"
 extern uint32_t rndseed;
 extern void srand(uint32_t seed);
@@ -261,8 +262,8 @@ static action get_action(int delay)
 		if (dpadbuts)
 		{
 			int debounce = 10;
-			if (dpadbuts & (1 | 16)) debounce = 20;
-			if (dpadbuts & 32) debounce = 20;
+			if (dpadbuts & (BUTTON_UP | BUTTON_A)) debounce = 20;
+			if (dpadbuts & BUTTON_B) debounce = 20;
 			while (debounce)
 			{
 				vbl();
@@ -272,13 +273,13 @@ static action get_action(int delay)
 			}
 		}
 
-		if (dpadbuts & 1) return ROTATE;
-		if (dpadbuts & 2) return MOVE_RIGHT;
-		if (dpadbuts & 8) return MOVE_LEFT;
-		if (dpadbuts & 4) return MOVE_DOWN;
-		if (dpadbuts & 16) return ROTATE;
-		if (dpadbuts & 32) return DROP;
-		if (dpadbuts & 2048) return PAUSE;
+		if (dpadbuts & BUTTON_UP) return ROTATE;
+		if (dpadbuts & BUTTON_RIGHT) return MOVE_RIGHT;
+		if (dpadbuts & BUTTON_LEFT) return MOVE_LEFT;
+		if (dpadbuts & BUTTON_DOWN) return MOVE_DOWN;
+		if (dpadbuts & BUTTON_A) return ROTATE;
+		if (dpadbuts & BUTTON_B) return DROP;
+		if (dpadbuts & BUTTON_START) return PAUSE;
 	}
 	return MOVE_DOWN;
 }
@@ -305,7 +306,7 @@ static void pause_game(game *game)
 	while (1)
 	{
 		vbl();
-		if (INP_JOYPAD1 & 2048) break;
+		if (INP_JOYPAD1 & BUTTON_START) break;
 	}
 	//debounce
 	while (1)

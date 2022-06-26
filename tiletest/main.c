@@ -1,4 +1,5 @@
 #include "../ass.h"
+#include "../ass-keys.h"
 IBios* interface;
 
 #define MAPWIDTH 130
@@ -180,7 +181,7 @@ void MovePlayer()
 	}
 
 	int dpadbuts = INP_JOYPAD1;
-	if (dpadbuts & 0x10)
+	if (dpadbuts & BUTTON_A)
 	{
 		if (player.state < 2 && player.grounded)
 		{
@@ -190,7 +191,7 @@ void MovePlayer()
 			player.grounded = 0;
 		}
 	}
-	if (dpadbuts & 2)
+	if (dpadbuts & BUTTON_RIGHT)
 	{
 		player.flip = 0;
 		player.posX++;
@@ -201,7 +202,7 @@ void MovePlayer()
 			player.frame = 1 + ((player.timer / 8) % 4);
 		}
 	}
-	else if (dpadbuts & 8)
+	else if (dpadbuts & BUTTON_LEFT)
 	{
 		player.flip = 1;
 		player.posX--;

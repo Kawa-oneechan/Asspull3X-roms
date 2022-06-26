@@ -1,4 +1,5 @@
 #include "../ass.h"
+#include "../ass-keys.h"
 IBios* interface;
 
 extern const TImageFile title;
@@ -25,11 +26,6 @@ char *thisLevel;
 
 #define WIDTH 40
 #define HEIGHT 30
-
-#define KEY_UP 0xC8
-#define KEY_LEFT 0xCB
-#define KEY_RIGHT 0xCD
-#define KEY_DOWN 0xD0
 
 #define OBJECTA_BUILD(t,b,e,p)	\
 (								\
@@ -511,9 +507,9 @@ void CheckForDisk()
 	while (1)
 	{
 		int key = getc();
-		if (key == 0x15 || key == 0x1C) //y or enter
+		if (key == KEYSCAN_Y || key == KEYSCAN_ENTER)
 			break;
-		else if (key == 0x31) //n
+		else if (key == KEYSCAN_N)
 		{
 			DRAW->Fade(false, true);
 			REG_HDMACONTROL[0] = 0;
@@ -586,11 +582,11 @@ int main(void)
 		{
 			vbl();
 			in = INP_KEYIN;
-			if (INP_JOYPAD1 & 1 || INP_KEYMAP[0xC8]) in = KEY_UP;
-			else if (INP_JOYPAD1 & 2 || INP_KEYMAP[0xCD]) in = KEY_RIGHT;
-			else if (INP_JOYPAD1 & 4 || INP_KEYMAP[0xD0]) in = KEY_DOWN;
-			else if (INP_JOYPAD1 & 8 || INP_KEYMAP[0xCB]) in = KEY_LEFT;
-			else if (INP_KEYMAP[0x13]) in = 0x13;
+			if (INP_JOYPAD1 & BUTTON_UP || INP_KEYMAP[KEYSCAN_UP]) in = KEYSCAN_UP;
+			else if (INP_JOYPAD1 & BUTTON_RIGHT || INP_KEYMAP[KEYSCAN_RIGHT]) in = KEYSCAN_RIGHT;
+			else if (INP_JOYPAD1 & BUTTON_DOWN || INP_KEYMAP[KEYSCAN_DOWN]) in = KEYSCAN_DOWN;
+			else if (INP_JOYPAD1 & BUTTON_LEFT || INP_KEYMAP[KEYSCAN_LEFT]) in = KEYSCAN_LEFT;
+			else if (INP_KEYMAP[KEYSCAN_R]) in = KEYSCAN_R;
 		}
 		if (REG_TIMET > lastTimeT)
 		{
@@ -607,11 +603,11 @@ int main(void)
 		//	continue;
 		switch (in)
 		{
-			case KEY_LEFT: move(-1, 0); break;
-			case KEY_RIGHT: move(1, 0); break;
-			case KEY_UP: move(0, -1); break;
-			case KEY_DOWN: move(0, 1); break;
-			case 0x13: victoryDance(); break;
+			case KEYSCAN_LEFT: move(-1, 0); break;
+			case KEYSCAN_RIGHT: move(1, 0); break;
+			case KEYSCAN_UP: move(0, -1); break;
+			case KEYSCAN_DOWN: move(0, 1); break;
+			case KEYSCAN_R: victoryDance(); break;
 		}
 		if (checkWin())
 			nextLevel();

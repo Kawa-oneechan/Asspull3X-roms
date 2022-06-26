@@ -1,4 +1,5 @@
 #include "../ass.h"
+#include "../ass-keys.h"
 #include "actor.h"
 
 extern const uint16_t* const playerTiles[];
@@ -64,12 +65,12 @@ void ThinkPlayer(int id)
 	{
 		int dpadbuts = INP_JOYPAD1;
 
-		if (dpadbuts & 4) p->y++;
-		else if (dpadbuts & 1) p->y--;
-		if (dpadbuts & 2) p->x++;
-		else if (dpadbuts & 8) p->x--;
+		if (dpadbuts & BUTTON_DOWN) p->y++;
+		else if (dpadbuts & BUTTON_UP) p->y--;
+		if (dpadbuts & BUTTON_RIGHT) p->x++;
+		else if (dpadbuts & BUTTON_LEFT) p->x--;
 
-		if (dpadbuts & 16)
+		if (dpadbuts & BUTTON_A)
 		{
 			if (p->shotTimer == 0)
 			{

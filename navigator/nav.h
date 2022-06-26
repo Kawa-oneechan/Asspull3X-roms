@@ -1,5 +1,6 @@
 #include "../ass.h"
 #include "../ass-std.h"
+#include "../ass-keys.h"
 
 //#define NORTON
 

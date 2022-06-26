@@ -220,13 +220,13 @@ void entityPlayerMotor(MapEntity *entity)
 {
 	switch (lastInput)
 	{
-		case KEY_LEFT: entityWalk(entity, 1); break;
-		case KEY_RIGHT: entityWalk(entity, 3); break;
-		case KEY_UP: entityWalk(entity, 2); break;
-		case KEY_DOWN: entityWalk(entity, 0); break;
-		case 30: entity->state = stateTsk; entity->counter[0] = 0; break;
-		case 31: entity->state = stateWave; entity->counter[0] = 0; break;
-		case 32: entity->state = stateLaugh; entity->counter[0] = 0; break;
+		case KEYSCAN_LEFT: entityWalk(entity, 1); break;
+		case KEYSCAN_RIGHT: entityWalk(entity, 3); break;
+		case KEYSCAN_UP: entityWalk(entity, 2); break;
+		case KEYSCAN_DOWN: entityWalk(entity, 0); break;
+		case KEYSCAN_A: entity->state = stateTsk; entity->counter[0] = 0; break;
+		case KEYSCAN_S: entity->state = stateWave; entity->counter[0] = 0; break;
+		case KEYSCAN_D: entity->state = stateLaugh; entity->counter[0] = 0; break;
 		case KEY_ACTION:
 		{
 			int tx = entity->x + xdisp[entity->facing];

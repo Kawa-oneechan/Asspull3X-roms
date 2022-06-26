@@ -1,4 +1,5 @@
 #include "../ass.h"
+#include "../ass-keys.h"
 
 extern IBios* interface;
 
@@ -10,11 +11,7 @@ extern const uint32_t sprites[], portraits[];
 #define WIDTH 32
 #define HEIGHT 32
 
-#define KEY_UP 0xC8
-#define KEY_LEFT 0xCB
-#define KEY_RIGHT 0xCD
-#define KEY_DOWN 0xD0
-#define KEY_ACTION 45
+#define KEY_ACTION KEYSCAN_X
 
 #define OBJECTA_BUILD(t,b,e,p)	\
 (								\

@@ -313,7 +313,7 @@ char OpenMenu(int cm)
 		uint16_t key = INP_KEYIN;
 		if ((key & 0xFF) > 0)
 		{
-			if (key == 0xCB) //left
+			if (key == KEYSCAN_LEFT)
 			{
 				Highlight(menuLefts[cm], 0, myStrLen(menuBar[cm].title) + 4, CLR_MENUBAR);
 				if (cm == 0) cm = NUMMENUS;
@@ -322,7 +322,7 @@ char OpenMenu(int cm)
 				Highlight(menuLefts[cm], 0, myStrLen(menuBar[cm].title) + 4, CLR_MENUSEL);
 				DropMenu(cm);
 			}
-			else if (key == 0xCD) //right
+			else if (key == KEYSCAN_RIGHT)
 			{
 				Highlight(menuLefts[cm], 0, myStrLen(menuBar[cm].title) + 4, CLR_MENUBAR);
 				cm++;
@@ -331,7 +331,7 @@ char OpenMenu(int cm)
 				Highlight(menuLefts[cm], 0, myStrLen(menuBar[cm].title) + 4, CLR_MENUSEL);
 				DropMenu(cm);
 			}
-			else if (key == 0xC8) //up
+			else if (key == KEYSCAN_UP)
 			{
 				Highlight(menuLefts[cm] + 1, 2 + ci, menuWidths[cm] + 4, CLR_MENUITEM);
 				if (ci == 0) ci = menuBar[cm].numItems;
@@ -339,7 +339,7 @@ char OpenMenu(int cm)
 				while (menuBar[cm].items[ci].state & DISABLED) ci--;
 				Highlight(menuLefts[cm] + 1, 2 + ci, menuWidths[cm] + 4, CLR_MENUSEL);
 			}
-			else if (key == 0xD0) //down
+			else if (key == KEYSCAN_DOWN)
 			{
 				Highlight(menuLefts[cm] + 1, 2 + ci, menuWidths[cm] + 4, CLR_MENUITEM);
 				ci++;
@@ -347,12 +347,12 @@ char OpenMenu(int cm)
 				if (ci == menuBar[cm].numItems) ci = 0;
 				Highlight(menuLefts[cm] + 1, 2 + ci, menuWidths[cm] + 4, CLR_MENUSEL);
 			}
-			else if (key == 0x1C || key == 0x01) //enter or escape
+			else if (key == KEYSCAN_ENTER || key == KEYSCAN_ESCAPE)
 			{
 				Highlight(menuLefts[cm], 0, myStrLen(menuBar[cm].title) + 4, CLR_MENUBAR);
 				CloseWindow(menuWindow);
 				menuWindow = NULL;
-				return (key == 0x1C) ? menuBar[cm].items[ci].code : 0;
+				return (key == KEYSCAN_ENTER) ? menuBar[cm].items[ci].code : 0;
 			}
 		}
 	}

@@ -481,7 +481,7 @@ void SelectFile(const char* path1, const char* path2, const char* pattern)
 						}
 					}
 				}
-				else if (key == 0x0F && views[cs ^ 1] == 0) //tab
+				else if (key == KEYSCAN_TAB && views[cs ^ 1] == 0)
 				{
 					if (views[cs ^ 1] == 0)
 						Highlight(cs ? WIDTH + 1 : 0, index[cs] + 2, WIDTH + 1, CLR_PANELITEM);
@@ -489,7 +489,7 @@ void SelectFile(const char* path1, const char* path2, const char* pattern)
 					redraw = 2;
 					break;
 				}
-				else if (key == 0xC8) //up
+				else if (key == KEYSCAN_UP)
 				{
 					if (index[cs] == 0)
 					{
@@ -521,7 +521,7 @@ void SelectFile(const char* path1, const char* path2, const char* pattern)
 						break;
 					}
 				}
-				else if (key == 0xD0) //down
+				else if (key == KEYSCAN_DOWN)
 				{
 					if (index[cs] == fileCt[cs] - 1)
 					{
@@ -548,7 +548,7 @@ void SelectFile(const char* path1, const char* path2, const char* pattern)
 						break;
 					}
 				}
-				else if (key == 0xC9) //page up
+				else if (key == KEYSCAN_PGUP)
 				{
 					lastIndex[cs] = index[cs];
 					index[cs] -= FILESSHOWN;
@@ -558,7 +558,7 @@ void SelectFile(const char* path1, const char* path2, const char* pattern)
 					redraw = 2;
 					break;
 				}
-				else if (key == 0xD1) //page down
+				else if (key == KEYSCAN_PGDN)
 				{
 					lastIndex[cs] = index[cs];
 					index[cs] += FILESSHOWN - 1;
@@ -575,7 +575,7 @@ void SelectFile(const char* path1, const char* path2, const char* pattern)
 					redraw = 2;
 					break;
 				}
-				else if (key == 0x1C) //enter
+				else if (key == KEYSCAN_ENTER)
 				{
 					if (curFN[0] == '.' && curFN[1] == '.')
 					{
@@ -643,7 +643,7 @@ void SelectFile(const char* path1, const char* path2, const char* pattern)
 						}
 					}
 				}
-				else if (key == 0x3B || key == 0x3C) //F1 or F2
+				else if (key == KEYSCAN_F1 || key == KEYSCAN_F2)
 ChangeDisk:
 				{
 					int d = key - 0x3B;
@@ -662,21 +662,21 @@ ChangeDisk:
 					else
 						lastIndex[d] = -1;
 				}
-				else if (key == 0x3D) //F3
+				else if (key == KEYSCAN_F3)
 				{ key = 11; goto HandleMenu; }
-				else if (key == 0x3E) //F4
+				else if (key == KEYSCAN_F4)
 				{ key = 12; goto HandleMenu; }
-				else if (key == 0x3F) //F5
+				else if (key == KEYSCAN_F5)
 				{ key = 13; goto HandleMenu; }
-				else if (key == 0x40) //F6
+				else if (key == KEYSCAN_F6)
 				{ key = 14; goto HandleMenu; }
-				else if (key == 0x41) //F7
+				else if (key == KEYSCAN_F7)
 				{ key = 15; goto HandleMenu; }
-				else if (key == 0x42) //F8
+				else if (key == KEYSCAN_F8)
 				{ key = 16; goto HandleMenu; }
-				else if (key == 0x43) //F9
+				else if (key == KEYSCAN_F9)
 				{ key = 17; goto HandleMenu; }
-				else if (key == 0x44) //F10
+				else if (key == KEYSCAN_F10)
 				{
 					key = OpenMenu(0);
 HandleMenu:

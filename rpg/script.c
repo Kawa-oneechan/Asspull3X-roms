@@ -147,12 +147,12 @@ int doMenu(int left, int top, char* options, int num)
 		getInput();
 		switch (lastInput)
 		{
-			case KEY_UP:
+			case KEYSCAN_UP:
 				if (choice == 0) choice = num;
 				choice--;
 				while (lastInput) { vbl(); getInput(); }
 				break;
-			case KEY_DOWN:
+			case KEYSCAN_DOWN:
 				choice++;
 				if (choice == num) choice = 0;
 				while (lastInput) { vbl(); getInput(); }

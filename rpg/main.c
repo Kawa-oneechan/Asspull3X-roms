@@ -6,11 +6,11 @@ int lastInput;
 void getInput()
 {
 	lastInput = INP_KEYIN;
-	if ((INP_JOYPAD1 & 1) || INP_KEYMAP[KEY_UP]) lastInput = KEY_UP;
-	else if ((INP_JOYPAD1 & 2) || INP_KEYMAP[KEY_RIGHT]) lastInput = KEY_RIGHT;
-	else if ((INP_JOYPAD1 & 4) || INP_KEYMAP[KEY_DOWN]) lastInput = KEY_DOWN;
-	else if ((INP_JOYPAD1 & 8) || INP_KEYMAP[KEY_LEFT]) lastInput = KEY_LEFT;
-	else if (INP_JOYPAD1 & 0x20) lastInput = KEY_ACTION;
+	if ((INP_JOYPAD1 & BUTTON_UP) || INP_KEYMAP[KEYSCAN_UP]) lastInput = KEYSCAN_UP;
+	else if ((INP_JOYPAD1 & BUTTON_RIGHT) || INP_KEYMAP[KEYSCAN_RIGHT]) lastInput = KEYSCAN_RIGHT;
+	else if ((INP_JOYPAD1 & BUTTON_DOWN) || INP_KEYMAP[KEYSCAN_DOWN]) lastInput = KEYSCAN_DOWN;
+	else if ((INP_JOYPAD1 & BUTTON_LEFT) || INP_KEYMAP[KEYSCAN_LEFT]) lastInput = KEYSCAN_LEFT;
+	else if (INP_JOYPAD1 & BUTTON_B) lastInput = KEY_ACTION;
 }
 
 void waitForActionKey()

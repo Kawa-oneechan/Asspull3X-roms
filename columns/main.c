@@ -1,4 +1,6 @@
 #include "../ass.h"
+#include "../ass-keys.h"
+
 IBios* interface;
 
 extern const uint16_t tilesTiles[], tilesPal[];
@@ -9,11 +11,6 @@ extern const uint16_t girl1Tiles[], girl1Pal[], girl1map[];
 
 #define WIDTH 40
 #define HEIGHT 30
-
-#define KEY_UP 0xC8
-#define KEY_LEFT 0xCB
-#define KEY_RIGHT 0xCD
-#define KEY_DOWN 0xD0
 
 #define POOF 12
 
@@ -256,7 +253,7 @@ void movePlayer()
 	if (dropTimer != 0)
 	{
 		dropTimer--;
-		if (INP_KEYIN != KEY_DOWN && INP_JOYPAD1 != 4)
+		if (INP_KEYIN != KEYSCAN_DOWN && INP_JOYPAD1 != 4)
 			return;
 	}
 	dropTimer = 8;
@@ -416,8 +413,8 @@ int main(void)
 			in = INP_JOYPAD1;
 			rndseed += in;
 		}
-		if (in & 1) rotate();
-		if (in & 2) moveSideways(1);
-		else if (in & 8) moveSideways(-1);
+		if (in & BUTTON_UP) rotate();
+		if (in & BUTTON_RIGHT) moveSideways(1);
+		else if (in & BUTTON_LEFT) moveSideways(-1);
 	}
 }

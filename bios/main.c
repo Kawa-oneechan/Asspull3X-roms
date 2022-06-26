@@ -1,5 +1,6 @@
 #include "../ass.h"
 #include "../ass-midi.h"
+#include "../ass-keys.h"
 
 //#define EXTENSIVE
 
@@ -152,13 +153,13 @@ int main(void)
 	if (GetNumDrives() == 0)
 	{
 		Write("  No disk drive connected. Power off, or press F1 to continue.\n\n");
-		while (INP_KEYIN != 59)
+		while (INP_KEYIN != KEYSCAN_F1)
 			vbl();
 	}
 	else if (GetNumDrives() > 4)
 	{
 		Write("  Too many disk drives connected. Only the first four will be accessible.\n  Press F1 to continue.\n\n");
-		while (INP_KEYIN != 59)
+		while (INP_KEYIN != KEYSCAN_F1)
 			vbl();
 	}
 #ifdef EXTENSIVE
@@ -217,7 +218,7 @@ int main(void)
 			break;
 		}
 
-		if (INP_KEYIN == 59 && showSplash) //F1
+		if (INP_KEYIN == KEYSCAN_F1 && showSplash) //F1
 		{
 			OBJECTS_B[0] = OBJECTB_BUILD(-32, -32, 0, 0, 0, 0, 0, 0);
 			char about[256];

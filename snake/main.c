@@ -1,10 +1,6 @@
 #include "../ass.h"
+#include "../ass-keys.h"
 IBios* interface;
-
-#define KEY_UP 0xC8
-#define KEY_LEFT 0xCB
-#define KEY_RIGHT 0xCD
-#define KEY_DOWN 0xD0
 
 #define WIDTH 40
 #define HEIGHT 30
@@ -148,17 +144,17 @@ void TitleScreen()
 		vbl();
 		int dpadbuts = INP_JOYPAD1;
 		int key = INP_KEYIN;
-		if ((key == KEY_UP || dpadbuts & 1) && delay < 16)
+		if ((key == KEYSCAN_UP || dpadbuts & BUTTON_UP) && delay < 16)
 		{
 			while (INP_KEYIN || INP_JOYPAD1) vbl();
 			delay++;
 		}
-		else if ((key == KEY_DOWN || dpadbuts & 4) && delay > 1)
+		else if ((key == KEYSCAN_DOWN || dpadbuts & BUTTON_DOWN) && delay > 1)
 		{
 			while (INP_KEYIN || INP_JOYPAD1) vbl();
 			delay--;
 		}
-		else if (key == 0x1C || dpadbuts & 16)
+		else if (key == KEYSCAN_ENTER || dpadbuts & BUTTON_A)
 			break;
 		char buffer[25];
 		ultoa(delay, buffer);
@@ -401,7 +397,7 @@ int main(void)
 	while(1)
 	{
 		ClearBoard();
-		int key = KEY_RIGHT;
+		int key = KEYSCAN_RIGHT;
 		headCursor = 4;
 		tailCursor = 0;
 		DrawBoard();
@@ -427,25 +423,25 @@ int main(void)
 
 			int dpadbuts = INP_JOYPAD1;
 			int keyIn = INP_KEYIN;
-			if ((keyIn == KEY_UP || dpadbuts & 1) && key != KEY_DOWN) key = KEY_UP;
-			else if ((keyIn == KEY_DOWN || dpadbuts & 4) && key != KEY_UP) key = KEY_DOWN;
-			if ((keyIn == KEY_RIGHT || dpadbuts & 2) && key != KEY_LEFT) key = KEY_RIGHT;
-			else if ((keyIn == KEY_LEFT || dpadbuts & 8) && key != KEY_RIGHT) key = KEY_LEFT;
+			if ((keyIn == KEYSCAN_UP || dpadbuts & BUTTON_UP) && key != KEYSCAN_DOWN) key = KEYSCAN_UP;
+			else if ((keyIn == KEYSCAN_DOWN || dpadbuts & BUTTON_DOWN) && key != KEYSCAN_UP) key = KEYSCAN_DOWN;
+			if ((keyIn == KEYSCAN_RIGHT || dpadbuts & BUTTON_RIGHT) && key != KEYSCAN_LEFT) key = KEYSCAN_RIGHT;
+			else if ((keyIn == KEYSCAN_LEFT || dpadbuts & BUTTON_LEFT) && key != KEYSCAN_RIGHT) key = KEYSCAN_LEFT;
 			switch(key)
 			{
-				case KEY_RIGHT:
+				case KEYSCAN_RIGHT:
 					headDir = 1;
 					head.x++;
 					break;
-				case KEY_DOWN:
+				case KEYSCAN_DOWN:
 					headDir = 2;
 					head.y++;
 					break;
-				case KEY_LEFT:
+				case KEYSCAN_LEFT:
 					headDir = 3;
 					head.x--;
 					break;
-				case KEY_UP:
+				case KEYSCAN_UP:
 					headDir = 4;
 					head.y--;
 					break;

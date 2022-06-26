@@ -148,7 +148,7 @@ int ShowText(char* filePath)
 		//vbl();
 		if ((key & 0xFF) > 0)
 		{
-			/*if (key == 0xCB) //left
+			/*if (key == KEYSCAN_LEFT)
 			{
 				if (scroll > 0)
 				{
@@ -158,7 +158,7 @@ int ShowText(char* filePath)
 					redraw = 1;
 				}
 			}
-			else if (key == 0xCD) //right
+			else if (key == KEYSCAN_RIGHT)
 			{
 				if (scroll + MAXLINESSHOWN < lineCt)
 				{
@@ -166,7 +166,7 @@ int ShowText(char* filePath)
 					redraw = 1;
 				}
 			}
-			else*/ if (key == 0xC8) //up
+			else*/ if (key == KEYSCAN_UP)
 			{
 				if (scroll > 0)
 				{
@@ -183,7 +183,7 @@ int ShowText(char* filePath)
 					redraw = 1;
 				}
 			}
-			else if (key == 0xD0) //down
+			else if (key == KEYSCAN_DOWN)
 			{
 				if (scroll < lineCt - 28)
 				{
@@ -194,28 +194,28 @@ int ShowText(char* filePath)
 					redraw = 1;
 				}
 			}
-			else if (key == 0x3B) //F1
+			else if (key == KEYSCAN_F1)
 				ShowError("F1 not implemented yet");
-			else if (key == 0x3C) //F2
+			else if (key == KEYSCAN_F2)
 			{
 				hidden = !hidden;
 				redraw = 1;
 			}
-			else if (key == 0x3D) //F3
+			else if (key == KEYSCAN_F3)
 				ShowError("F3 not implemented yet");
-			else if (key == 0x3E) //F4
+			else if (key == KEYSCAN_F4)
 				ShowError("F4 not implemented yet");
-			else if (key == 0x3F) //F5
+			else if (key == KEYSCAN_F5)
 				ShowError("F5 not implemented yet");
-			else if (key == 0x40) //F6
+			else if (key == KEYSCAN_F6)
 				ShowError("F6 not implemented yet");
-			else if (key == 0x41) //F7
+			else if (key == KEYSCAN_F7)
 				ShowError("F7 not implemented yet");
-			else if (key == 0x42) //F8
+			else if (key == KEYSCAN_F8)
 				ShowError("F8 not implemented yet");
-			else if (key == 0x43) //F9
+			else if (key == KEYSCAN_F9)
 				PrintBuffer((char*)fullText);
-			else if (key == 0x44 || key == 0x01) //F10 or Escape
+			else if (key == KEYSCAN_F10 || key == KEYSCAN_ESCAPE) //F10 or Escape
 				break;
 		}
 	}

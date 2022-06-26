@@ -1,4 +1,5 @@
 #include "../ass.h"
+#include "../ass-keys.h"
 extern IBios* interface;
 
 extern char* asctime(const tm*);
@@ -23,12 +24,6 @@ void Spinner()
 	TEXTMAP[(29 * 80) + 27] = 0x0E | (spinner[((spin >> 4) + 2) % 11] << 8);
 	vbl();
 }
-
-#define KEY_UP 0xC8
-#define KEY_LEFT 0xCB
-#define KEY_RIGHT 0xCD
-#define KEY_DOWN 0xD0
-#define KEY_ENTER 0x1C
 
 void DrawClock(tm* now_tm)
 {
@@ -125,12 +120,12 @@ reset:
 			TEXT->SetCursorPosition(6 + cursor, 5);
 
 			int in = INP_KEYIN;
-			if (in == KEY_ENTER)
+			if (in == KEYSCAN_ENTER)
 			{
 				REG_TIMET = mktime(now_tm);
 				break;
 			}
-			else if (in == KEY_LEFT)
+			else if (in == KEYSCAN_LEFT)
 			{
 				if (cursor == 0) cursor = 20;
 				else if (cursor == 5) cursor = 3;
@@ -140,7 +135,7 @@ reset:
 				else if (cursor == 19) cursor = 17;
 				else cursor--;
 			}
-			else if (in == KEY_RIGHT)
+			else if (in == KEYSCAN_RIGHT)
 			{
 				if (cursor == 20) cursor = 0;
 				else if (cursor == 3) cursor = 5;
@@ -151,7 +146,7 @@ reset:
 				else if (cursor == 17) cursor = 19;
 				else cursor++;
 			}
-			else if (in == KEY_UP || in == KEY_DOWN)
+			else if (in == KEYSCAN_UP || in == KEYSCAN_DOWN)
 			{
 				switch(cursor)
 				{
@@ -163,7 +158,7 @@ reset:
 					{
 						int y = now_tm->tm_year + 1900;
 						int mul = muls[cursor];
-						if (in == KEY_DOWN) mul = -mul;
+						if (in == KEYSCAN_DOWN) mul = -mul;
 						y += mul;
 						now_tm->tm_year = y - 1900;
 						changed = 1;
@@ -175,7 +170,7 @@ reset:
 					{
 						int y = now_tm->tm_mon + 1;
 						int mul = muls[cursor - 3];
-						if (in == KEY_DOWN) mul = -mul;
+						if (in == KEYSCAN_DOWN) mul = -mul;
 						y += mul;
 						if (y > 12) y = 1;
 						else if (y <= 0) y = 12;
@@ -189,7 +184,7 @@ reset:
 					{
 						int y = now_tm->tm_mday;
 						int mul = muls[cursor - 6];
-						if (in == KEY_DOWN) mul = -mul;
+						if (in == KEYSCAN_DOWN) mul = -mul;
 						y += mul;
 						if (y > 31) y = 1;
 						else if (y <= 0) y = 31;
@@ -203,7 +198,7 @@ reset:
 					{
 						int y = now_tm->tm_hour;
 						int mul = muls[cursor - 11];
-						if (in == KEY_DOWN) mul = -mul;
+						if (in == KEYSCAN_DOWN) mul = -mul;
 						y += mul;
 						if (y > 23) y = 0;
 						else if (y <= 0) y = 23;
@@ -217,7 +212,7 @@ reset:
 					{
 						int y = now_tm->tm_min;
 						int mul = muls[cursor - 14];
-						if (in == KEY_DOWN) mul = -mul;
+						if (in == KEYSCAN_DOWN) mul = -mul;
 						y += mul;
 						if (y > 59) y = 0;
 						else if (y <= 0) y = 59;
@@ -231,7 +226,7 @@ reset:
 					{
 						int y = now_tm->tm_sec;
 						int mul = muls[cursor - 17];
-						if (in == KEY_DOWN) mul = -mul;
+						if (in == KEYSCAN_DOWN) mul = -mul;
 						y += mul;
 						if (y > 59) y = 0;
 						else if (y <= 0) y = 59;
