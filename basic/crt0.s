@@ -4,6 +4,6 @@
 	.asciz	"A3X BASIC"
 	.align	32
 	.long	0	//let ASSFIX set this.
-	.ascii	"FRN0"
+	.ascii	"BASw"
 	.byte	0	//reserved
 	#include "../crt0.s"

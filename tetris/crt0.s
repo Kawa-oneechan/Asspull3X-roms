@@ -4,6 +4,6 @@
 	.asciz	"Tetris"
 	.align	32
 	.long	0	//let ASSFIX set this.
-	.ascii	"FRNw"
+	.ascii	"TETw"
 	.byte	0	//reserved
 	#include "../crt0.s"

@@ -4,6 +4,6 @@
 	.asciz	"Salanyander"
 	.align	32
 	.long	0	//let ASSFIX set this.
-	.ascii	"FRN0"
+	.ascii	"GRAw"
 	.byte	0	//reserved
 	#include "../crt0.s"

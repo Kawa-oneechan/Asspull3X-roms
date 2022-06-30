@@ -4,6 +4,6 @@
 	.asciz	"Hello World!"
 	.align	32
 	.long	0	//let ASSFIX set this.
-	.ascii	"FRN0"
+	.ascii	"til0"
 	.byte	0	//reserved
 	#include "../crt0.s"

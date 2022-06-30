@@ -4,6 +4,6 @@
 	.asciz	"Here's Ranmya!"
 	.align	32
 	.long	0	//let ASSFIX set this.
-	.ascii	"FRN0"
+	.ascii	"r120"
 	.byte	0	//reserved
 	#include "../crt0.s"
