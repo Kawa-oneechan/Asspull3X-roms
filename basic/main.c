@@ -15,8 +15,10 @@ IBios* interface;
 #define MAXSTRING 255
 
 #ifdef WIN32
+#define MAYBESWAP(x)
 #define _rand() rand()
 #else
+#define MAYBESWAP(x) x = (((x) >> 8) & 0x00FF) | (((x) << 8) & 0xFF00)
 long rndseed = 0xDEADBEEF;
 
 void srand(long seed)
@@ -736,18 +738,14 @@ bool CmdLoad()
 			memset((void*)thisLine, 0, sizeof(line));
 			fread(&nextLineAt, sizeof(short), 1, f);
 			fread(&thisLine->lineNo, sizeof(short), 1, f);
+			MAYBESWAP(nextLineAt);
+			MAYBESWAP(thisLine->lineNo);
 			fgets((char*)thisLine->lineTokens, MAXSTRING, f);
+
 			if (previousLine != 0)
 				previousLine->nextLine = thisLine;
 			if (firstLine == 0)
 				firstLine = thisLine;
-			if (thisLine->lineNo == 0)
-			{
-				//BUGBUG
-				printf("<line zero bug, skipping>\n");
-				free(thisLine);
-				thisLine = 0;
-			}
 			if (nextLineAt == 0)
 				break;
 			previousLine = thisLine;
@@ -803,9 +801,13 @@ bool CmdSave()
 			}
 			unsigned short nextOffset = offset + lineLen + 2 + 2;
 			if (nextLine == NULL) nextOffset = 0;
+			MAYBESWAP(nextOffset);
+			MAYBESWAP(thisLine->lineNo);
 			fwrite(&nextOffset, sizeof(short), 1, f);
 			fwrite(&thisLine->lineNo, sizeof(short), 1, f);
 			fwrite(&thisLine->lineTokens, sizeof(char), lineLen, f);
+			MAYBESWAP(thisLine->lineNo);
+			MAYBESWAP(nextOffset);
 			thisLine = nextLine;
 			offset = nextOffset;
 		}
