@@ -75,29 +75,88 @@ int strkitten_s(char* dest, size_t len, char src)
 	return 2;
 }
 
+int isgraph(int c)
+{
+	return (unsigned int)c - 0x21 < 0x5E;
+}
+
+int isprint(int c)
+{
+	return (unsigned int)c - 0x20 < 0x5F;
+}
+
 int isalpha(int c)
 {
-	return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z');
+	return ((unsigned int)c | 32) - 'a' < 26;
 }
 
 int isdigit(int c)
 {
-	return (c >= '0' && c <= '9');
+	return (unsigned int)c - '0' < 10;
+}
+
+int isalnum(int c)
+{
+	return isalpha(c) || isdigit(c);
+}
+
+int isspace(int c)
+{
+	return c == ' ' || (unsigned int) c - '\t' < 5;
+}
+
+int ispunct(int c)
+{
+	return isgraph(c) && !isalnum(c);
+}
+
+int isblank(int c)
+{
+	return (c == ' ' || c == '\t');
+}
+
+int isxdigit(int c)
+{
+	return isdigit(c) || ((unsigned int)c | 32) - 'a' < 6;
+}
+
+int iscntrl(int c)
+{
+	return (unsigned int)c < 0x20 || c == 0x7F;
+}
+
+int isascii(int c)
+{
+	return !(c & ~0x7F);
 }
 
 int isupper(int c)
 {
-	return (c >= 'A' && c <= 'Z');
+	return (unsigned int)c - 'A' < 26;
+}
+
+int islower(int c)
+{
+	return (unsigned int)c - 'a' < 26;
 }
 
 int toupper(int c)
 {
-	return (c >= 'a' && c <= 'z') ? (c - 'a' + 'A') : c;
+	if (islower(c))
+		return c & 0x5F;
+	return c;
 }
 
 int tolower(int c)
 {
-	return (c >= 'A' && c <= 'Z') ? (c - 'A' + 'a') : c;
+	if (isupper(c))
+		return c | 32;
+	return c;
+}
+
+int toascii(int c)
+{
+	return c & 0x7F;
 }
 
 char* strcpy(char* s2, const char* s1)
