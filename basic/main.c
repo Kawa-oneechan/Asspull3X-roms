@@ -45,7 +45,7 @@ typedef unsigned char* sptr;
 bool Command();
 int Function();
 
-bool errdOut;
+bool errdOut, suppressPrompt;
 sptr ptr, errPos;
 line* firstLine;
 line* currentLine;
@@ -459,9 +459,9 @@ bool CmdEnd()
 bool CmdPrint()
 {
 	bool hadSemiColon = false;
-	SkipWhite();
 	while (*ptr && !errdOut)
 	{
+		SkipWhite();
 		unsigned char c = *ptr;
 		if (c == EOL || c == ':')
 			break;
@@ -470,6 +470,7 @@ bool CmdPrint()
 			char* str = ExpectString();
 			printf(str);
 			free(str);
+			hadSemiColon = false;
 			ptr--;
 		}
 		else if (isalpha(c))
@@ -1373,7 +1374,7 @@ int Save(const char* file)
 #ifdef WIN32
 int main(int argc, char* argv[])
 {
-	Direct("COLOR 14: PRINT \"A3X BASIC (win32 v.)\": COLOR 7");
+	Direct("COLOR 14: PRINT \"A3X BASIC (win32 v.)\": COLOR 7: PRINT CHR$(&HA9); \" 2022 Firrhna Productions\"");
 #else
 int main()
 {
@@ -1381,7 +1382,7 @@ int main()
 	REG_CARET = 0x8000;
 	TEXT->SetTextColor(0, 7);
 	TEXT->ClearScreen();
-	Direct("COLOR 14: PRINT \"A3X BASIC\": COLOR 7");
+	Direct("COLOR 14: PRINT \"A3X BASIC\": COLOR 7: PRINT CHR$(&H9B); \" 2022 Firrhna Productions\"");
 #endif
 	//We use the BASIC interpreter to announce the BASIC interpreter :3
 
@@ -1409,11 +1410,14 @@ int main()
 	char directInput[MAXSTRING+1];
 	while(true)
 	{
-		printf(">");
+		if (!suppressPrompt)
+			printf("Ok\n");
+		suppressPrompt = false;
 		gets_s(directInput, MAXSTRING);
 		if (isdigit(directInput[0]))
 		{
 			CompileLine(directInput);
+			suppressPrompt = true;
 		}
 		else
 		{
