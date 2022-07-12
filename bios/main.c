@@ -57,10 +57,13 @@ int main(void)
 	int32_t* cartCode = (int32_t*)0x00020000;
 	void(*entry)(void)= (void*)0x00020004;
 	bool haveDisk = false, hadDisk = false;
-	bool showSplash = false;
+	bool showSplash = false, showMenu = false;
 	const char bop[] = { 0, 0, 0, 1, 1, 2, 3, 3, 4, 4, 4, 3, 3, 2, 1, 1 };
+	const char blink[] = { 3, 4, 5, 6, 6, 6, 5, 4, 3 };
+	int blinker = 0;
 
 	sprintf(biosVer, "BIOS v%d.%d", (interface->biosVersion >> 8) & 0xFF, (interface->biosVersion >> 0) & 0xFF);
+	const char banner[] = "\x93\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x8B\n\x89 ASSPULL \x96\xD7 \x89\n\x8C\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x92";
 
 	DmaCopy(TEXTFONT, (int8_t*)&fontTiles, 0xC00, DMA_INT);
 	ResetPalette();
@@ -173,14 +176,15 @@ int main(void)
 	FindFont();
 #endif
 
-	Fade(false, false);
+	//Fade(false, false);
 
 	volatile uint8_t* firstDisk = (uint8_t*)0x02000000 + (diskToDev[0] * 0x8000);
 
 	while(1)
 	{
-		if (*cartCode != 0x41535321) //ASS!
-		{
+goAgain:
+//		if (*cartCode != 0x41535321) //ASS!
+//		{
 			haveDisk = firstDisk[4] & 1;
 			if (haveDisk && !hadDisk)
 			{
@@ -196,7 +200,11 @@ int main(void)
 					CloseFile(&file);
 					OBJECTS_A[0] = OBJECTA_BUILD(32, 0, 1, 0); //disk
 					entry = (void*)0x01002020;
-					break;
+					//BUT!
+					if (*cartCode == 0x41535321)
+						showMenu = true;
+					else
+						break;
 				}
 				else
 				{
@@ -210,8 +218,9 @@ int main(void)
 				OBJECTS_A[0] = OBJECTA_BUILD(0, 0, 1, 0); //logo
 				continue;
 			}
-		}
-		else
+//		}
+//		else
+		if (*cartCode == 0x41535321 && !showMenu) //ASS!
 		{
 			entry = (void*)0x00020004;
 			OBJECTS_A[0] = OBJECTA_BUILD(16, 0, 1, 0); //cart
@@ -224,15 +233,14 @@ int main(void)
 			char about[256];
 			interface->DrawCharFont = (char*)0x0E060400;
 			interface->DrawCharHeight = 0x0808;
-			sprintf(about, "\x93\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x8B\n\x89 ASSPULL \x96\xD7 \x89\n\x8C\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x92\n%s\nCode by Kawa\n" __DATE__, biosVer);
+			sprintf(about, "%s\nCode by Kawa\n" __DATE__, biosVer);
 			for (int i = 2; i <= 6; i++)
 			{
-				DrawString(about, 104, 130, i);
+				DrawString(banner, 104, 130, i);
+				DrawString(about, 104, 154, i);
 				WaitForVBlanks(16);
 			}
 			WaitForVBlanks(128);
-			const char blink[] = { 3, 4, 5, 6, 6, 6, 5, 4, 3 };
-			int blinker = 0;
 			while (!INP_KEYIN)
 			{
 				if (blinker % 8 == 0)
@@ -245,10 +253,63 @@ int main(void)
 			DrawString("\x03", 208, 202, 1);
 			for (int i = 5; i >= 1; i--)
 			{
-				DrawString(about, 104, 130, i);
+				DrawString(banner, 104, 130, i);
+				DrawString(about, 104, 154, i);
 				WaitForVBlanks(16);
 			}
 			OBJECTS_B[0] = OBJECTB_BUILD(144, 152, 1, 1, 0, 0, 1, 0);
+		}
+
+		if (showSplash && showMenu)
+		{
+			OBJECTS_B[0] = OBJECTB_BUILD(-32, -32, 0, 0, 0, 0, 0, 0);
+			interface->DrawCharFont = (char*)0x0E060400;
+			interface->DrawCharHeight = 0x0808;
+			const char menu[] = " \x1D CARTRIDGE\n\n   DISKETTE\n";
+			DrawString(banner, 104, 130, 6);
+			DrawString(menu, 104, 162, 6);
+			int cursor = 0;
+			while (true)
+			{
+				int key = INP_KEYIN;
+				if (key == KEYSCAN_UP || key == KEYSCAN_DOWN)
+					cursor = !cursor;
+				if (*cartCode != 0x41535321 || !(firstDisk[4] & 1))
+				{
+					showMenu = false;
+					hadDisk = false;
+					haveDisk = false;
+					DrawString(banner, 104, 130, 1);
+					DrawString(menu, 104, 162, 1);
+					OBJECTS_B[0] = OBJECTB_BUILD(144, 152, 1, 1, 0, 0, 1, 0);
+					goto goAgain;
+				}
+				else if (key == KEYSCAN_ENTER)
+				{
+					if (!cursor)
+					{
+						entry = (void*)0x00020004;
+						OBJECTS_A[0] = OBJECTA_BUILD(16, 0, 1, 0); //cart
+					}
+					else
+					{
+						entry = (void*)0x01002020;
+						OBJECTS_A[0] = OBJECTA_BUILD(32, 0, 1, 0); //disk
+					}
+					break;
+				}
+				DrawString("\x1D", 112, 162 + (cursor * 16), blink[blinker / 8]);
+				DrawString("\x1D", 112, 162 + (!cursor * 16), 1);
+				blinker++;
+				if (blinker == 8 * 8)
+					blinker = 0;
+				WaitForVBlank();
+			}
+			DrawString(banner, 104, 130, 1);
+			DrawString(menu, 104, 162, 1);
+			DrawString("\x1D", 112, 162 + 16, 1);
+			OBJECTS_B[0] = OBJECTB_BUILD(144, 152, 1, 1, 0, 0, 1, 0);
+			break;
 		}
 
 		if (!showSplash)
@@ -268,7 +329,8 @@ int main(void)
 			MISC->DmaCopy(PALETTE + 256, (int8_t*)&iconsPal, 16, DMA_SHORT);
 			MISC->DmaCopy(TILESET, (int8_t*)&iconsTiles, 512, DMA_INT);
 			OBJECTS_A[0] = OBJECTA_BUILD(0, 0, 1, 0);
-			OBJECTS_B[0] = OBJECTB_BUILD(144, 152, 1, 1, 0, 0, 1, 0);
+			if (!showMenu)
+				OBJECTS_B[0] = OBJECTB_BUILD(144, 152, 1, 1, 0, 0, 1, 0);
 			MIDI_PROGRAM(1, MIDI_SEASHORE);
 			MIDI_KEYON(1, MIDI_C4, 80);
 			Fade(true, false);
