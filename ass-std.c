@@ -40,7 +40,7 @@ static const char sctoasc[] = {
 	0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   // 0xf0
 };
 
-char __fgetc_echo = 1;
+static bool __fgetc_echo = true;
 
 int fputc(int c, FILE* file)
 {
@@ -159,8 +159,8 @@ char* fgets(char* s, int n, FILE* file)
 {
 	char* _s = s;
 	int c = 0;
-	char echo = __fgetc_echo;
-	__fgetc_echo = 0;
+	bool echo = __fgetc_echo;
+	__fgetc_echo = false;
 	while(--n)
 	{
 		c = fgetc(file);
