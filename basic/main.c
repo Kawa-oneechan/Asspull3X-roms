@@ -513,6 +513,7 @@ bool CmdPrint()
 	}
 	if (!hadSemiColon)
 		printf("\n");
+
 	return true;
 }
 
@@ -1261,6 +1262,16 @@ bool CmdRun()
 			break;
 		else if (ret == 2) //Goto'd
 			continue;
+
+#ifdef WIN32
+		if (GetAsyncKeyState(VK_ESCAPE) && GetAsyncKeyState(VK_SHIFT))
+#else
+		if (INP_KEYMAP[0x01] && INP_KEYSHIFT == 1)
+#endif
+		{
+			printf("\nBreak!\n");
+			break;
+		}
 	}
 	return true;
 }
@@ -1303,7 +1314,7 @@ bool List(int from, int to)
 		int errColTrack = 1;
 		if (from != -1)
 		{
-			printf("%-4d ", thisLine->lineNo);
+			printf("%d ", thisLine->lineNo);
 			errColTrack = 6;
 		}
 		sptr ptr = thisLine->lineTokens;
