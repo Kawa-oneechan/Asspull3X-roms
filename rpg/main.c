@@ -72,6 +72,29 @@ void drawString(int x, int y, const char* string)
 	}
 }
 
+uint16_t convertRange(uint16_t v, uint16_t oldMax, uint16_t newMax)
+{
+	return (uint16_t)(v * newMax) / oldMax;
+}
+
+void drawBar(int x, int y, int v, int m, int l)
+{
+	int barDotsFilled = convertRange(v, m, l * 8);
+	int barWholes = barDotsFilled / 8;
+	int barFracs = barDotsFilled % 8;
+
+	uint16_t *map = &MAP4[(y * 64) + x];
+	*map++ = 0xF010;
+	if (barWholes)
+		for (int i = 0; i < barWholes; i++)
+			*map++ = 0xF01A;
+	if (barFracs)
+		*map++ = 0xF012 + barFracs;
+	for (int i = barWholes + (barFracs > 0); i < l; i++)
+		*map++ = 0xF012;
+	*map++ = 0xF011;
+}
+
 int main(void)
 {
 	REG_MAPSET = 0xF0;
@@ -84,7 +107,7 @@ int main(void)
 
 //	MISC->DmaCopy(TILESET + 0x6000, (int8_t*)&fontTiles, 0x700, DMA_INT);
 
-	MISC->DmaCopy(TILESET + 0xC000, (int8_t*)&fontTiles, 0x80, DMA_INT);
+	MISC->DmaCopy(TILESET + 0xC000, (int8_t*)&fontTiles, 0x100, DMA_INT);
 	MISC->DmaClear(TILESET+ 0xC400, 0x88888888, 0x3800 / 4, DMA_INT);
 //	MISC->DmaCopy(TILESET + 0x6400, (int8_t*)&uiTiles + 0x400, 0x5D0, DMA_INT);
 	REG_BLITSOURCE = (int32_t)fontTiles + 0x400;
