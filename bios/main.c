@@ -168,12 +168,9 @@ int main(void)
 #ifdef EXTENSIVE
 	else
 	{
-		FindFont();
 		WaitForVBlanks(1);
 		Jingle();
 	}
-#else
-	FindFont();
 #endif
 
 	//Fade(false, false);
@@ -356,6 +353,9 @@ goAgain:
 #endif
 		Fade(false, false);
 	}
+
+	FindFont();
+
 	if (entry == (void*)0x00020004)
 		DmaClear((int8_t*)0x01001000, 0, 0x00200000, DMA_INT); //Reset cart's workram
 	MidiReset();
@@ -376,13 +376,16 @@ goAgain:
 void FindFont()
 {
 	FILE file;
+	FILEINFO nfo;
 	char fontName[] = "A:/font.bin";
 	for (int i = 0; i < GetNumDrives(); i++)
 	{
 		fontName[0] = 'A' + i;
 		if (OpenFile(&file, fontName, FA_READ) == 0)
 		{
-			ReadFile(&file, (void*)TEXTFONT, 0x3000);
+			DISK->FileStat(fontName, &nfo);
+			if (nfo.fsize == 12288)
+				ReadFile(&file, (void*)TEXTFONT, 0x3000);
 			CloseFile(&file);
 			return;
 		}

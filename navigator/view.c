@@ -1,4 +1,5 @@
 #include "nav.h"
+extern const uint8_t iconsTiles[];
 
 int StartApp(char* filePath)
 {
@@ -8,6 +9,7 @@ int StartApp(char* filePath)
 	FILE file;
 	DISK->OpenFile(&file, filePath, FA_READ);
 	DISK->ReadFile(&file, (void*)0x01002000, nfo.fsize);
+	DISK->CloseFile(&file);
 	TEXT->ClearScreen();
 	entry();
 	WaitForKey();
@@ -223,6 +225,23 @@ int ShowText(char* filePath)
 	return 2;
 }
 
+int LoadFont(char* filePath)
+{
+	FILEINFO nfo;
+	DISK->FileStat(filePath, &nfo);
+	if (nfo.fsize != 12288)
+	{
+		ShowError("Invalid font file, wrong size.");
+		return 3;
+	}
+	FILE file;
+	DISK->OpenFile(&file, filePath, FA_READ);
+	DISK->ReadFile(&file, (void*)TEXTFONT, 0x3000);
+	MISC->DmaCopy(TEXTFONT + 0x2A00, (int8_t*)&iconsTiles, 512, DMA_BYTE);
+	DISK->CloseFile(&file);
+	return 0;
+}
+
 int ShowFile(char* filePath, bool allowRun)
 {
 	char* ext = strrchr(filePath, '.') + 1;
@@ -230,6 +249,8 @@ int ShowFile(char* filePath, bool allowRun)
 		ShowText(filePath);
 	else if (!strcmp(ext, "API"))
 		ShowPic(filePath);
+	else if (!strcmp(ext, "FNT"))
+		LoadFont(filePath);
 	else if (!strcmp(ext, "APP") && allowRun)
 		StartApp(filePath);
 	else
