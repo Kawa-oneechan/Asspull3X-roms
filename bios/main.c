@@ -269,8 +269,11 @@ goAgain:
 			while (true)
 			{
 				int key = INP_KEYIN;
-				if (key == KEYSCAN_UP || key == KEYSCAN_DOWN)
+				if (key == KEYSCAN_UP || key == KEYSCAN_DOWN || (INP_JOYPAD1 && INP_JOYPAD1 <= BUTTON_LEFT))
+				{
+					while (INP_JOYPAD1) vbl();
 					cursor = !cursor;
+				}
 				if (*cartCode != 0x41535321 || !(firstDisk[4] & 1))
 				{
 					showMenu = false;
@@ -281,7 +284,7 @@ goAgain:
 					OBJECTS_B[0] = OBJECTB_BUILD(144, 152, 1, 1, 0, 0, 1, 0);
 					goto goAgain;
 				}
-				else if (key == KEYSCAN_ENTER)
+				else if (key == KEYSCAN_ENTER || INP_JOYPAD1 >= BUTTON_A)
 				{
 					if (!cursor)
 					{
