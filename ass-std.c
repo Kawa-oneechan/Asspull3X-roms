@@ -116,7 +116,7 @@ int fgetc(FILE* file)
 
 int getdelim(char** linePtr, int* n, char delim, FILE* file)
 {
-	register int charsAvailable;
+	int charsAvailable;
 	char* readPos;
 	if (*linePtr == NULL)
 	{
@@ -125,9 +125,13 @@ int getdelim(char** linePtr, int* n, char delim, FILE* file)
 	}
 	charsAvailable = *n;
 	readPos = *linePtr;
-	while(1)
+	while (1)
 	{
 		int c = getc(file);
+		if (file != STDIN && c == EOF)
+		{
+			return EOF;
+		}
 		if (file == STDIN && c == '\b')
 		{
 			if (readPos > *linePtr) readPos--;

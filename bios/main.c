@@ -47,7 +47,8 @@ extern const uint16_t iconsPal[16];
 	(((hp) & 0x7FF) << 0)						\
 )
 
-void FindFont();
+void BlankOut();
+void DiskEntry();
 void Jingle();
 extern char diskToDev[16];
 
@@ -187,16 +188,11 @@ goAgain:
 			{
 				hadDisk = true;
 				FILE file;
-				if (OpenFile(&file, "start.app", FA_READ) == 0)
+				if (OpenFile(&file, "start.cfg", FA_READ) == 0)
 				{
-					if (ReadFile(&file, (void*)0x01002000, 0) < 0)
-					{
-						OBJECTS_A[0] = OBJECTA_BUILD(48, 0, 1, 0); //? disk
-						continue;
-					}
 					CloseFile(&file);
 					OBJECTS_A[0] = OBJECTA_BUILD(32, 0, 1, 0); //disk
-					entry = (void*)0x01002020;
+					entry = DiskEntry;
 					//BUT!
 					if (*cartCode == 0x41535321)
 						showMenu = true;
@@ -293,7 +289,7 @@ goAgain:
 					}
 					else
 					{
-						entry = (void*)0x01002020;
+						entry = DiskEntry;
 						OBJECTS_A[0] = OBJECTA_BUILD(32, 0, 1, 0); //disk
 					}
 					break;
@@ -357,10 +353,16 @@ goAgain:
 		Fade(false, false);
 	}
 
-	FindFont();
-
 	if (entry == (void*)0x00020004)
+	{
 		DmaClear((int8_t*)0x01001000, 0, 0x00200000, DMA_INT); //Reset cart's workram
+		BlankOut();
+	}
+	entry();
+}
+
+void BlankOut()
+{
 	MidiReset();
 	REG_SCREENMODE = REG_SCREENFADE = REG_MAPSET = 0;
 	REG_SCROLLX1 = REG_SCROLLX2 = REG_SCROLLY1 = REG_SCROLLY2 = 0;
@@ -373,25 +375,65 @@ goAgain:
 	attribs = 0x0F;
 	ClearScreen();
 	ResetPalette();
-	entry();
 }
 
-void FindFont()
+void DiskEntry()
 {
 	FILE file;
 	FILEINFO nfo;
-	char fontName[] = "A:/font.bin";
-	for (int i = 0; i < GetNumDrives(); i++)
+	char cfgData[512];
+	OpenFile(&file, "start.cfg", FA_READ);
+	ReadFile(&file, cfgData, 512);
+	CloseFile(&file);
+
+	char* ptr = cfgData;
+	char* key;
+	char* value;
+
+	char fontName[16] = { 0 };
+	char shellName[16] = { 0 };
+
+	while (*ptr != 0)
 	{
-		fontName[0] = 'A' + i;
-		if (OpenFile(&file, fontName, FA_READ) == 0)
+		//printf("ptr: %s\n", ptr);
+		key = ptr;
+		while(*ptr != 0 && *ptr != '=') ptr++;
+		*ptr = 0;
+		ptr++;
+		value = ptr;
+		while(*ptr != 0 && *ptr != '\n') ptr++;
+		*ptr = 0;
+		ptr++;
+
+		//printf("key: %s\n", key);
+		//printf("value: %s\n", value);
+		if (!strcmp(key, "font"))
+			strcpy(fontName, value);
+		else if (!strcmp(key, "shell"))
+			strcpy(shellName, value);
+	}
+
+	if (fontName[0])
+	{
+		FileStat(fontName, &nfo);
+		if (nfo.fsize == 12288)
 		{
-			DISK->FileStat(fontName, &nfo);
-			if (nfo.fsize == 12288)
-				ReadFile(&file, (void*)TEXTFONT, 0x3000);
-			CloseFile(&file);
-			return;
+			OpenFile(&file, fontName, FA_READ);
+			ReadFile(&file, (void*)TEXTFONT, 0x3000);
 		}
+		CloseFile(&file);
+	}
+
+	if (shellName[0])
+	{
+		void(*entry)(void) = (void*)0x01002020;
+		FILEINFO nfo;
+		FileStat(shellName, &nfo);
+		OpenFile(&file, shellName, FA_READ);
+		ReadFile(&file, (void*)0x01002000, nfo.fsize);
+		CloseFile(&file);
+		BlankOut();
+		entry();
 	}
 }
 
