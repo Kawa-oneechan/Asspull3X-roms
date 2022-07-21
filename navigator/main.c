@@ -344,7 +344,7 @@ void SelectFile(const char* path1, const char* path2, const char* pattern)
 						TEXTMAP[(FILESSHOWN + 2) * 80 + o + i + 1] = 0x9000 | CLR_PANEL; //--
 					TEXTMAP[(FILESSHOWN + 2) * 80 + o + WIDTH] = 0xBE00 | CLR_PANEL; //-|
 					TEXT->SetTextColor(SplitColor(CLR_PANEL));
-					TEXT->SetCursorPosition(2 + o + 1, FILESSHOWN + 3);
+					TEXT->SetCursorPosition(2 + o, FILESSHOWN + 3);
 					DISK->GetLabel(workPath[s][0], label, &id);
 					TEXT->Write("Label: %04X-%04X, %s", id >> 16, id & 0xFFFF, label[0] ? label : "no name");
 					id = DISK->GetFree(workPath[s][0]);
@@ -382,7 +382,7 @@ void SelectFile(const char* path1, const char* path2, const char* pattern)
 						{
 							icon[0] = 0xB4;
 							icon[1] = 0xB5;
-							char* ext = strrchr((const char*)filePath, '.') + 1;
+							char* ext = strrchr((const char*)filePath[s], '.') + 1;
 							if (!strcmp(ext, "APP"))
 							{
 								icon[0] = 0xB6;

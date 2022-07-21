@@ -249,16 +249,17 @@ int ShowFile(char* filePath, bool allowRun)
 		ShowText(filePath);
 	else if (!strcmp(ext, "API"))
 		ShowPic(filePath);
-	else if (!strcmp(ext, "FNT"))
+	else if (!strcmp(ext, "FNT") && allowRun)
 		LoadFont(filePath);
 	else if (!strcmp(ext, "APP") && allowRun)
 		StartApp(filePath);
 	else
 	{
-		char msg[64];
-		sprintf(msg, "Unknown file type \"%s\".", ext);
-		ShowError(msg);
-		return 3;
+//		char msg[64];
+//		sprintf(msg, "Unknown file type \"%s\".", ext);
+//		ShowError(msg);
+//		return 3;
+		ShowText(filePath);
 	}
 	TEXT->SetTextColor(0, 7);
 	MISC->SetTextMode(SMODE_240 | SMODE_BOLD);
