@@ -47,6 +47,24 @@ char getchar()
 	return sctoasc[key & 0xFF];
 }
 
+extern uint16_t tilegrid[];
+extern uint8_t tilesTiles[];
+void TilemapTest()
+{
+	MISC->SetTextMode(SMODE_TILE);
+	MISC->DmaCopy(TILESET, (int8_t*)&tilesTiles, 256, DMA_INT);
+	REG_MAPSET = 0x10;
+	uint16_t* dst = MAP1;
+	uint16_t* src = (uint16_t*)tilegrid;
+	for (int line = 0; line < 30; line++)
+	{
+		for (int row = 0; row < 40; row++)
+			*dst++ = *src++;
+		dst += 24;
+	}
+	while (INP_KEYIN == 0) vbl();
+}
+
 #define NUMOPTS 11
 extern void TextTest();
 extern void GraphicsTest();
@@ -76,7 +94,7 @@ const void* const optionFuncs[] =
 {
 	TextTest,
 	GraphicsTest,
-	0,
+	TilemapTest,
 	KeyboardTest,
 	MouseTest,
 	JoypadTest,
