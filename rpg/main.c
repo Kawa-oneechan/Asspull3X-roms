@@ -49,29 +49,6 @@ void eraseWindow(int l, int t, int w, int h)
 	}
 }
 
-void drawString(int x, int y, const char* string)
-{
-	char *c = (char*)string;
-	int pos = (y * 64) + x;
-	int t = 0;
-	while (*c)
-	{
-		if (*c == '\n')
-		{
-			y += 2;
-			pos = (y * 64) + x;
-			c++;
-			continue;
-		}
-		t = (*c - ' ' + 16) * 2;
-		t |= 0xF000;
-		MAP4[pos +  0] = t;
-		MAP4[pos + 64] = t + 1;
-		pos++;
-		c++;
-	}
-}
-
 uint16_t convertRange(uint16_t v, uint16_t oldMax, uint16_t newMax)
 {
 	return (uint16_t)(v * newMax) / oldMax;
@@ -95,6 +72,8 @@ void drawBar(int x, int y, int v, int m, int l)
 	*map++ = 0xF011;
 }
 
+extern void startBattle();
+
 int main(void)
 {
 	REG_MAPSET = 0xF0;
@@ -102,19 +81,19 @@ int main(void)
 	MISC->SetTextMode(SMODE_TILE);
 	MISC->DmaClear(TILESET, 0, 0x4000, DMA_INT);
 	MISC->DmaClear(OBJECTS_A, 0, 0x1000, DMA_INT);
-	MISC->DmaCopy(PALETTE + 240, (int16_t*)&fontPal, 8, DMA_INT);
-	MISC->DmaCopy(PALETTE + 256 + 240, (int16_t*)&fontPal, 8, DMA_INT);
+	MISC->DmaCopy(PALETTE + 240, (int16_t*)&uiPal, 8, DMA_INT);
+	MISC->DmaCopy(PALETTE + 256 + 240, (int16_t*)&uiPal, 8, DMA_INT);
 
 //	MISC->DmaCopy(TILESET + 0x6000, (int8_t*)&fontTiles, 0x700, DMA_INT);
 
-	MISC->DmaCopy(TILESET + 0xC000, (int8_t*)&fontTiles, 0x100, DMA_INT);
-	MISC->DmaClear(TILESET+ 0xC400, 0x88888888, 0x3800 / 4, DMA_INT);
-//	MISC->DmaCopy(TILESET + 0x6400, (int8_t*)&uiTiles + 0x400, 0x5D0, DMA_INT);
-	REG_BLITSOURCE = (int32_t)fontTiles + 0x400;
-	REG_BLITTARGET = (int32_t)TILESET + 0xC400;
-	REG_BLITLENGTH = 0x3800;
+	MISC->DmaCopy(TILESET + 0xC000, (int8_t*)&uiTiles, 0x100, DMA_INT);
+	MISC->DmaClear(TILESET+ 0xC200, 0x88888888, 0x200 / 4, DMA_INT);
+	REG_BLITSOURCE = (int32_t)uiTiles + 0x200;
+	REG_BLITTARGET = (int32_t)TILESET + 0xC200;
+	REG_BLITLENGTH = 0x200;
 	REG_BLITKEY = 0;
 	REG_BLITCONTROL = BLIT_COPY | 0xC0 | BLIT_COLORKEY;
+
 	REG_MAPSHIFT = 0xD5;
 
 	MISC->DmaCopy(PALETTE + 256, (int16_t*)spritepalPal, 48, DMA_INT);
@@ -128,6 +107,9 @@ int main(void)
 	REG_HDMATARGET[0] = (int32_t)PALETTE + 496;
 	REG_HDMACONTROL[0] = DMA_ENABLE | HDMA_DOUBLE | (DMA_SHORT << 4) | (0 << 8) | (480 << 20);
 
+//	swapPartyMembers(1, 0);
+//	startBattle(4);
+
 	loadMap((Map*)testMap);
 	PALETTE[0] = 0;
 
@@ -135,9 +117,12 @@ int main(void)
 	//saySomething("* What a year, huh?\n* Captain, it's February.", 1);
 	//saySomething("0123456789012345678901234567890123\b\nSupercalifragilisticexpialidocious\nEven though the sound of it is\nsomething quite atrocious.", 0);
 
+//	drawBar(1, 2, 40, 80, 6);
+
 	for(;;)
 	{
 		updateAndDraw();
+//		drawBar(1, 2, entities[0].x * entities[0].y, 256, 6);
 		vbl();
 		getInput();
 	}

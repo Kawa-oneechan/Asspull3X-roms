@@ -4,7 +4,7 @@
 extern IBios* interface;
 
 extern const TImageFile titlePic;
-extern const uint16_t spritepalPal[], fontTiles[], fontPal[], uiBackground[];
+extern const uint16_t spritepalPal[], uiTiles[], uiPal[], uiBackground[];
 extern const uint8_t testMap[], spritePals[];
 extern const uint32_t sprites[], portraits[];
 
@@ -96,7 +96,12 @@ extern void loadMap(Map* map);
 extern void waitForActionKey();
 extern void drawWindow(int l, int t, int w, int h);
 extern void eraseWindow(int l, int t, int w, int h);
-extern void drawString(int x, int y, const char* string);
+extern void drawBar(int x, int y, int v, int m, int l);
+
+extern int doMenu(int left, int top, int width, int height, char* options, int num);
 
 extern void runScript(uint8_t* code, int entityID);
 
+extern int drawChar(char ch, int x, int y, int col, int font);
+extern int drawString(const char* str, int x, int y, int col, int font);
+extern int measureString(const char* str, int font);

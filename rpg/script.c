@@ -19,6 +19,8 @@ const uint8_t cursorTiles[] =
 
 int dialogueBoxIsOpen, dialoguePortrait;
 
+extern uint8_t canvas[];
+
 char playerName[16] = "Farrah";
 uint32_t scriptVariables[256] =
 {
@@ -27,6 +29,9 @@ uint32_t scriptVariables[256] =
 
 void saySomething(char *what, int flags)
 {
+	MISC->DmaClear(canvas, 0x88, 0x1000, DMA_BYTE);
+	MISC->DmaCopy(TILESET + 0xC400, (int8_t*)&canvas, 0x1000, DMA_BYTE);
+
 	char *c = what;
 
 	if (!dialogueBoxIsOpen)
@@ -42,6 +47,10 @@ void saySomething(char *what, int flags)
 		drawWindow(2, 2, 36, 6);
 	dialogueBoxIsOpen = 1;
 
+	for (int j = 0; j < 32; j++)
+		for (int i = 0; i < 4; i++)
+			MAP4[((i + 3) * 64) + (j + 3)] = (32 + j + (32 * i)) | 0xF000;
+
 	if (dialoguePortrait)
 	{
 		MISC->DmaCopy(TILESET + 0x1800, (int8_t*)portraits[dialoguePortrait - 1], 0x80, DMA_INT);
@@ -54,8 +63,9 @@ void saySomething(char *what, int flags)
 
 	if (*c != 0)
 	{
-		int x = dialoguePortrait ? 8 : 3;
-		int sx = x, sy = 3;
+		int x = dialoguePortrait ? 40 : 0;
+		int sx = x, sy = 0;
+		int lines = 1;
 		while (*c != 0)
 		{
 			vbl();
@@ -68,27 +78,41 @@ void saySomething(char *what, int flags)
 			}
 			if (*c == '\n')
 			{
-				if (sy == 5)
+				if (lines == 2)
 				{
 					//Already have a full box. Scroll it.
-					for (int i = 0; i < 2; i++)
+					//TODO: Wait for key?
+					for (int i = 0; i < 4; i++)
 					{
-						MISC->DmaCopy(&MAP4[3 * 64], &MAP4[4 * 64], 360, DMA_BYTE);
-						MISC->DmaClear(&MAP4[6 * 64] + 3, 0xF301, 34, DMA_SHORT);
-						vbl(); vbl(); vbl(); vbl();
+						//MISC->DmaCopy(&MAP4[3 * 64], &MAP4[4 * 64], 360, DMA_BYTE);
+						//MISC->DmaClear(&MAP4[6 * 64] + 3, 0xF301, 34, DMA_SHORT);
+						MISC->DmaCopy(canvas, canvas + 0x400, 0xC00, DMA_BYTE);
+						MISC->DmaClear(canvas + 0xC00, 0x88, 0x400, DMA_BYTE);
+						MISC->DmaCopy(TILESET + 0xC400, (int8_t*)&canvas, 0x1000, DMA_BYTE);
+						vbl(); vbl();
 					}
-					sy = 3;
+					sy = 0;
+					lines = 0;
 				}
-				sy += 2;
+				else
+				{
+					sy += 16; //2;
+					lines++;
+				}
 				sx = x;
 				c++;
 				continue;
 			}
-			uint16_t t = ((unsigned char)*c - 16) * 2;
-			t |= 0xF000;
-			MAP4[(sy * 64) + sx +  0] = t;
-			MAP4[(sy * 64) + sx + 64] = t + 1;
-			sx++;
+
+			//uint16_t t = ((unsigned char)*c - 16) * 2;
+			//t |= 0xF000;
+			//MAP4[(sy * 64) + sx +  0] = t;
+			//MAP4[(sy * 64) + sx + 64] = t + 1;
+			//sx++;
+			drawChar(*c, sx + 1, sy + 1, 1, 1);
+			sx += drawChar(*c, sx, sy, 2, 1);
+			MISC->DmaCopy(TILESET + 0xC400, (int8_t*)&canvas, 0x1000, DMA_BYTE);
+
 			c++;
 		}
 		waitForActionKey();
@@ -113,23 +137,40 @@ void saySomething(char *what, int flags)
 	while (INP_KEYMAP[KEY_ACTION]) { vbl(); }
 }
 
-int doMenu(int left, int top, char* options, int num)
+int doMenu(int left, int top, int width, int height, char* options, int num)
 {
+	MISC->DmaClear(canvas + 0x3000, 0x88, 0xC00, DMA_BYTE);
 	char *b = options;
-	int len = 0;
-	for (int i = 0; i < num; i++)
+	if (width == -1)
 	{
-		int nl = strlen(b);
-		if (nl > len)
-			len = nl;
-		b += nl + 1;
+		width = 0;
+		for (int i = 0; i < num; i++)
+		{
+			int nl = measureString(b, 0);
+			if (nl > width)
+				width = nl;
+			b += strlen(b) + 1;
+		}
+		width += 4;
+		width = width / 8;
+		width += 4;
 	}
-	drawWindow(left, top, len + 5, (num * 2) + 2);
+	if (height == -1)
+		height = num + 2;
+	if (height != -2)
+		drawWindow(left, top, width, height);
 	b = options;
-	for (int i = 0; i < num; i++)
+	if (b[0])
 	{
-		drawString(left + 3, top + 1 + (i * 2), b);
-		b += strlen(b) + 1;
+		for (int i = 0; i < num; i++)
+		{
+			drawString(b, ((i % 4) * 64) + 1, ((i / 4) * 8) + 96 + 1, 1, 0);
+			drawString(b, ((i % 4) * 64) + 0, ((i / 4) * 8) + 96 + 0, 2, 0);
+			int k = 416 + ((i % 4) * 8) + ((i / 4) * 32);
+			for (int j = 0; j < width - 4; j++)
+				MAP4[((i + top + 1) * 64) + (j + left + 3)] = k++ | 0xF000;
+			b += strlen(b) + 1;
+		}
 	}
 	MISC->DmaCopy(TILESET + 32, cursorTiles, 48, DMA_INT);
 
@@ -141,8 +182,8 @@ int doMenu(int left, int top, char* options, int num)
 	while (INP_KEYMAP[KEY_ACTION]) { vbl(); }
 	while (lastInput != KEY_ACTION)
 	{
-		OBJECTS_B[255] = OBJECTB_BUILD(((left + 1) * 8) - 4, ((top + 1 + (choice * 2)) * 8) + ((REG_TICKCOUNT / 32) % 2), 0, 0, 0, 0, 1, 0);
-		OBJECTS_B[254] = OBJECTB_BUILD(((left + 1) * 8) - 4, (top + 2 + (choice * 2)) * 8, 1, 0, 0, 0, 0, 0);
+		OBJECTS_B[255] = OBJECTB_BUILD(((left + 1) * 8) - 4, ((top + 1 + choice) * 8) - 2 + ((REG_TICKCOUNT / 32) % 2), 0, 0, 0, 0, 1, 0);
+		OBJECTS_B[254] = OBJECTB_BUILD(((left + 1) * 8) - 4, ((top + 2 + choice) * 8) - 2, 1, 0, 0, 0, 0, 0);
 		vbl();
 		getInput();
 		switch (lastInput)
@@ -162,7 +203,8 @@ int doMenu(int left, int top, char* options, int num)
 	lastInput = 0;
 	OBJECTS_A[255] = 0;
 	OBJECTS_A[254] = 0;
-	eraseWindow(left, top, len + 5, (num * 2) + 2);
+	if (height != -2)
+		eraseWindow(left, top, width, height);
 	return choice;
 }
 
@@ -326,7 +368,7 @@ void runScript(uint8_t* code, int entityID)
 					*biga++ = 0;
 					opts++;
 				}
-				acc = doMenu(2, 8, printBuffer, opts);
+				acc = doMenu(2, 8, -1, -1, printBuffer, opts);
 				break;
 			}
 			case 0x84: //portrait
