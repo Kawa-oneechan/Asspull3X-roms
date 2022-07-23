@@ -74,6 +74,66 @@ typedef struct
 
 extern MapEntity entities[MAXENTITIES];
 
+#define BIT_FROZEN		0x00010000
+#define BIT_BERSERK		0x00020000
+#define BIT_POISONED	0x00040000
+#define BIT_CANTFREEZE	0x00100000
+#define BIT_CANTBERSERK	0x00200000
+#define BIT_CANTPOISON	0x00400000
+#define BIT_AI_LEADER	0x01000000
+#define BIT_AI_FOLLOWER	0x02000000
+#define BIT_PLAYER		0x80000000
+
+#define BIT_FACTIONMASK	0x00000007
+enum Factions
+{
+	factFelin, factNation, factSunyellow, factNeutral
+};
+
+#define SHARED_BATTLE_STUFF \
+	uint32_t bits; \
+	uint16_t hp, hpMax; \
+	uint16_t pp, ppMax;
+
+typedef struct
+{
+	SHARED_BATTLE_STUFF
+} BattleParticipant;
+
+typedef struct
+{
+	SHARED_BATTLE_STUFF
+	char name[12];
+	uint8_t titleID;
+} PartyMember;
+
+typedef struct
+{
+	SHARED_BATTLE_STUFF
+	uint16_t monsterID;
+	void* work;
+} BattleOpponent;
+
+#undef SHARED_BATTLE_STUFF
+
+#define GETFACTION(x) (x->bits & BIT_FACTIONMASK)
+
+extern PartyMember party[8];
+
+typedef struct
+{
+	uint32_t bits; //copied to BattleOpponent
+	uint16_t hp, pp; //copied to BattleOpponent
+	const char name[16];
+	void(*handler)(void*, BattleOpponent*, int);
+} BattleOpponentDB;
+
+extern const BattleOpponentDB opponentDB[];
+extern const uint8_t formationsDB[][6];
+
+extern bool tryToFreeze(BattleParticipant* target);
+extern void swapPartyMembers(int a, int b);
+
 extern int lastInput;
 extern void getInput();
 

@@ -1,0 +1,137 @@
+{ "backgroundcolor":"#55007f",
+ "compressionlevel":-1,
+ "height":15,
+ "infinite":false,
+ "layers":[
+        {
+         "data":[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 4, 4, 5, 6, 4, 4, 4, 5, 6, 4, 4, 4, 5, 6, 4, 4, 4, 0,
+            0, 0, 20, 20, 21, 22, 23, 33, 34, 21, 22, 23, 33, 34, 21, 22, 23, 20, 20, 0,
+            0, 0, 14, 36, 37, 38, 39, 36, 36, 37, 64, 39, 36, 111, 37, 38, 39, 36, 15, 0,
+            0, 0, 24, 2, 2, 2, 2, 2, 2, 2, 28, 2, 2, 115, 2, 2, 2, 2, 26, 0,
+            0, 0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 0,
+            0, 0, 2, 2, 2, 2, 2, 2, 2, 2, 49, 50, 50, 50, 50, 50, 51, 2, 2, 0,
+            0, 0, 2, 2, 2, 2, 2, 2, 2, 2, 65, 66, 78, 79, 80, 124, 67, 2, 2, 0,
+            0, 0, 2, 2, 53, 85, 2, 2, 10, 2, 65, 122, 70, 71, 72, 132, 67, 2, 2, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 26, 2, 65, 130, 70, 71, 72, 66, 67, 2, 2, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 65, 76, 138, 140, 141, 124, 67, 2, 2, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 12, 2, 81, 82, 82, 82, 82, 136, 83, 2, 97, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 28, 2, 2, 2, 2, 2, 2, 2, 2, 2, 113, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+         "height":15,
+         "id":1,
+         "name":"Tile Layer 1",
+         "opacity":1,
+         "type":"tilelayer",
+         "visible":true,
+         "width":20,
+         "x":0,
+         "y":0
+        },
+        {
+         "draworder":"topdown",
+         "id":4,
+         "name":"Object Layer 1",
+         "objects":[
+                {
+                 "height":16,
+                 "id":2,
+                 "name":"start",
+                 "properties":[
+                        {
+                         "name":"facing",
+                         "type":"int",
+                         "value":0
+                        },
+                        {
+                         "name":"motor",
+                         "type":"int",
+                         "value":255
+                        },
+                        {
+                         "name":"script",
+                         "type":"string",
+                         "value":""
+                        },
+                        {
+                         "name":"sprite",
+                         "type":"int",
+                         "value":1
+                        }],
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":16,
+                 "x":96,
+                 "y":96
+                },
+                {
+                 "height":16,
+                 "id":3,
+                 "name":"Ilira",
+                 "properties":[
+                        {
+                         "name":"facing",
+                         "type":"int",
+                         "value":0
+                        },
+                        {
+                         "name":"motor",
+                         "type":"int",
+                         "value":0
+                        },
+                        {
+                         "name":"oldscript",
+                         "type":"string",
+                         "value":"(\n  (face 4)\n  (say \"Hello there, %s.\" %playername 1)\n  (ask \"Yes\" \"No\")\n  (face 0)\n)"
+                        },
+                        {
+                         "name":"script",
+                         "type":"string",
+                         "value":"(\n  (face 4)\n  (portrait 2)\n  (say \"What a year, huh %s?\" (getpartyname 0) 1)\n  (ask \"Joke\" \"Ignore\")\n  (portrait 1)\n  (say \"It's only July.\")\n  (face 0)\n)"
+                        },
+                        {
+                         "name":"sprite",
+                         "type":"int",
+                         "value":2
+                        }],
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":16,
+                 "x":128,
+                 "y":96
+                }],
+         "opacity":1,
+         "type":"objectgroup",
+         "visible":true,
+         "x":0,
+         "y":0
+        }],
+ "nextlayerid":6,
+ "nextobjectid":6,
+ "orientation":"orthogonal",
+ "renderorder":"right-down",
+ "tiledversion":"1.8.6",
+ "tileheight":16,
+ "tilesets":[
+        {
+         "columns":16,
+         "firstgid":1,
+         "image":"office16.png",
+         "imageheight":144,
+         "imagewidth":256,
+         "margin":0,
+         "name":"officeTiles",
+         "spacing":0,
+         "tilecount":144,
+         "tileheight":16,
+         "tilewidth":16,
+         "transparentcolor":"#000000"
+        }],
+ "tilewidth":16,
+ "type":"map",
+ "version":"1.8",
+ "width":20
+}

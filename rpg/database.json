@@ -1,0 +1,42 @@
+{
+	"partymembers": [
+		{
+			"name": "Farah",
+			"hp": 50,
+			"pp": 20
+		},
+		{
+			"name": "Sara",
+			"hp": 30,
+			"pp": 20
+		},
+		{
+			"name": "Laura",
+			"hp": 40,
+			"pp": 20
+		}
+	],
+	"opponents": [
+		{
+			"name": "Ratte",
+			"faction": "neutral",
+			"hp": 10,
+			"pp": 10,
+			"handler": null
+		},
+		{
+			"name": "Invader",
+			"faction": "nation",
+			"hp": 20,
+			"pp": 10,
+			"handler": null
+		}
+	],
+	"formations": [
+		[ "ratte" ],
+		[ "ratte", "ratte" ],
+		[ "invader" ],
+		[ "invader", "invader" ],
+		[ "invader", "ratte" ]
+	]
+}

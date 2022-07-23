@@ -54,7 +54,7 @@ $(TARGET).elf : $(OFILES) $(AFILES) Makefile $(DEPENDFILE)
 all:	clean $(TARGET).elf
 
 clean:
-	rm -f $(OFILES) $(MAPFILE) $(TARGET).elf $(GFXtoclean)
+	rm -f $(OFILES) $(MAPFILE) $(TARGET).elf $(GFXtoclean) $(othercleans)
 	# ../_disk2_/$(TARGET).app
 
 # --- ROM compilation ---

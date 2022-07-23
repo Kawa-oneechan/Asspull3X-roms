@@ -385,6 +385,21 @@ void runScript(uint8_t* code, int entityID)
 				dialoguePortrait = acc;
 				break;
 			}
+			case 0x85: //getpartyname
+			{
+				argc = stack[--stackSize];
+				if (argc == 0)
+					acc = 0;
+				else
+				{
+					acc = stack[--stackSize];
+					argc--;
+				}
+				while (argc--) --stackSize;
+				acc = (uint32_t)party[acc].name;
+				stack[stackSize++] = acc;
+				break;
+			}
 		}
 		//printf(" 0x%04X  ", acc);
 		//for (int i = 0; i < stackSize; i++)	printf("%d ", stack[i]);
