@@ -13,9 +13,6 @@ A work-in-progress classic BASIC interpreter. The same source file is shared bet
 ### `bios`
 This is the complete source of the BIOS and boot firmware. It compiles to `ass-bios.apb` ("*a*ss*p*ull *b*ios") and contains several functions available to other programs, subdivided into a couple different libraries, Amiga style.
 
-### `cmd`
-This is an attempt to create a DOS prompt, basically, to navigate standard-issue 1.44 MB FAT floppy diskettes. It's very simple, with `cd`, `dir`, `ren`, `del`, and `show` commands. The `show` command should work on `txt` files as well as images in `api` format. `navigator` is much better, and `cmd` may be removed.
-
 ### `columns`
 It's *Columns*, and it's in development.
 
@@ -30,12 +27,6 @@ Hello World, but as a file on a bootable diskette. It compiles straight into `_d
 
 ### `helloworld`
 Much the same as `fromdisk`, but as a cart application.
-
-### `lab`
-This defies description. It has been many things, all buried in comment blocks.
-
-### `malloctest`
-An attempt at stress-testing heap memory.
 
 ### `midipiano`
 A toy piano. Use the keyboard to play notes, change octaves with the left and right arrow keys, and change instruments with the up and down arrow keys.
