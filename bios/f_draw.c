@@ -95,6 +95,27 @@ void DisplayPicture(TImageFile* picData)
 		RleUnpack((void*)MEM_VRAM, source, picData->Stride * picData->Height);
 	else
 		DmaCopy((void*)MEM_VRAM, source, picData->ByteSize, DMA_INT);
+
+	if (picData->Flags & 2) //HDMA
+	{
+		uint8_t* hdma = (uint8_t*)((int)picData + picData->HdmaOffset);
+		uint8_t channels = *hdma;
+		hdma++;
+		int32_t p = (int32_t)PALETTE;
+		for (int i = 0; i < channels; i++)
+		{
+			uint16_t size = *(uint16_t*)hdma;
+			hdma += 2;
+			uint32_t ctrl = *(uint32_t*)hdma;
+			hdma += 4;
+			int32_t here = (int32_t)hdma;
+			REG_HDMASOURCE[i] = here;
+			REG_HDMATARGET[i] = p;
+			REG_HDMACONTROL[i] = ctrl;
+			hdma += size;
+			p += 2;
+		}
+	}
 }
 
 #define FADESPEED 1

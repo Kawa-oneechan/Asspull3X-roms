@@ -13,7 +13,7 @@ GRIT		:= grit.exe
 TARGET		:= ass-bios
 
 # Regular makefile continues here
-SFILES	:=	crt0.s font.s splash.s hdma.s icons.s
+SFILES	:=	crt0.s font.s splash.s icons.s
 CFILES	:=	main.c f_text.c f_draw.c f_misc.c f_disk.c \
 		../ass-rt.c printf.c ff.c diskio.c 
 
@@ -71,8 +71,8 @@ clean:
 # --------------------------------------------------------------------
 
 splash.s : splash.api
-splash.api : splash.png
-	$(IMG2ASS) splash.png
+splash.api : splash.png splash-h0.png splash-h1.png
+	$(IMG2ASS) splash.png splash.api -c
 
 icons.s : icons.img.bin
 icons.img.bin : icons.png
@@ -84,7 +84,3 @@ font1.img.bin : font.png
 	$(GRIT) font.png -ofont1 -ab256 -ftb -fh! -p! -gB1
 font2.img.bin : font.png
 	$(GRIT) font.png -ofont2 -at256 -ftb -fh! -p! -gB1 -th16
-
-hdma.s : hdma1.png hdma2.png
-	$(HDMA2ASS) hdma1.png hdma.s hdma1
-	$(HDMA2ASS) hdma2.png hdma.s hdma2 -a

@@ -137,6 +137,7 @@ typedef struct
 	int32_t ByteSize;		// The total amount of bytes making up the full image. Should be equal to stride times height.
 	int32_t ColorOffset;	// The offset from the start of the structure to the color data.
 	int32_t ImageOffset;	// The offset from the start of the structure to the image data.
+	int32_t HdmaOffset;
 } TImageFile;
 
 typedef struct {

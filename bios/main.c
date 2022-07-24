@@ -22,7 +22,6 @@ extern int8_t attribs;
 
 extern char diskToDev[];
 
-extern const uint16_t hdma1[], hdma2[];
 extern const uint16_t fontTiles[];
 extern const TImageFile splashData;
 extern const uint16_t iconsTiles[256];
@@ -316,12 +315,6 @@ goAgain:
 			MISC->DmaClear(TILESET, 0, 0x4000, DMA_INT);
 			MISC->DmaClear(OBJECTS_A, 0, 0x1000, DMA_INT);
 			DisplayPicture((TImageFile*)&splashData);
-			REG_HDMASOURCE[0] = (int32_t)hdma1;
-			REG_HDMATARGET[0] = (int32_t)PALETTE;
-			REG_HDMACONTROL[0] = DMA_ENABLE | HDMA_DOUBLE | (DMA_SHORT << 4) | (0 << 8) | (480 << 20);
-			REG_HDMASOURCE[1] = (int32_t)hdma2;
-			REG_HDMATARGET[1] = (int32_t)(PALETTE + 1);
-			REG_HDMACONTROL[1] = DMA_ENABLE | HDMA_DOUBLE | (DMA_SHORT << 4) | (254 << 8) | (170 << 20);
 			MISC->DmaCopy(PALETTE + 256, (int8_t*)&iconsPal, 16, DMA_SHORT);
 			MISC->DmaCopy(TILESET, (int8_t*)&iconsTiles, 512, DMA_INT);
 			OBJECTS_A[0] = OBJECTA_BUILD(0, 0, 1, 0);
