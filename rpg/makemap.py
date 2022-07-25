@@ -252,7 +252,7 @@ def compile(script):
 
 	for k,v in stringPool.items():
 		code.write(f'STRPOOL_{k}:\n')
-		code.write(f'\t.asciz "{v}"\n')
+		code.write(f'\t.asciz "{v.encode("unicode_escape").decode("utf-8")}"\n')
 
 	return code.getvalue()
 

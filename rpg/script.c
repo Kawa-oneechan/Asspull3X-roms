@@ -138,7 +138,13 @@ void saySomething(char *what, int flags)
 
 int doMenu(int left, int top, int width, int height, char* options, int num)
 {
-	MISC->DmaClear(canvas + 0x3000, 0x88, 0xC00, DMA_BYTE);
+	if (width == -2)
+	{
+		MISC->DmaClear(canvas + 0x3000, 0, 0xC00, DMA_BYTE);
+		width = -1;
+	}
+	else
+		MISC->DmaClear(canvas + 0x3000, 0x88, 0xC00, DMA_BYTE);
 	char *b = options;
 	if (width == -1)
 	{
@@ -150,7 +156,7 @@ int doMenu(int left, int top, int width, int height, char* options, int num)
 				width = nl;
 			b += strlen(b) + 1;
 		}
-		width += 4;
+		width += 8;
 		width = width / 8;
 		width += 4;
 	}
