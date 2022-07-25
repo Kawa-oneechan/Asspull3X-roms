@@ -66,10 +66,30 @@ void saySomething(char *what, int flags)
 		int x = dialoguePortrait ? 40 : 0;
 		int sx = x, sy = 0;
 		int lines = 1;
+		int ink = 2, font = 1;
 		while (*c != 0)
 		{
 			vbl();
 			vbl();
+			if (*c == '@')
+			{
+				c++;
+				if (*c != '@')
+				{
+					switch(*c)
+					{
+#define HEXTOVAR(on, off, var, def) \
+case on: { c++; \
+	if (*c >= '0' && *c <= '9') var = *c - '0'; \
+	else if (*c >= 'A' && *c <= 'F') var = 10 + *c - 'A'; \
+	c++; break; } \
+case off: { c++; var = def; break; }
+						HEXTOVAR('C','c',ink, 2);
+						HEXTOVAR('F','f',font, 1);
+#undef HEXTOVAR
+					}
+				}
+			}
 			if (*c == '\b')
 			{
 				waitForActionKey();
@@ -108,8 +128,8 @@ void saySomething(char *what, int flags)
 			//MAP4[(sy * 64) + sx +  0] = t;
 			//MAP4[(sy * 64) + sx + 64] = t + 1;
 			//sx++;
-			drawChar(*c, sx + 1, sy + 1, 1, 1);
-			sx += drawChar(*c, sx, sy, 2, 1);
+			drawChar(*c, sx + 1, sy + 1, 1, font);
+			sx += drawChar(*c, sx, sy, ink, font);
 			MISC->DmaCopy(TILESET + 0xC400, (int8_t*)&canvas, 0x1000, DMA_BYTE);
 
 			c++;
