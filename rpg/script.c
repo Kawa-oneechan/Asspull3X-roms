@@ -81,8 +81,7 @@ void saySomething(char *what, int flags)
 				if (lines == 2)
 				{
 					//Already have a full box. Scroll it.
-					//TODO: Wait for key?
-					for (int i = 0; i < 4; i++)
+					for (int i = 0; i < 2; i++)
 					{
 						//MISC->DmaCopy(&MAP4[3 * 64], &MAP4[4 * 64], 360, DMA_BYTE);
 						//MISC->DmaClear(&MAP4[6 * 64] + 3, 0xF301, 34, DMA_SHORT);
@@ -91,8 +90,8 @@ void saySomething(char *what, int flags)
 						MISC->DmaCopy(TILESET + 0xC400, (int8_t*)&canvas, 0x1000, DMA_BYTE);
 						vbl(); vbl();
 					}
-					sy = 0;
-					lines = 0;
+					sy = 16;
+					lines = 2;
 				}
 				else
 				{
