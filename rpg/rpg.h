@@ -68,11 +68,13 @@ typedef struct
 	int8_t* tileset;
 	uint8_t* script;
 	void* motor;
+	bool offscreen;
 } MapEntity;
 
 #define MAXENTITIES 16
 
 extern MapEntity entities[MAXENTITIES];
+extern MapEntity* playerEntity;
 
 #define BIT_FROZEN		0x00010000
 #define BIT_BERSERK		0x00020000

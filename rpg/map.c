@@ -8,7 +8,8 @@ int cameraTX, cameraTY, lastCameraTX, lastCameraTY;
 
 Map* map;
 MapEntity entities[MAXENTITIES];
-
+MapEntity* playerEntity;
+int oidCt;
 
 void drawTile(int x, int y, int tileNum)
 {
@@ -92,6 +93,7 @@ void drawMap()
 void drawEntity(MapEntity *entity)
 {
 	if (entity->oid == 255) return;
+	int oid = 65 - entity->oid;
 
 	const char stepFrames[] = { 8,8,8,8,8,8,8,8,0,0,0,0,0,0,0,0,16,16,16,16,16,16,16,16,0,0,0,0,0,0,0,0 };
 
@@ -145,18 +147,31 @@ void drawEntity(MapEntity *entity)
 			break;
 	}
 
-	if (entity == (MapEntity*)&entities[0])
+	if (entity == playerEntity)
 		aimCamera(x, y);
 
-	MISC->DmaClear(TILESET + (entity->oid * 256), 0, 64, DMA_INT);
-	MISC->DmaCopy(TILESET + (entity->oid * 256) + 64, entity->tileset + (tile * 24), 48, DMA_INT);
-	OBJECTS_A[entity->oid] = OBJECTA_BUILD(entity->oid * 8, 0, 1, entity->palette);
+	MISC->DmaClear(TILESET + (oid * 256), 0, 64, DMA_INT);
+	MISC->DmaCopy(TILESET + (oid * 256) + 64, entity->tileset + (tile * 24), 48, DMA_INT);
+	OBJECTS_A[entity->oid] = OBJECTA_BUILD(oid * 8, 0, 1, entity->palette);
 	OBJECTS_B[entity->oid] = OBJECTB_BUILD(x - cameraX, y - cameraY, 0, 1, flip, 0, 1, 2);
 }
 
 void updateEntity(MapEntity *entity)
 {
-	if (entity->oid == 255) return;
+//	if (entity->oid == 255) return;
+
+	//adapted from OpenPoke
+	bool offscreen = false;
+	int bsv = entity->x - playerEntity->x;
+	if(bsv < -10) offscreen = true;
+	if(bsv > 10) offscreen = true;
+	bsv = entity->y - playerEntity->y;
+	if(bsv < -9) offscreen = true;
+	if(bsv > 9) offscreen = true;
+	if (offscreen)
+		entity->oid = 255;
+	else
+		entity->oid = 64 - oidCt++;
 
 	if (entity->motor != 0)
 	{
@@ -273,10 +288,11 @@ void updateAndDraw()
 	int keys[MAXENTITIES];
 	uint8_t ids[MAXENTITIES];
 	int count = 0;
+
 	for(int i = 0; i < map->entities[0]; i++)
 	{
 		ids[i] = i;
-		keys[i] = 42;
+		keys[i] = entities[i].oid;
 //		if(Actors[i].sprite)
 //		{
 			keys[i] = -256 * entities[i].y + i;
@@ -284,10 +300,13 @@ void updateAndDraw()
 //		}
 	}
 	id_sort_shell(keys, ids, count);
+	oidCt = 0;
+	for (int i = 0; i < MAXENTITIES; i++)
+		OBJECTS_A[i] = 0;
 
 	for (int i = 0; i < count; i++)
 	{
-		entities[ids[i]].oid = count - i;
+		//entities[ids[i]].oid = count - i;
 		updateEntity((MapEntity*)&entities[ids[i]]);
 		drawEntity((MapEntity*)&entities[ids[i]]);
 	}
@@ -319,6 +338,7 @@ void loadMap(Map* newMap)
 			case 255:
 				me->motor = entityPlayerMotor;
 				aimCamera(me->x * 16, me->y * 16);
+				playerEntity = me;
 				break;
 			default: me->motor = 0; break;
 		}
