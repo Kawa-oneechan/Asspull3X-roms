@@ -251,8 +251,10 @@ def compile(script):
 			code.write(f'\t  .long STRPOOL_{w}\n')
 
 	for k,v in stringPool.items():
+		v2 = v.replace('\n', '\\n')
+		v2 = v2.replace('\b', '\\b')
 		code.write(f'STRPOOL_{k}:\n')
-		code.write(f'\t.asciz "{v.encode("unicode_escape").decode("utf-8")}"\n')
+		code.write(f'\t.asciz "{v2}"\n')
 
 	return code.getvalue()
 
@@ -294,7 +296,7 @@ for layer in mapJSON['layers']:
 		v = ((value - 1) & 0x3FF) if (value > 0) else 0
 		tileMap.append(v)
 
-of = open(args.outFile, "w")
+of = open(args.outFile, "w", encoding='cp1252')
 
 of.write('\t.text\n')
 of.write(f'\t.global {mapName}\n')

@@ -22,10 +22,14 @@ void plotTilePixel(int x, int y, unsigned char clr)
 	*dest = (*dest & (0xF0 >> shift)) | ((clr & 15) << shift);
 }
 
-int drawChar(char ch, int x, int y, int col, int font)
+int drawChar(unsigned int ch, int x, int y, int col, int font)
 {
+	ch = ch & 0xFF;
 	const TFont* f = fonts[font];
-	uint16_t offset = f->charRecs[(int)ch];
+	uint16_t high = f->highChar;
+	BYTESWAP(high);
+	if (ch >= high) ch = '?';
+	uint16_t offset = f->charRecs[ch];
 	BYTESWAP(offset);
 	uint8_t* charAddr = (uint8_t*)((uint8_t*)f->charRecs + offset - 6);
 	uint8_t width = *charAddr++;
@@ -58,10 +62,15 @@ int drawString(const char* str, int x, int y, int col, int font)
 int measureString(const char* str, int font)
 {
 	const TFont* f = fonts[font];
+	uint16_t high = f->highChar;
+	BYTESWAP(high);
 	int ret = 0;
 	while(*str)
 	{
-		uint16_t offset = f->charRecs[(int)*(str++)];
+		unsigned int ch = (unsigned int)*str++;
+		ch = ch & 0xFF;
+		if (ch >= high) ch = '?';
+		uint16_t offset = f->charRecs[ch];
 		BYTESWAP(offset);
 		uint8_t* charAddr = (uint8_t*)((uint8_t*)f->charRecs + offset - 6);
 		ret += *charAddr++;
