@@ -95,7 +95,8 @@ enum Factions
 #define SHARED_BATTLE_STUFF \
 	uint32_t bits; \
 	uint16_t hp, hpMax; \
-	uint16_t pp, ppMax;
+	uint16_t pp, ppMax; \
+	uint8_t attack, defense;
 
 typedef struct
 {
@@ -126,6 +127,7 @@ typedef struct
 {
 	uint32_t bits; //copied to BattleOpponent
 	uint16_t hp, pp; //copied to BattleOpponent
+	uint8_t attack, defense;
 	const char name[16];
 	void(*handler)(void*, BattleOpponent*, int);
 } BattleOpponentDB;

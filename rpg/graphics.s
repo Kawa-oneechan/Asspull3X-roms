@@ -18,8 +18,8 @@ spritePals:
 	.byte 0,0,0,0,0,0,0,0
 
 portraits:
-	.long farah_prtTiles, ilira_prtTiles, 0,0,0,0,0,0
-	.long farah_prtPal, ilira_prtPal, 0,0,0,0,0,0	
+	.long farah_prtTiles, ilira_prtTiles, kay_prtTiles,0,0,0,0,0
+	.long farah_prtPal, ilira_prtPal, kay_prtPal,0,0,0,0,0	
 
 uiBackground:
 	.short 0x5294,0x5294,0x5294,0x5294,0x5294,0x5294,0x4E73,0x4E73

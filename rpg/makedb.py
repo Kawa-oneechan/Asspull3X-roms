@@ -29,11 +29,14 @@ for partymember in dbJS['partymembers']:
 	bits = 0
 	hp = partymember['hp']
 	pp = partymember['pp']
+	at = partymember['atk']
+	df = partymember['def']
 	name = partymember['name']
 	of.write(f'//{name}\n')
 	of.write(f'\t.long 0x{bits:08X}\n') # consider using defines
 	of.write(f'\t.short {hp}, {hp}\n')
 	of.write(f'\t.short {pp}, {pp}\n')
+	of.write(f'\t.byte {at}, {df}\n')
 	of.write(f'\t.asciz "{name}"; .skip {12-len(name)}\n')
 	of.write(f'\t.byte 0\n') # TODO
 name = '\\0' * 14
@@ -50,12 +53,15 @@ for opponent in dbJS['opponents']:
 	bits = 0
 	hp = opponent['hp']
 	pp = opponent['pp']
+	at = opponent['atk']
+	df = opponent['def']
 	name = opponent['name']
 	handler = opponent['handler']
 	opponents.append(name.upper());
 	of.write(f'//{name}\n')
 	of.write(f'\t.long 0x{bits:08X}\n') # consider using defines
 	of.write(f'\t.short {hp}, {pp}\n')
+	of.write(f'\t.byte {at}, {df}\n')
 	of.write(f'\t.asciz "{name}"; .skip {15-len(name)}\n')
 	if handler == None:
 		handler = '0'

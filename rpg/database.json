@@ -3,17 +3,23 @@
 		{
 			"name": "Farah",
 			"hp": 50,
-			"pp": 20
+			"pp": 20,
+			"atk": 10,
+			"def": 15
 		},
 		{
 			"name": "Sara",
 			"hp": 30,
-			"pp": 20
+			"pp": 20,
+			"atk": 10,
+			"def": 15
 		},
 		{
 			"name": "Laura",
 			"hp": 40,
-			"pp": 20
+			"pp": 20,
+			"atk": 10,
+			"def": 15
 		}
 	],
 	"opponents": [
@@ -22,6 +28,8 @@
 			"faction": "neutral",
 			"hp": 10,
 			"pp": 10,
+			"atk": 10,
+			"def": 15,
 			"handler": null
 		},
 		{
@@ -29,6 +37,8 @@
 			"faction": "nation",
 			"hp": 20,
 			"pp": 10,
+			"atk": 10,
+			"def": 15,
 			"handler": null
 		}
 	],

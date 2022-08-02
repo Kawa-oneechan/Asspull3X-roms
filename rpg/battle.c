@@ -52,6 +52,7 @@ static const uint16_t hdma2[] =
 };
 
 extern uint8_t canvas[];
+extern int dialogueBoxIsOpen, dialoguePortrait;
 
 void drawBattleUI()
 {
@@ -75,17 +76,17 @@ void drawBattleUI()
 
 	for (int j = 0; j < 8; j++)
 		for (int i = 0; i < 6; i++)
-			MAP4[((i + 23) * 64) + (j + 1)] = (32 + j + (32 * i)) | 0xF000;
+			MAP4[((i + 23) * 64) + (j + 1)] = (128 + 32 + j + (32 * i)) | 0xF000;
 	for (int j = 0; j < 8; j++)
 		for (int i = 0; i < 6; i++)
-			MAP4[((i + 23) * 64) + (j + 26)] = (40 + j + (32 * i)) | 0xF000;
+			MAP4[((i + 23) * 64) + (j + 26)] = (128 + 40 + j + (32 * i)) | 0xF000;
 
 	for (int i = 0; i < 6; i++)
 	{
 		if (party[i].name[0] == 0 || party[i].hpMax == 0)
 			continue;
-		drawString(party[i].name, 0 + 1, (i * 8) + 1, 1, 0);
-		drawString(party[i].name, 0 + 0, (i * 8) + 0, 2, 0);
+		drawString(party[i].name, 0 + 1, 32 + (i * 8) + 1, 1, 0);
+		drawString(party[i].name, 0 + 0, 32 + (i * 8) + 0, 2, 0);
 		drawBar(9, 23 + i, party[i].hp, party[i].hpMax, 5);
 	}
 
@@ -93,9 +94,12 @@ void drawBattleUI()
 	{
 		if (opponents[i].monsterID == 0xFFFF)
 			continue;
-		drawString(opponentDB[opponents[i].monsterID].name, 64 + 1, (i * 8) + 1, 1, 0);
-		drawString(opponentDB[opponents[i].monsterID].name, 64 + 0, (i * 8) + 0, 2, 0);
+		drawString(opponentDB[opponents[i].monsterID].name, 64 + 1, 32 + (i * 8) + 1, 1, 0);
+		drawString(opponentDB[opponents[i].monsterID].name, 64 + 0, 32 + (i * 8) + 0, 2, 0);
 	}
+
+	dialoguePortrait = 3;
+	saySomething("It  is  I  who   added the\nnuts to that!");
 
 	while(1)
 	{
