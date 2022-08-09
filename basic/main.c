@@ -6,6 +6,7 @@
 #include <ctype.h>
 #define NOGDI
 #include <windows.h>
+#define strdup(X) _strdup(X)
 #else
 #include "../ass.h"
 #include "../ass-std.h"
@@ -422,6 +423,8 @@ char* ExpectString()
 		len++;
 	ptr = oldPtr + 1;
 	char* ret = (char*)malloc(len + 1);
+	if (ret == NULL)
+		return NULL;
 	char* r = ret;
 	while (len--)
 	{
@@ -956,7 +959,7 @@ bool CmdPoke()
 int Compile(const char* input, sptr output)
 {
 	unsigned char codeSoFar[MAXSTRING * 2] = "";
-	char token[64] = "";
+	char token[64] = { 0 };
 	sptr ptr = codeSoFar;
 	char* tok = token;
 	int mode = 0;
@@ -1131,7 +1134,7 @@ int CompileLine(const char* directInput)
 	if (toCompile == input)
 	{
 		printf("Invalid numbered input.\n");
-		return 0;;
+		return 0;
 	}
 	int lineNo = atoi(input);
 	if (toCompile == (char*)1)
@@ -1160,6 +1163,11 @@ int CompileLine(const char* directInput)
 	if (firstLine == 0)
 	{
 		firstLine = (line*)malloc(sizeof(line));
+		if (firstLine == NULL)
+		{
+			SyntaxError("Could not allocate line.");
+			return 0;
+		}
 		memset((void*)firstLine, 0, sizeof(line));
 		firstLine->lineNo = lineNo;
 		Compile(toCompile, firstLine->lineTokens);
@@ -1184,6 +1192,11 @@ int CompileLine(const char* directInput)
 		if (thisLine->lineNo != lineNo)
 		{
 			thisLine = (line*)malloc(sizeof(line));
+			if (thisLine == NULL)
+			{
+				SyntaxError("Could not allocate line.");
+				return 0;
+			}
 			memset((void*)thisLine, 0, sizeof(line));
 		}
 		if (prevLine == 0)
