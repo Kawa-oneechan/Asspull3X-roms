@@ -25,14 +25,17 @@ A small "Hello World" variant that demonstrates how to identify and use an exter
 ### `fromdisk`
 Hello World, but as a file on a bootable diskette. It compiles straight into `_disk2_` as an `app` file ("*a*ss*p*ull *p*rogram"). The BIOS can then detect its presence.
 
+### `hdma-api`
+Testing `api`-format images, but with HDMA gradients baked in.
+
 ### `helloworld`
 Much the same as `fromdisk`, but as a cart application.
 
-### `midipiano`
+### `midiboard`
 A toy piano. Use the keyboard to play notes, change octaves with the left and right arrow keys, and change instruments with the up and down arrow keys.
 
 ### `navigator`
-A disk navigator, *Norton Commander*-style that *might* become part of the BIOS.
+A disk navigator, *Norton Commander*-style that *may* become part of the BIOS.
 
 ### `ranmya`
 A more graphical Hello World featuring the *previous*, placeholder mascot. Should be updated and renamed.
@@ -82,4 +85,3 @@ Normally, the A3X draws 240 or 480 lines, but by setting the bold font flag in g
 * Tetris game ported from [an implementation by Marco Lucidi](https://github.com/MarcoLucidi01/tetris_clone).
 * IMF player based on work by K1n9 Duk3.
 * `.data` segment help by Dmitry Grinberg.
-
