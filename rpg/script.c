@@ -17,7 +17,7 @@ const uint8_t cursorTiles[] =
 	0x11,0x11,0x11,0x00,0x11,0x11,0x11,0x11,0x11,0x11,0x11,0x01,0x00,0x00,0x00,0x00,
 };
 
-int dialogueBoxIsOpen, dialoguePortrait;
+int dialogueBoxIsOpen, dialoguePortrait, dialogueFrame = 0, dialogueFrames = 4;
 
 extern uint8_t canvas[];
 
@@ -33,6 +33,7 @@ void saySomething(char *what, int flags)
 	MISC->DmaCopy(TILESET + 0xC400, (int8_t*)&canvas, 0x1000, DMA_BYTE);
 
 	char *c = what;
+	int df = 0;
 
 	if (!dialogueBoxIsOpen)
 	{
@@ -71,6 +72,11 @@ void saySomething(char *what, int flags)
 		{
 			vbl();
 			vbl();
+			if (dialoguePortrait && dialogueFrames)
+			{
+				df = (df + 1) % (dialogueFrames << 2);
+				MISC->DmaCopy(TILESET + 0x3C00, (int8_t*)portraits[dialoguePortrait - 1] + (((df >> 2) + dialogueFrame) * 0x200), 0x80, DMA_INT);
+			}
 			if (*c == '@')
 			{
 				c++;
@@ -92,6 +98,7 @@ case off: { c++; var = def; break; }
 			}
 			if (*c == '\b')
 			{
+				MISC->DmaCopy(TILESET + 0x3C00, (int8_t*)portraits[dialoguePortrait - 1] + (dialogueFrame * 0x200), 0x80, DMA_INT);
 				waitForActionKey();
 				c++;
 				continue;
@@ -134,6 +141,7 @@ case off: { c++; var = def; break; }
 
 			c++;
 		}
+		MISC->DmaCopy(TILESET + 0x3C00, (int8_t*)portraits[dialoguePortrait - 1] + (dialogueFrame * 0x200), 0x80, DMA_INT);
 		waitForActionKey();
 	}
 

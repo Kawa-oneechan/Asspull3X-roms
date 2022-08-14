@@ -54,8 +54,12 @@ uiBackground:
 	.short 0x4210,0x4210,0x4210,0x4210,0x4210,0x4210,0x4210,0x4210
 
 font1:
-	.incbin "shadowrun1.fon"
+	.incbin "999.fon"
 font2:
 	.incbin "chicago.fon"
+font3:
+	.incbin "geneva.fon"
+font4:
+	.incbin "monaco.fon"
 fonts:
-	.long font1, font2
+	.long font1, font2, font3, font4
