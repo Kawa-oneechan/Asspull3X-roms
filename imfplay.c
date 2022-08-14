@@ -8,6 +8,8 @@ static uint16_t _imfwait, _imfsize;
 static bool imfLoop = true;
 static uint32_t _imfticks = 0;
 
+uint16_t imfCycles = 16;
+
 static void IMF_Service()
 {
 	uint16_t value;
@@ -45,7 +47,7 @@ void IMF_Play()
 {
 	if (!_imfptr)
 		return;
-	for (int i = 0; i < 16; i++) IMF_Service();
+	for (int i = 0; i < imfCycles; i++) IMF_Service();
 }
 
 int IMF_LoadSong(const uint16_t *sauce, bool loop)
