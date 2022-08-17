@@ -6,27 +6,22 @@ static const uint16_t *imfdata;
 static const uint16_t *_imfptr;
 static uint16_t _imfwait, _imfsize;
 static bool imfLoop = true;
-static uint32_t _imfticks = 0;
 
 uint16_t imfCycles = 16;
 
-static void IMF_Service()
+void IMF_Service()
 {
-	uint16_t value;
-
 	if (!_imfptr)
 		return;
 
 	while ((_imfsize) && (!_imfwait))
 	{
-		value = *_imfptr++;
+		REG_OPLOUT = *_imfptr++;
 		_imfwait = *_imfptr++;
 		_imfwait = (_imfwait + 127) / 128;
 		_imfsize -= 4;
-		REG_OPLOUT = value;
 	}
 	_imfwait--;
-	_imfticks++;
 	if (!_imfsize)
 	{
 		if (imfLoop)
@@ -34,7 +29,6 @@ static void IMF_Service()
 			_imfptr = imfdata;
 			_imfsize = (*_imfptr++) & 0xFCFF;
 			BYTESWAP(_imfsize);
-			_imfticks = 0;
 		} else
 		{
 			_imfptr = NULL;
