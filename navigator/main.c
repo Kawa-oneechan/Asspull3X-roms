@@ -241,19 +241,40 @@ void InfoPanel(int panel, char* workPath, char* filename)
 	int i = 0;
 
 	if (filename[0] == '.' && filename[1] == '.')
-		sprintf(t[0], "Go up one directory");
+		strcpy(t[0], "Go up one directory");
 	else
 	{
 		sprintf(t[i++], "@%s", filename);
 		if (info.fattrib & AM_DIRECTORY)
-			sprintf(t[i++], "Directory");
+			strcpy(t[i++], "Directory");
 		else
-			sprintf(t[i++], "File");
-		if (info.fattrib & AM_READONLY) sprintf(t[i++], "Read-only");
-		if (info.fattrib & AM_HIDDEN) sprintf(t[i++], "Hidden");
-		if (info.fattrib & AM_SYSTEM) sprintf(t[i++], "System");
-		if (info.fattrib & AM_ARCHIVE) sprintf(t[i++], "Archive");
-		sprintf(t[i++], "0x%02X", info.fattrib);
+		{
+			char* ext = strrchr((const char*)filename, '.') + 1;
+			if (!strcmp(ext, "APP")) strcpy(t[i++], "A\x96\xD7 Application");
+			else if (!strcmp(ext, "API"))
+			{
+				strcpy(t[i++], "A\x96\xD7 Image");
+				i++;
+				TImageFile imgHeader;
+				FILE imgFile;
+				DISK->OpenFile(&imgFile, filePath, FA_READ);
+				DISK->ReadFile(&imgFile, (void*)&imgHeader, sizeof(TImageFile));
+				DISK->CloseFile(&imgFile);
+				sprintf(t[i++], "Bit depth: %d", imgHeader.BitDepth);
+				if (imgHeader.Flags & 1) strcpy(t[i++], "Compressed");
+				if (imgHeader.Flags & 2) strcpy(t[i++], "Has HDMA data");
+				sprintf(t[i++], "Size: %d\xD7%d", imgHeader.Width, imgHeader.Height);
+			}
+			else if (!strcmp(ext, "TXT")) strcpy(t[i++], "Text file");
+			else if (!strcmp(ext, "FNT") && info.fsize == 12288) strcpy(t[i++], "Font - open to use");
+			else strcpy(t[i++], "File");
+		}
+		i++;
+		if (info.fattrib & AM_READONLY) strcpy(t[i++], "Read-only");
+		if (info.fattrib & AM_HIDDEN) strcpy(t[i++], "Hidden");
+		if (info.fattrib & AM_SYSTEM) strcpy(t[i++], "System");
+		if (info.fattrib & AM_ARCHIVE) strcpy(t[i++], "Archive");
+//		sprintf(t[i++], "0x%02X", info.fattrib);
 	}
 
 	for (i = 0; i < 20; i++)
@@ -333,6 +354,7 @@ void SelectFile(const char* path1, const char* path2, const char* pattern)
 					TEXT->SetTextColor(SplitColor(CLR_PANEL));
 					for (int i = 0; i < WIDTH - 1; i++)
 						TEXTMAP[80 + o + i + 1] = 0x9000 | CLR_PANEL; //top edge
+					TEXT->SetTextColor(CLR_PANEL & 0x0F, CLR_PANEL >> 4);
 					TEXT->SetCursorPosition(o + (WIDTH / 2) - (strlen(workPath[s]) / 2), 1);
 					TEXT->Write(" %s ", workPath[s]);
 
