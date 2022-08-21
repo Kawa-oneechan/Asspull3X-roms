@@ -11,16 +11,16 @@ int ChangeAttributes(char* filePath)
 	//"The feline urge to add a disabled 'Directory' checkbox." -- Kawa, March 7, 2022
 	TEXT->SetTextColor(CLR_DIALOG >> 4, 8);
 	TEXT->SetCursorPosition(win->left + 2, win->top + 1);
-	printf("%s Directory", (info.fattrib & AM_DIRECTORY) ? "\xAC\xAD" : "\xAA\xAB");
+	printf("%s Directory", (info.fattrib & AM_DIRECTORY) ? "[X]" : "[ ]");
 
 	for (int i = 0; i < 4; i++)
 	{
 		TEXT->SetTextColor(CLR_DIALOG >> 4, 0);
 		TEXT->SetCursorPosition(win->left + 2, win->top + 2 + i);
 		if (info.fattrib & attribs[i])
-			printf("\xAC\xAD ");
+			printf("[X] ");
 		else
-			printf("\xAA\xAB ");
+			printf("[ ] ");
 		TEXT->SetTextColor(SplitColor(CLR_DIALOG));
 		printf(names[i]);
 	}
@@ -52,7 +52,7 @@ int ChangeAttributes(char* filePath)
 				info.fattrib ^= attribs[tab];
 				TEXT->SetTextColor(9, 0);
 				TEXT->SetCursorPosition(win->left + 2, win->top + 2 + tab);
-				printf(info.fattrib & attribs[tab] ? "\xAC\xAD" : "\xAA\xAB");
+				printf(info.fattrib & attribs[tab] ? "[X]" : "[ ]");
 			}
 			else if (key == KEYSCAN_ENTER || key == KEYSCAN_ESCAPE)
 			{

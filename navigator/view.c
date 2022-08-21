@@ -1,5 +1,4 @@
 #include "nav.h"
-extern const uint8_t iconsTiles[];
 
 int StartApp(char* filePath)
 {
@@ -237,7 +236,6 @@ int LoadFont(char* filePath)
 	FILE file;
 	DISK->OpenFile(&file, filePath, FA_READ);
 	DISK->ReadFile(&file, (void*)TEXTFONT, 0x3000);
-	MISC->DmaCopy(TEXTFONT + 0x2A00, (int8_t*)&iconsTiles, 512, DMA_BYTE);
 	DISK->CloseFile(&file);
 	return 0;
 }

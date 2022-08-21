@@ -2,8 +2,6 @@
 
 IBios* interface;
 
-extern const uint8_t iconsTiles[];
-
 #define WIDTH 39
 #define HEIGHT 24
 #define FILESSHOWN (HEIGHT-2)
@@ -154,32 +152,33 @@ tryOpenDir:
 int SwitchDrive(int which, int now)
 {
 	const uint16_t abcd[] = { 30, 48, 46, 32 };
-	static int numDrives = -1;
-	static char driveTypes[4];
+	int numDrives = DISK->GetNumDrives();
+//	static int numDrives = -1;
+//	static char driveTypes[4];
 
-	if (numDrives == -1)
-	{
-		numDrives = 0;
-		uint8_t* devices = (uint8_t*)0x02000000;
-		for (char i = 0; i < 16; i++)
-		{
-			if (*(int16_t*)devices == 0x0144)
-			{
-				if (numDrives < 4)
-					driveTypes[numDrives] = *(char*)&devices[5];
-				numDrives++;
-			}
-			devices += 0x8000;
-		}
-	}
+//	if (numDrives == -1)
+//	{
+//		numDrives = 0;
+//		uint8_t* devices = (uint8_t*)0x02000000;
+//		for (char i = 0; i < 16; i++)
+//		{
+//			if (*(int16_t*)devices == 0x0144)
+//			{
+//				if (numDrives < 4)
+//					driveTypes[numDrives] = *(char*)&devices[5];
+//				numDrives++;
+//			}
+//			devices += 0x8000;
+//		}
+//	}
 
 	tWindow* win = OpenWindow((WIDTH >> 1) - 2 + (WIDTH * which), 8, 9, numDrives + 2, CLR_DIALOG);
 	for (int i = 0; i < numDrives; i++)
 	{
-		int16_t icon = ((0xB9 + (driveTypes[i] << 1)) << 8) | ((CLR_DIALOG >> 4) << 4);
+		//int16_t icon = ((0xB9 + (driveTypes[i] << 1)) << 8) | ((CLR_DIALOG >> 4) << 4);
 		int16_t o = ((win->top + 1 + i) * 80) + win->left + 2;
-		TEXTMAP[o++] = icon;
-		TEXTMAP[o++] = icon + 0x100;
+		//TEXTMAP[o++] = icon;
+		//TEXTMAP[o++] = icon + 0x100;
 		o++;
 		TEXTMAP[o++] = (('A' + i) << 8) | CLR_DIALOG;
 		TEXTMAP[o++] = (':' << 8) | CLR_DIALOG;
@@ -333,16 +332,16 @@ void SelectFile(const char* path1, const char* path2, const char* pattern)
 				{
 					TEXT->SetTextColor(SplitColor(CLR_PANEL));
 					for (int i = 0; i < WIDTH - 1; i++)
-						TEXTMAP[80 + o + i + 1] = 0x8300 | CLR_PANEL; //top edge
+						TEXTMAP[80 + o + i + 1] = 0x9000 | CLR_PANEL; //top edge
 					TEXT->SetCursorPosition(o + (WIDTH / 2) - (strlen(workPath[s]) / 2), 1);
 					TEXT->Write(" %s ", workPath[s]);
 
 					char label[12] = { 0 };
 					uint32_t id = 0;
-					TEXTMAP[(FILESSHOWN + 2) * 80 + o] = 0xBD00 | CLR_PANEL; //|-
+					TEXTMAP[(FILESSHOWN + 2) * 80 + o] = 0x8F00 | CLR_PANEL; //|-
 					for (int i = 0; i < WIDTH - 1; i++)
 						TEXTMAP[(FILESSHOWN + 2) * 80 + o + i + 1] = 0x9000 | CLR_PANEL; //--
-					TEXTMAP[(FILESSHOWN + 2) * 80 + o + WIDTH] = 0xBE00 | CLR_PANEL; //-|
+					TEXTMAP[(FILESSHOWN + 2) * 80 + o + WIDTH] = 0x8A00 | CLR_PANEL; //-|
 					TEXT->SetTextColor(SplitColor(CLR_PANEL));
 					TEXT->SetCursorPosition(2 + o, FILESSHOWN + 3);
 					DISK->GetLabel(workPath[s][0], label, &id);
@@ -368,32 +367,11 @@ void SelectFile(const char* path1, const char* path2, const char* pattern)
 						if (filePath[s][strnlen_s(filePath[s], MAXPATH) - 1] != '\\') strkitten_s(filePath[s], MAXPATH, '\\');
 						strcat_s(filePath[s], MAXPATH, curFN);
 						DISK->FileStat(filePath[s], &info);
-						char icon[3] = "  ";
-						if (curFN[0] == '.' && curFN[1] == '.')
-						{
-							//Leave it.
-						}
-						else if (info.fattrib & AM_DIRECTORY)
-						{
-							icon[0] = 0xB2;
-							icon[1] = 0xB3;
-						}
-						else
-						{
-							icon[0] = 0xB4;
-							icon[1] = 0xB5;
-							char* ext = strrchr((const char*)filePath[s], '.') + 1;
-							if (!strcmp(ext, "APP"))
-							{
-								icon[0] = 0xB6;
-								icon[1] = 0xB7;
-							}
-						}
 						TEXT->SetCursorPosition(1 + o, i + 2);
 						TEXT->SetTextColor(SplitColor(CLR_PANELITEM));
 						//if (cs == s && index[s] == i + scroll[s])
 						//	TEXT->SetTextColor(SplitColor(CLR_PANELSEL));
-						printf("%s %-12s ", icon, curFN);
+						printf(" %-12s  ", curFN);
 						if (curFN[0] == '.' && curFN[1] == '.')
 						{
 							printf("      <UP>            ");
@@ -411,7 +389,7 @@ void SelectFile(const char* path1, const char* path2, const char* pattern)
 						int fdy = 1980 + (info.fdate >> 9);
 						int fdm = (info.fdate >> 5) & 15;
 						int fdd = info.fdate & 0x1F;
-						printf(" %02d-%02d-%02d", fdy, fdm, fdd);
+						printf(" %02d-%02d-%02d ", fdy, fdm, fdd);
 						curFN += 16;
 						if (cs == s && lastIndex[s] != -1 && lastIndex[s] == i + scroll[s])
 							Highlight(o + 1, i + 2, WIDTH - 1, CLR_PANELITEM);
@@ -801,7 +779,6 @@ int main(void)
 {
 	MISC->SetTextMode(SMODE_240 | SMODE_BOLD);
 	DRAW->ResetPalette();
-	MISC->DmaCopy(TEXTFONT + 0x2A00, (int8_t*)&iconsTiles, 512, DMA_BYTE);
 	REG_CARET = 0;
 	while(1)
 	{

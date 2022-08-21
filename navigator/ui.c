@@ -58,6 +58,78 @@ void WaitForKey()
 	while (INP_KEYIN == 0) { vbl(); }
 }
 
+void DrawWindow(char left, char top, char width, char height, uint8_t color, bool shadow)
+{
+	uint16_t c;
+	if (shadow)
+	{
+		for (int i = 1; i < height; i++)
+		{
+			if (i + top < 0) continue;
+			if (i + top >= 30) break;
+			for (int j = 0; j < width; j++)
+			{
+				if (j + left < 0) continue;
+				if (j + left >= 80) break;
+				int o = ((i + top) * 80) + j + left;
+				c = TEXTMAP[o];
+				if (i == height - 1 && j > 1)
+					c = (c & 0xFF00) | 0x08;
+				else if (j > width - 3)
+					c = (c & 0xFF00) | 0x08;
+				TEXTMAP[o] = c;
+			}
+		}
+
+		width -= 2;
+		height -= 1;
+	}
+	for (int i = 0; i < height; i++)
+	{
+		if (i + top < 0) continue;
+		if (i + top >= 30) break;
+		for (int j = 0; j < width; j++)
+		{
+			if (j + left < 0) continue;
+			if (j + left >= 80) break;
+			int o = ((i + top) * 80) + j + left;
+			if (i == 0 || i == height - 1)
+			{
+				c = 0x9000 | color; //top or bottom edge
+				if (j == 0)
+				{
+					if (i == 0)
+						c = 0x9300 | color; //top left
+					else
+						c = 0x8C00 | color; //bottom left
+				}
+				else if (j == width - 1)
+				{
+					if (i == 0)
+						c = 0x8B00 | color; //top right
+					else
+						c = 0x9200 | color; //bottom right
+				}
+			}
+			else
+			{
+				c = 0x2000 | color; //space
+				if (i == height - 1)
+				{
+					c = TEXTMAP[o];
+					if (j > 1)
+						c = (c & 0xFF00) | 0x08;
+				}
+				else if (j == 0 || j == width - 1)
+					c = 0x8900 | color; //sides
+				else if (shadow && j > width - 1)
+					c = (TEXTMAP[o] & 0xFF00) | 0x08;
+			}
+			TEXTMAP[o] = c;
+		}
+	}
+}
+
 tWindow* OpenWindow(char left, char top, char width, char height, uint8_t color)
 {
 	if (left == -1) left = 40 - (width >> 1);
@@ -71,7 +143,6 @@ tWindow* OpenWindow(char left, char top, char width, char height, uint8_t color)
 	win->height = height;
 	win->bits = (uint16_t*)malloc(sizeof(uint16_t) * (width * height));
 	uint16_t* b = win->bits;
-	uint16_t c;
 	for (int i = 0; i < height; i++)
 	{
 		if (i + top < 0) continue;
@@ -82,47 +153,9 @@ tWindow* OpenWindow(char left, char top, char width, char height, uint8_t color)
 			if (j + left >= 80) break;
 			int o = ((i + top) * 80) + j + left;
 			*b++ = TEXTMAP[o];
-			if (i == 0 || i == height - 2)
-			{
-				c = (i == 0 ? 0xA100 : 0xA600) | color; //top or bottom edge
-				if (j == 0)
-				{
-					if (i == 0)
-						c = 0xA400 | color; //top left
-					else
-						c = 0xA500 | color; //bottom left
-				}
-				else if (j == width - 3)
-				{
-					if (i == 0)
-						c = 0xA200 | color; //top right
-					else
-						c = 0xA300 | color; //bottom right
-				}
-				else if (j > width - 3)
-				{
-					c = TEXTMAP[o];
-					if (i)
-						c = (c & 0xFF00) | 0x08;
-				}
-			}
-			else
-			{
-				c = 0x2000 | color; //space
-				if (i == height - 1)
-				{
-					c = TEXTMAP[o];
-					if (j > 1)
-						c = (c & 0xFF00) | 0x08;
-				}
-				else if (j == 0 || j == width - 3)
-					c = (j == 0 ? 0xA000 : 0xA700) | color; //sides
-				else if (j > width - 3)
-					c = (TEXTMAP[o] & 0xFF00) | 0x08;
-			}
-			TEXTMAP[o] = c;
 		}
 	}
+	DrawWindow(left, top, width, height, color, true);
 	return win;
 }
 
@@ -157,43 +190,7 @@ void ShowError(const char* message)
 
 void DrawPanel(char left, char top, char width, char height, uint8_t color)
 {
-	uint16_t c;
-	for (int i = 0; i < height; i++)
-	{
-		for (int j = 0; j < width; j++)
-		{
-			int o = ((i + top) * 80) + j + left;
-			if (i == 0)
-			{
-				c = 0x8300 | color; //top edge
-			}
-			else if (i == height - 1)
-			{
-				c = (i == 0 ? 0xA100 : 0xA600) | color; //bottom edge
-				if (j == 0)
-				{
-					if (i == 0)
-						c = 0xA400 | color; //top left
-					else
-						c = 0xA500 | color; //bottom left
-				}
-				else if (j == width - 1)
-				{
-					if (i == 0)
-						c = 0xA200 | color; //top right
-					else
-						c = 0xA300 | color; //bottom right
-				}
-			}
-			else
-			{
-				c = 0x2000 | color; //space
-				if (j == 0 || j == width - 1)
-					c = (j == 0 ? 0xA000 : 0xA700) | color; //sides
-			}
-			TEXTMAP[o] = c;
-		}
-	}
+	DrawWindow(left, top, width, height, color, false);
 }
 
 void DrawKeys(const char** keys)
@@ -216,7 +213,7 @@ void DrawKeys(const char** keys)
 	}
 }
 
-size_t myStrLen(const char* str)
+static size_t myStrLen(const char* str)
 {
 	size_t i;
 	if (str == 0) return 0;
@@ -278,10 +275,10 @@ void DropMenu(int c)
 		if (menuBar[c].items[i].title[0] == '-')
 		{
 			int o = ((2 + i) * 80) + menuLefts[c];
-			TEXTMAP[o++] = 0xBD00 | CLR_MENU; //|-
+			TEXTMAP[o++] = 0x8F00 | CLR_MENU; //|-
 			for (int j = 0; j < menuWidths[c] + 4; j++)
 				TEXTMAP[o++] = 0x9000 | CLR_MENU; //--
-			TEXTMAP[o] = 0xBE00 | CLR_MENU; //-|
+			TEXTMAP[o] = 0x8A00 | CLR_MENU; //-|
 			continue;
 		}
 		int o = ((2 + i) * 80) + menuLefts[c] + 3;
