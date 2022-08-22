@@ -728,8 +728,7 @@ HandleMenu:
 						switch (key)
 						{
 							case 11: //View
-								ShowFile(curFN, false);
-								redraw = 1;
+								redraw = ShowFile(curFN, false) > 1;
 								break;
 							case 12: //Edit
 								ShowError("Editor unlikely to be implemented.");

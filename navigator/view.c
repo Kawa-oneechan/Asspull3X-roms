@@ -242,6 +242,14 @@ int LoadFont(char* filePath)
 
 int ShowFile(char* filePath, bool allowRun)
 {
+	FILEINFO info;
+	DISK->FileStat(filePath, &info);
+	if (info.fattrib & AM_DIRECTORY || (info.fname[0] == 0))
+	{
+		ShowError("This is a directory.");
+		return 0;
+	}
+
 	char* ext = strrchr(filePath, '.') + 1;
 	if (!strcmp(ext, "TXT"))
 		ShowText(filePath);
