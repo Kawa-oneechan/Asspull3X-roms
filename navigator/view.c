@@ -44,24 +44,15 @@ int ShowPic(char* filePath)
 	return 2;
 }
 
+const char* keys[] = {
+	"Help  ", "Unwrap", "      ", "Hex   ", "      ",
+	"      ", "      ", "      ", "Print ", "Quit  "
+};
+
 int ShowText(char* filePath)
 {
-	//Note: these are PLACEHOLDERS
-	static const char* keys[] = {
-		"Help  ",
-		"Hidden",
-		"      ",
-		"      ",
-		"      ",
-		"      ",
-		"      ",
-		"      ",
-		"Print ",
-		"Quit  ",
-	};
-
 	int i, j, scroll = 0, lineCt = 0, redraw = 1;
-	bool hidden = false;
+	bool wrap = false, hex = true;
 
 	FILEINFO nfo;
 	DISK->FileStat(filePath, &nfo);
@@ -74,10 +65,10 @@ int ShowText(char* filePath)
 	DISK->CloseFile(&file);
 	fileText[size] = 0;
 
-	uint8_t* fullText = malloc(size + 1024);
-	memset(fullText, 0, size + 1024);
+	uint8_t* wrapText = malloc(size + 1024);
+	memset(wrapText, 0, size + 1024);
 	uint8_t *b = fileText;
-	uint8_t *c = fullText;
+	uint8_t *c = wrapText;
 	i = 0;
 	while (*b != 0)
 	{
@@ -102,44 +93,101 @@ int ShowText(char* filePath)
 		}
 	}
 
-	free(fileText);
+	//free(fileText);
 
-	b = fullText;
+	int32_t cursor = 0;
+	uint8_t* d = fileText;
 
 	TEXT->SetTextColor(SplitColor(CLR_VIEWBACK));
 	TEXT->ClearScreen();
 
+
+	for (j = 0; j < 80; j++)
+		TEXTMAP[j] = CLR_VIEWSTAT;
+
 	while(1)
 	{
+
 		if (redraw)
 		{
 			TEXT->SetTextColor(SplitColor(CLR_VIEWSTAT));
-			for (j = 0; j < 80; j++)
-				TEXTMAP[j] = CLR_VIEWSTAT;
 			TEXT->SetCursorPosition(0, 0);
-			printf(" %s \t%d/%d $%x, $%x", filePath, scroll, lineCt, b, b - fullText);
-			c = b;
-			int row = 1;
-			int col = 0;
-			while (row < 29 && *c != 0)
+			//printf(" %s \t%d/%d $%x, $%x", filePath, scroll, lineCt, b, b - fileText);
+
+			int percent = (int)(scroll * 100) / lineCt;
+			printf("%-72s %5d%%", filePath, percent);
+
+			if (!hex)
 			{
-				if (*c == '\n' && col < 80)
+				c = d + cursor;
+				int row = 1;
+				int col = 0;
+				while (row < 29 && *c != 0)
 				{
-					if (hidden)
-						TEXTMAP[(row * 80) + col++] = 0x0F04;
-					for (; col < 80; col++)
-						TEXTMAP[(row * 80) + col] = 0x2004;
-					row++;
-					col = 0;
+					if (*c == '\r')
+					{
+						c++;
+						continue;
+					}
+					if (*c == '\n' && col < 80)
+					{
+						for (; col < 80; col++)
+							TEXTMAP[(row * 80) + col] = 0x2004;
+						row++;
+						col = 0;
+					}
+					else if (col == 80)
+					{
+						if (!wrap)
+						{
+							TEXTMAP[(row * 80) + 79] = 0x1508;
+							while (*c != '\n' && *c != '\r') c++;
+							c++;
+							//continue;
+						}
+						row++;
+						col = 0;
+					}
+					else
+						TEXTMAP[(row * 80) + (col++)] = (*c << 8) | CLR_VIEWBACK;
+					c++;
 				}
-				else if (col == 80)
+			}
+			else
+			{
+				c = d + ((cursor / 16) * 16);
+				int row = 1;
+				int col = 0;
+				const char hex[] = "0123456789ABCDEF";
+				const char line[] = ".....  .. .. .. .. \x89 .. .. .. .. \x89 .. .. .. .. \x89 .. .. .. ..   ................";
+				const char cols[] = { 7, 10, 13, 16, 21, 24, 27, 30, 35, 38, 41, 44, 49, 52, 55, 58 };
+				while (row < 29 && *c != 0)
 				{
-					row++;
-					col = 0;
+					if (col % 16 == 0)
+					{
+						for (int l = 0; l < 80; l++)
+							TEXTMAP[(row * 80) + l] = (line[l] << 8) | CLR_VIEWBACK;
+
+						TEXTMAP[(row * 80) + 4] = (hex[((c - d) >> 0) & 0x0F] << 8) | CLR_VIEWBACK;
+						TEXTMAP[(row * 80) + 3] = (hex[((c - d) >> 4) & 0x0F] << 8) | CLR_VIEWBACK;
+						TEXTMAP[(row * 80) + 2] = (hex[((c - d) >> 8) & 0x0F] << 8) | CLR_VIEWBACK;
+						TEXTMAP[(row * 80) + 1] = (hex[((c - d) >> 12) & 0x0F] << 8) | CLR_VIEWBACK;
+						TEXTMAP[(row * 80) + 0] = (hex[((c - d) >> 16) & 0x0F] << 8) | CLR_VIEWBACK;
+					}
+
+					TEXTMAP[(row * 80) + cols[col] + 1] = (hex[*c & 0x0F] << 8) | CLR_VIEWBACK;
+					TEXTMAP[(row * 80) + cols[col] + 0] = (hex[(*c >> 4) & 0x0F] << 8) | CLR_VIEWBACK;
+
+					TEXTMAP[(row * 80) + 63 + col] = ((*c > ' ' ? *c : '.') << 8) | CLR_VIEWBACK;
+
+					c++;
+					col++;
+					if (col == 16)
+					{
+						col = 0;
+						row++;
+					}
 				}
-				else
-					TEXTMAP[(row * 80) + (col++)] = (*c << 8) | CLR_VIEWBACK;
-				c++;
 			}
 			DrawKeys(keys);
 			redraw = 0;
@@ -171,14 +219,14 @@ int ShowText(char* filePath)
 			{
 				if (scroll > 0)
 				{
-					b -= 2;
-					while (b >= fullText && *b != '\n')
-						b--;
-					b++;
+					cursor -= 2;
+					while (cursor >= 0 && d[cursor] != '\n')
+						cursor--;
+					cursor++;
 					scroll--;
-					if (b < fullText)
+					if (cursor < 0)
 					{
-						b = fullText;
+						cursor = 0;
 						scroll = 0;
 					}
 					redraw = 1;
@@ -188,39 +236,37 @@ int ShowText(char* filePath)
 			{
 				if (scroll < lineCt - 28)
 				{
-					while (b < fullText + size && *b != '\n')
-						b++;
-					b++;
+					while ((uint32_t)cursor < size && d[cursor] != '\n')
+						cursor++;
+					cursor++;
 					scroll++;
 					redraw = 1;
 				}
 			}
 			else if (key == KEYSCAN_F1)
-				ShowError("F1 not implemented yet");
+				ShowError("Figure it out lol.");
 			else if (key == KEYSCAN_F2)
 			{
-				hidden = !hidden;
+				wrap = !wrap;
+				d = wrap ? wrapText : fileText;
+				keys[1] = wrap ? "Wrap  " : "Unwrap";
 				redraw = 1;
 			}
-			else if (key == KEYSCAN_F3)
-				ShowError("F3 not implemented yet");
 			else if (key == KEYSCAN_F4)
-				ShowError("F4 not implemented yet");
-			else if (key == KEYSCAN_F5)
-				ShowError("F5 not implemented yet");
-			else if (key == KEYSCAN_F6)
-				ShowError("F6 not implemented yet");
-			else if (key == KEYSCAN_F7)
-				ShowError("F7 not implemented yet");
-			else if (key == KEYSCAN_F8)
-				ShowError("F8 not implemented yet");
+			{
+				hex = !hex;
+				d = hex ? fileText : (wrap ? wrapText : fileText);
+				keys[3] = hex ? "ASCII " : "Hex   ";
+				redraw = 1;
+			}
 			else if (key == KEYSCAN_F9)
-				PrintBuffer((char*)fullText);
+				PrintBuffer((char*)fileText);
 			else if (key == KEYSCAN_F10 || key == KEYSCAN_ESCAPE) //F10 or Escape
 				break;
 		}
 	}
-	free(fullText);
+	free(wrapText);
+	free(fileText);
 	return 2;
 }
 
