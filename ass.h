@@ -140,6 +140,23 @@ typedef struct
 	int32_t HdmaOffset;
 } TImageFile;
 
+typedef struct
+{
+	char code[6];			//Locale name
+	char wday_name[7][4];	//"Sun"..."Sat"
+	char mon_name[12][4];	//"Jan"..."Dec"
+	char wday_nameF[7][10];	//"Sunday"..."Saturday"
+	char mon_nameF[12][10];	//"January"..."December"
+	char shortDateFmt[16];	//Format for "1983-06-26"
+	char longDateFmt[16];	//Format for "Sunday, June 26, 1983"
+	char timeFmt[16];		//Format for "17:42:07"
+	char thousands;			//What to put between clusters of three digits, ','
+	char decimals;			//What to put between an integer and decimals, '.'
+	char currency[4];		//Currency symbol, '$'
+	bool currencyAfter;		//Is it "10$" or "$10"?
+	char sctoasc[256];		//Scancode map
+} TLocale;
+
 typedef struct {
 	int8_t	fs_type;		// File system type (0: N/A)
 	int8_t	drv;			// Physical drive number
@@ -383,6 +400,7 @@ typedef struct
 	char* DrawCharFont;
 	uint16_t DrawCharHeight;
 	uint8_t* LinePrinter;
+	TLocale locale;
 } IBios;
 
 #define TEXT interface->textLibrary

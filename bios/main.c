@@ -384,6 +384,7 @@ void DiskEntry()
 	char* value;
 
 	char fontName[16] = { 0 };
+	char locName[16] = { 0 };
 	char shellName[16] = { 0 };
 
 	while (*ptr != 0)
@@ -402,6 +403,8 @@ void DiskEntry()
 		//printf("value: %s\n", value);
 		if (!strcmp(key, "font"))
 			strcpy(fontName, value);
+		else if (!strcmp(key, "locale"))
+			strcpy(locName, value);
 		else if (!strcmp(key, "shell"))
 			strcpy(shellName, value);
 	}
@@ -416,6 +419,28 @@ void DiskEntry()
 		}
 		CloseFile(&file);
 	}
+
+	if (locName[0])
+	{
+		FileStat(locName, &nfo);
+		if (nfo.fsize == 583)
+		{
+			OpenFile(&file, locName, FA_READ);
+			ReadFile(&file, (void*)&interface->locale, 583);
+		}
+		CloseFile(&file);
+	}
+
+	Write("Locale test: name is \"%s\", Monday is \"%s\".\n", interface->locale.code, interface->locale.wday_nameF[1]);
+	Write("January is \"%s\"\n", interface->locale.mon_nameF[0]);
+	Write("June is \"%s\"\n", interface->locale.mon_nameF[5]);
+	Write("Short date is \"%s\"\n", interface->locale.shortDateFmt);
+	Write("Long date is \"%s\"\n", interface->locale.longDateFmt);
+	Write("Time is \"%s\"\n", interface->locale.timeFmt);
+	Write("Separators are \"%c\" and \"%c\"\n", interface->locale.thousands, interface->locale.decimals);
+	Write("Currency is \"%s\"\n", interface->locale.currency);
+	while (INP_KEYIN != KEYSCAN_F1)
+		vbl();
 
 	if (shellName[0])
 	{
