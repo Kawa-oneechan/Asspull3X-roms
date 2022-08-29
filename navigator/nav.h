@@ -19,6 +19,7 @@
 #define CLR_KEYTEXT 0x8F
 #define CLR_DIALOG 0x7F
 #define CLR_VIEWBACK 0x07
+#define CLR_VIEWDIM 0x08
 #define CLR_VIEWSTAT 0x1B
 #else
 #define CLR_PANEL 0x1B
@@ -35,6 +36,7 @@
 #define CLR_KEYTEXT 0x30
 #define CLR_DIALOG 0x7F
 #define CLR_VIEWBACK 0x1B
+#define CLR_VIEWDIM 0x19
 #define CLR_VIEWSTAT 0x31
 #endif
 

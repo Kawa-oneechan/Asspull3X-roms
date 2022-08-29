@@ -44,10 +44,12 @@ int ShowPic(char* filePath)
 	return 2;
 }
 
-const char* keys[] = {
+const char* textViewerKeys[] = {
 	"Help  ", "Unwrap", "      ", "Hex   ", "      ",
 	"      ", "      ", "      ", "Print ", "Quit  "
 };
+
+#define TABS 8
 
 int ShowText(char* filePath)
 {
@@ -79,6 +81,11 @@ int ShowText(char* filePath)
 			*c++ = *b++;
 			lineCt++;
 			i = 0;
+		}
+		else if (*b == '\t')
+		{
+			i += TABS - (i % TABS);
+			b++;
 		}
 		else
 		{
@@ -129,6 +136,17 @@ int ShowText(char* filePath)
 						c++;
 						continue;
 					}
+					if (*c == '\t')
+					{
+						int nc = col + TABS - (col % TABS);
+						while (col < nc)
+						{
+							TEXTMAP[(row * 80) + col] = 0x2004;
+							col++;
+						}
+						c++;
+						continue;
+					}
 					if (*c == '\n' && col < 80)
 					{
 						for (; col < 80; col++)
@@ -152,6 +170,12 @@ int ShowText(char* filePath)
 						TEXTMAP[(row * 80) + (col++)] = (*c << 8) | CLR_VIEWBACK;
 					c++;
 				}
+				while (row < 29)
+				{
+					for (int l = 0; l < 80; l++)
+						TEXTMAP[(row * 80) + l] = 0x2000 | CLR_VIEWBACK;
+						row++;
+				}
 			}
 			else
 			{
@@ -159,14 +183,16 @@ int ShowText(char* filePath)
 				int row = 1;
 				int col = 0;
 				const char hex[] = "0123456789ABCDEF";
-				const char line[] = ".....  .. .. .. .. \x89 .. .. .. .. \x89 .. .. .. .. \x89 .. .. .. ..   ................";
 				const char cols[] = { 7, 10, 13, 16, 21, 24, 27, 30, 35, 38, 41, 44, 49, 52, 55, 58 };
+				const char seps[] = { 19, 33, 47 };
 				while (row < 29 && *c != 0)
 				{
 					if (col % 16 == 0)
 					{
 						for (int l = 0; l < 80; l++)
-							TEXTMAP[(row * 80) + l] = (line[l] << 8) | CLR_VIEWBACK;
+							TEXTMAP[(row * 80) + l] = 0x2000 | CLR_VIEWBACK;
+						for (int l = 0; l < 3; l++)
+							TEXTMAP[(row * 80) + seps[l]] = 0x8900 | CLR_VIEWDIM;
 
 						TEXTMAP[(row * 80) + 4] = (hex[((c - d) >> 0) & 0x0F] << 8) | CLR_VIEWBACK;
 						TEXTMAP[(row * 80) + 3] = (hex[((c - d) >> 4) & 0x0F] << 8) | CLR_VIEWBACK;
@@ -178,7 +204,7 @@ int ShowText(char* filePath)
 					TEXTMAP[(row * 80) + cols[col] + 1] = (hex[*c & 0x0F] << 8) | CLR_VIEWBACK;
 					TEXTMAP[(row * 80) + cols[col] + 0] = (hex[(*c >> 4) & 0x0F] << 8) | CLR_VIEWBACK;
 
-					TEXTMAP[(row * 80) + 63 + col] = ((*c > ' ' ? *c : '.') << 8) | CLR_VIEWBACK;
+					TEXTMAP[(row * 80) + 63 + col] = (*c > ' ') ? ((*c << 8) | CLR_VIEWBACK) : (('.' << 8) | CLR_VIEWDIM);
 
 					c++;
 					col++;
@@ -189,7 +215,7 @@ int ShowText(char* filePath)
 					}
 				}
 			}
-			DrawKeys(keys);
+			DrawKeys(textViewerKeys);
 			redraw = 0;
 		}
 
@@ -249,14 +275,14 @@ int ShowText(char* filePath)
 			{
 				wrap = !wrap;
 				d = wrap ? wrapText : fileText;
-				keys[1] = wrap ? "Wrap  " : "Unwrap";
+				textViewerKeys[1] = wrap ? "Wrap  " : "Unwrap";
 				redraw = 1;
 			}
 			else if (key == KEYSCAN_F4)
 			{
 				hex = !hex;
 				d = hex ? fileText : (wrap ? wrapText : fileText);
-				keys[3] = hex ? "ASCII " : "Hex   ";
+				textViewerKeys[3] = hex ? "ASCII " : "Hex   ";
 				redraw = 1;
 			}
 			else if (key == KEYSCAN_F9)
