@@ -1,5 +1,9 @@
 #pragma once
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #define likely(x)	__builtin_expect((x),1)
 #define unlikely(x)	__builtin_expect((x),0)
 
@@ -393,3 +397,7 @@ typedef struct
 extern IBios* interface;
 
 //#define DrawChar(g,x,y,c) interface->DrawChar(g,x,y,c)
+
+#ifdef __cplusplus
+}
+#endif

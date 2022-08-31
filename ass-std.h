@@ -1,7 +1,10 @@
-#if !defined ASS_STD
-#define ASS_STD
+#pragma once
 
 #include "ass.h"
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 #define STDIN  ((FILE*)-1)
 #define STDOUT ((FILE*)-2)
@@ -35,4 +38,6 @@ extern char * strtok_r (char *newstring, const char *delimiters, char **save_ptr
 extern size_t strlen (char *s);
 extern int strcmp (char *a, char *b);
 
+#ifdef __cplusplus
+}
 #endif
