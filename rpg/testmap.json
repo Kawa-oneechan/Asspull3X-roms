@@ -84,7 +84,7 @@
                         {
                          "name":"script",
                          "type":"string",
-                         "value":"(\n  (face 4)\n  (portrait 2)\n  (say \"What a @C9year@c, huh %s?\b\nBetween all this and everything\nelse, who knows what comes next?\b\nCos I sure as hell don't...\n@F0...and I'd be surprised if you did.\" (getpartyname 0) 1)\n  (ask \"Joke\" \"Ignore\")\n  (portrait 1)\n  (say \"It's only July.\")\n  (face 0)\n)"
+                         "value":"(\n  (face 4)\n  (portrait 2 4 1)\n  (say \"What a @C9year@c, huh %s?\" (getpartyname 0) 1)\n  (portrait 2)\n  (say \"Between all this and everything\nelse, who knows what comes next?\b\nCos I sure as hell don't...\n@F0...and I'd be surprised if you did.\" 1)\n  (ask \"Joke\" \"Ignore\")\n  (portrait 1)\n  (say \"It's only July.\")\n  (face 0)\n)"
                         },
                         {
                          "name":"sprite",

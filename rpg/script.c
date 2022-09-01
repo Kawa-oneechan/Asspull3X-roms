@@ -54,7 +54,7 @@ void saySomething(char *what, int flags)
 
 	if (dialoguePortrait)
 	{
-		MISC->DmaCopy(TILESET + 0x3C00, (int8_t*)portraits[dialoguePortrait - 1], 0x80, DMA_INT);
+		MISC->DmaCopy(TILESET + 0x3C00, (int8_t*)portraits[dialoguePortrait - 1] + (dialogueFrame * 0x200), 0x80, DMA_INT);
 		MISC->DmaCopy(PALETTE + 256 + 256 - 32, (int16_t*)portraits[dialoguePortrait - 1 + 8], 16, DMA_SHORT);
 		OBJECTS_A[253] = OBJECTA_BUILD(480, 0, 1, 14);
 		OBJECTS_B[253] = OBJECTB_BUILD(3 * 8, 3 * 8, 1, 1, 0, 0, 1, 0);
@@ -411,8 +411,16 @@ void runScript(uint8_t* code, int entityID)
 					acc = 0;
 				else
 				{
+					dialogueFrame = 0;
+					dialogueFrames = 4;
 					acc = stack[--stackSize];
 					argc--;
+					if (argc == 2)
+					{
+						dialogueFrame = stack[--stackSize];
+						dialogueFrames = stack[--stackSize];
+						argc -= 2;
+					}
 				}
 				while (argc--) --stackSize;
 				dialoguePortrait = acc;
