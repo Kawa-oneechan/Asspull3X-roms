@@ -4,6 +4,10 @@ extern IBios* interface;
 extern "C"
 {
 
+//Needed for namespace-level instances,
+//but crt0 doesn't construct them yet.
+void* __dso_handle = (void*) &__dso_handle;
+
 void abort()
 {
 	printf("aborted!");
