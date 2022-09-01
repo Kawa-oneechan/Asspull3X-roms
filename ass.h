@@ -323,7 +323,6 @@ typedef struct
 	void(*DrawFormat)(const char* format, int x, int y, int color, ...);
 	void(*DrawChar)(char ch, int x, int y, int color);
 	void(*DrawLine)(int x0, int y0, int x1, int y1, int color, uint8_t* dest);
-	void(*FloodFill)(int x, int y, int color, uint8_t* dest);
 } IDrawingLibrary;
 
 typedef struct

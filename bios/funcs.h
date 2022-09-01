@@ -19,7 +19,6 @@ extern void DrawString(const char*, int, int, int);
 extern void DrawFormat(const char*, int, int, int, ...);
 extern void DrawChar(char, int, int, int);
 extern void DrawLine(int, int, int, int, int, uint8_t*);
-extern void FloodFill(int, int, int, uint8_t*);
 extern void SetTextMode80x30(void);
 extern void SetTextMode80x60(void);
 extern void SetTextMode(int);
