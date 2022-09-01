@@ -1,5 +1,4 @@
-#ifndef TETRAMINO_HEADER
-#define TETRAMINO_HEADER
+#pragma once
 
 #include "grid.h"
 #include "helpers.h"
@@ -76,5 +75,3 @@ void put_on_grid(grid *grid, tetramino *tetramino, int row, int col);
  *                    to false.
  */
 void remove_from_grid(grid *grid, tetramino *tetramino);
-
-#endif

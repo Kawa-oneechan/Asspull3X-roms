@@ -15,17 +15,12 @@ void Write(int x, int y, int p, const char* buffer)
 	while (*c) *here++ = p | *c++;
 }
 
-extern int32_t vsprintf(char*, const char*, va_list);
-void WriteF(int x, int y, int p, const char* format, ...)
-{
-	char buffer[256];
-	va_list args;
-	va_start(args, format);
-	vsprintf(buffer, format, args);
-	va_end(args);
-	Write(x, y, p, buffer);
+static char wfb[64];
+#define WriteF(X, Y, P, F, ...) \
+{ \
+	TEXT->Format(wfb, F, __VA_ARGS__); \
+	Write(X, Y, P, wfb); \
 }
-
 
 /*
  * reset_game:  sets game fields to their initial state.
@@ -101,12 +96,13 @@ static void increase_level(game *game);
  */
 static void increase_score(game *game, int lines);
 
+static game _theGame_;
 
 game *init_game(void)
 {
 	srand(REG_TIMET);
 
-	game *new_game = malloc(sizeof(*new_game));
+	game *new_game = (game*)&_theGame_;
 
 	new_game->grid = create_grid(GRID_ROWS, GRID_COLS);
 	new_game->falling = create_tetramino();
@@ -405,11 +401,4 @@ action game_over(game *game)
 		reset_game(game);
 
 	return action;
-}
-
-void free_game(game *game)
-{
-	free_grid(game->grid);
-	free(game->falling);
-	free(game);
 }

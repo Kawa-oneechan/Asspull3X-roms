@@ -1,5 +1,4 @@
-#ifndef CONTROLLER_HEADER
-#define CONTROLLER_HEADER
+#pragma once
 
 #include "actions.h"
 #include "tetramino.h"
@@ -38,5 +37,3 @@ int drop_tetramino(grid *grid, tetramino *tetramino);
  */
 int check_position(const grid *grid, const tetramino *tetramino,
                     int row, int col);
-
-#endif

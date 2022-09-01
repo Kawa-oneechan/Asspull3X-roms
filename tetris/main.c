@@ -155,6 +155,5 @@ int main(void)
 	{
 		run_game(game);
 	} while (game_over(game) == NEW_GAME);
-	free_game(game);
 }
 

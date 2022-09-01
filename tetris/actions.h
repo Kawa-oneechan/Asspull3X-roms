@@ -1,5 +1,4 @@
-#ifndef ACTIONS_HEADER
-#define ACTIONS_HEADER
+#pragma once
 
 typedef enum
 {
@@ -13,5 +12,3 @@ typedef enum
         PAUSE,
         QUIT
 } action;
-
-#endif

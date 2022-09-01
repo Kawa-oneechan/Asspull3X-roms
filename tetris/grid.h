@@ -1,5 +1,4 @@
-#ifndef GRID_HEADER
-#define GRID_HEADER
+#pragma once
 
 #include "helpers.h"
 
@@ -70,10 +69,3 @@ void flush_grid(grid *grid);
  * swap_rows:  swaps the blocks in row1 with the blocks in row2.
  */
 void swap_rows(grid *grid, int row1, int row2);
-
-/*
- * free_grid:  frees all memory occupied by grid.
- */
-void free_grid(grid *grid);
-
-#endif

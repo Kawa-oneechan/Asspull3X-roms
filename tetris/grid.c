@@ -1,11 +1,13 @@
 #include "../ass.h"
 #include "grid.h"
 
+static grid _theGrid_;
+static int16_t _theBlocks_[32*32];
 
 grid *create_grid(int rows, int cols)
 {
-	grid *new_grid = malloc(sizeof(*new_grid));
-	int16_t *new_blocks = malloc(sizeof(*new_blocks) * rows * cols);
+	grid *new_grid = (grid*)&_theGrid_;
+	int16_t *new_blocks = (int16_t*)&_theBlocks_;
 
 	new_grid->blocks = new_blocks;
 	new_grid->rows = rows;
@@ -73,10 +75,4 @@ void swap_rows(grid *grid, int row1, int row2)
 		fill_block(grid, temp1, row2, col);
 		fill_block(grid, temp2, row1, col);
 	}
-}
-
-void free_grid(grid *grid)
-{
-	free(grid->blocks);
-	free(grid);
 }

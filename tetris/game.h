@@ -1,5 +1,4 @@
-#ifndef GAME_HEADER
-#define GAME_HEADER
+#pragma once
 
 #include "actions.h"
 #include "grid.h"
@@ -75,10 +74,3 @@ void run_game(game *game);
  *             Later run_game should be called to actually "start" a new game.
  */
 action game_over(game *game);
-
-/*
- * free_game:  frees all memory allocated by init_game() ending the game.
- */
-void free_game(game *game);
-
-#endif

@@ -189,10 +189,11 @@ const char shapes[TOT_SHAPES][ROTATIONS][TETRAMINO_ROWS][TETRAMINO_COLS] =
 	}
 };
 
+static tetramino _theMino_;
 
 tetramino *create_tetramino(void)
 {
-	tetramino *new_tetramino = malloc(sizeof(*new_tetramino));
+	tetramino *new_tetramino = (tetramino*)&_theMino_;
 	change_shape(new_tetramino, 'I');
 	return new_tetramino;
 }
