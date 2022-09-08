@@ -229,18 +229,19 @@ goAgain:
 
 		if (INP_KEYIN == KEYSCAN_F1 && showSplash) //F1
 		{
+doAbout:
 			OBJECTS_B[0] = OBJECTB_BUILD(-32, -32, 0, 0, 0, 0, 0, 0);
 			char about[256];
-			interface->DrawCharFont = (char*)0x0E060400;
+			interface->DrawCharFont = (char*)0x0E060C00;
 			interface->DrawCharHeight = 0x0808;
 			sprintf(about, "%s\nCode by Kawa\n" __DATE__, biosVer);
 			for (int i = 2; i <= 6; i++)
 			{
 				DrawString(banner, 104, 130, i);
 				DrawString(about, 104, 154, i);
-				WaitForVBlanks(16);
+				WaitForVBlanks(8);
 			}
-			WaitForVBlanks(128);
+			WaitForVBlanks(8);
 			while (!INP_KEYIN)
 			{
 				if (blinker % 8 == 0)
@@ -255,7 +256,7 @@ goAgain:
 			{
 				DrawString(banner, 104, 130, i);
 				DrawString(about, 104, 154, i);
-				WaitForVBlanks(16);
+				WaitForVBlanks(8);
 			}
 			OBJECTS_B[0] = OBJECTB_BUILD(144, 152, 1, 1, 0, 0, 1, 0);
 		}
@@ -263,7 +264,7 @@ goAgain:
 		if (showSplash && showMenu)
 		{
 			OBJECTS_B[0] = OBJECTB_BUILD(-32, -32, 0, 0, 0, 0, 0, 0);
-			interface->DrawCharFont = (char*)0x0E060400;
+			interface->DrawCharFont = (char*)0x0E060C00;
 			interface->DrawCharHeight = 0x0808;
 			const char menu[] = " \x1D CARTRIDGE\n\n   DISKETTE\n";
 			DrawString(banner, 104, 130, 6);
@@ -272,6 +273,13 @@ goAgain:
 			while (true)
 			{
 				int key = INP_KEYIN;
+				if (key == KEYSCAN_F1)
+				{
+					DrawString(banner, 104, 130, 1);
+					DrawString(menu, 104, 162, 1);
+					DrawString("\x1D", 112, 162, 1);
+					goto doAbout;
+				}
 				if (key == KEYSCAN_UP || key == KEYSCAN_DOWN || (INP_JOYPAD1 && INP_JOYPAD1 <= BUTTON_LEFT))
 				{
 					while (INP_JOYPAD1) vbl();
@@ -310,7 +318,7 @@ goAgain:
 			}
 			DrawString(banner, 104, 130, 1);
 			DrawString(menu, 104, 162, 1);
-			DrawString("\x1D", 112, 162 + 16, 1);
+			DrawString("\x1D", 112, 162, 1);
 			OBJECTS_B[0] = OBJECTB_BUILD(144, 152, 1, 1, 0, 0, 1, 0);
 			break;
 		}
