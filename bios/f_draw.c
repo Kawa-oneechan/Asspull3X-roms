@@ -7,7 +7,7 @@ const IDrawingLibrary drawingLibrary =
 {
 	ResetPalette, DisplayPicture,
 	Fade, DrawString, DrawFormat,
-	DrawChar, DrawLine
+	DrawChar, DrawLine, FloodFill
 };
 
 /* CONSIDER: We have four different copies of this routine after preprocessing.
@@ -281,4 +281,114 @@ void DrawLine(int x1, int y1, int x2, int y2, int color, uint8_t* dest)
 			setPixel(x1, y1, stride, color, dest);
 		}
 	}
+}
+
+#define _FFSTACKMAX 512
+static uint16_t* _ffStack;
+static int _ffSP = -1;
+
+static int _ffEmpty()
+{
+	return (_ffSP == -1);
+}
+
+static int _ffFull()
+{
+	return (_ffSP == _FFSTACKMAX);
+}
+
+static inline void _ffPush(int16_t i)
+{
+	if (!_ffFull())
+	{
+		_ffSP++;
+		_ffStack[_ffSP] = i;
+	}
+}
+
+static inline int16_t _ffPop()
+{
+	if (!_ffEmpty())
+	{
+		int16_t data = _ffStack[_ffSP];
+		_ffSP--;
+		return data;
+	}
+	return 0;
+}
+
+static inline int16_t _ffPeek()
+{
+	return _ffStack[_ffSP];
+}
+
+void FloodFill(int x, int y, int newColor, uint8_t* dest)
+{
+	uint16_t _ffTrueStack[_FFSTACKMAX * 2];
+
+	int stride = 640;
+	if (REG_SCREENMODE & SMODE_320) stride = 320;
+	int width = stride;
+	if (REG_SCREENMODE & SMODE_BMP16) stride /= 2;
+
+	int height = 480;
+	if (REG_SCREENMODE & SMODE_200) height = 400;
+	if (REG_SCREENMODE & SMODE_240) height /= 2;
+
+	int(*getPixel)(int,int,int,uint8_t*) = _getPixel8;
+	void(*setPixel)(int,int,int,int,uint8_t*) = _setPixel8;
+	if (REG_SCREENMODE & SMODE_BMP16)
+	{
+		getPixel = _getPixel4;
+		setPixel = _setPixel4;
+	}
+
+	int oldColor = getPixel(x, y, stride, dest);
+
+	//https://lodev.org/cgtutor/floodfill.html
+
+	if (oldColor == newColor)
+		return;
+	if (getPixel(x, y, stride, dest) != oldColor)
+		return;
+
+	_ffStack = _ffTrueStack; //malloc(_FFSTACKMAX * 2);
+	_ffSP = -1;
+	_ffPush(x); _ffPush(y);
+
+	int spanAbove, spanBelow;
+	while (!_ffEmpty())
+	{
+		y = _ffPop();
+		x = _ffPop();
+		int x1 = x;
+		while (x1 >= 0 && getPixel(x1, y, stride, dest) == oldColor) x1--;
+		x1++;
+		spanAbove = spanBelow = 0;
+		while (x1 < width && getPixel(x1, y, stride, dest) == oldColor)
+		{
+			setPixel(x1, y, stride, newColor, dest);
+			if (!spanAbove && y > 0 && getPixel(x1, y - 1, stride, dest) == oldColor)
+			{
+				_ffPush(x1); _ffPush(y - 1);
+				spanAbove = 1;
+			}
+			else if (spanAbove && y > 0 && getPixel(x1, y - 1, stride, dest) != oldColor)
+			{
+				spanAbove = 0;
+			}
+			if (!spanBelow && y < height - 1 && getPixel(x1, y + 1, stride, dest) == oldColor)
+			{
+				_ffPush(x1); _ffPush(y + 1);
+				spanBelow = 1;
+			}
+			else if (spanBelow && y < height - 1 && getPixel(x1, y + 1, stride, dest) != oldColor)
+			{
+				spanBelow = 0;
+			}
+			x1++;
+		}
+	}
+
+	//free(_ffStack);
 }

@@ -10,10 +10,7 @@ const ITextLibrary textLibrary =
 	ClearScreen,
 };
 
-#define TEXT_WIDTH 80
-#define TEXT_HEIGHT 25
 #define TAB_STOPS 8
-unsigned char attribs;
 
 //Kill our printf define for __attribute's sake
 #ifdef printf
@@ -33,7 +30,7 @@ void ScrollIfNeeded()
 			*dst++ = *src++;
 		int16_t* bottomLine = ((int16_t*)MEM_VRAM) + (textWidth * (textHeight - 1));
 		for (int32_t i = 0; i < textWidth; i++)
-			*bottomLine++ = (' ' << 8) | attribs;
+			*bottomLine++ = (' ' << 8) | interface->io.attribs;
 		cursorPos = textWidth * (textHeight - 2);
 		REG_CARET = (REG_CARET & 0xC000) | cursorPos;
 	}
@@ -58,14 +55,14 @@ int Write(const char* format, ...)
 		{
 			if (*(b+1) == 'E')
 			{
-				attribs |= 8;
+				interface->io.attribs |= 8;
 				b += 2;
 				len += 2;
 				continue;
 			}
 			else if (*(b+1) == 'e')
 			{
-				attribs &= ~8;
+				interface->io.attribs &= ~8;
 				b += 2;
 				len += 2;
 				continue;
@@ -103,10 +100,10 @@ void WriteChar(char ch)
 		cursorPos += TAB_STOPS - (cursorPos % TAB_STOPS);
 	else if (ch == '\b')
 	{
-		((int16_t*)MEM_VRAM)[--cursorPos] = (' ' << 8) | attribs;
+		((int16_t*)MEM_VRAM)[--cursorPos] = (' ' << 8) | interface->io.attribs;
 	}
 	else
-		((int16_t*)MEM_VRAM)[cursorPos++] = (ch << 8) | attribs;
+		((int16_t*)MEM_VRAM)[cursorPos++] = (ch << 8) | interface->io.attribs;
 	REG_CARET = (REG_CARET & 0xC000) | cursorPos;
 	ScrollIfNeeded();
 }
@@ -130,14 +127,14 @@ void SetCursor(int left, int top)
 
 void SetTextColor(int back, int fore)
 {
-	attribs = (back << 4) | fore;
+	interface->io.attribs = (back << 4) | fore;
 }
 
 void ClearScreen()
 {
 	if ((REG_SCREENMODE & 3) == 0)
 	{
-		DmaClear((void*)MEM_VRAM, ((' ' << 8) | attribs), 80*60*2, DMA_SHORT);
+		DmaClear((void*)MEM_VRAM, ((' ' << 8) | interface->io.attribs), 80*60*2, DMA_SHORT);
 		REG_CARET = (REG_CARET & 0xC000);
 	}
 	else

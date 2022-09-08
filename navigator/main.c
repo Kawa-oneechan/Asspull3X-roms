@@ -152,7 +152,7 @@ tryOpenDir:
 int SwitchDrive(int which, int now)
 {
 	const uint16_t abcd[] = { 30, 48, 46, 32 };
-	int numDrives = DISK->GetNumDrives();
+	int numDrives = interface->io.numDrives;
 //	static int numDrives = -1;
 //	static char driveTypes[4];
 

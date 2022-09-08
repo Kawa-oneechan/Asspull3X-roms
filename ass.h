@@ -144,6 +144,13 @@ typedef struct
 	int32_t HdmaOffset;
 } TImageFile;
 
+typedef struct
+{
+	unsigned char attribs;
+	char numDrives;
+	char diskToDev[4];
+} TIOState;
+
 typedef struct {
 	int8_t	fs_type;		// File system type (0: N/A)
 	int8_t	drv;			// Physical drive number
@@ -323,6 +330,7 @@ typedef struct
 	void(*DrawFormat)(const char* format, int x, int y, int color, ...);
 	void(*DrawChar)(char ch, int x, int y, int color);
 	void(*DrawLine)(int x0, int y0, int x1, int y1, int color, uint8_t* dest);
+	void(*FloodFill)(int x, int y, int color, uint8_t* dest);
 } IDrawingLibrary;
 
 typedef struct
@@ -366,7 +374,6 @@ typedef struct
 	EFileError(*GetCurrentDir)(char* buffer, size_t buflen);
 	EFileError(*GetLabel)(char disk, char* buffer, uint32_t*);
 	const char*(*FileErrStr)(EFileError error);
-	uint8_t(*GetNumDrives)(void);
 	uint32_t(*GetFree)(char disk);
 } IDiskLibrary;
 
@@ -386,6 +393,7 @@ typedef struct
 	char* DrawCharFont;
 	uint16_t DrawCharHeight;
 	uint8_t* LinePrinter;
+	TIOState io;
 } IBios;
 
 #define TEXT interface->textLibrary

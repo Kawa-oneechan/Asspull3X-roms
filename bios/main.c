@@ -18,10 +18,6 @@ extern void PrepareDiskToDevMapping();
 //from crt0.s
 IBios* interface = (IBios*)(0x01000000);
 
-extern int8_t attribs;
-
-extern char diskToDev[];
-
 extern const uint16_t fontTiles[];
 extern const TImageFile splashData;
 extern const uint16_t iconsTiles[256];
@@ -49,7 +45,6 @@ extern const uint16_t iconsPal[16];
 void BlankOut();
 void DiskEntry();
 void Jingle();
-extern char diskToDev[16];
 
 int main(void)
 {
@@ -74,11 +69,11 @@ int main(void)
 	inton();
 
 	REG_CARET = 80 + 2;
-	attribs = 0x0B;
+	interface->io.attribs = 0x0B;
 	Write("Asspull \x96\xD7 %s\n\n", biosVer);
 	((char*)TEXTMAP)[17 + 160 + 4] = 0x0C;
 	((char*)TEXTMAP)[19 + 160 + 4] = 0x09;
-	attribs = 0x07;
+	interface->io.attribs = 0x07;
 
 #ifdef EXTENSIVE
 	{
@@ -93,15 +88,15 @@ int main(void)
 			vbl();
 			if (*memTest != 42)
 			{
-				attribs = 0x0C;
+				interface->io.attribs = 0x0C;
 				Write(" something's up.");
 				while (1) vbl();
 			}
 			memTest += 1024 * 32;
 		}
-		attribs = 0x0A;
+		interface->io.attribs = 0x0A;
 		Write(" okay!\n\n");
-		attribs = 0x07;
+		interface->io.attribs = 0x07;
 	}
 #endif
 	PrepareDiskToDevMapping();
@@ -126,7 +121,7 @@ int main(void)
 			{
 				for (int j = 0; j < 4; j++)
 				{
-					if (diskToDev[j] == i)
+					if (interface->io.diskToDev[j] == i)
 					{
 						Write("%s drive %c:", *(char*)&devices[5] ? "Hard disk" : "Diskette", 'A' + j);
 						break;
@@ -153,13 +148,13 @@ int main(void)
 
 	REG_CARET = 80 * 18;
 
-	if (GetNumDrives() == 0)
+	if (interface->io.numDrives == 0)
 	{
 		Write("  No disk drive connected. Power off, or press F1 to continue.\n\n");
 		while (INP_KEYIN != KEYSCAN_F1)
 			vbl();
 	}
-	else if (GetNumDrives() > 4)
+	else if (interface->io.numDrives > 4)
 	{
 		Write("  Too many disk drives connected. Only the first four will be accessible.\n  Press F1 to continue.\n\n");
 		while (INP_KEYIN != KEYSCAN_F1)
@@ -175,7 +170,7 @@ int main(void)
 
 	//Fade(false, false);
 
-	volatile uint8_t* firstDisk = (uint8_t*)0x02000000 + (diskToDev[0] * 0x8000);
+	volatile uint8_t* firstDisk = (uint8_t*)0x02000000 + (interface->io.diskToDev[0] * 0x8000);
 
 	while(1)
 	{
@@ -365,7 +360,7 @@ void BlankOut()
 	interface->VBlank = 0;
 	interface->DrawCharFont = (char*)0x0E060C00;
 	interface->DrawCharHeight = 0x0808;
-	attribs = 0x0F;
+	interface->io.attribs = 0x0F;
 	ClearScreen();
 	ResetPalette();
 }
@@ -459,7 +454,7 @@ void ShowException(int which, int what)
 	};
 	ClearScreen();
 	REG_CARET = 0;
-	attribs = 0x0F;
+	interface->io.attribs = 0x0F;
 	PALETTE[0] = 0;
 	PALETTE[15] = 0x7FFF;
 	REG_SCREENMODE = 0x20 | 0x80;

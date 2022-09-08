@@ -19,6 +19,32 @@
 #define REG_DMALENGTH	*(volatile uint32_t*)(0x0D000108)
 #define REG_DMACONTROL	*(volatile uint8_t*)(0x0D00010A)
 #define REG_TIMET		*(volatile int64_t*)(0x0D00060)
+typedef struct
+{
+	unsigned char attribs;
+	char numDrives;
+	char diskToDev[4];
+} TIOState;
+typedef struct
+{
+	long AssBang;
+	int16_t biosVersion;
+	int16_t extensions;
+	void(*Exception)(void*);
+	void(*VBlank)(void*);
+	void(*HBlank)(void*);
+	void(*DrawChar)(unsigned char, int, int, int);
+	void* textLibrary;
+	void* drawingLibrary;
+	void* miscLibrary;
+	void* diskLibrary;
+	char* DrawCharFont;
+	uint16_t DrawCharHeight;
+	uint8_t* LinePrinter;
+	TIOState io;
+} IBios;
+
+extern IBios* interface;
 
 /*
 DSTATUS disk_status(BYTE driveNo) __attribute__ ((weak, alias ("disk_initialize")));
@@ -110,12 +136,9 @@ DWORD get_fattime(void)
 #undef EPOCH_YEARS_SINCE_LEAP_CENTURY
 #undef isleap
 
-extern char diskToDev[16];
-extern int diskDrives;
-
 DSTATUS disk_initialize(BYTE driveNo)
 {
-	uint8_t* device = DEVS + (diskToDev[driveNo] * DEVSIZE);
+	uint8_t* device = DEVS + (interface->io.diskToDev[driveNo] * DEVSIZE);
 	if (REG_DISKCONTROL & DCTL_PRESENT)
 		return 0;
 	return STA_NOINIT; //STA_NODISK?
@@ -123,7 +146,7 @@ DSTATUS disk_initialize(BYTE driveNo)
 
 DSTATUS disk_status(BYTE driveNo)
 {
-	uint8_t* device = DEVS + (diskToDev[driveNo] * DEVSIZE);
+	uint8_t* device = DEVS + (interface->io.diskToDev[driveNo] * DEVSIZE);
 	if (REG_DISKCONTROL & DCTL_PRESENT)
 		return 0;
 	return STA_NOINIT; //STA_NODISK?
@@ -131,7 +154,7 @@ DSTATUS disk_status(BYTE driveNo)
 
 DRESULT disk_read(BYTE driveNo, BYTE *buff, DWORD sector, UINT count)
 {
-	uint8_t* device = DEVS + (diskToDev[driveNo] * DEVSIZE);
+	uint8_t* device = DEVS + (interface->io.diskToDev[driveNo] * DEVSIZE);
 	while(count--)
 	{
 		REG_DISKSECTOR = sector++;
@@ -149,7 +172,7 @@ DRESULT disk_read(BYTE driveNo, BYTE *buff, DWORD sector, UINT count)
 
 DRESULT disk_write(BYTE driveNo, const BYTE *buff, DWORD sector, UINT count)
 {
-	uint8_t* device = DEVS + (diskToDev[driveNo] * DEVSIZE);
+	uint8_t* device = DEVS + (interface->io.diskToDev[driveNo] * DEVSIZE);
 	while(count--)
 	{
 		REG_DISKSECTOR = sector++;
@@ -165,7 +188,7 @@ DRESULT disk_write(BYTE driveNo, const BYTE *buff, DWORD sector, UINT count)
 
 DRESULT disk_ioctl(BYTE driveNo, BYTE ctrl, void *buff)
 {
-	uint8_t* device = DEVS + (diskToDev[driveNo] * DEVSIZE);
+	uint8_t* device = DEVS + (interface->io.diskToDev[driveNo] * DEVSIZE);
 	if (!(REG_DISKCONTROL & DCTL_PRESENT))
 		return RES_NOTRDY;
 	switch (ctrl)

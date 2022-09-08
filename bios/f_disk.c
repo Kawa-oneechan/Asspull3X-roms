@@ -15,7 +15,7 @@ const IDiskLibrary diskLibrary =
 	UnlinkFile, RenameFile, FileTouch,
 	FileAttrib, MakeDir, ChangeDir,
 	GetCurrentDir, GetLabel, FileErrStr,
-	GetNumDrives, GetFree
+	GetFree
 };
 
 FATFS FatFs[FF_VOLUMES] = { 0 };
@@ -50,28 +50,26 @@ extern int f_mount (FATFS* fs, const char* path, char opt);
 //extern int f_printf (FILE* fp, const char* str, ...);
 //extern char* f_gets (char* buff, size_t len, FILE* fp);
 
-
-char diskToDev[FF_VOLUMES] = { 0 };
-int diskDrives = 0;
 void PrepareDiskToDevMapping()
 {
 	unsigned char* devices = (unsigned char*)0x02000000;
-	diskDrives = 0;
+	int n = 0;
 	for (char i = 0; i < 16; i++)
 	{
 		if (*(int16_t*)devices == 0x0144)
 		{
-			if (diskDrives < FF_VOLUMES)
-				diskToDev[diskDrives] = i;
-			diskDrives++;
+			if (interface->io.numDrives < FF_VOLUMES)
+				interface->io.diskToDev[n] = i;
+			n++;
 		}
 		devices += 0x8000;
 	}
-	for (int i = 0; i < diskDrives && i < FF_VOLUMES; i++)
+	for (int i = 0; i < n && i < FF_VOLUMES; i++)
 	{
 		char path[4] = { i + 'A', ':', 0 };
 		f_mount(&FatFs[i], path, 1);
 	}
+	interface->io.numDrives = n;
 }
 
 EFileError OpenFile(TFileHandle* handle, const char* path, char mode)
@@ -261,9 +259,4 @@ const char* FileErrStr(EFileError error)
 {
 	if (error > 19) error = 20;
 	return FSErrors[error];
-}
-
-unsigned char GetNumDrives()
-{
-	return diskDrives;
 }
