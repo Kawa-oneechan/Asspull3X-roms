@@ -438,9 +438,9 @@ void DiskEntry()
 
 	if (diskEntryMayRun)
 	{
-		Write("Was allowed to run");
-		while (INP_KEYIN != KEYSCAN_F1)
-			vbl();
+//		Write("Was allowed to run");
+//		while (INP_KEYIN != KEYSCAN_F1)
+//			vbl();
 		if (!shellName[0])
 		{
 			BlankOut();
