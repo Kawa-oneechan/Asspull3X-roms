@@ -52,6 +52,26 @@ int Write(const char* format, ...)
 	int len = 0;
 	while (*b)
 	{
+		//This is incredibly silly.
+		/*
+		if (*b == 0x1B)
+		{
+			if (*(b+1) == 'E')
+			{
+				attribs |= 8;
+				b += 2;
+				len += 2;
+				continue;
+			}
+			else if (*(b+1) == 'e')
+			{
+				attribs &= ~8;
+				b += 2;
+				len += 2;
+				continue;
+			}
+		}
+		*/
 		WriteChar(*b++);
 		len++;
 	}
