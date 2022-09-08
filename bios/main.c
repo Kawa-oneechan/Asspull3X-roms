@@ -198,8 +198,8 @@ goAgain:
 					{
 						if (!diskEntryMayRun)
 						{
-							hadDisk = false;
-							haveDisk = false;
+							entry = (void*)0x00020004;
+							continue;
 						}
 						else
 							entry = DiskEntry;
