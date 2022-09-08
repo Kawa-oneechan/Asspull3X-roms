@@ -14,6 +14,7 @@
 #define DCTL_ERROR		2
 #define DCTL_READNOW	4
 #define DCTL_WRITENOW	8
+#define DCTL_BUSY		16
 #define REG_DMASOURCE	*(volatile uint32_t*)(0x0D000100)
 #define REG_DMATARGET	*(volatile uint32_t*)(0x0D000104)
 #define REG_DMALENGTH	*(volatile uint32_t*)(0x0D000108)
@@ -138,7 +139,7 @@ DWORD get_fattime(void)
 
 DSTATUS disk_initialize(BYTE driveNo)
 {
-	uint8_t* device = DEVS + (interface->io.diskToDev[driveNo] * DEVSIZE);
+	volatile uint8_t* device = DEVS + (interface->io.diskToDev[driveNo] * DEVSIZE);
 	if (REG_DISKCONTROL & DCTL_PRESENT)
 		return 0;
 	return STA_NOINIT; //STA_NODISK?
@@ -146,7 +147,7 @@ DSTATUS disk_initialize(BYTE driveNo)
 
 DSTATUS disk_status(BYTE driveNo)
 {
-	uint8_t* device = DEVS + (interface->io.diskToDev[driveNo] * DEVSIZE);
+	volatile uint8_t* device = DEVS + (interface->io.diskToDev[driveNo] * DEVSIZE);
 	if (REG_DISKCONTROL & DCTL_PRESENT)
 		return 0;
 	return STA_NOINIT; //STA_NODISK?
@@ -154,7 +155,8 @@ DSTATUS disk_status(BYTE driveNo)
 
 DRESULT disk_read(BYTE driveNo, BYTE *buff, DWORD sector, UINT count)
 {
-	uint8_t* device = DEVS + (interface->io.diskToDev[driveNo] * DEVSIZE);
+	volatile uint8_t* device = DEVS + (interface->io.diskToDev[driveNo] * DEVSIZE);
+	while(REG_DISKCONTROL & DCTL_BUSY) { ; }
 	while(count--)
 	{
 		REG_DISKSECTOR = sector++;
@@ -172,7 +174,8 @@ DRESULT disk_read(BYTE driveNo, BYTE *buff, DWORD sector, UINT count)
 
 DRESULT disk_write(BYTE driveNo, const BYTE *buff, DWORD sector, UINT count)
 {
-	uint8_t* device = DEVS + (interface->io.diskToDev[driveNo] * DEVSIZE);
+	volatile uint8_t* device = DEVS + (interface->io.diskToDev[driveNo] * DEVSIZE);
+	while(REG_DISKCONTROL & DCTL_BUSY) { ; }
 	while(count--)
 	{
 		REG_DISKSECTOR = sector++;
@@ -191,6 +194,7 @@ DRESULT disk_ioctl(BYTE driveNo, BYTE ctrl, void *buff)
 	uint8_t* device = DEVS + (interface->io.diskToDev[driveNo] * DEVSIZE);
 	if (!(REG_DISKCONTROL & DCTL_PRESENT))
 		return RES_NOTRDY;
+	while(REG_DISKCONTROL & DCTL_BUSY) { ; }
 	switch (ctrl)
 	{
 		case CTRL_SYNC: break;
