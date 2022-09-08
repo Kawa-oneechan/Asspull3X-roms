@@ -162,5 +162,8 @@ interface:
 	.long 0x0E050C00	| Bold
 	.short 0x0808		| 8x8, line height 8
 	.long 0x00000000	| No line printer
+	.byte 0x07
+	.byte 0
+	.long 0
 
 	.text

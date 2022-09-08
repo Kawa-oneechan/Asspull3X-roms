@@ -46,6 +46,8 @@ void BlankOut();
 void DiskEntry();
 void Jingle();
 
+bool diskEntryMayRun = false;
+
 int main(void)
 {
 	char biosVer[32];
@@ -169,10 +171,11 @@ int main(void)
 #endif
 
 	//Fade(false, false);
+	diskEntryMayRun = false;
 
 	volatile uint8_t* firstDisk = (uint8_t*)0x02000000 + (interface->io.diskToDev[0] * 0x8000);
 
-	while(1)
+	while(true)
 	{
 goAgain:
 //		if (*cartCode != 0x41535321) //ASS!
@@ -186,12 +189,22 @@ goAgain:
 				{
 					CloseFile(&file);
 					OBJECTS_A[0] = OBJECTA_BUILD(32, 0, 1, 0); //disk
-					entry = DiskEntry;
+					diskEntryMayRun = false;
+					DiskEntry();
 					//BUT!
-					if (*cartCode == 0x41535321)
+					if (*cartCode == 0x41535321 && diskEntryMayRun)
 						showMenu = true;
 					else
+					{
+						if (!diskEntryMayRun)
+						{
+							hadDisk = false;
+							haveDisk = false;
+						}
+						else
+							entry = DiskEntry;
 						break;
+					}
 				}
 				else
 				{
@@ -347,6 +360,10 @@ goAgain:
 		BlankOut();
 	}
 	entry();
+
+	showSplash = false;
+	showMenu = false;
+	goto goAgain;
 }
 
 void BlankOut()
@@ -370,7 +387,7 @@ void DiskEntry()
 	FILE file;
 	FILEINFO nfo;
 	char cfgData[512];
-	OpenFile(&file, "start.cfg", FA_READ);
+	if (OpenFile(&file, "start.cfg", FA_READ)) return;
 	ReadFile(&file, cfgData, 512);
 	CloseFile(&file);
 
@@ -379,6 +396,7 @@ void DiskEntry()
 	char* value;
 
 	char fontName[16] = { 0 };
+	char locName[16] = { 0 };
 	char shellName[16] = { 0 };
 
 	while (*ptr != 0)
@@ -397,6 +415,8 @@ void DiskEntry()
 		//printf("value: %s\n", value);
 		if (!strcmp(key, "font"))
 			strcpy(fontName, value);
+		else if (!strcmp(key, "locale"))
+			strcpy(locName, value);
 		else if (!strcmp(key, "shell"))
 			strcpy(shellName, value);
 	}
@@ -412,16 +432,53 @@ void DiskEntry()
 		CloseFile(&file);
 	}
 
-	if (shellName[0])
+//	Write("Shell is \"%s\"", shellName);
+//	while (INP_KEYIN != KEYSCAN_F1)
+//		vbl();
+
+	if (diskEntryMayRun)
 	{
+		Write("Was allowed to run");
+		while (INP_KEYIN != KEYSCAN_F1)
+			vbl();
+		if (!shellName[0])
+		{
+			BlankOut();
+			REG_SCREENMODE = SMODE_BOLD | SMODE_240;
+			Write("No shell specified. Press F1 to restart.");
+			while (INP_KEYIN != KEYSCAN_F1)
+				vbl();
+			return;
+		}
 		void(*entry)(void) = (void*)0x01002020;
 		FILEINFO nfo;
 		FileStat(shellName, &nfo);
-		OpenFile(&file, shellName, FA_READ);
+		if (OpenFile(&file, shellName, FA_READ))
+		{
+			BlankOut();
+			REG_SCREENMODE = SMODE_BOLD | SMODE_240;
+			Write("Could not open \"%s\". Press F1 to restart.", shellName);
+			while (INP_KEYIN != KEYSCAN_F1)
+				vbl();
+			return;
+		}
 		ReadFile(&file, (void*)0x01002000, nfo.fsize);
 		CloseFile(&file);
-		BlankOut();
 		entry();
+	}
+	else if (!shellName[0])
+	{
+//		Write("Was not allowed to run, nothing TO run anyway");
+//		while (INP_KEYIN != KEYSCAN_F1)
+//			vbl();
+		diskEntryMayRun = false;
+	}
+	else
+	{
+//		Write("Was not allowed to run, would've run \"%s\"", shellName);
+//		while (INP_KEYIN != KEYSCAN_F1)
+//			vbl();
+		diskEntryMayRun = true;
 	}
 }
 
