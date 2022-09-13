@@ -71,7 +71,6 @@ char *strchr(const char *haystack, int needle)
 	return 0;
 }
 
-
 char *strrchr(const char *haystack, int needle)
 {
 	size_t pos = strnlen_s(haystack, 2048) + 1;
@@ -81,29 +80,17 @@ char *strrchr(const char *haystack, int needle)
 	return 0;
 }
 
-
-//TODO: needs proper testing
 int strkitten_s(char* dest, size_t len, char src)
 {
 	size_t i;
 	if (!dest) return 1;
 	if (len == 0) return 1;
-	if (!src)
-	{
-		dest[0] = '\0';
-		return 1;
-	}
 	i = strnlen_s(dest, len);
-	//just about here
-	if (i < len)
-	{
-		dest[i++] = src;
-		dest[i++] = '\0';
-		return 0;
-	}
-
-	dest[0] = '\0';
-	return 2;
+	if (i == len)
+		return 2;
+	dest[i++] = src;
+	dest[i++] = '\0';
+	return 0;
 }
 
 int isgraph(int c)
