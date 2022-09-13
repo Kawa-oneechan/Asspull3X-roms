@@ -440,6 +440,17 @@ void DiskEntry()
 		CloseFile(&file);
 	}
 
+	if (locName[0])
+	{
+		FileStat(locName, &nfo);
+		if (nfo.fsize == sizeof(TLocale))
+		{
+			OpenFile(&file, locName, FA_READ);
+			ReadFile(&file, (void*)&interface->locale, sizeof(TLocale));
+		}
+		CloseFile(&file);
+	}
+
 //	Write("Shell is \"%s\"", shellName);
 //	while (INP_KEYIN != KEYSCAN_F1)
 //		vbl();

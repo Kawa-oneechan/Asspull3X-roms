@@ -146,6 +146,38 @@ typedef struct
 
 typedef struct
 {
+	char code[6];			//Locale name
+	char wday_name[32];		//"Sun"..."Sat"
+	char mon_name[64];		//"Jan"..."Dec"
+	char wday_nameF[64];	//"Sunday"..."Saturday"
+	char mon_nameF[106];	//"January"..."December"
+	char shortDateFmt[16];	//Format for "1983-06-26"
+	char longDateFmt[16];	//Format for "Sunday, June 26, 1983"
+	char shortTimeFmt[16];	//Format for "17:42:07"
+	char longTimeFmt[16];	//Format for "17:42:07"
+	char thousands;			//What to put between clusters of three digits, ','
+	char decimals;			//What to put between an integer and decimals, '.'
+	char currency[4];		//Currency symbol, '$'
+	bool currencyAfter;		//Is it "10$" or "$10"?
+	char sctoasc[256];		//Scancode map
+} TLocale;
+
+typedef enum
+{
+	LC_CODE,
+	LC_DAYS,
+	LC_MONS,
+	LC_DAYF,
+	LC_MONF,
+	LC_DATES,
+	LC_DATEL,
+	LC_TIMES,
+	LC_TIMEL,
+	LC_CURR,
+} ELocale;
+
+typedef struct
+{
 	unsigned char attribs;
 	char numDrives;
 	char diskToDev[4];
@@ -345,6 +377,7 @@ typedef struct
 	void(*DmaClear)(void* dst, int src, size_t size, int step);
 	void(*MidiReset)(void);
 	void(*RleUnpack)(int8_t* dst, int8_t* src, size_t size);
+	char*(*GetLocaleStr)(ELocale category, int item);
 } IMiscLibrary;
 
 typedef struct
@@ -394,6 +427,7 @@ typedef struct
 	uint16_t DrawCharHeight;
 	uint8_t* LinePrinter;
 	TIOState io;
+	TLocale locale;
 } IBios;
 
 #define TEXT interface->textLibrary

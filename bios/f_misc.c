@@ -11,7 +11,8 @@ const IMiscLibrary miscLibrary =
 	WaitForVBlank, WaitForVBlanks,
 	DmaCopy, DmaClear,
 	MidiReset,
-	RleUnpack
+	RleUnpack,
+	GetLocaleStr
 };
 
 void SetTextMode(int flags)
@@ -98,4 +99,25 @@ void RleUnpack(int8_t* dst, int8_t* src, size_t size)
 		}
 		size--;
 	}
+}
+
+char* GetLocaleStr(ELocale category, int item)
+{
+	char* source;
+	switch (category)
+	{
+		case LC_CODE: return interface->locale.code;
+		case LC_DAYS: source = interface->locale.wday_name; break;
+		case LC_MONS: source = interface->locale.mon_name; break;
+		case LC_DAYF: source = interface->locale.wday_nameF; break;
+		case LC_MONF: source = interface->locale.mon_nameF; break;
+		case LC_DATES: return interface->locale.shortDateFmt;
+		case LC_DATEL: return interface->locale.longDateFmt;
+		case LC_TIMES: return interface->locale.shortTimeFmt;
+		case LC_TIMEL: return interface->locale.longTimeFmt;
+		case LC_CURR: return interface->locale.currency;
+		default: return "<?>";
+	}
+	for (; item; item--, source++) for (; *source; source++);
+	return source;
 }

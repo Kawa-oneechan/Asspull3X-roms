@@ -147,6 +147,7 @@ typedef struct IBios
 	uint16_t DrawCharHeight;
 	uint8_t* LinePrinter;
 	TIOState io;
+	TLocale locale;	
 }
 */
 interface:
@@ -166,5 +167,6 @@ interface:
 	.byte 0x07
 	.byte 0
 	.long 0
+	.incbin "en_US.bin"
 
 	.text

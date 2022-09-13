@@ -32,6 +32,7 @@ extern void DmaCopy(void*, const void*, size_t, int);
 extern void DmaClear(void*, int, size_t, int);
 extern void MidiReset(void);
 extern void RleUnpack(int8_t*, int8_t*, size_t);
+extern char* GetLocaleStr(ELocale, int);
 extern EFileError OpenFile(TFileHandle*, const char*, char);
 extern EFileError CloseFile(TFileHandle*);
 extern int ReadFile(TFileHandle*, void*, size_t);

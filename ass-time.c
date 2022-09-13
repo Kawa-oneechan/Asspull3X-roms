@@ -29,21 +29,6 @@ extern IBios* interface;
 
 tm __gmtime_res;
 
-static const char wday_name[][4] = {
-	"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"
-};
-static const char mon_name[][4] = {
-	"Jan", "Feb", "Mar", "Apr", "May", "Jun",
-	"Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
-};
-static const char wday_nameF[][10] = {
-	"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"
-};
-static const char mon_nameF[][10] = {
-	"January", "February", "March", "April", "May", "June",
-	"July", "August", "September", "October", "November", "December"
-};
-
 size_t strftime(char *str, size_t count, const char *format, const tm *time)
 {
 	const char *f = format;
@@ -88,10 +73,10 @@ size_t strftime(char *str, size_t count, const char *format, const tm *time)
 						goto next;
 					case 'b':
 					case 'h':
-						len = TEXT->Format(s, "%s", mon_name[time->tm_mon]);
+						len = TEXT->Format(s, "%s", MISC->GetLocaleStr(LC_MONS, time->tm_mon));
 						goto next;
 					case 'B':
-						len = TEXT->Format(s, "%s", mon_nameF[time->tm_mon]);
+						len = TEXT->Format(s, "%s", MISC->GetLocaleStr(LC_MONF, time->tm_mon));
 						goto next;
 					case 'm':
 						len = TEXT->Format(s, "%02d", time->tm_mon + 1);
@@ -109,10 +94,10 @@ size_t strftime(char *str, size_t count, const char *format, const tm *time)
 						len = TEXT->Format(s, "%.2d", time->tm_mday);
 						goto next;
 					case 'a':
-						len = TEXT->Format(s, "%s", wday_name[time->tm_wday]);
+						len = TEXT->Format(s, "%s", MISC->GetLocaleStr(LC_DAYS, time->tm_wday));
 						goto next;
 					case 'A':
-						len = TEXT->Format(s, "%s", wday_nameF[time->tm_wday]);
+						len = TEXT->Format(s, "%s", MISC->GetLocaleStr(LC_DAYF, time->tm_wday));
 						goto next;
 					case 'w':
 						len = TEXT->Format(s, "%d", time->tm_wday);
@@ -165,8 +150,8 @@ size_t strftime(char *str, size_t count, const char *format, const tm *time)
 char* asctime_r(const tm *timeptr, char* buf)
 {
 	TEXT->Format(buf, "%.3s %.3s%3d %.2d:%.2d:%.2d %d",
-		wday_name[timeptr->tm_wday],
-		mon_name[timeptr->tm_mon],
+		MISC->GetLocaleStr(LC_DAYS, timeptr->tm_wday),
+		MISC->GetLocaleStr(LC_MONS, timeptr->tm_mon),
 		timeptr->tm_mday, timeptr->tm_hour,
 		timeptr->tm_min, timeptr->tm_sec,
 		YEAR_BASE + timeptr->tm_year);
@@ -182,7 +167,7 @@ char* asctime(const tm *timeptr)
 tm* gmtime(const time_t* timer)
 {
 	tm* res = &__gmtime_res;
-	int16_t days, rem;
+	int32_t days, rem;
 	const time_t lcltime = *timer;
 	int era, weekday, year;
 	uint32_t erayear, yearday, month, day;
