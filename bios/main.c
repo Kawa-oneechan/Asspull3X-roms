@@ -421,11 +421,11 @@ void DiskEntry()
 
 		//printf("key: %s\n", key);
 		//printf("value: %s\n", value);
-		if (!strcmp(key, "font"))
+		if (!strncmp(key, "font", 8))
 			strcpy(fontName, value);
-		else if (!strcmp(key, "locale"))
+		else if (!strncmp(key, "locale", 8))
 			strcpy(locName, value);
-		else if (!strcmp(key, "shell"))
+		else if (!strncmp(key, "shell", 8))
 			strcpy(shellName, value);
 	}
 

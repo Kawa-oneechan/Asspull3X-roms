@@ -182,7 +182,7 @@ int doMenu(int left, int top, int width, int height, char* options, int num)
 			int nl = measureString(b, 0);
 			if (nl > width)
 				width = nl;
-			b += strlen(b) + 1;
+			b += strnlen_s(b, 1024) + 1;
 		}
 		width += 8;
 		width = width / 8;
@@ -202,7 +202,7 @@ int doMenu(int left, int top, int width, int height, char* options, int num)
 			int k = 416 + ((i % 4) * 8) + ((i / 4) * 32);
 			for (int j = 0; j < width - 4; j++)
 				MAP4[((i + top + 1) * 64) + (j + left + 3)] = k++ | 0xF000;
-			b += strlen(b) + 1;
+			b += strnlen_s(b, 1024) + 1;
 		}
 	}
 	MISC->DmaCopy(TILESET + 32, cursorTiles, 48, DMA_INT);
@@ -397,7 +397,7 @@ void runScript(uint8_t* code, int entityID)
 				{
 					chu = (char*)stack[--stackSize];
 					strcpy(biga, chu);
-					biga += strlen(biga);
+					biga += strnlen_s(biga, 1024);
 					*biga++ = 0;
 					opts++;
 				}

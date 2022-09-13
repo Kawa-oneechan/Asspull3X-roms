@@ -323,13 +323,13 @@ int ShowFile(char* filePath, bool allowRun)
 	}
 
 	char* ext = strrchr(filePath, '.') + 1;
-	if (!strcmp(ext, "TXT"))
+	if (!strncmp(ext, "TXT", 3))
 		ShowText(filePath);
-	else if (!strcmp(ext, "API"))
+	else if (!strncmp(ext, "API", 3))
 		ShowPic(filePath);
-	else if (!strcmp(ext, "FNT") && allowRun)
+	else if (!strncmp(ext, "FNT", 3) && allowRun)
 		LoadFont(filePath);
-	else if (!strcmp(ext, "APP") && allowRun)
+	else if (!strncmp(ext, "APP", 3) && allowRun)
 		StartApp(filePath);
 	else
 	{

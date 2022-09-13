@@ -35,8 +35,6 @@ extern int fclose(FILE* file);
 #define sprintf(b,f,rest...) TEXT->Format(b,f, ## rest)
 
 extern char * strtok_r (char *newstring, const char *delimiters, char **save_ptr);
-extern size_t strlen (char *s);
-extern int strcmp (char *a, char *b);
 
 #ifdef __cplusplus
 }

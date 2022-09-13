@@ -98,8 +98,8 @@ void drawBattleUI()
 		drawString(opponentDB[opponents[i].monsterID].name, 64 + 0, 32 + (i * 8) + 0, 2, 0);
 	}
 
-	dialoguePortrait = 3;
-	saySomething("It  is  I  who   added the\nnuts to that!");
+	//dialoguePortrait = 3;
+	//saySomething("It  is  I  who   added the\nnuts to that!");
 
 	while(1)
 	{

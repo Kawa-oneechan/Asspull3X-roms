@@ -51,6 +51,37 @@ size_t strnlen_s(const char* str, size_t max)
 	return i;
 }
 
+int strncmp(const char *l, const char *r, size_t max)
+{
+	const unsigned char *a=(void *)l, *b=(void *)r;
+	if (!max--) return 0;
+	for (; *a && *b && max && *a == *b ; a++, b++, max--);
+	return *a - *b;
+}
+
+char *strchr(const char *haystack, int needle)
+{
+	size_t pos = 0;
+	while (haystack[pos])
+	{
+		if (haystack[pos] == needle)
+			return (char*)(haystack + pos);
+		pos++;
+	}
+	return 0;
+}
+
+
+char *strrchr(const char *haystack, int needle)
+{
+	size_t pos = strnlen_s(haystack, 2048) + 1;
+	while (pos--)
+		if (haystack[pos] == needle)
+			return (char*)(haystack + pos);
+	return 0;
+}
+
+
 //TODO: needs proper testing
 int strkitten_s(char* dest, size_t len, char src)
 {

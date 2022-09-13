@@ -180,7 +180,7 @@ void CloseWindow(tWindow* win)
 
 void ShowError(const char* message)
 {
-	tWindow* win = OpenWindow(-1, -1, strlen((char*)message) + 8, 5, 0x4F);
+	tWindow* win = OpenWindow(-1, -1, strnlen_s((char*)message, 80) + 8, 5, 0x4F);
 	TEXT->SetTextColor(SplitColor(0x4F));
 	TEXT->SetCursorPosition(win->left + 4, win->top + 2);
 	printf(message);

@@ -141,9 +141,6 @@ extern void swapPartyMembers(int a, int b);
 extern int lastInput;
 extern void getInput();
 
-extern char *strcpy(char *dest, const char *src);
-extern int strlen(const char *str);
-
 extern void drawTile(int x, int y, int tileNum);
 extern void aimCamera(int x, int y);
 extern void drawMap();

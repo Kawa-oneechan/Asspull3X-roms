@@ -636,7 +636,7 @@ bool FncAsc()
 {
 	if (!Anticipate('(')) return SyntaxError("Expected '('");
 	char* t = ExpectString();
-	if (strlen(t) == 0) return SyntaxError("Invalid string");
+	if (strnlen_s(t, 1024) == 0) return SyntaxError("Invalid string");
 	intVars[26] = t[0];
 	free(t);
 	if (!Anticipate(')')) return SyntaxError("Expected ')'");
@@ -647,7 +647,7 @@ bool FncLen()
 {
 	if (!Anticipate('(')) return SyntaxError("Expected '('");
 	char* t = ExpectString();
-	intVars[26] = strlen(t);
+	intVars[26] = strnlen_s(t, 1024);
 	free(t);
 	if (!Anticipate(')')) return SyntaxError("Expected ')'");
 	return true;
@@ -995,7 +995,7 @@ int Compile(const char* input, sptr output)
 				c = toupper(c);
 				unsigned char n = *(input + 1);
 				n = toupper(n);
-				if (strlen(token) < 2 && (n == '$' || n == '%' || !isalpha(n)))
+				if (strnlen_s(token, 64) < 2 && (n == '$' || n == '%' || !isalpha(n)))
 				{
 					*ptr++ = c;
 				}
@@ -1013,7 +1013,7 @@ int Compile(const char* input, sptr output)
 						const command* cmd = &newCommands[i];
 						if (cmd->name[0] == 0)
 							continue;
-						if (!strcmp((char*)cmd->name, token))
+						if (!strncmp((char*)cmd->name, token, 15))
 						{
 							cmdFound = i;
 						}
@@ -1034,7 +1034,7 @@ int Compile(const char* input, sptr output)
 					const command* cmd = &newCommands[i];
 					if (cmd->name[0] == 0)
 						continue;
-					if (!strcmp((char*)cmd->name, token))
+					if (!strncmp((char*)cmd->name, token, 15))
 					{
 						expFound = i;
 					}

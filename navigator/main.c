@@ -250,8 +250,8 @@ void InfoPanel(int panel, char* workPath, char* filename)
 		else
 		{
 			char* ext = strrchr((const char*)filename, '.') + 1;
-			if (!strcmp(ext, "APP")) strcpy(t[i++], "A\x96\xD7 Application");
-			else if (!strcmp(ext, "API"))
+			if (!strncmp(ext, "APP", 3)) strcpy(t[i++], "A\x96\xD7 Application");
+			else if (!strncmp(ext, "API", 3))
 			{
 				strcpy(t[i++], "A\x96\xD7 Image");
 				i++;
@@ -265,8 +265,8 @@ void InfoPanel(int panel, char* workPath, char* filename)
 				if (imgHeader.Flags & 2) strcpy(t[i++], "Has HDMA data");
 				sprintf(t[i++], "Size: %d\xD7%d", imgHeader.Width, imgHeader.Height);
 			}
-			else if (!strcmp(ext, "TXT")) strcpy(t[i++], "Text file");
-			else if (!strcmp(ext, "FNT") && info.fsize == 12288) strcpy(t[i++], "Font - open to use");
+			else if (!strncmp(ext, "TXT", 3)) strcpy(t[i++], "Text file");
+			else if (!strncmp(ext, "FNT", 3) && info.fsize == 12288) strcpy(t[i++], "Font - open to use");
 			else strcpy(t[i++], "File");
 		}
 		i++;
@@ -355,7 +355,7 @@ void SelectFile(const char* path1, const char* path2, const char* pattern)
 					for (int i = 0; i < WIDTH - 1; i++)
 						TEXTMAP[80 + o + i + 1] = 0x9000 | CLR_PANEL; //top edge
 					TEXT->SetTextColor(CLR_PANEL & 0x0F, CLR_PANEL >> 4);
-					TEXT->SetCursorPosition(o + (WIDTH / 2) - (strlen(workPath[s]) / 2), 1);
+					TEXT->SetCursorPosition(o + (WIDTH / 2) - (strnlen_s(workPath[s], MAXPATH) / 2), 1);
 					TEXT->Write(" %s ", workPath[s]);
 
 					char label[12] = { 0 };
@@ -592,7 +592,7 @@ void SelectFile(const char* path1, const char* path2, const char* pattern)
 						scroll[cs] = 0;
 						for (int r = 0; r < fileCt[cs]; r++)
 						{
-							if (!strcmp(&filenames[cs][r * 16], justLeft))
+							if (!strncmp(&filenames[cs][r * 16], justLeft, 16))
 							{
 								//DISK->FileStat(&filenames[cs][r * 16], &info);
 								//if (info.fattrib & AM_DIRECTORY)

@@ -307,6 +307,9 @@ typedef struct {
 extern int strcpy_s(char*, size_t, const char*);
 extern int strcat_s(char*, size_t, const char*);
 extern size_t strnlen_s(const char*, size_t);
+extern int strncmp(const char*, const char*, size_t);
+extern char *strchr(const char*, int);
+extern char *strrchr(const char*, int);
 extern int strkitten_s(char*, size_t, char);
 extern int isgraph(int);
 extern int isprint(int);
