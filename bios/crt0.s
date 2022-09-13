@@ -146,6 +146,7 @@ typedef struct IBios
 	char* DrawCharFont;
 	uint16_t DrawCharHeight;
 	uint8_t* LinePrinter;
+	TIOState io;
 }
 */
 interface:
