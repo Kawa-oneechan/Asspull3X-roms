@@ -250,10 +250,10 @@ void InfoPanel(int panel, char* workPath, char* filename)
 		else
 		{
 			char* ext = strrchr((const char*)filename, '.') + 1;
-			if (!strncmp(ext, "APP", 3)) strcpy(t[i++], "A\x96\xD7 Application");
+			if (!strncmp(ext, "APP", 3)) strcpy(t[i++], "A\x11\xD7 Application");
 			else if (!strncmp(ext, "API", 3))
 			{
-				strcpy(t[i++], "A\x96\xD7 Image");
+				strcpy(t[i++], "A\x11\xD7 Image");
 				i++;
 				TImageFile imgHeader;
 				FILE imgFile;

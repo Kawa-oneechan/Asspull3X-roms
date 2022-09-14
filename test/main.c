@@ -122,7 +122,7 @@ int main(void)
 		TEXT->SetTextColor(0, 1);
 		TEXT->Write("Asspull ");
 		TEXT->SetTextColor(0, 9);
-		TEXT->WriteChar('\x96');
+		TEXT->WriteChar('\x11');
 		TEXT->SetTextColor(0, 12);
 		TEXT->WriteChar('\xD7');
 		TEXT->SetTextColor(0, 7);

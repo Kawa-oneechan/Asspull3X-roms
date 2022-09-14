@@ -60,7 +60,7 @@ int main(void)
 	int blinker = 0;
 
 	sprintf(biosVer, "BIOS v%d.%d", (interface->biosVersion >> 8) & 0xFF, (interface->biosVersion >> 0) & 0xFF);
-	const char banner[] = "\x93\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x8B\n\x89 ASSPULL \x96\xD7 \x89\n\x8C\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x92";
+	const char banner[] = "\x93\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x8B\n\x89 ASSPULL \x11\xD7 \x89\n\x8C\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x92";
 
 	DmaCopy(TEXTFONT, (int8_t*)&fontTiles, 0xC00, DMA_INT);
 	ResetPalette();
@@ -72,7 +72,7 @@ int main(void)
 
 	REG_CARET = 80 + 2;
 	interface->io.attribs = 0x0B;
-	Write("Asspull \x96\xD7 %s\n\n", biosVer);
+	Write("Asspull \x11\xD7 %s\n\n", biosVer);
 	((char*)TEXTMAP)[17 + 160 + 4] = 0x0C;
 	((char*)TEXTMAP)[19 + 160 + 4] = 0x09;
 	interface->io.attribs = 0x07;
