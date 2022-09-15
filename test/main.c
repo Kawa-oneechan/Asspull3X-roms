@@ -3,17 +3,6 @@ IBios* interface;
 
 #define SRAM ((uint8_t*)(0x00FE0000))
 
-static const char sctoasc[256] = {
-	0,0,'1','2','3','4','5','6','7','8','9','0','-','=',0,0,
-	'q','w','e','r','t','y','u','i','o','p','[',']',0,0,'a','s',
-	'd','f','g','h','j','k','l',';',39,'`',0,92,'z','x','c','v',
-	'b','n','m',',','.','/',0,'*',0,32,0,0,0,0,0,0,
-	0,0,0,0,0,0,0,'7','8','9','-','4','5','6','+','1',
-	'2','3','0','.',0,0,0,0,0,0,0,0,0,0,0,0,
-	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-};
-
 void WaitForKey()
 {
 	//TEXT->SetCursorPosition(0, 28);
@@ -44,7 +33,7 @@ char getchar()
 		if ((key & 0xFF) > 0)
 			break;
 	}
-	return sctoasc[key & 0xFF];
+	return interface->locale.sctoasc[key & 0xFF];
 }
 
 extern uint16_t tilegrid[];
