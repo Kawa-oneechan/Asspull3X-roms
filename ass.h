@@ -157,8 +157,10 @@ typedef struct
 	char longTimeFmt[16];	//Format for "17:42:07"
 	char thousands;			//What to put between clusters of three digits, ','
 	char decimals;			//What to put between an integer and decimals, '.'
+	char thousandsCt;		//How many digits per cluster, 3
 	char currency[4];		//Currency symbol, '$'
 	bool currencyAfter;		//Is it "10$" or "$10"?
+	char reserved[16];
 	char sctoasc[256];		//Scancode map
 } TLocale;
 

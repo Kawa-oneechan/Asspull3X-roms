@@ -167,6 +167,6 @@ interface:
 	.byte 0x07
 	.byte 0
 	.long 0
-	.incbin "en_US.bin"
+	.incbin "en_US.loc"
 
 	.text

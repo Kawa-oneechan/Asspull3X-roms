@@ -22,8 +22,10 @@ typedef struct
 	char longTimeFmt[16];	//Format for "17:42:07"
 	char thousands;			//What to put between clusters of three digits, ','
 	char decimals;			//What to put between an integer and decimals, '.'
+	char thousandsCt;		//How many digits per cluster, 3
 	char currency[4];		//Currency symbol, '$'
 	bool currencyAfter;		//Is it "10$" or "$10"?
+	char reserved[16];
 	char sctoasc[256];		//Scancode map
 } TLocale;
 typedef struct
@@ -103,6 +105,9 @@ static char *number(char *str, long num, int base, int size, int precision,
 	const char *digits = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 	int i;
 
+	if (interface->locale.thousandsCt == 0 && type & SPECIAL)
+		type &= ~SPECIAL;
+
 	//if (type & LARGE)
 	//	digits = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 	if (type & LEFT)
@@ -162,7 +167,7 @@ static char *number(char *str, long num, int base, int size, int precision,
 	{
 		*str++ = tmp[i];
 		//Kawa added this
-		if (type & SPECIAL && base == 10 && i % 3 == 0 && i > 0)
+		if (type & SPECIAL && base == 10 && i % interface->locale.thousandsCt == 0 && i > 0)
 			*str++ = interface->locale.thousands; //',';
 	}
 	while (size-- > 0)
