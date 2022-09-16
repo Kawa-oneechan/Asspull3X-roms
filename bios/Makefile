@@ -25,7 +25,7 @@ export OFILES	:= $(SFILES:.s=.o) $(CFILES:.c=.o)
 
 MAPFILE		:= $(TARGET).map
 
-ARCH		:= -m68000
+ARCH		:= -m68030
 SPECS		:= -B ../devkit68K/m68k-elf/lib -specs=asspull-bios.specs
 
 INCLUDE		:= -I toolinclude
