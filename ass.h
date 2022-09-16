@@ -6,8 +6,7 @@ extern "C" {
 
 #define likely(x)	__builtin_expect((x),1)
 #define unlikely(x)	__builtin_expect((x),0)
-
-#define DEBUG
+#define array_size(x) ((sizeof(x) / sizeof(*x)) / !(sizeof(x) % sizeof(*x)))
 
 #include <stddef.h>
 #include <stdint.h>
@@ -16,8 +15,6 @@ extern "C" {
 
 #define printf interface->textLibrary->Write
 #define vbl interface->miscLibrary->WaitForVBlank
-#define intoff() REG_INTRMODE |= IMODE_DISABLE
-#define inton() REG_INTRMODE &= ~IMODE_DISABLE
 
 //-----------------
 //ASSPULL REGISTERS

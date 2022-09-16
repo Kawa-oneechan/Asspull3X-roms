@@ -68,7 +68,7 @@ int main(void)
 	REG_SCREENMODE = SMODE_TEXT | SMODE_240 | SMODE_BOLD;
 	//REG_CARET = 0x8000;
 
-	inton();
+	REG_INTRMODE &= ~IMODE_DISABLE;
 
 	REG_CARET = 80 + 2;
 	interface->io.attribs = 0x0B;
