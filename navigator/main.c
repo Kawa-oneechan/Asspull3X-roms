@@ -243,6 +243,7 @@ void InfoPanel(int panel, char* workPath, char* filename)
 			}
 			else if (!strncmp(ext, "TXT", 3)) strcpy(t[i++], "Text file");
 			else if (!strncmp(ext, "FNT", 3) && info.fsize == 12288) strcpy(t[i++], "Font - open to use");
+			else if (!strncmp(ext, "LOC", 3) && info.fsize == sizeof(TLocale)) strcpy(t[i++], "Locale - open to use");
 			else strcpy(t[i++], "File");
 		}
 		i++;

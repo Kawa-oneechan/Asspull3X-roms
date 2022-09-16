@@ -312,6 +312,22 @@ int LoadFont(char* filePath)
 	return 0;
 }
 
+int LoadLocale(char* filePath)
+{
+	FILEINFO nfo;
+	DISK->FileStat(filePath, &nfo);
+	if (nfo.fsize != sizeof(TLocale))
+	{
+		ShowError("Invalid locale file, wrong size.");
+		return 3;
+	}
+	FILE file;
+	DISK->OpenFile(&file, filePath, FA_READ);
+	DISK->ReadFile(&file, (void*)&interface->locale, sizeof(TLocale));
+	DISK->CloseFile(&file);
+	return 0;
+}
+
 int ShowFile(char* filePath, bool allowRun)
 {
 	FILEINFO info;
@@ -329,6 +345,8 @@ int ShowFile(char* filePath, bool allowRun)
 		ShowPic(filePath);
 	else if (!strncmp(ext, "FNT", 3) && allowRun)
 		LoadFont(filePath);
+	else if (!strncmp(ext, "LOC", 3) && allowRun)
+		LoadLocale(filePath);
 	else if (!strncmp(ext, "APP", 3) && allowRun)
 		StartApp(filePath);
 	else
