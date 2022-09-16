@@ -75,7 +75,7 @@ void JoypadTest()
 		if (buttons != oldButtons || axis1 != oldAxis[0] || axis2 != oldAxis[1])
 		{
 			MISC->DmaClear(BITMAP + (160 * 24), 0, 160 * 8, DMA_BYTE);
-			TEXT->Format(buffer, "0x%04X %3d,%3d  ", buttons, axis1, axis2);
+			TEXT->Format(buffer, "%#04X %3d,%3d  ", buttons, axis1, axis2);
 			DRAW->DrawString(buffer, 0, 24, 15);
 			oldButtons = buttons;
 			oldAxis[0] = axis1;

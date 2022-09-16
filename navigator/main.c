@@ -6,30 +6,6 @@ IBios* interface;
 #define HEIGHT 24
 #define FILESSHOWN (HEIGHT-2)
 
-void PrintComma(int32_t n)
-{
-    int32_t n2 = 0;
-    int scale = 1;
-    if (n < 0)
-    {
-        printf("-");
-        n = -n;
-    }
-    while (n >= 1000) {
-        n2 = n2 + scale * (n % 1000);
-        n /= 1000;
-        scale *= 1000;
-    }
-    printf("%d", n);
-    while (scale != 1)
-    {
-        scale /= 1000;
-        n = n2 / scale;
-        n2 = n2  % scale;
-        printf(",%03d", n);
-    }
-}
-
 void PrintBuffer(char* buffer)
 {
 	unsigned char* lpt = interface->LinePrinter;
@@ -274,7 +250,7 @@ void InfoPanel(int panel, char* workPath, char* filename)
 		if (info.fattrib & AM_HIDDEN) strcpy(t[i++], "Hidden");
 		if (info.fattrib & AM_SYSTEM) strcpy(t[i++], "System");
 		if (info.fattrib & AM_ARCHIVE) strcpy(t[i++], "Archive");
-//		sprintf(t[i++], "0x%02X", info.fattrib);
+//		sprintf(t[i++], "%#02X", info.fattrib);
 	}
 
 	for (i = 0; i < 20; i++)
@@ -368,11 +344,8 @@ void SelectFile(const char* path1, const char* path2, const char* pattern)
 					TEXT->SetCursorPosition(2 + o, FILESSHOWN + 3);
 					DISK->GetLabel(workPath[s][0], label, &id);
 					TEXT->Write("Label: %04X-%04X, %s", id >> 16, id & 0xFFFF, label[0] ? label : "no name");
-					id = DISK->GetFree(workPath[s][0]);
 					TEXT->SetCursorPosition(2 + o, FILESSHOWN + 4);
-					TEXT->Write("Space: ");
-					PrintComma(id);
-					TEXT->Write(" bytes free");
+					TEXT->Write("Space: %#d bytes free", DISK->GetFree(workPath[s][0]));
 
 					curFN = &filenames[s][scroll[s] * 16];
 					for (int i = 0; i < FILESSHOWN; i++)
@@ -789,7 +762,7 @@ HandleMenu:
 					}
 				}
 //				else
-//					printf("0x%X", key);
+//					printf("%#X", key);
 				break;
 			}
 		}

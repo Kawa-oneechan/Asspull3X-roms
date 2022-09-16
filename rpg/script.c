@@ -442,7 +442,7 @@ void runScript(uint8_t* code, int entityID)
 				break;
 			}
 		}
-		//printf(" 0x%04X  ", acc);
+		//printf(" %#04X  ", acc);
 		//for (int i = 0; i < stackSize; i++)	printf("%d ", stack[i]);
 		//printf("\n");
 		//if (cmd == 0x06) printf("> \"%s\"\n", printBuffer);

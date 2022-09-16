@@ -85,7 +85,7 @@ int main(void)
 		while (memTest < (uint8_t*)0x01400000)
 		{
 			REG_CARET = (80 * 5) + 2;
-			Write("0x%08X...", memTest);
+			Write("%#08X...", memTest);
 			*memTest = 42;
 			vbl();
 			if (*memTest != 42)
@@ -543,7 +543,7 @@ void ShowException(int which, int what)
 
 	WriteChar(0x83);
 	REG_CARET = 80 + 40 - 16;
-	Write("%20s: 0x%08X", text[which], what);
+	Write("%20s: %#08X", text[which], what);
 	REG_CARET = 80 + 80 - 1;
 	WriteChar(0x83);
 

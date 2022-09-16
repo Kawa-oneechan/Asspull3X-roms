@@ -1,4 +1,52 @@
 #include <stdarg.h>
+#include <stdint.h>
+#include <stdbool.h>
+
+//jeez, all this just to grab the thousands separator, cos we can't just #include ../ass.h? WOW!
+typedef struct
+{
+	unsigned char attribs;
+	char numDrives;
+	char diskToDev[4];
+} TIOState;
+typedef struct
+{
+	char code[6];			//Locale name
+	char wday_name[32];		//"Sun"..."Sat"
+	char mon_name[64];		//"Jan"..."Dec"
+	char wday_nameF[64];	//"Sunday"..."Saturday"
+	char mon_nameF[106];	//"January"..."December"
+	char shortDateFmt[16];	//Format for "1983-06-26"
+	char longDateFmt[16];	//Format for "Sunday, June 26, 1983"
+	char shortTimeFmt[16];	//Format for "17:42:07"
+	char longTimeFmt[16];	//Format for "17:42:07"
+	char thousands;			//What to put between clusters of three digits, ','
+	char decimals;			//What to put between an integer and decimals, '.'
+	char currency[4];		//Currency symbol, '$'
+	bool currencyAfter;		//Is it "10$" or "$10"?
+	char sctoasc[256];		//Scancode map
+} TLocale;
+typedef struct
+{
+	long AssBang;
+	int16_t biosVersion;
+	int16_t extensions;
+	void(*Exception)(void*);
+	void(*VBlank)(void*);
+	void(*HBlank)(void*);
+	void(*DrawChar)(unsigned char, int, int, int);
+	void* textLibrary;
+	void* drawingLibrary;
+	void* miscLibrary;
+	void* diskLibrary;
+	char* DrawCharFont;
+	uint16_t DrawCharHeight;
+	uint8_t* LinePrinter;
+	TIOState io;
+	TLocale locale;
+} IBios;
+
+extern IBios* interface;
 
 /* vsprintf.c -- Lars Wirzenius & Linus Torvalds.
 
@@ -111,7 +159,12 @@ static char *number(char *str, long num, int base, int size, int precision,
 	while (i < precision--)
 		*str++ = '0';
 	while (i-- > 0)
+	{
 		*str++ = tmp[i];
+		//Kawa added this
+		if (type & SPECIAL && base == 10 && i % 3 == 0 && i > 0)
+			*str++ = interface->locale.thousands; //',';
+	}
 	while (size-- > 0)
 		*str++ = ' ';
 	return str;
