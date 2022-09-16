@@ -187,6 +187,8 @@ EFileError FileTouch(const char* path, TFileInfo* dt)
 #else
 EFileError FileTouch(const char* path, TFileInfo* dt)
 {
+	(void)(path);
+	(void)(dt);
 	return FE_NoError;
 }
 #endif

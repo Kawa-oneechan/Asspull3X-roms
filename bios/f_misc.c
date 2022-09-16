@@ -36,12 +36,12 @@ void SetBitmapMode256(int flags)
 void EnableObjects(bool enabled)
 {
 	//To be replaced with RemoveObjects
-	enabled = false;
+	(void)(enabled);
 }
 
 void WaitForVBlank()
 {
-	long tickCount = REG_TICKCOUNT;
+	uint32_t tickCount = REG_TICKCOUNT;
 	while (REG_TICKCOUNT == tickCount);
 //	while(REG_LINE >= 480);
 //	while(REG_LINE < 480);

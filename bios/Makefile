@@ -31,7 +31,7 @@ SPECS		:= -B ../devkit68K/m68k-elf/lib -specs=asspull-bios.specs
 INCLUDE		:= -I toolinclude
 LIBPATHS	:=
 
-CFLAGS		:= $(INCLUDE) -Wall -Os -fno-strict-aliasing -fomit-frame-pointer $(ARCH)
+CFLAGS		:= $(INCLUDE) -Wall -Wextra -Os -fno-strict-aliasing -fomit-frame-pointer -fno-builtin $(ARCH)
 ASFLAGS		:= -x assembler-with-cpp -c $(ARCH) -Wall
 LDFLAGS		:= $(ARCH) $(SPECS) $(LIBPATHS) $(LIBS)
 
