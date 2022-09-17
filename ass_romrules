@@ -24,7 +24,9 @@ GRITFLAGS := -ftc -fh! -gu8
 
 MAPFILE		:= $(TARGET).map
 
-ARCH    	:= -m68030
+ifndef ARCH
+  ARCH    	:= -m68030
+endif
 SPECS		:= -B ../devkit68K/m68k-elf/lib -specs=asspull.specs
 
 INCLUDE		:= -I toolinclude
