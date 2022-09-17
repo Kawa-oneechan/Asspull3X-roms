@@ -9,6 +9,7 @@ extern IBios* interface;
 extern int __HEAP_START; //0x01100000 presumed.
 
 void* heap = (void*)0x01100000; //0;
+
 void* sbrk(int incr)
 {
 	if (incr == 0) return heap;
@@ -27,6 +28,7 @@ void* sbrk(int incr)
 	heap += incr;
 	return prev_heap; //(void*)ALIGN4((uint32_t)prev_heap);
 }
+
 void* brk(void* new_heap)
 {
 	void* prev_heap = heap;
@@ -44,7 +46,7 @@ typedef struct malloc_block_meta {
 
 void* malloc_global_base = NULL;
 
-malloc_block_meta* malloc_find_free_block(struct malloc_block_meta** last, size_t size)
+static malloc_block_meta* malloc_find_free_block(struct malloc_block_meta** last, size_t size)
 {
 	malloc_block_meta* current = malloc_global_base;
 	while (current && !(current->free && current->size >= size))
@@ -55,7 +57,7 @@ malloc_block_meta* malloc_find_free_block(struct malloc_block_meta** last, size_
 	return current;
 }
 
-struct malloc_block_meta* malloc_request_space(struct malloc_block_meta* last, size_t size)
+static struct malloc_block_meta* malloc_request_space(struct malloc_block_meta* last, size_t size)
 {
 	malloc_block_meta *block;
 	block = (malloc_block_meta*)sbrk(0);
@@ -99,7 +101,7 @@ void* malloc(size_t size)
 	return (block+1);
 }
 
-malloc_block_meta* malloc_get_block_ptr(void* ptr)
+static malloc_block_meta* malloc_get_block_ptr(void* ptr)
 {
 	return (malloc_block_meta*)ptr - 1;
 }
