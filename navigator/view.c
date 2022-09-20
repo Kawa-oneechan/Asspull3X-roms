@@ -23,23 +23,18 @@ int ShowPic(char* filePath)
 
 	TEXT->SetCursorPosition(0, 12);
 
-	TImageFile* image = malloc(size);
-	if (image == NULL)
-	{
-		ShowError("Failed to malloc.");
-		return 2;
-	}
+	char image[size];
 	FILE file;
 	DISK->OpenFile(&file, filePath, FA_READ);
 	DISK->ReadFile(&file, (void*)image, nfo.fsize);
 	DISK->CloseFile(&file);
-	if (image->BitDepth != 4 && image->BitDepth != 8)
+	TImageFile* img = (TImageFile*)&image;
+	if (img->BitDepth != 4 && img->BitDepth != 8)
 	{
 		ShowError("Weird bitdepth, not happening.");
 		return 2;
 	}
-	DRAW->DisplayPicture(image);
-	free(image);
+	DRAW->DisplayPicture(img);
 	WaitForKey();
 	return 2;
 }
@@ -60,14 +55,14 @@ int ShowText(char* filePath)
 	DISK->FileStat(filePath, &nfo);
 	size_t size = nfo.fsize;
 
-	uint8_t* fileText = malloc(size);
+	uint8_t fileText[size];
 	FILE file;
 	DISK->OpenFile(&file, filePath, FA_READ);
 	DISK->ReadFile(&file, (void*)fileText, nfo.fsize);
 	DISK->CloseFile(&file);
 	fileText[size] = 0;
 
-	uint8_t* wrapText = malloc(size + 1024);
+	uint8_t wrapText[size + 1024];
 	memset(wrapText, 0, size + 1024);
 	uint8_t *b = fileText;
 	uint8_t *c = wrapText;
@@ -99,8 +94,6 @@ int ShowText(char* filePath)
 			}
 		}
 	}
-
-	//free(fileText);
 
 	int32_t cursor = 0;
 	uint8_t* d = fileText;
@@ -291,8 +284,6 @@ int ShowText(char* filePath)
 				break;
 		}
 	}
-	free(wrapText);
-	free(fileText);
 	return 2;
 }
 

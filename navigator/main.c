@@ -33,14 +33,13 @@ void PrintFile(char* filePath)
 		return;
 	}
 
-	char* fileText = malloc(size);
+	char fileText[size];
 	FILE file;
 	DISK->OpenFile(&file, filePath, FA_READ);
 	DISK->ReadFile(&file, (void*)fileText, nfo.fsize);
 	DISK->CloseFile(&file);
 	fileText[size] = 0;
 	PrintBuffer(fileText);
-	free(fileText);
 }
 
 char* filenames[2] = { 0 };
