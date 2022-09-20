@@ -42,9 +42,9 @@ int main(void)
 
 	while(ret == 0 && info.fname[0])
 	{
-		char heapImage[info.fsize];
-		LoadFile((const char*)info.fname, (void*)heapImage);
-		TImageFile* image = (TImageFile*)&heapImage;
+		char stackImage[info.fsize];
+		LoadFile((const char*)info.fname, (void*)stackImage);
+		TImageFile* image = (TImageFile*)&stackImage;
 		if (image->BitDepth != 4 && image->BitDepth != 8)
 			continue;
 		DRAW->DisplayPicture(image);
