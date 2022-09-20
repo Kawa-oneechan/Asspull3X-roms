@@ -1,7 +1,7 @@
 #include "../ass.h"
 IBios* interface;
 
-void* LoadFile(const char* path, void* buffer)
+inline void* LoadFile(const char* path, void* buffer)
 {
 	FILE file;
 	FILEINFO nfo;
@@ -27,28 +27,24 @@ void* LoadFile(const char* path, void* buffer)
 	return buffer;
 }
 
-void WaitForKey()
+inline void WaitForKey()
 {
 	while (INP_KEYIN == 0) vbl();
 }
 
 int main(void)
 {
-
 	int ret;
 	DIR dir;
 	FILEINFO info;
 
-	TImageFile* image = NULL;
 	ret = DISK->FindFirst(&dir, &info, "0:", "*.api");
 
 	while(ret == 0 && info.fname[0])
 	{
-		image = malloc(info.fsize);
-		if (image == NULL)
-			continue;
-
-		LoadFile((const char*)info.fname, (void*)image);
+		char heapImage[info.fsize];
+		LoadFile((const char*)info.fname, (void*)heapImage);
+		TImageFile* image = (TImageFile*)&heapImage;
 		if (image->BitDepth != 4 && image->BitDepth != 8)
 			continue;
 		DRAW->DisplayPicture(image);
@@ -56,7 +52,6 @@ int main(void)
 		//DRAW->DrawString(info.fname, 9, 9, 0);
 		//DRAW->DrawString(info.fname, 8, 8, 15);
 		DRAW->Fade(true, false);
-		free(image);
 		WaitForKey();
 		DRAW->Fade(false, false);
 		ret = DISK->FindNext(&dir, &info);
