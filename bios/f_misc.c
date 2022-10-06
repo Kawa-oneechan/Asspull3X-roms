@@ -41,10 +41,8 @@ void EnableObjects(bool enabled)
 
 void WaitForVBlank()
 {
-	asm("stop #0x2400"); //only respond to VBlank interrupts
-	asm("move #0x2000,%sr"); //re-enable all of them
-//	uint32_t tickCount = REG_TICKCOUNT;
-//	while (REG_TICKCOUNT == tickCount);
+	uint32_t tickCount = REG_TICKCOUNT;
+	while (REG_TICKCOUNT == tickCount);
 //	while(REG_LINE >= 480);
 //	while(REG_LINE < 480);
 }
