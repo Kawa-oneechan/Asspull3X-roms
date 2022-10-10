@@ -1,39 +1,10 @@
 #include "../ass.h"
 IBios* interface;
 
-inline void* LoadFile(const char* path, void* buffer)
-{
-	FILE file;
-	FILEINFO nfo;
-	int32_t ret = DISK->FileStat(path, &nfo);
-
-	ret = DISK->OpenFile(&file, path, FA_READ);
-	if (ret > 0)
-		return (void*)ret;
-
-	void *target = buffer;
-	for(;;)
-	{
-		ret = DISK->ReadFile(&file, target, 1024);
-		if (ret < 0)
-			return (void*)ret;
-
-		target += ret;
-		if (ret < 1024)
-			break;
-	}
-
-	DISK->CloseFile(&file);
-	return buffer;
-}
-
-inline void WaitForKey()
-{
-	while (INP_KEYIN == 0) vbl();
-}
-
 int main(void)
 {
+	REG_SCREENFADE = 31;
+
 	int ret;
 	DIR dir;
 	FILEINFO info;
@@ -43,7 +14,11 @@ int main(void)
 	while(ret == 0 && info.fname[0])
 	{
 		char stackImage[info.fsize];
-		LoadFile((const char*)info.fname, (void*)stackImage);
+		FILE file;
+		DISK->OpenFile(&file, info.fname, FA_READ);
+		DISK->ReadFile(&file, (void*)stackImage, info.fsize);
+		DISK->CloseFile(&file);
+
 		TImageFile* image = (TImageFile*)&stackImage;
 		if (image->BitDepth != 4 && image->BitDepth != 8)
 			continue;
@@ -52,7 +27,7 @@ int main(void)
 		//DRAW->DrawString(info.fname, 9, 9, 0);
 		//DRAW->DrawString(info.fname, 8, 8, 15);
 		DRAW->Fade(true, false);
-		WaitForKey();
+		while (INP_KEYIN == 0) vbl();
 		DRAW->Fade(false, false);
 		ret = DISK->FindNext(&dir, &info);
 	}
