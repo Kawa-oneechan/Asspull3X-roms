@@ -491,7 +491,17 @@ void CheckForDisk()
 	FILEINFO nfo;
 	DIR dir;
 	FILE file;
-	int ret = DISK->FindFirst(&dir, &nfo, "A:/", "sokoban.txt");
+	char filename[] = "A:/sokoban.txt";
+	char drive[] = "A:/";
+	int ret = 0;
+	for (int i = 0; i < interface->io.numDrives; i++)
+	{
+		drive[0] = 'A' + i;
+		filename[0] = drive[0];
+		ret = DISK->FindFirst(&dir, &nfo, drive, "sokoban.txt");
+		if (ret == 0)
+			break;
+	}
 	if (ret != 0) return;
 	if (nfo.fname[0] == 0) return;
 
@@ -519,7 +529,7 @@ void CheckForDisk()
 	}
 
 	levelPack = (char*)malloc(nfo.fsize);
-	ret = DISK->OpenFile(&file, "0:/sokoban.txt", FA_READ);
+	ret = DISK->OpenFile(&file, filename, FA_READ);
 	ret = DISK->ReadFile(&file, (void*)levelPack, nfo.fsize);
 	ret = DISK->CloseFile(&file);
 	char* c = levelPack;
