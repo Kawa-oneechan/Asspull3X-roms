@@ -1,0 +1,80 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="assets.s" />
+    <None Include="backs.grit" />
+    <None Include="BLATTES.imf" />
+    <None Include="coolboy.imf" />
+    <None Include="crt0.s" />
+    <None Include="diskette.grit" />
+    <None Include="Flute-1.imf" />
+    <None Include="font.grit" />
+    <None Include="hdma.s" />
+    <None Include="LOT_BON.imf" />
+    <None Include="Makefile" />
+    <None Include="player.grit" />
+    <None Include="Secretclan.imf" />
+    <None Include="Sornettes.imf" />
+    <None Include="tiles.grit" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="levels.c" />
+    <ClCompile Include="main.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="backs.png" />
+    <Image Include="diskbg.png" />
+    <Image Include="diskette.png" />
+    <Image Include="font.png" />
+    <Image Include="player.png" />
+    <Image Include="tiles.png" />
+    <Image Include="title.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Media Include="jingle.wav" />
+    <Media Include="slide.wav" />
+    <Media Include="step.wav" />
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{D57B1976-F585-4288-96C9-C340FFCEBCAA}</ProjectGuid>
+    <Keyword>MakeFileProj</Keyword>
+    <ProjectName>sokoban</ProjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Makefile</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <NMakeBuildCommandLine>make</NMakeBuildCommandLine>
+    <NMakeOutput>..\$(TargetName).ap3</NMakeOutput>
+    <NMakeCleanCommandLine>make clean</NMakeCleanCommandLine>
+    <NMakeReBuildCommandLine>make clean all</NMakeReBuildCommandLine>
+    <NMakePreprocessorDefinitions>
+    </NMakePreprocessorDefinitions>
+    <OutDir>$(SolutionDir)\</OutDir>
+    <IntDir />
+    <IncludePath>C:\devkitPro\devkit68K\lib\gcc\m68k-elf\5.2.0\include</IncludePath>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

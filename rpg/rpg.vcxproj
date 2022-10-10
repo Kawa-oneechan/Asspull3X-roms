@@ -1,0 +1,81 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="999.fon" />
+    <None Include="battlebg.grit" />
+    <None Include="battlemap.json" />
+    <None Include="chicago.fon" />
+    <None Include="crt0.s" />
+    <None Include="database.json" />
+    <None Include="elaie.grit" />
+    <None Include="emotes.grit" />
+    <None Include="farah.grit" />
+    <None Include="farah_prt.grit" />
+    <None Include="geneva.fon" />
+    <None Include="graphics.s" />
+    <None Include="ilira.grit" />
+    <None Include="ilira_prt.grit" />
+    <None Include="kay_prt.grit" />
+    <None Include="Makefile" />
+    <None Include="monaco.fon" />
+    <None Include="office16.s" />
+    <None Include="office8.grit" />
+    <None Include="shadowrun1.fon" />
+    <None Include="spritepal.grit" />
+    <None Include="testmap.json" />
+    <None Include="ui.grit" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="battle.c" />
+    <ClCompile Include="main.c" />
+    <ClCompile Include="map.c" />
+    <ClCompile Include="party.c" />
+    <ClCompile Include="script.c" />
+    <ClCompile Include="vwf.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="rpg.h" />
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{4347C4D0-B546-4A16-BC84-E27EEC32CD93}</ProjectGuid>
+    <Keyword>MakeFileProj</Keyword>
+    <ProjectName>rpg</ProjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Makefile</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <NMakeBuildCommandLine>make</NMakeBuildCommandLine>
+    <NMakeOutput>..\$(TargetName).ap3</NMakeOutput>
+    <NMakeCleanCommandLine>make clean</NMakeCleanCommandLine>
+    <NMakeReBuildCommandLine>make clean all</NMakeReBuildCommandLine>
+    <NMakePreprocessorDefinitions>
+    </NMakePreprocessorDefinitions>
+    <OutDir>$(SolutionDir)\</OutDir>
+    <IntDir />
+    <IncludePath>C:\devkitPro\devkit68K\lib\gcc\m68k-elf\5.2.0\include</IncludePath>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

@@ -1,0 +1,76 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="crt0.s" />
+    <None Include="font.s" />
+    <None Include="icons.s" />
+    <None Include="Makefile" />
+    <None Include="splash.s" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="diskio.c" />
+    <ClCompile Include="ff.c" />
+    <ClCompile Include="f_disk.c" />
+    <ClCompile Include="f_draw.c" />
+    <ClCompile Include="f_misc.c" />
+    <ClCompile Include="f_text.c" />
+    <ClCompile Include="main.c" />
+    <ClCompile Include="printf.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="diskio.h" />
+    <ClInclude Include="ff.h" />
+    <ClInclude Include="ffconf.h" />
+    <ClInclude Include="funcs.h" />
+    <ClInclude Include="integer.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="font.png" />
+    <Image Include="icons.png" />
+    <Image Include="splash-h0.png" />
+    <Image Include="splash-h1.png" />
+    <Image Include="splash.png" />
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{1B4FF934-FFD8-4C4B-9889-7689F4A0FA71}</ProjectGuid>
+    <Keyword>MakeFileProj</Keyword>
+    <ProjectName>bios</ProjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Makefile</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <NMakeBuildCommandLine>make</NMakeBuildCommandLine>
+    <NMakeOutput>..\$(TargetName).ap3</NMakeOutput>
+    <NMakeCleanCommandLine>make clean</NMakeCleanCommandLine>
+    <NMakeReBuildCommandLine>make clean all</NMakeReBuildCommandLine>
+    <NMakePreprocessorDefinitions>
+    </NMakePreprocessorDefinitions>
+    <OutDir>$(SolutionDir)\</OutDir>
+    <IntDir />
+    <IncludePath>C:\devkitPro\devkit68K\lib\gcc\m68k-elf\5.2.0\include</IncludePath>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

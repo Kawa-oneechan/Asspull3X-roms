@@ -8,6 +8,16 @@ extern "C" {
 #define unlikely(x)	__builtin_expect((x),0)
 #define array_size(x) ((sizeof(x) / sizeof(*x)) / !(sizeof(x) % sizeof(*x)))
 
+//For Visual Studio's sake
+typedef signed char int8_t;
+typedef signed short int16_t;
+typedef signed long int32_t;
+typedef signed long long int64_t;
+typedef unsigned char uint8_t;
+typedef unsigned short uint16_t;
+typedef unsigned long uint32_t;
+typedef unsigned long long uint64_t;
+
 #include <stddef.h>
 #include <stdint.h>
 #include <stdbool.h>

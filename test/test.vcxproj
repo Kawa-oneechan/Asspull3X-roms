@@ -1,0 +1,81 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="assets.s" />
+    <None Include="crt0.s" />
+    <None Include="kbdimg.bin" />
+    <None Include="LOT_BON.imf" />
+    <None Include="Makefile" />
+    <None Include="sprites.grit" />
+    <None Include="tilegrid.json" />
+    <None Include="tiles.grit" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="clock.c" />
+    <ClCompile Include="graphics.c" />
+    <ClCompile Include="joypad.c" />
+    <ClCompile Include="keyboard.c" />
+    <ClCompile Include="main.c" />
+    <ClCompile Include="midi.c" />
+    <ClCompile Include="mouse.c" />
+    <ClCompile Include="opl.c" />
+    <ClCompile Include="pcm.c" />
+    <ClCompile Include="text.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="bmp320x200x4.png" />
+    <Image Include="bmp320x200x8.png" />
+    <Image Include="bmp320x240x4.png" />
+    <Image Include="bmp320x240x8.png" />
+    <Image Include="bmp640x480x4.png" />
+    <Image Include="bmp640x480x8.png" />
+    <Image Include="sprites.png" />
+    <Image Include="tiles.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Media Include="heyevery.wav" />
+    <Media Include="jingle.wav" />
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{2F6A9530-A5B4-4C27-809C-B15CA00D32CC}</ProjectGuid>
+    <Keyword>MakeFileProj</Keyword>
+    <ProjectName>test</ProjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Makefile</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <NMakeBuildCommandLine>make</NMakeBuildCommandLine>
+    <NMakeOutput>..\$(TargetName).ap3</NMakeOutput>
+    <NMakeCleanCommandLine>make clean</NMakeCleanCommandLine>
+    <NMakeReBuildCommandLine>make clean all</NMakeReBuildCommandLine>
+    <NMakePreprocessorDefinitions>
+    </NMakePreprocessorDefinitions>
+    <OutDir>$(SolutionDir)\</OutDir>
+    <IntDir />
+    <IncludePath>C:\devkitPro\devkit68K\lib\gcc\m68k-elf\5.2.0\include</IncludePath>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

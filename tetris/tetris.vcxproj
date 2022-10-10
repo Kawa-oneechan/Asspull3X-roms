@@ -1,0 +1,82 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="background.json" />
+    <None Include="crt0.s" />
+    <None Include="farah.grit" />
+    <None Include="imfdata.s" />
+    <None Include="logo.grit" />
+    <None Include="Makefile" />
+    <None Include="techtris.imf" />
+    <None Include="tiles.grit" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="controller.c" />
+    <ClCompile Include="drawer.c" />
+    <ClCompile Include="game.c" />
+    <ClCompile Include="grid.c" />
+    <ClCompile Include="helpers.c" />
+    <ClCompile Include="main.c" />
+    <ClCompile Include="tetramino.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="actions.h" />
+    <ClInclude Include="controller.h" />
+    <ClInclude Include="drawer.h" />
+    <ClInclude Include="game.h" />
+    <ClInclude Include="grid.h" />
+    <ClInclude Include="helpers.h" />
+    <ClInclude Include="tetramino.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="built-farah.png" />
+    <Image Include="farah.png" />
+    <Image Include="logo-kotris.png" />
+    <Image Include="logo.png" />
+    <Image Include="tiles.png" />
+    <Image Include="title-kotris.png" />
+    <Image Include="title.png" />
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{E93300A7-0D3B-4DB5-B9C3-7F6C3B980398}</ProjectGuid>
+    <Keyword>MakeFileProj</Keyword>
+    <ProjectName>tetris</ProjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Makefile</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <NMakeBuildCommandLine>make</NMakeBuildCommandLine>
+    <NMakeOutput>..\$(TargetName).ap3</NMakeOutput>
+    <NMakeCleanCommandLine>make clean</NMakeCleanCommandLine>
+    <NMakeReBuildCommandLine>make clean all</NMakeReBuildCommandLine>
+    <NMakePreprocessorDefinitions>
+    </NMakePreprocessorDefinitions>
+    <OutDir>$(SolutionDir)\</OutDir>
+    <IntDir />
+    <IncludePath>C:\devkitPro\devkit68K\lib\gcc\m68k-elf\5.2.0\include</IncludePath>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
