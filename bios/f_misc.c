@@ -7,7 +7,7 @@ const IMiscLibrary miscLibrary =
 {
 	SetTextMode, SetBitmapMode16,
 	SetBitmapMode256,
-	EnableObjects,
+	RemoveObjects,
 	WaitForVBlank, WaitForVBlanks,
 	DmaCopy, DmaClear,
 	MidiReset,
@@ -33,10 +33,9 @@ void SetBitmapMode256(int flags)
 	interface->DrawChar = (flags & SMODE_320) ? DrawChar8_320 : DrawChar8_640;
 }
 
-void EnableObjects(bool enabled)
+void RemoveObjects()
 {
-	//To be replaced with RemoveObjects
-	(void)(enabled);
+	DmaClear(OBJECTS_A, 0, 0x1000, DMA_INT);
 }
 
 void WaitForVBlank()

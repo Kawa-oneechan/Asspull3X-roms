@@ -372,7 +372,7 @@ typedef struct
 	void(*SetTextMode)(int flags);
 	void(*SetBitmapMode16)(int flags);
 	void(*SetBitmapMode256)(int flags);
-	void(*EnableObjects)(bool);
+	void(*RemoveObjects)(void);
 	void(*WaitForVBlank)(void);
 	void(*WaitForVBlanks)(int vbls);
 	void(*DmaCopy)(void* dst, const void* src, size_t size, int step);
