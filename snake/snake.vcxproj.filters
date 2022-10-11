@@ -1,0 +1,37 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Image Include="tiles.png">
+      <Filter>Media Files</Filter>
+    </Image>
+    <Image Include="hdma.png">
+      <Filter>Media Files</Filter>
+    </Image>
+    <Image Include="bg.png">
+      <Filter>Media Files</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="crt0.s" />
+    <None Include="Makefile" />
+    <None Include="title.json">
+      <Filter>Media Files</Filter>
+    </None>
+    <None Include="tiles.grit">
+      <Filter>Media Files</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Media Files">
+      <UniqueIdentifier>{4d14ae5b-b211-435c-9d3c-2b04eef24c50}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{44714e80-890c-4170-a007-226b4e78d75e}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

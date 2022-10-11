@@ -1,0 +1,106 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <None Include="crt0.s" />
+    <None Include="Makefile" />
+    <None Include="graphics.s">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="office16.s">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="ui.grit">
+      <Filter>Media Files</Filter>
+    </None>
+    <None Include="999.fon">
+      <Filter>Media Files</Filter>
+    </None>
+    <None Include="chicago.fon">
+      <Filter>Media Files</Filter>
+    </None>
+    <None Include="geneva.fon">
+      <Filter>Media Files</Filter>
+    </None>
+    <None Include="monaco.fon">
+      <Filter>Media Files</Filter>
+    </None>
+    <None Include="shadowrun1.fon">
+      <Filter>Media Files</Filter>
+    </None>
+    <None Include="battlebg.grit">
+      <Filter>Media Files</Filter>
+    </None>
+    <None Include="elaie.grit">
+      <Filter>Media Files</Filter>
+    </None>
+    <None Include="emotes.grit">
+      <Filter>Media Files</Filter>
+    </None>
+    <None Include="farah.grit">
+      <Filter>Media Files</Filter>
+    </None>
+    <None Include="farah_prt.grit">
+      <Filter>Media Files</Filter>
+    </None>
+    <None Include="ilira.grit">
+      <Filter>Media Files</Filter>
+    </None>
+    <None Include="ilira_prt.grit">
+      <Filter>Media Files</Filter>
+    </None>
+    <None Include="kay_prt.grit">
+      <Filter>Media Files</Filter>
+    </None>
+    <None Include="office8.grit">
+      <Filter>Media Files</Filter>
+    </None>
+    <None Include="spritepal.grit">
+      <Filter>Media Files</Filter>
+    </None>
+    <None Include="battlemap.json">
+      <Filter>Media Files</Filter>
+    </None>
+    <None Include="database.json">
+      <Filter>Media Files</Filter>
+    </None>
+    <None Include="testmap.json">
+      <Filter>Media Files</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{1818ea01-476c-4af6-ba9b-0577a7a2fc1e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Media Files">
+      <UniqueIdentifier>{f26a6c1d-4623-4011-a4e2-23236b7f7a86}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{5d37c69c-afb5-4af4-97c5-074d8bd8af85}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="party.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="script.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="vwf.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="battle.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="map.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="rpg.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

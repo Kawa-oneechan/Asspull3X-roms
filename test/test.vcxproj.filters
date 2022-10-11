@@ -1,0 +1,102 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <None Include="crt0.s" />
+    <None Include="Makefile" />
+    <None Include="sprites.grit">
+      <Filter>Media Files</Filter>
+    </None>
+    <None Include="tiles.grit">
+      <Filter>Media Files</Filter>
+    </None>
+    <None Include="LOT_BON.imf">
+      <Filter>Media Files</Filter>
+    </None>
+    <None Include="tilegrid.json">
+      <Filter>Media Files</Filter>
+    </None>
+    <None Include="kbdimg.bin">
+      <Filter>Media Files</Filter>
+    </None>
+    <None Include="assets.s">
+      <Filter>Source Files</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{1818ea01-476c-4af6-ba9b-0577a7a2fc1e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Media Files">
+      <UniqueIdentifier>{f26a6c1d-4623-4011-a4e2-23236b7f7a86}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{5d37c69c-afb5-4af4-97c5-074d8bd8af85}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="keyboard.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="clock.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="graphics.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="joypad.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="text.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="midi.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="mouse.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="opl.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="pcm.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="bmp320x200x4.png">
+      <Filter>Media Files</Filter>
+    </Image>
+    <Image Include="bmp320x200x8.png">
+      <Filter>Media Files</Filter>
+    </Image>
+    <Image Include="bmp320x240x4.png">
+      <Filter>Media Files</Filter>
+    </Image>
+    <Image Include="bmp320x240x8.png">
+      <Filter>Media Files</Filter>
+    </Image>
+    <Image Include="bmp640x480x4.png">
+      <Filter>Media Files</Filter>
+    </Image>
+    <Image Include="bmp640x480x8.png">
+      <Filter>Media Files</Filter>
+    </Image>
+    <Image Include="sprites.png">
+      <Filter>Media Files</Filter>
+    </Image>
+    <Image Include="tiles.png">
+      <Filter>Media Files</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <Media Include="heyevery.wav">
+      <Filter>Media Files</Filter>
+    </Media>
+    <Media Include="jingle.wav">
+      <Filter>Media Files</Filter>
+    </Media>
+  </ItemGroup>
+</Project>

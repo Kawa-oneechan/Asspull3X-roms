@@ -1,0 +1,99 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <None Include="crt0.s" />
+    <None Include="Makefile" />
+    <None Include="font.grit">
+      <Filter>Media Files</Filter>
+    </None>
+    <None Include="player.grit">
+      <Filter>Media Files</Filter>
+    </None>
+    <None Include="tiles.grit">
+      <Filter>Media Files</Filter>
+    </None>
+    <None Include="BLATTES.imf">
+      <Filter>Media Files</Filter>
+    </None>
+    <None Include="coolboy.imf">
+      <Filter>Media Files</Filter>
+    </None>
+    <None Include="Flute-1.imf">
+      <Filter>Media Files</Filter>
+    </None>
+    <None Include="LOT_BON.imf">
+      <Filter>Media Files</Filter>
+    </None>
+    <None Include="Secretclan.imf">
+      <Filter>Media Files</Filter>
+    </None>
+    <None Include="Sornettes.imf">
+      <Filter>Media Files</Filter>
+    </None>
+    <None Include="backs.grit">
+      <Filter>Media Files</Filter>
+    </None>
+    <None Include="diskette.grit">
+      <Filter>Media Files</Filter>
+    </None>
+    <None Include="assets.s">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="hdma.s">
+      <Filter>Source Files</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{1818ea01-476c-4af6-ba9b-0577a7a2fc1e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Media Files">
+      <UniqueIdentifier>{f26a6c1d-4623-4011-a4e2-23236b7f7a86}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{5d37c69c-afb5-4af4-97c5-074d8bd8af85}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="levels.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="backs.png">
+      <Filter>Media Files</Filter>
+    </Image>
+    <Image Include="diskbg.png">
+      <Filter>Media Files</Filter>
+    </Image>
+    <Image Include="diskette.png">
+      <Filter>Media Files</Filter>
+    </Image>
+    <Image Include="font.png">
+      <Filter>Media Files</Filter>
+    </Image>
+    <Image Include="player.png">
+      <Filter>Media Files</Filter>
+    </Image>
+    <Image Include="tiles.png">
+      <Filter>Media Files</Filter>
+    </Image>
+    <Image Include="title.png">
+      <Filter>Media Files</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <Media Include="jingle.wav">
+      <Filter>Media Files</Filter>
+    </Media>
+    <Media Include="slide.wav">
+      <Filter>Media Files</Filter>
+    </Media>
+    <Media Include="step.wav">
+      <Filter>Media Files</Filter>
+    </Media>
+  </ItemGroup>
+</Project>

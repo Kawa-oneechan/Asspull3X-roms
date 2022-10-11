@@ -22,7 +22,6 @@ Debug
 *.pdb
 *.sdf
 *.VC.*
-*.vcxproj.*
 *.apb
 *.txt
 *.img

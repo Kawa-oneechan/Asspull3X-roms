@@ -1,0 +1,87 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Media Files">
+      <UniqueIdentifier>{4a06201f-d7bd-4cc9-8602-62216270d179}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{5fcee9f5-1950-498b-9f75-04a0276e0972}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{33bcb525-7e93-40f4-8444-23f7ddb7b06b}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="crt0.s" />
+    <None Include="Makefile" />
+    <None Include="font.s">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="icons.s">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="splash.s">
+      <Filter>Source Files</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="diskio.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="f_disk.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="f_misc.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="f_text.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="f_draw.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ff.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="main.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="printf.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="diskio.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ff.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ffconf.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="integer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="funcs.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="splash-h1.png">
+      <Filter>Media Files</Filter>
+    </Image>
+    <Image Include="splash.png">
+      <Filter>Media Files</Filter>
+    </Image>
+    <Image Include="splash-h0.png">
+      <Filter>Media Files</Filter>
+    </Image>
+    <Image Include="icons.png">
+      <Filter>Media Files</Filter>
+    </Image>
+    <Image Include="font.png">
+      <Filter>Media Files</Filter>
+    </Image>
+  </ItemGroup>
+</Project>

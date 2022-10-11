@@ -1,0 +1,105 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <None Include="crt0.s" />
+    <None Include="Makefile" />
+    <None Include="imfdata.s">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="farah.grit">
+      <Filter>Media Files</Filter>
+    </None>
+    <None Include="logo.grit">
+      <Filter>Media Files</Filter>
+    </None>
+    <None Include="tiles.grit">
+      <Filter>Media Files</Filter>
+    </None>
+    <None Include="techtris.imf">
+      <Filter>Media Files</Filter>
+    </None>
+    <None Include="background.json">
+      <Filter>Media Files</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{1818ea01-476c-4af6-ba9b-0577a7a2fc1e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Media Files">
+      <UniqueIdentifier>{f26a6c1d-4623-4011-a4e2-23236b7f7a86}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{5d37c69c-afb5-4af4-97c5-074d8bd8af85}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="tetramino.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="controller.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="drawer.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="game.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="grid.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="helpers.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="tetramino.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="actions.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="controller.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="drawer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="game.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grid.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="helpers.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="title-kotris.png">
+      <Filter>Media Files</Filter>
+    </Image>
+    <Image Include="built-farah.png">
+      <Filter>Media Files</Filter>
+    </Image>
+    <Image Include="farah.png">
+      <Filter>Media Files</Filter>
+    </Image>
+    <Image Include="logo.png">
+      <Filter>Media Files</Filter>
+    </Image>
+    <Image Include="logo-kotris.png">
+      <Filter>Media Files</Filter>
+    </Image>
+    <Image Include="tiles.png">
+      <Filter>Media Files</Filter>
+    </Image>
+    <Image Include="title.png">
+      <Filter>Media Files</Filter>
+    </Image>
+  </ItemGroup>
+</Project>
