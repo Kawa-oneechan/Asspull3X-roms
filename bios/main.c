@@ -409,6 +409,9 @@ void DiskEntry()
 
 	while (*ptr != 0)
 	{
+		if (*ptr == ';')
+			while(*ptr != 0 && *ptr != '\n') ptr++;
+
 		//printf("ptr: %s\n", ptr);
 		key = ptr;
 		while(*ptr != 0 && *ptr != '=') ptr++;
