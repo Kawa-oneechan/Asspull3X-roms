@@ -77,7 +77,7 @@ void DisplayPicture(TImageFile* picData)
 			mode = 0;
 	}
 	if (picData->Height == 200 || picData->Height == 400)
-		mode |= SMODE_BOLD;
+		mode |= SMODE_200;
 	if (mode > -1)
 	{
 		//mode |= (picData->BitDepth == 8) ? SMODE_BMP256 : SMODE_BMP16;
