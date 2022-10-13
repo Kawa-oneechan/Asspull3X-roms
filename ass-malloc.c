@@ -147,7 +147,7 @@ char* strdup(const char* s1)
 {
 	size_t l = 0; //strnlen_s((char*)s1, 1024);
 	char* s2 = (char*)s1;
-	while (*s2) l++;
+	while (*s2++) l++;
 	s2 = malloc(l + 1);
 	memcpy(s2, s1, l + 1);
 	s2[l + 1] = 0;
