@@ -135,8 +135,15 @@ char* fgets(char* s, int n, FILE* file)
 			n++;
 			continue;
 		}
-		if (((file == STDIN && c == '\n') || (file != STDIN && c == 0)) || c == EOF)
+		if (file == STDIN && c == '\n')
+		{
+			putchar(c);
 			break;
+		}
+		else if ((file != STDIN && c == 0) || c == EOF)
+		{
+			break;
+		}
 		if (c == '\b' && file == STDIN)
 		{
 			if (_s > s)
@@ -154,6 +161,44 @@ char* fgets(char* s, int n, FILE* file)
 		return 0;
 	*_s = 0;
 	if (file == STDIN) putchar('\n');
+	__fgetc_echo = echo;
+	return s;
+}
+
+char* gets_s(char* s, int n)
+{
+	char* _s = s;
+	int c = 0;
+	bool echo = __fgetc_echo;
+	__fgetc_echo = false;
+	while(--n)
+	{
+		c = fgetc(STDIN);
+		if (c == '\x1B')
+		{
+			//eat the esc
+			n++;
+			continue;
+		}
+		if (c == '\n' || c == 0 || c == EOF)
+			break;
+		if (c == '\b')
+		{
+			if (_s > s)
+			{
+				putchar('\b');
+				*_s-- = 0;
+				n++;
+			}
+			continue;
+		}
+		putchar((char)c);
+		*_s++ = (char)c;
+	}
+	if (c == EOF && _s == s)
+		return 0;
+	*_s = 0;
+	putchar('\n');
 	__fgetc_echo = echo;
 	return s;
 }
