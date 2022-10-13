@@ -1,7 +1,25 @@
 #include "../ass.h"
 IBios* interface;
 
-extern void WaitForKey();
+static void HighWaitForKey()
+{
+	//TEXT->SetCursorPosition(0, 28);
+	//printf("Press any key to continue.");
+	const char prompt[] = "Press any key to continue.";
+	const char spinner[] = "\xB8\x08+*+\x08\xB8    ";
+	int spin = 0;
+	for (int i = 0; i < 26; i++)
+		TEXTMAP[(4 * 80) + i + 4] = 0x07 | (prompt[i] << 8);
+	while (INP_KEYIN == 0)
+	{
+		TEXTMAP[(4 * 80) + 29 + 4] = 0x0E | (spinner[((spin++) >> 4) % 11] << 8);
+		TEXTMAP[(4 * 80) + 28 + 4] = 0x0E | (spinner[((spin >> 4) + 1) % 11] << 8);
+		TEXTMAP[(4 * 80) + 27 + 4] = 0x0E | (spinner[((spin >> 4) + 2) % 11] << 8);
+		vbl();
+	}
+	for (int i = 0; i < 30; i++)
+		TEXTMAP[(4 * 80) + i + 4] = 0x2007;
+}
 
 const char customBits[96] =
 {
@@ -19,43 +37,75 @@ void TextTest()
 
 	MISC->SetTextMode(SMODE_240 | SMODE_BOLD);
 	TEXT->ClearScreen();
-	for (int row = 0; row < 30; row++)
-		((int16_t*)MEM_VRAM)[row  * 80] = (('0' + (row % 10)) << 8) | 0x8F;
+	for (int row = 1; row < 30; row++)
+	{
+		((int16_t*)MEM_VRAM)[(row * 80) + 0] = (('0' + (row / 10)) << 8) | 0x8F;
+		((int16_t*)MEM_VRAM)[(row * 80) + 1] = (('0' + (row % 10)) << 8) | 0x8F;
+	}
 	for (int col = 1; col < 80; col++)
 		((int16_t*)MEM_VRAM)[col] = (('0' + (col % 10)) << 8) | 0x8F;
 	TEXT->SetCursorPosition(4, 2);
 	TEXT->Write("Size test - 80x30");
-	WaitForKey();
+	HighWaitForKey();
+
+	REG_SCREENMODE |= SMODE_200;
+	TEXT->SetCursorPosition(4, 2);
+	TEXT->Write("Size test - 80x25");
+	HighWaitForKey();
 
 	MISC->SetTextMode(SMODE_320 | SMODE_BOLD);
 	TEXT->ClearScreen();
-	for (int row = 0; row < 60; row++)
-		((int16_t*)MEM_VRAM)[row  * 40] = (('0' + (row % 10)) << 8) | 0x8F;
+	for (int row = 1; row < 60; row++)
+	{
+		((int16_t*)MEM_VRAM)[(row * 40) + 0] = (('0' + (row / 10)) << 8) | 0x8F;
+		((int16_t*)MEM_VRAM)[(row * 40) + 1] = (('0' + (row % 10)) << 8) | 0x8F;
+	}
 	for (int col = 1; col < 40; col++)
 		((int16_t*)MEM_VRAM)[col] = (('0' + (col % 10)) << 8) | 0x8F;
 	TEXT->SetCursorPosition(4, 2);
 	TEXT->Write("Size test - 40x60");
-	WaitForKey();
+	HighWaitForKey();
+
+	REG_SCREENMODE |= SMODE_200;
+	TEXT->SetCursorPosition(4, 2);
+	TEXT->Write("Size test - 40x50");
+	HighWaitForKey();
 
 	MISC->SetTextMode(SMODE_320 | SMODE_240 | SMODE_BOLD);
 	TEXT->ClearScreen();
-	for (int row = 0; row < 30; row++)
-		((int16_t*)MEM_VRAM)[row  * 40] = (('0' + (row % 10)) << 8) | 0x8F;
+	for (int row = 1; row < 30; row++)
+	{
+		((int16_t*)MEM_VRAM)[(row * 40) + 0] = (('0' + (row / 10)) << 8) | 0x8F;
+		((int16_t*)MEM_VRAM)[(row * 40) + 1] = (('0' + (row % 10)) << 8) | 0x8F;
+	}
 	for (int col = 1; col < 40; col++)
 		((int16_t*)MEM_VRAM)[col] = (('0' + (col % 10)) << 8) | 0x8F;
 	TEXT->SetCursorPosition(4, 2);
 	TEXT->Write("Size test - 40x30");
-	WaitForKey();
+	HighWaitForKey();
+
+	REG_SCREENMODE |= SMODE_200;
+	TEXT->SetCursorPosition(4, 2);
+	TEXT->Write("Size test - 40x25");
+	HighWaitForKey();
 
 	MISC->SetTextMode(SMODE_BOLD);
 	TEXT->ClearScreen();
 	for (int row = 0; row < 60; row++)
-		((int16_t*)MEM_VRAM)[row  * 80] = (('0' + (row % 10)) << 8) | 0x8F;
+	{
+		((int16_t*)MEM_VRAM)[(row * 80) + 0] = (('0' + (row / 10)) << 8) | 0x8F;
+		((int16_t*)MEM_VRAM)[(row * 80) + 1] = (('0' + (row % 10)) << 8) | 0x8F;
+	}
 	for (int col = 1; col < 80; col++)
 		((int16_t*)MEM_VRAM)[col] = (('0' + (col % 10)) << 8) | 0x8F;
 	TEXT->SetCursorPosition(4, 2);
 	TEXT->Write("Size test - 80x60");
-	WaitForKey();
+	HighWaitForKey();
+
+	REG_SCREENMODE |= SMODE_200;
+	TEXT->SetCursorPosition(4, 2);
+	TEXT->Write("Size test - 80x50");
+	HighWaitForKey();
 
 	MISC->SetTextMode(SMODE_240 | SMODE_BOLD);
 	TEXT->ClearScreen();
