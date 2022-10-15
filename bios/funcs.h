@@ -9,10 +9,10 @@ extern void ClearScreen(void);
 extern void ResetPalette(void);
 extern void DisplayPicture(TImageFile*);
 extern void Fade(bool, bool);
-extern void SetupDrawChar(void(*)(unsigned char, int, int, int));
+extern void SetupDrawChar(int(*)(unsigned char, int, int, int));
 extern void DrawString(const char*, int, int, int);
 extern void DrawFormat(const char*, int, int, int, ...);
-extern void DrawChar(char, int, int, int);
+extern int DrawChar(char, int, int, int);
 extern void DrawLine(int, int, int, int, int, uint8_t*);
 extern void FloodFill(int, int, int, uint8_t*);
 extern void WaitForVBlank(void);
@@ -52,7 +52,7 @@ extern const char* FileErrStr(EFileError);
 
 
 
-extern void DrawChar4_320(unsigned char, int, int, int);
-extern void DrawChar4_640(unsigned char, int, int, int);
-extern void DrawChar8_320(unsigned char, int, int, int);
-extern void DrawChar8_640(unsigned char, int, int, int);
+extern int DrawChar4_320(unsigned char, int, int, int);
+extern int DrawChar4_640(unsigned char, int, int, int);
+extern int DrawChar8_320(unsigned char, int, int, int);
+extern int DrawChar8_640(unsigned char, int, int, int);

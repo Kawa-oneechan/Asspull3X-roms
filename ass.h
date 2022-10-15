@@ -370,10 +370,10 @@ typedef struct
 	void(*ResetPalette)(void);
 	void(*DisplayPicture)(TImageFile* picData);
 	void(*Fade)(bool in, bool toWhite);
-	void(*SetupDrawChar)(void(*dcCallback)(unsigned char, int, int, int));
+	void(*SetupDrawChar)(int(*dcCallback)(unsigned char, int, int, int));
 	void(*DrawString)(const char* str, int x, int y, int color);
 	void(*DrawFormat)(const char* format, int x, int y, int color, ...);
-	void(*DrawChar)(char ch, int x, int y, int color);
+	int(*DrawChar)(char ch, int x, int y, int color);
 	void(*DrawLine)(int x0, int y0, int x1, int y1, int color, uint8_t* dest);
 	void(*FloodFill)(int x, int y, int color, uint8_t* dest);
 } IDrawingLibrary;
@@ -428,7 +428,7 @@ typedef struct
 	void(*Exception)(void*);
 	void(*VBlank)(void*);
 	void(*HBlank)(void*);
-	void(*DrawChar)(unsigned char, int, int, int);
+	int(*DrawChar)(unsigned char, int, int, int);
 	ITextLibrary* textLibrary;
 	IDrawingLibrary* drawingLibrary;
 	IMiscLibrary* miscLibrary;
@@ -446,8 +446,6 @@ typedef struct
 #define DISK interface->diskLibrary
 
 extern IBios* interface;
-
-//#define DrawChar(g,x,y,c) interface->DrawChar(g,x,y,c)
 
 #ifdef __cplusplus
 }

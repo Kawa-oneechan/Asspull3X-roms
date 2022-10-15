@@ -32,19 +32,21 @@ const IDrawingLibrary drawingLibrary =
 				if (p & 1) *target = (*target & 0xF0) | (color << 0); \
 				if (p & 2) *target = (*target & 0x0F) | (color << 4); \
 			} target++; if ((g >> 7) & 1) *target = (*target & 0x0F) | (color << 4); \
-			target += (WIDTH/2) - 4; } }
+			target += (WIDTH/2) - 4; } } \
+	return 8;
 #define DRAWCHAR8(WIDTH) \
 	char* glyph = interface->DrawCharFont + (c * (interface->DrawCharHeight & 0x00FF)); \
 	char* target = (char*)MEM_VRAM + (y * (WIDTH)) + x; \
 	for (int line = 0; line < (interface->DrawCharHeight & 0x00FF); line++) { for (int bit = 0; bit < 8; bit++) { \
-			int pixel = (*glyph >> bit) & 1; if (pixel == 0) continue; \
-			target[bit] = color; \
-		}  glyph++; target += (WIDTH); }
+		int pixel = (*glyph >> bit) & 1; if (pixel == 0) continue; \
+		target[bit] = color; \
+	}  glyph++; target += (WIDTH); } \
+	return 8;
 
-void DrawChar4_320(unsigned char c, int x, int y, int color) { DRAWCHAR4(320) }
-void DrawChar4_640(unsigned char c, int x, int y, int color) { DRAWCHAR4(640) }
-void DrawChar8_320(unsigned char c, int x, int y, int color) { DRAWCHAR8(320) }
-void DrawChar8_640(unsigned char c, int x, int y, int color) { DRAWCHAR8(640) }
+int DrawChar4_320(unsigned char c, int x, int y, int color) { DRAWCHAR4(320) }
+int DrawChar4_640(unsigned char c, int x, int y, int color) { DRAWCHAR4(640) }
+int DrawChar8_320(unsigned char c, int x, int y, int color) { DRAWCHAR8(320) }
+int DrawChar8_640(unsigned char c, int x, int y, int color) { DRAWCHAR8(640) }
 
 static const uint16_t palette[] = {
 	0x0000, 0x5400, 0x02A0, 0x56A0, 0x0015, 0x5415, 0x0115, 0x56B5,
@@ -144,7 +146,7 @@ void Fade(bool in, bool toWhite)
 	}
 }
 
-void SetupDrawChar(void(*dcCallback)(unsigned char, int, int, int))
+void SetupDrawChar(int(*dcCallback)(unsigned char, int, int, int))
 {
 	if (dcCallback)
 		interface->DrawChar = dcCallback;
@@ -155,7 +157,7 @@ void SetupDrawChar(void(*dcCallback)(unsigned char, int, int, int))
 		else if (REG_SCREENMODE & SMODE_BMP256)
 			interface->DrawChar = (REG_SCREENMODE & SMODE_320) ? DrawChar8_320 : DrawChar8_640;
 		else
-			interface->DrawChar = 0;
+			interface->DrawChar = NULL;
 	}
 }
 
@@ -173,8 +175,7 @@ void DrawString(const char* str, int x, int y, int color)
 			continue;
 		}
 		//TODO: support \t?
-		DrawChar(*str++, x, y, color);
-		x += 8;
+		x += DrawChar(*str++, x, y, color);
 	}
 }
 
@@ -185,18 +186,14 @@ void DrawFormat(const char* format, int x, int y, int color, ...)
 	va_list args;
 	va_start(args, color);
 	vsprintf(buffer, format, args);
-	char *b = buffer;
-	while(*b)
-	{
-		DrawChar(*b++, x, y, color);
-		x += 8;
-	}
 	va_end(args);
+	DrawString(buffer, x, y, color);
 }
 
-void DrawChar(char ch, int x, int y, int color)
+int DrawChar(char ch, int x, int y, int color)
 {
-	interface->DrawChar(ch, x, y, color);
+	if (interface->DrawChar == NULL) return 8;
+	return interface->DrawChar(ch, x, y, color);
 }
 
 extern int abs(int);
