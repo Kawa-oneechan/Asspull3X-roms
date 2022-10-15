@@ -5,38 +5,12 @@ extern int vsprintf(char*, const char*, va_list);
 
 const IMiscLibrary miscLibrary =
 {
-	SetTextMode, SetBitmapMode16,
-	SetBitmapMode256,
-	RemoveObjects,
 	WaitForVBlank, WaitForVBlanks,
 	DmaCopy, DmaClear,
-	MidiReset,
+	MidiReset, OplReset,
 	RleUnpack,
 	GetLocaleStr
 };
-
-void SetTextMode(int flags)
-{
-	REG_SCREENMODE = SMODE_TEXT | flags;
-	interface->DrawChar = 0;
-}
-
-void SetBitmapMode16(int flags)
-{
-	REG_SCREENMODE = SMODE_BMP16 | flags;
-	interface->DrawChar = (flags & SMODE_320) ? DrawChar4_320 : DrawChar4_640;
-}
-
-void SetBitmapMode256(int flags)
-{
-	REG_SCREENMODE = SMODE_BMP256 | flags;
-	interface->DrawChar = (flags & SMODE_320) ? DrawChar8_320 : DrawChar8_640;
-}
-
-void RemoveObjects()
-{
-	DmaClear(OBJECTS_A, 0, 0x1000, DMA_INT);
-}
 
 void WaitForVBlank()
 {
@@ -74,6 +48,11 @@ void MidiReset()
 		REG_MIDIOUT = (0xB0 | i) | 121 << 8; //Reset controllers
 		REG_MIDIOUT = (0xB0 | i) | 123 << 8; //All notes off
 	}
+}
+
+void OplReset()
+{
+	//TODO
 }
 
 void RleUnpack(int8_t* dst, int8_t* src, size_t size)

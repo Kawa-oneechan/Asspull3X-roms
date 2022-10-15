@@ -396,9 +396,10 @@ void nextLevel()
 	{
 		//Reached a blank level? Must be the end. Cool beans.
 		//TODO: make this a nice bitmap image instead.
-		MISC->SetBitmapMode256(SMODE_240);
+		REG_SCREENMODE = SMODE_BMP256 | SMODE_240;
 		MISC->DmaClear((void*)MEM_VRAM, 0, 640*240/4, DMA_INT);
 		DRAW->ResetPalette();
+		DRAW->SetupDrawChar(0);
 		DRAW->DrawString(
 			"Congratulations, you beat every single level in this pack.\n"
 			"Reminder to self: make a nice win screen.",
@@ -567,7 +568,7 @@ int main(void)
 	//levelPack = (char**)diskLevels;
 	thisLevel = levelPack;
 
-	MISC->SetTextMode(SMODE_TILE);
+	REG_SCREENMODE = SMODE_TILE;
 	MISC->DmaCopy(TILESET, (int8_t*)&tilesTiles, 0x200, DMA_INT);
 	MISC->DmaCopy(TILESET + 0x800, (int8_t*)&fontTiles, 0x280, DMA_INT);
 	MISC->DmaCopy(TILESET + 0x2000, (int8_t*)&playerTiles, 0x400, DMA_INT);

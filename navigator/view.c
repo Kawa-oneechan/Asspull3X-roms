@@ -349,7 +349,7 @@ int ShowFile(char* filePath, bool allowRun)
 		ShowText(filePath);
 	}
 	TEXT->SetTextColor(0, 7);
-	MISC->SetTextMode(SMODE_240 | SMODE_BOLD);
+	REG_SCREENMODE = SMODE_TEXT | SMODE_240 | SMODE_BOLD;
 	DRAW->ResetPalette();
 	return 2;
 }

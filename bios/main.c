@@ -331,6 +331,7 @@ doAbout:
 			MISC->DmaClear(TILESET, 0, 0x4000, DMA_INT);
 			MISC->DmaClear(OBJECTS_A, 0, 0x1000, DMA_INT);
 			DisplayPicture((TImageFile*)&splashData);
+			SetupDrawChar(0);
 			MISC->DmaCopy(PALETTE + 256, (int8_t*)&iconsPal, 16, DMA_SHORT);
 			MISC->DmaCopy(TILESET, (int8_t*)&iconsTiles, 512, DMA_INT);
 			OBJECTS_A[0] = OBJECTA_BUILD(0, 0, 1, 0);

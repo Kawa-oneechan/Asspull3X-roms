@@ -371,7 +371,7 @@ void ClearBoard()
 
 int main(void)
 {
-	MISC->SetTextMode(SMODE_TILE | SMODE_320 | SMODE_240);
+	REG_SCREENMODE = SMODE_TILE;
 	MISC->DmaCopy(PALETTE, (int8_t*)&tilesPal, 32, DMA_SHORT);
 	MISC->DmaCopy(PALETTE + 32, (int8_t*)&bgPal, 16, DMA_SHORT);
 	MISC->DmaCopy(TILESET, (int8_t*)&tilesTiles, 1024, DMA_INT);

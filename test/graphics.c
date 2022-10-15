@@ -15,6 +15,7 @@ const TImageFile * const bitmaps[] =
 
 static void WaitForKey()
 {
+	DRAW->SetupDrawChar(0);
 	DRAW->DrawString("Press any key to continue.", 0, 0, 15);
 	while (INP_KEYIN == 0) { vbl(); }
 }
@@ -29,7 +30,7 @@ void GraphicsTest()
 		DRAW->DisplayPicture((TImageFile*)bitmaps[i]);
 		WaitForKey();
 	}
-	MISC->SetBitmapMode16(SMODE_320 | SMODE_240);
+	REG_SCREENMODE = SMODE_BMP16 | SMODE_320 | SMODE_240;
 	MISC->DmaClear(BITMAP, 0, 320*240, DMA_BYTE);
 	DRAW->FloodFill(4, 4, 1, BITMAP);
 	for (int i = 1; i < 18; i++)

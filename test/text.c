@@ -35,7 +35,7 @@ void TextTest()
 {
 	TEXT->SetTextColor(0, 7);
 
-	MISC->SetTextMode(SMODE_240 | SMODE_BOLD);
+	REG_SCREENMODE = SMODE_TEXT | SMODE_240 | SMODE_BOLD;
 	TEXT->ClearScreen();
 	for (int row = 1; row < 30; row++)
 	{
@@ -53,7 +53,7 @@ void TextTest()
 	TEXT->Write("Size test - 80x25");
 	HighWaitForKey();
 
-	MISC->SetTextMode(SMODE_320 | SMODE_BOLD);
+	REG_SCREENMODE = SMODE_TEXT | SMODE_320 | SMODE_BOLD;
 	TEXT->ClearScreen();
 	for (int row = 1; row < 60; row++)
 	{
@@ -71,7 +71,7 @@ void TextTest()
 	TEXT->Write("Size test - 40x50");
 	HighWaitForKey();
 
-	MISC->SetTextMode(SMODE_320 | SMODE_240 | SMODE_BOLD);
+	REG_SCREENMODE = SMODE_TEXT | SMODE_320 | SMODE_240 | SMODE_BOLD;
 	TEXT->ClearScreen();
 	for (int row = 1; row < 30; row++)
 	{
@@ -89,7 +89,7 @@ void TextTest()
 	TEXT->Write("Size test - 40x25");
 	HighWaitForKey();
 
-	MISC->SetTextMode(SMODE_BOLD);
+	REG_SCREENMODE = SMODE_TEXT | SMODE_BOLD;
 	TEXT->ClearScreen();
 	for (int row = 0; row < 60; row++)
 	{
@@ -107,7 +107,7 @@ void TextTest()
 	TEXT->Write("Size test - 80x50");
 	HighWaitForKey();
 
-	MISC->SetTextMode(SMODE_240 | SMODE_BOLD);
+	REG_SCREENMODE = SMODE_TEXT | SMODE_240 | SMODE_BOLD;
 	TEXT->ClearScreen();
 
 	TEXT->Write("Font test - Bold");
@@ -119,7 +119,7 @@ void TextTest()
 		}
 	}
 	WaitForKey();
-	MISC->SetTextMode(SMODE_240);
+	REG_SCREENMODE = SMODE_TEXT | SMODE_240;
 	TEXT->SetCursorPosition(0, 0);
 	TEXT->Write("Font test - Thin");
 	WaitForKey();
@@ -128,7 +128,7 @@ void TextTest()
 	MISC->DmaCopy(TEXTFONT + 16 + 0x1000, customBits, 96, DMA_BYTE);
 	WaitForKey();
 
-	MISC->SetTextMode(SMODE_240 | SMODE_BOLD);
+	REG_SCREENMODE = SMODE_TEXT | SMODE_240 | SMODE_BOLD;
 	TEXT->ClearScreen();
 	TEXT->Write("Color attribute test - Bright");
 

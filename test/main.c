@@ -40,7 +40,7 @@ extern uint16_t tilegrid[];
 extern uint8_t tilesTiles[];
 void TilemapTest()
 {
-	MISC->SetTextMode(SMODE_TILE);
+	REG_SCREENMODE = SMODE_TILE;
 	MISC->DmaCopy(TILESET, (int8_t*)&tilesTiles, 256, DMA_INT);
 	REG_MAPSET = 0x10;
 	uint16_t* dst = MAP1;
@@ -102,7 +102,7 @@ int main(void)
 	while (1)
 	{
 		DRAW->ResetPalette();
-		MISC->SetTextMode(SMODE_240 | SMODE_BOLD);
+		REG_SCREENMODE = SMODE_TEXT | SMODE_240 | SMODE_BOLD;
 		TEXT->SetTextColor(0, 7);
 		TEXT->ClearScreen();
 

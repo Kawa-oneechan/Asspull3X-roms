@@ -118,7 +118,7 @@ const key keys[] =
 
 void KeyboardTest()
 {
-	MISC->SetTextMode(SMODE_240 | SMODE_BOLD);
+	REG_SCREENMODE = SMODE_TEXT | SMODE_240 | SMODE_BOLD;
 	MISC->DmaCopy(MAP1, (int8_t*)&keyboardImage, 80 * 30, DMA_INT);
 	TEXT->SetTextColor(0, 7);
 	TEXT->SetCursorPosition(38, 26);

@@ -358,10 +358,10 @@ typedef struct
 {
 	int(*Write)(const char* format, ...);
 	int(*Format)(char* buffer, const char* format, ...);
+	int(*VFormat)(char* buffer, const char* format, va_list args);
 	void(*WriteChar)(char ch);
 	void(*SetCursorPosition)(int left, int top);
 	void(*SetTextColor)(int back, int fore);
-	void(*SetBold)(bool bold);
 	void(*ClearScreen)(void);
 } ITextLibrary;
 
@@ -370,6 +370,7 @@ typedef struct
 	void(*ResetPalette)(void);
 	void(*DisplayPicture)(TImageFile* picData);
 	void(*Fade)(bool in, bool toWhite);
+	void(*SetupDrawChar)(void(*dcCallback)(unsigned char, int, int, int));
 	void(*DrawString)(const char* str, int x, int y, int color);
 	void(*DrawFormat)(const char* format, int x, int y, int color, ...);
 	void(*DrawChar)(char ch, int x, int y, int color);
@@ -379,15 +380,12 @@ typedef struct
 
 typedef struct
 {
-	void(*SetTextMode)(int flags);
-	void(*SetBitmapMode16)(int flags);
-	void(*SetBitmapMode256)(int flags);
-	void(*RemoveObjects)(void);
 	void(*WaitForVBlank)(void);
 	void(*WaitForVBlanks)(int vbls);
 	void(*DmaCopy)(void* dst, const void* src, size_t size, int step);
 	void(*DmaClear)(void* dst, int src, size_t size, int step);
 	void(*MidiReset)(void);
+	void(*OplReset)(void);
 	void(*RleUnpack)(int8_t* dst, int8_t* src, size_t size);
 	char*(*GetLocaleStr)(ELocale category, int item);
 } IMiscLibrary;

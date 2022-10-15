@@ -23,8 +23,9 @@ extern const uint16_t spritesTiles[], spritesPal[];
 
 void JoypadTest()
 {
-	MISC->SetBitmapMode16(SMODE_320 | SMODE_240);
+	REG_SCREENMODE = SMODE_BMP16 | SMODE_320 | SMODE_240;
 	MISC->DmaClear(BITMAP, 0, 160 * 240, DMA_BYTE);
+	DRAW->SetupDrawChar(0);
 
 	MISC->DmaCopy(TILESET + 0x2000, (int8_t*)&spritesTiles, 0x480, DMA_SHORT);
 	MISC->DmaCopy(PALETTE + 256, spritesPal, 16, DMA_SHORT);

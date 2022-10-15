@@ -1402,7 +1402,7 @@ int main(int argc, char* argv[])
 #else
 int main()
 {
-	MISC->SetTextMode(SMODE_240 | SMODE_BOLD);
+	REG_SCREENMODE = SMODE_TEXT | SMODE_240 | SMODE_BOLD;
 	REG_CARET = 0x8000;
 	TEXT->SetTextColor(0, 7);
 	TEXT->ClearScreen();

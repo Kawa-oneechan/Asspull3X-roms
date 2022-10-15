@@ -367,7 +367,7 @@ void WaitForKey()
 
 int main(void)
 {
-	MISC->SetTextMode(SMODE_TILE);
+	REG_SCREENMODE = SMODE_TILE;
 	MISC->DmaCopy(TILESET, (int8_t*)&tilesTiles, 96 * 8, DMA_INT);
 	MISC->DmaCopy(PALETTE, (int16_t*)&tilesPal, 32, DMA_SHORT);
 	MISC->DmaCopy(PALETTE + 256, (int16_t*)&tilesPal, 32, DMA_SHORT);

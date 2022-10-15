@@ -5,9 +5,8 @@ extern int32_t vsprintf(char*, const char*, va_list);
 
 const ITextLibrary textLibrary =
 {
-	Write, Format, WriteChar,
-	SetCursor, SetTextColor, SetBold,
-	ClearScreen,
+	Write, Format, VFormat, WriteChar,
+	SetCursorPosition, SetTextColor, ClearScreen,
 };
 
 #define TAB_STOPS 8
@@ -88,6 +87,12 @@ int Format(char* buffer, const char* format, ...)
 	return ret;
 }
 
+int VFormat(char* buffer, const char* format, va_list args)
+{
+	//TEST ME
+	return vsprintf(buffer, format, args);
+}
+
 void WriteChar(char ch)
 {
 	int cursorPos = REG_CARET & 0x3FFF;
@@ -111,15 +116,7 @@ void WriteChar(char ch)
 //...and redef it
 #define printf Write
 
-void SetBold(bool bold)
-{
-	if (bold)
-		REG_SCREENMODE |= SMODE_BOLD;
-	else
-		REG_SCREENMODE &= ~SMODE_BOLD;
-}
-
-void SetCursor(int left, int top)
+void SetCursorPosition(int left, int top)
 {
 	int textWidth = (REG_SCREENMODE & SMODE_320) ? 40 : 80;
 	REG_CARET = (REG_CARET & 0xC000) | ((textWidth * top) + left);
@@ -142,4 +139,3 @@ void ClearScreen()
 		DmaClear((void*)MEM_VRAM, 0, 640 * 480, DMA_BYTE);
 	}
 }
-

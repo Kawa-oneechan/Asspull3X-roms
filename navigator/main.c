@@ -304,7 +304,7 @@ void SelectFile(const char* path1, const char* path2, const char* pattern)
 		Populate(workPath[1], 1, pattern);
 	}
 
-	MISC->SetTextMode(SMODE_BOLD | SMODE_240);
+	REG_SCREENMODE = SMODE_TEXT | SMODE_240 | SMODE_BOLD;
 	//TEXT->SetTextColor(0, 7);
 	//TEXT->ClearScreen();
 
@@ -771,7 +771,7 @@ HandleMenu:
 
 int main(void)
 {
-	MISC->SetTextMode(SMODE_240 | SMODE_BOLD);
+	REG_SCREENMODE = SMODE_TEXT | SMODE_240 | SMODE_BOLD;
 	DRAW->ResetPalette();
 	REG_CARET = 0;
 	while(1)

@@ -6,7 +6,8 @@ extern int vsprintf(char*, const char*, va_list);
 const IDrawingLibrary drawingLibrary =
 {
 	ResetPalette, DisplayPicture,
-	Fade, DrawString, DrawFormat,
+	Fade, SetupDrawChar,
+	DrawString, DrawFormat,
 	DrawChar, DrawLine, FloodFill
 };
 
@@ -83,9 +84,9 @@ void DisplayPicture(TImageFile* picData)
 		//mode |= (picData->BitDepth == 8) ? SMODE_BMP256 : SMODE_BMP16;
 		//REG_SCREENMODE = (uint8_t)mode;
 		if (picData->BitDepth == 8)
-			SetBitmapMode256(mode);
+			REG_SCREENMODE = SMODE_BMP256 | mode;
 		else
-			SetBitmapMode16(mode);
+			REG_SCREENMODE = SMODE_BMP16 | mode;
 	}
 	int colors = (picData->BitDepth == 8) ? 256 : 16;
 	DmaCopy((void*)PALETTE, (int8_t*)((int)picData + picData->ColorOffset), colors * 1, DMA_SHORT);
@@ -140,6 +141,21 @@ void Fade(bool in, bool toWhite)
 			WaitForVBlank();
 		}
 		REG_SCREENFADE = 0;
+	}
+}
+
+void SetupDrawChar(void(*dcCallback)(unsigned char, int, int, int))
+{
+	if (dcCallback)
+		interface->DrawChar = dcCallback;
+	else
+	{
+		if (REG_SCREENMODE & SMODE_BMP16)
+			interface->DrawChar = (REG_SCREENMODE & SMODE_320) ? DrawChar4_320 : DrawChar4_640;
+		else if (REG_SCREENMODE & SMODE_BMP256)
+			interface->DrawChar = (REG_SCREENMODE & SMODE_320) ? DrawChar8_320 : DrawChar8_640;
+		else
+			interface->DrawChar = 0;
 	}
 }
 

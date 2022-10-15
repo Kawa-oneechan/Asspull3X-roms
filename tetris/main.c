@@ -107,7 +107,7 @@ int main(void)
 	WaitForKey();
 	DRAW->Fade(false, true);
 
-	MISC->SetTextMode(SMODE_TILE);
+	REG_SCREENMODE = SMODE_TILE;
 	MISC->DmaCopy(TILESET, (int8_t*)&tilesTiles, 1024, DMA_INT);
 	MISC->DmaCopy(TILESET + 0x1000, (int8_t*)&farahTiles, 1024, DMA_INT);
 	MISC->DmaCopy(TILESET + 0x3000, (int8_t*)&logoTiles, 1024, DMA_INT);

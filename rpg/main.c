@@ -78,7 +78,7 @@ int main(void)
 {
 	REG_MAPSET = 0xF0;
 
-	MISC->SetTextMode(SMODE_TILE);
+	REG_SCREENMODE = SMODE_TILE;
 	MISC->DmaClear(TILESET, 0, 0x4000, DMA_INT);
 	MISC->DmaClear(OBJECTS_A, 0, 0x1000, DMA_INT);
 	MISC->DmaCopy(PALETTE + 240, (int16_t*)&uiPal, 8, DMA_INT);

@@ -4,7 +4,7 @@ IBios* interface;
 
 int main(void)
 {
-	//MISC->SetTextMode(SMODE_240 | SMODE_BOLD);
+	//REG_SCREENMODE = SMODE_TEXT | SMODE_240 | SMODE_BOLD;
 	//TEXT->SetCursorPosition(0, 0);
 	//TEXT->SetTextColor(0, 7);
 	//REG_SCREENFADE = 0;
