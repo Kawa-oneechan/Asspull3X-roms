@@ -48,15 +48,13 @@ int DrawChar4_640(unsigned char c, int x, int y, int color) { DRAWCHAR4(640) }
 int DrawChar8_320(unsigned char c, int x, int y, int color) { DRAWCHAR8(320) }
 int DrawChar8_640(unsigned char c, int x, int y, int color) { DRAWCHAR8(640) }
 
-static const uint16_t palette[] = {
-	0x0000, 0x5400, 0x02A0, 0x56A0, 0x0015, 0x5415, 0x0115, 0x56B5,
-	0x294A, 0x7D4A, 0x2BEA, 0x7FEA, 0x295F, 0x7D5F, 0x2BFF, 0x7FFF,
-};
-
-
 void ResetPalette()
 {
-	for (int idx = 0; idx < 16; idx++)
+	static const uint16_t palette[] = {
+		0x0000, 0x5400, 0x02A0, 0x56A0, 0x0015, 0x5415, 0x0115, 0x56B5,
+		0x294A, 0x7D4A, 0x2BEA, 0x7FEA, 0x295F, 0x7D5F, 0x2BFF, 0x7FFF,
+	};
+	for (unsigned int idx = 0; idx < array_size(palette); idx++)
 	{
 		PALETTE[idx] = palette[idx];
 	}

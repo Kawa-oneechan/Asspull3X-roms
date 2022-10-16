@@ -66,6 +66,7 @@ int main(void)
 	DmaCopy(TEXTFONT, (int8_t*)&fontTiles, 0xC00, DMA_INT);
 	ResetPalette();
 	MidiReset();
+	OplReset();
 	REG_SCREENMODE = SMODE_TEXT | SMODE_240 | SMODE_BOLD;
 	//REG_CARET = 0x8000;
 
@@ -355,8 +356,10 @@ doAbout:
 #ifndef EXTENSIVE
 		Jingle();
 		MidiReset();
+		OplReset();
 #else
 		MidiReset();
+		OplReset();
 		MIDI_PROGRAM(1, MIDI_GUITARFRETNOISE);
 		MIDI_KEYON(1, MIDI_C4, 80);
 		WaitForVBlanks(256);
@@ -379,6 +382,7 @@ doAbout:
 void BlankOut()
 {
 	MidiReset();
+	OplReset();
 	REG_SCREENMODE = REG_SCREENFADE = REG_MAPSET = 0;
 	REG_SCROLLX1 = REG_SCROLLX2 = REG_SCROLLY1 = REG_SCROLLY2 = 0;
 	REG_HDMACONTROL[0] = 0;
