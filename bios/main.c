@@ -9,6 +9,7 @@
 #define printf Write
 #endif
 
+extern int strncmp(const char *l, const char *r, size_t max);
 extern int sprintf(char *buf, const char *fmt, ...);
 
 extern void PrepareDiskToDevMapping();

@@ -51,6 +51,11 @@ extern IBios* interface;
 DSTATUS disk_status(BYTE driveNo) __attribute__ ((weak, alias ("disk_initialize")));
 */
 
+//Define this to make get_fattime NOT choke on the year 2038 by using the full 64-bit time_t.
+//FAT16 timestamps range from 1980-01-01 to 2099-12-31, but when you have to get a new one...
+//#define YEAR2038
+//Using a 32-bit time_t (casting lol) saves about point six KB.
+
 #define SECSPERMIN 60L
 #define MINSPERHOUR 60L
 #define HOURSPERDAY 24L
@@ -77,7 +82,11 @@ DSTATUS disk_status(BYTE driveNo) __attribute__ ((weak, alias ("disk_initialize"
 #define isleap(y) ((((y) % 4) == 0 && ((y) % 100) != 0) || ((y) % 400) == 0)
 DWORD get_fattime(void)
 {
-	const uint64_t lcltime = REG_TIMET;
+#ifdef YEAR2038
+	const int64_t lcltime = REG_TIMET;
+#else
+	const int32_t lcltime = (int32_t)REG_TIMET;
+#endif
 	if (lcltime == 0)
 		return ((DWORD)(FF_NORTC_YEAR - 1980) << 25 | (DWORD)FF_NORTC_MON << 21 | (DWORD)FF_NORTC_MDAY << 16);
 
@@ -87,7 +96,7 @@ DWORD get_fattime(void)
 	uint32_t erayear, yearday, month, day;
 	uint32_t eraday;
 
-	days = lcltime / ((SECSPERMIN * MINSPERHOUR) * HOURSPERDAY) + EPOCH_ADJUSTMENT_DAYS;
+	days = lcltime / SECSPERDAY + EPOCH_ADJUSTMENT_DAYS;
 	rem = lcltime % SECSPERDAY;
 	if (rem < 0)
 	{
