@@ -1,72 +1,12 @@
 #include "../ass.h"
 IBios* interface;
 
-/*
-#include <limits.h>
-
-#define FRACBITS 16
-#define FRACUNIT (1 << FRACBITS)
-typedef int fixed_t;
-
-int abs(int a)
-{
-	return a < 0 ? -a : a;
-}
-
-fixed_t FixedMul(fixed_t a, fixed_t b)
-{
-	return ((long long) a * (long long) b) >> FRACBITS;
-}
-
-fixed_t FixedDiv(fixed_t a, fixed_t b)
-{
-	if ((abs(a) >> 14) >= abs(b))
-	return (a ^ b) < 0 ? INT_MIN : INT_MAX;
-
-	long long c;
-	c = ((long long)a <<16 ) / ((long long)b);
-	return (fixed_t)c;
-}
-
-inline fixed_t Fixed(int a, int b)
-{
-	fixed_t c = (a << FRACBITS) + ((b * FRACUNIT) / 100);
-	return c;
-}
-
-void printfixnum(fixed_t a)
-{
-	printf("%d.%d", a >> FRACBITS, ((a % FRACUNIT) * 100) / FRACUNIT);
-}
-*/
-
 int main(void)
 {
 	REG_SCREENMODE = SMODE_TEXT | SMODE_240 | SMODE_BOLD;
 	TEXT->SetTextColor(1, 7);
 	TEXT->ClearScreen();
 	printf("Hello, world!\n");
-
-/*
-	TEXT->SetTextColor(1, 7);
-	printf("\nFRACUNIT is %d\n", FRACUNIT);
-	fixed_t f1 = Fixed(12, 50); //(12 * FRACUNIT) + (FRACUNIT >> 1);
-	fixed_t f2 = Fixed(2, 0); //2 * FRACUNIT;
-	printf("%d -> ", f1);
-	printfixnum(f1);
-	printf("\n");
-	printf("%d -> ", f2);
-	printfixnum(f2);
-	printf("\n");
-	fixed_t f3 = FixedDiv(f1, f2);
-	printf("Divide and... %d -> ", f3);
-	printfixnum(f3);
-	printf("\n");
-	f3 = FixedMul(f1, f2);
-	printf("Multiply and... %d -> ", f3);
-	printfixnum(f3);
-	printf("\n");
-*/
 
 	TEXT->SetTextColor(1, 15);
 	printf("\nA\x11\xD7 BIOS/Interface\n");
