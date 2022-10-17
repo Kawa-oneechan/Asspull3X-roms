@@ -48,7 +48,7 @@ void TextTest()
 	TEXT->Write("Size test - 80x30");
 	HighWaitForKey();
 
-	REG_SCREENMODE |= SMODE_200;
+	REG_SCREENMODE |= SMODE_1610;
 	TEXT->SetCursorPosition(4, 2);
 	TEXT->Write("Size test - 80x25");
 	HighWaitForKey();
@@ -66,7 +66,7 @@ void TextTest()
 	TEXT->Write("Size test - 40x60");
 	HighWaitForKey();
 
-	REG_SCREENMODE |= SMODE_200;
+	REG_SCREENMODE |= SMODE_1610;
 	TEXT->SetCursorPosition(4, 2);
 	TEXT->Write("Size test - 40x50");
 	HighWaitForKey();
@@ -84,7 +84,7 @@ void TextTest()
 	TEXT->Write("Size test - 40x30");
 	HighWaitForKey();
 
-	REG_SCREENMODE |= SMODE_200;
+	REG_SCREENMODE |= SMODE_1610;
 	TEXT->SetCursorPosition(4, 2);
 	TEXT->Write("Size test - 40x25");
 	HighWaitForKey();
@@ -102,7 +102,7 @@ void TextTest()
 	TEXT->Write("Size test - 80x60");
 	HighWaitForKey();
 
-	REG_SCREENMODE |= SMODE_200;
+	REG_SCREENMODE |= SMODE_1610;
 	TEXT->SetCursorPosition(4, 2);
 	TEXT->Write("Size test - 80x50");
 	HighWaitForKey();

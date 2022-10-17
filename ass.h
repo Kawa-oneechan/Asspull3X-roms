@@ -112,12 +112,12 @@ typedef unsigned long long uint64_t;
 #define SMODE_TEXT 0		// Specifies PC CGA-style text mode.
 #define SMODE_BMP16 1		// Specifies a linear-addressed 16-color four bits per pixel bitmap mode.
 #define SMODE_BMP256 2		// Specifies a linear-addressed 256-color eight bits per pixel bitmap mode.
+#define SMODE_TILE 0x63		// Specifies a tilemap system. Forces 320x240 resolution.
 #define SMODE_BOLD 8		// Specifies that text mode should use a bold font.
-#define SMODE_TILE 0x63		// Specifies a dual-tilemap system. Forces 320x240 resolution.
 #define SMODE_BLINK 0x10	// Specifies that instead of bright background colors, text mode cells should blink.
 #define SMODE_240 0x20		// Specifies that instead of 480 lines, the screen height should be halved to 240.
 #define SMODE_320 0x40		// Specifies that the screen width should be halved from 640 to 320.
-#define SMODE_200 0x80		// Specifies that bitmap modes should be 200 or 400 lines, and text mode 25 or 50 lines.
+#define SMODE_1610 0x80		// Specifies that bitmap modes should be 200 or 400 lines, and text mode 25 or 50 lines.
 
 #define IMODE_DISABLE	0x80	// Enable interrupts.
 #define IMODE_INVBLANK	0x04	// VBlank is active.

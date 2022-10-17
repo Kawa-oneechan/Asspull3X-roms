@@ -78,7 +78,7 @@ void DisplayPicture(TImageFile* picData)
 			mode = 0;
 	}
 	if (picData->Height == 200 || picData->Height == 400)
-		mode |= SMODE_200;
+		mode |= SMODE_1610;
 	if (mode > -1)
 	{
 		//mode |= (picData->BitDepth == 8) ? SMODE_BMP256 : SMODE_BMP16;
@@ -343,7 +343,7 @@ void FloodFill(int x, int y, int newColor, uint8_t* dest)
 	if (REG_SCREENMODE & SMODE_BMP16) stride /= 2;
 
 	int height = 480;
-	if (REG_SCREENMODE & SMODE_200) height = 400;
+	if (REG_SCREENMODE & SMODE_1610) height = 400;
 	if (REG_SCREENMODE & SMODE_240) height /= 2;
 
 	int(*getPixel)(int,int,int,uint8_t*) = _getPixel8;
