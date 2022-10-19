@@ -40,7 +40,7 @@ int strncmp(const char *l, const char *r, size_t max)
 char* strcpy(char* s2, const char* s1)
 {
 	int l;
-	char* src = s2;
+	const char* src = s1;
 	for (l = 0; l < 1024 && *src; l++, src++);
 	memcpy(s2, s1, l + 1);
 	s2[l + 1] = 0;

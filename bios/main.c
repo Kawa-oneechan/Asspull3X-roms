@@ -415,8 +415,13 @@ void DiskEntry()
 
 	while (*ptr != 0)
 	{
-		if (*ptr == ';')
-			while(*ptr != 0 && *ptr != '\n') ptr++;
+		if (*ptr == 0xD) *ptr = 0xA;
+		if (*ptr == '\n' || *ptr == ';')
+		{
+			while(*ptr != '\n') ptr++;
+			ptr++;
+			continue;
+		}
 
 		//printf("ptr: %s\n", ptr);
 		key = ptr;
