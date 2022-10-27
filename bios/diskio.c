@@ -28,17 +28,17 @@ typedef struct
 } TIOState;
 typedef struct
 {
-	long AssBang;
-	int16_t biosVersion;
-	int16_t extensions;
+	const long AssBang;
+	const int16_t biosVersion;
+	const int16_t extensions;
 	void(*Exception)(void*);
 	void(*VBlank)(void*);
 	void(*HBlank)(void*);
 	void(*DrawChar)(unsigned char, int, int, int);
-	void* textLibrary;
-	void* drawingLibrary;
-	void* miscLibrary;
-	void* diskLibrary;
+	const void* textLibrary;
+	const void* drawingLibrary;
+	const void* miscLibrary;
+	const void* diskLibrary;
 	char* DrawCharFont;
 	uint16_t DrawCharHeight;
 	uint8_t* LinePrinter;

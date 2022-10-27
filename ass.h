@@ -388,6 +388,7 @@ typedef struct
 	void(*OplReset)(void);
 	void(*RleUnpack)(int8_t* dst, int8_t* src, size_t size);
 	char*(*GetLocaleStr)(ELocale category, int item);
+
 } IMiscLibrary;
 
 typedef struct
@@ -422,17 +423,17 @@ typedef struct
 
 typedef struct
 {
-	long AssBang;
-	int16_t biosVersion;
-	int16_t extensions;
+	const long AssBang;
+	const int16_t biosVersion;
+	const int16_t extensions;
 	void(*Exception)(void*);
 	void(*VBlank)(void*);
 	void(*HBlank)(void*);
 	int(*DrawChar)(unsigned char, int, int, int);
-	ITextLibrary* textLibrary;
-	IDrawingLibrary* drawingLibrary;
-	IMiscLibrary* miscLibrary;
-	IDiskLibrary* diskLibrary;
+	const ITextLibrary* textLibrary;
+	const IDrawingLibrary* drawingLibrary;
+	const IMiscLibrary* miscLibrary;
+	const IDiskLibrary* diskLibrary;
 	char* DrawCharFont;
 	uint16_t DrawCharHeight;
 	uint8_t* LinePrinter;

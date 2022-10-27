@@ -30,18 +30,18 @@ typedef struct
 } TLocale;
 typedef struct
 {
-	long AssBang;
-	int16_t biosVersion;
-	int16_t extensions;
+	const long AssBang;
+	const int16_t biosVersion;
+	const int16_t extensions;
 	void(*Exception)(void*);
 	void(*VBlank)(void*);
 	void(*HBlank)(void*);
 	void(*DrawChar)(unsigned char, int, int, int);
-	void* textLibrary;
-	void* drawingLibrary;
-	void* miscLibrary;
-	void* diskLibrary;
-	char* DrawCharFont;
+	const void* textLibrary;
+	const void* drawingLibrary;
+	const void* miscLibrary;
+	const void* diskLibrary;
+	const char* DrawCharFont;
 	uint16_t DrawCharHeight;
 	uint8_t* LinePrinter;
 	TIOState io;
