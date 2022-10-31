@@ -17,6 +17,19 @@ initialize:
 	move.l  #0x01000000,interface
 	link.w  %a6,#-8
 
+	tst.l	__CTOR_LIST__
+	beq.s	5f
+	lea		__CTOR_LIST__,%a2
+	move.l	#1,%d2
+4:	add.l	#4,%a2
+	cmp.l	__CTOR_LIST__,%d2
+	bgt.s 	5f
+	add.l	#1,%d2
+	move.al	%a2@,%a0
+	jsr		%a0@
+	bra.s	4b
+5:
+
 	move    #0x2000,%sr     | enable interrupts
 	jsr     main
 3:	bra.b   3b
