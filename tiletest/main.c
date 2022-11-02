@@ -11,9 +11,10 @@ IBios* interface;
 extern const uint16_t tilesetPal[], tilesetTiles[], hdma1[];
 extern const uint16_t map16[];
 extern const uint16_t farahPal[], farahTiles[];
-extern const uint16_t tileanimTiles[];
+//extern const uint16_t tileanimTiles[];
 extern const uint16_t bg1Map[], bg2Map[], levelMap[];
 
+/*
 const uint16_t palAnim[] =
 {
 	0x7708,0x7FFF,0x1084,0x1BDF,0x027F,0x0139,0x1ADA,0x0DF3,0x050D,0x671B,0x4A34,0x2D4D,0x3FFF,0x45BF,0x20D4,0x2D3A,
@@ -23,6 +24,7 @@ const uint16_t palAnim[] =
 	0x7708,0x7FFF,0x1084,0x7FFF,0x4BFF,0x19FF,0x3BDF,0x2EFB,0x1DD3,0x7E97,0x6DB0,0x54EA,0x3FFF,0x45BF,0x20D4,0x2D3A,
 	0x7708,0x7FFF,0x1084,0x7FFF,0x4BFF,0x19FF,0x3BDF,0x2EFB,0x1DD3,0x477F,0x3298,0x15B1,0x3FFF,0x45BF,0x20D4,0x2D3A,
 };
+*/
 
 void DrawTile(int x, int y, int num, uint16_t* map)
 {
@@ -218,8 +220,8 @@ void MovePlayer()
 		player.timer = 0;
 	}
 
-	MAP3[0] = player.state + 256 + 0x1000;
-	MAP3[2] = player.grounded + 256 + 0x1000;
+//	MAP3[0] = player.state + 256 + 0x1000;
+//	MAP3[2] = player.grounded + 256 + 0x1000;
 }
 
 void BarnDoorsIn()
@@ -281,13 +283,14 @@ int main(void)
 	MISC->DmaClear(MAP1, 0, 0x4000, DMA_SHORT);
 	for (int i = 0; i < 20; i++)
 	{
-		DrawTile(i, 13, 0x41, MAP1);
-		DrawTile(i, 14, 0x42, MAP1);
+		DrawTile(i, 13, 0x03, MAP1);
+		DrawTile(i, 14, 0x13, MAP1);
 	}
 	for (int j = 0, k = 0; j < 12; j++)
-		for (int i = 0; i < 16 && k < 0xAF; i++, k++)
+		for (int i = 0; i < 16 && k < 0x40; i++, k++)
 			DrawTile(i, j, k, MAP1);
 
+/*
 	{
 		const char buffer[] = "TILE TEST - V3";
 		char *c = (char*)buffer;
@@ -304,6 +307,7 @@ int main(void)
 			pos++;
 		}
 	}
+*/
 
 	REG_SCROLLY1 = 0;
 	REG_SCROLLY2 = 0;
@@ -311,7 +315,7 @@ int main(void)
 //	int scroll = 0;
 //	int col = 40;
 	int animation = 0;
-	MISC->DmaCopy(TILESET + (32*0x1C0), (int8_t*)&tileanimTiles + ((animation % 8) * (32*4*16)), (8*4*16), DMA_INT);
+//	MISC->DmaCopy(TILESET + (32*0x1C0), (int8_t*)&tileanimTiles + ((animation % 8) * (32*4*16)), (8*4*16), DMA_INT);
 
 	player.posX =  9 * 16;
 	player.posY = 2 * 16; //11 * 16;
@@ -348,8 +352,8 @@ int main(void)
 		if (REG_TICKCOUNT % 8 == 0)
 		{
 			animation++;
-			MISC->DmaCopy(TILESET + (32*0x1C0), (int8_t*)&tileanimTiles + ((animation % 8) * (32*4*16)), (8*4*16), DMA_INT);
-			MISC->DmaCopy(PALETTE + 16, (int8_t*)&palAnim + ((animation % 6) * 32), 16, DMA_SHORT);
+//			MISC->DmaCopy(TILESET + (32*0x1C0), (int8_t*)&tileanimTiles + ((animation % 8) * (32*4*16)), (8*4*16), DMA_INT);
+//			MISC->DmaCopy(PALETTE + 16, (int8_t*)&palAnim + ((animation % 6) * 32), 16, DMA_SHORT);
 		}
 //		if (scroll % 8 == 0)
 //		{

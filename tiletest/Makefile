@@ -2,7 +2,7 @@ GRITS := $(wildcard *.grit)
 GRAPHICS := $(GRITS:.grit=.png)
 
 GFX8x8FP := tileset.png
-GFX8x8NP := tileanim.png
+# GFX8x8NP := tileanim.png
 GFX8x8 := farah.png
 HDMA := hdma1.png
 TILED := map.json
