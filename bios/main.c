@@ -44,20 +44,20 @@ extern const uint16_t iconsPal[16];
 )
 
 void BlankOut();
-void DiskEntry();
+void LoadConfig(int);
 void Jingle();
 
-bool diskEntryMayRun = false;
-
-int main(void)
+#pragma GCC diagnostic ignored "-Wmain"
+__attribute__ ((noreturn))
+void main(void)
 {
 	char biosVer[32];
 	int32_t* cartCode = (int32_t*)0x00020000;
 	void(*entry)(void)= (void*)0x00020004;
-	bool haveDisk = false, hadDisk = false;
-	bool showSplash = false, showMenu = false;
-	const char bop[] = { 0, 0, 0, 1, 1, 2, 3, 3, 4, 4, 4, 3, 3, 2, 1, 1 };
-	const char blink[] = { 3, 4, 5, 6, 6, 6, 5, 4, 3 };
+	bool showSplash = false;
+	static const char bop[] = { 0, 0, 0, 1, 1, 2, 3, 3, 4, 4, 4, 3, 3, 2, 1, 1 };
+	static const char blink[] = { 9, 7, 4, 4, 4, 4, 7, 9, 1 };
+	static const char fade[] = { 1, 1, 9, 7, 4 };
 	int blinker = 0;
 
 	sprintf(biosVer, "BIOS v%d.%d", (interface->biosVersion >> 8) & 0xFF, (interface->biosVersion >> 0) & 0xFF);
@@ -173,56 +173,22 @@ int main(void)
 #endif
 
 	//Fade(false, false);
-	diskEntryMayRun = false;
 
-	volatile uint8_t* firstDisk = (uint8_t*)0x02000000 + (interface->io.diskToDev[0] * 0x8000);
+	for (int i = 0; i < 4; i++)
+	{
+		volatile uint8_t* firstDisk = (uint8_t*)0x02000000 + (interface->io.diskToDev[i] * 0x8000);
+		printf("disk %d @ %p\n", i, firstDisk);
+		if (firstDisk[4] & 1)
+		{
+			LoadConfig(i);
+			break;
+		}
+	}
 
 	while(true)
 	{
 goAgain:
-//		if (*cartCode != 0x41535321) //ASS!
-//		{
-			haveDisk = firstDisk[4] & 1;
-			if (haveDisk && !hadDisk)
-			{
-				hadDisk = true;
-				FILE file;
-				if (OpenFile(&file, "start.cfg", FA_READ) == 0)
-				{
-					CloseFile(&file);
-					OBJECTS_A[0] = OBJECTA_BUILD(32, 0, 1, 0); //disk
-					diskEntryMayRun = false;
-					DiskEntry();
-					//BUT!
-					if (*cartCode == 0x41535321 && diskEntryMayRun)
-						showMenu = true;
-					else
-					{
-						if (!diskEntryMayRun)
-						{
-							entry = (void*)0x00020004;
-							continue;
-						}
-						else
-							entry = DiskEntry;
-						break;
-					}
-				}
-				else
-				{
-					OBJECTS_A[0] = OBJECTA_BUILD(48, 0, 1, 0); //? disk
-					continue;
-				}
-			}
-			else if (!haveDisk && hadDisk)
-			{
-				hadDisk = false;
-				OBJECTS_A[0] = OBJECTA_BUILD(0, 0, 1, 0); //logo
-				continue;
-			}
-//		}
-//		else
-		if (*cartCode == 0x41535321 && !showMenu) //ASS!
+		if (*cartCode == 0x41535321) //ASS!
 		{
 			entry = (void*)0x00020004;
 			OBJECTS_A[0] = OBJECTA_BUILD(16, 0, 1, 0); //cart
@@ -231,98 +197,35 @@ goAgain:
 
 		if (INP_KEYIN == KEYSCAN_F1 && showSplash) //F1
 		{
-doAbout:
 			OBJECTS_B[0] = OBJECTB_BUILD(-32, -32, 0, 0, 0, 0, 0, 0);
 			char about[256];
 			interface->DrawCharFont = (char*)0x0E060C00;
 			interface->DrawCharHeight = 0x0808;
 			sprintf(about, "%s\nCode by Kawa\n" __DATE__, biosVer);
-			for (int i = 2; i <= 6; i++)
+			for (unsigned int i = 0; i < array_size(fade); i++)
 			{
-				DrawString(banner, 104, 130, i);
-				DrawString(about, 104, 154, i);
+				DrawString(banner, 48, 64, fade[i]);
+				DrawString(about, 48, 88, fade[i]);
 				WaitForVBlanks(8);
 			}
 			WaitForVBlanks(8);
 			while (!INP_KEYIN)
 			{
-				if (blinker % 8 == 0)
-					DrawString("\x03", 208, 202, blink[blinker / 8]);
+				if (blinker % 8 == 60)
+					DrawString("\x03", 144, 136, blink[blinker / 8]);
 				blinker++;
 				if (blinker == 8 * 8)
 					blinker = 0;
 				WaitForVBlank();
 			}
-			DrawString("\x03", 208, 202, 1);
-			for (int i = 5; i >= 1; i--)
+			DrawString("\x03", 144, 136, 1);
+			for (unsigned int i = array_size(fade) - 1; i > 0; i--)
 			{
-				DrawString(banner, 104, 130, i);
-				DrawString(about, 104, 154, i);
+				DrawString(banner, 48, 64, fade[i]);
+				DrawString(about, 48, 88, fade[i]);
 				WaitForVBlanks(8);
 			}
-			OBJECTS_B[0] = OBJECTB_BUILD(144, 152, 1, 1, 0, 0, 1, 0);
-		}
-
-		if (showSplash && showMenu)
-		{
-			OBJECTS_B[0] = OBJECTB_BUILD(-32, -32, 0, 0, 0, 0, 0, 0);
-			interface->DrawCharFont = (char*)0x0E060C00;
-			interface->DrawCharHeight = 0x0808;
-			const char menu[] = " \x1D CARTRIDGE\n\n   DISKETTE\n";
-			DrawString(banner, 104, 130, 6);
-			DrawString(menu, 104, 162, 6);
-			int cursor = 0;
-			while (true)
-			{
-				int key = INP_KEYIN;
-				if (key == KEYSCAN_F1)
-				{
-					DrawString(banner, 104, 130, 1);
-					DrawString(menu, 104, 162, 1);
-					DrawString("\x1D", 112, 162, 1);
-					goto doAbout;
-				}
-				if (key == KEYSCAN_UP || key == KEYSCAN_DOWN || (INP_JOYPAD1 && INP_JOYPAD1 <= BUTTON_LEFT))
-				{
-					while (INP_JOYPAD1) vbl();
-					cursor = !cursor;
-				}
-				if (*cartCode != 0x41535321 || !(firstDisk[4] & 1))
-				{
-					showMenu = false;
-					hadDisk = false;
-					haveDisk = false;
-					DrawString(banner, 104, 130, 1);
-					DrawString(menu, 104, 162, 1);
-					OBJECTS_B[0] = OBJECTB_BUILD(144, 152, 1, 1, 0, 0, 1, 0);
-					goto goAgain;
-				}
-				else if (key == KEYSCAN_ENTER || INP_JOYPAD1 >= BUTTON_A)
-				{
-					if (!cursor)
-					{
-						entry = (void*)0x00020004;
-						OBJECTS_A[0] = OBJECTA_BUILD(16, 0, 1, 0); //cart
-					}
-					else
-					{
-						entry = DiskEntry;
-						OBJECTS_A[0] = OBJECTA_BUILD(32, 0, 1, 0); //disk
-					}
-					break;
-				}
-				DrawString("\x1D", 112, 162 + (cursor * 16), blink[blinker / 8]);
-				DrawString("\x1D", 112, 162 + (!cursor * 16), 1);
-				blinker++;
-				if (blinker == 8 * 8)
-					blinker = 0;
-				WaitForVBlank();
-			}
-			DrawString(banner, 104, 130, 1);
-			DrawString(menu, 104, 162, 1);
-			DrawString("\x1D", 112, 162, 1);
-			OBJECTS_B[0] = OBJECTB_BUILD(144, 152, 1, 1, 0, 0, 1, 0);
-			break;
+			OBJECTS_B[0] = OBJECTB_BUILD(88, 88, 1, 1, 0, 0, 1, 0);
 		}
 
 		if (!showSplash)
@@ -337,15 +240,14 @@ doAbout:
 			MISC->DmaCopy(PALETTE + 256, (int8_t*)&iconsPal, 16, DMA_SHORT);
 			MISC->DmaCopy(TILESET, (int8_t*)&iconsTiles, 512, DMA_INT);
 			OBJECTS_A[0] = OBJECTA_BUILD(0, 0, 1, 0);
-			if (!showMenu)
-				OBJECTS_B[0] = OBJECTB_BUILD(144, 152, 1, 1, 0, 0, 1, 0);
+			OBJECTS_B[0] = OBJECTB_BUILD(88, 88, 1, 1, 0, 0, 1, 0);
 			MIDI_PROGRAM(1, MIDI_SEASHORE);
 			MIDI_KEYON(1, MIDI_C4, 80);
 			Fade(true, false);
 		}
 		else
 		{
-			OBJECTS_B[0] = OBJECTB_BUILD(144, 152 + bop[(REG_TICKCOUNT / 16) % 16], 1, 1, 0, 0, 1, 0);
+			OBJECTS_B[0] = OBJECTB_BUILD(88, 88 + bop[(REG_TICKCOUNT / 16) % 16], 1, 1, 0, 0, 1, 0);
 			WaitForVBlank();
 		}
 		continue;
@@ -367,15 +269,11 @@ doAbout:
 		Fade(false, false);
 	}
 
-	if (entry == (void*)0x00020004)
-	{
-		DmaClear((int8_t*)0x01001000, 0, 0x00200000, DMA_INT); //Reset cart's workram
-		BlankOut();
-	}
+	DmaClear((int8_t*)0x01001000, 0, 0x00200000, DMA_INT); //Reset cart's workram
+	BlankOut();
 	entry();
 
 	showSplash = false;
-	showMenu = false;
 	goto goAgain;
 }
 
@@ -396,12 +294,16 @@ void BlankOut()
 	ResetPalette();
 }
 
-void DiskEntry()
+void LoadConfig(int drive)
 {
 	FILE file;
 	FILEINFO nfo;
 	char cfgData[512];
-	if (OpenFile(&file, "start.cfg", FA_READ)) return;
+	char path[16];
+	strcpy(path, "a:/start.cfg");
+	path[0] = 'a' + drive;
+	//printf("checking %s...", path);
+	if (OpenFile(&file, path, FA_READ)) return;
 	ReadFile(&file, cfgData, 512);
 	CloseFile(&file);
 
@@ -411,7 +313,6 @@ void DiskEntry()
 
 	char fontName[16] = { 0 };
 	char locName[16] = { 0 };
-	char shellName[16] = { 0 };
 
 	while (*ptr != 0)
 	{
@@ -436,11 +337,15 @@ void DiskEntry()
 		//printf("key: %s\n", key);
 		//printf("value: %s\n", value);
 		if (!strncmp(key, "font", 8))
-			strcpy(fontName, value);
+		{
+			strcpy(fontName, path);
+			strcpy(fontName + 3, value);
+		}
 		else if (!strncmp(key, "locale", 8))
-			strcpy(locName, value);
-		else if (!strncmp(key, "shell", 8))
-			strcpy(shellName, value);
+		{
+			strcpy(locName, path);
+			strcpy(locName + 3, value);
+		}
 	}
 
 	if (fontName[0])
@@ -464,55 +369,6 @@ void DiskEntry()
 		}
 		CloseFile(&file);
 	}
-
-//	Write("Shell is \"%s\"", shellName);
-//	while (INP_KEYIN != KEYSCAN_F1)
-//		vbl();
-
-	if (diskEntryMayRun)
-	{
-//		Write("Was allowed to run");
-//		while (INP_KEYIN != KEYSCAN_F1)
-//			vbl();
-		if (!shellName[0])
-		{
-			BlankOut();
-			REG_SCREENMODE = SMODE_BOLD | SMODE_240;
-			Write("No shell specified. Press F1 to restart.");
-			while (INP_KEYIN != KEYSCAN_F1)
-				vbl();
-			return;
-		}
-		void(*entry)(void) = (void*)0x01002020;
-		FILEINFO nfo;
-		FileStat(shellName, &nfo);
-		if (OpenFile(&file, shellName, FA_READ))
-		{
-			BlankOut();
-			REG_SCREENMODE = SMODE_BOLD | SMODE_240;
-			Write("Could not open \"%s\". Press F1 to restart.", shellName);
-			while (INP_KEYIN != KEYSCAN_F1)
-				vbl();
-			return;
-		}
-		ReadFile(&file, (void*)0x01002000, nfo.fsize);
-		CloseFile(&file);
-		entry();
-	}
-	else if (!shellName[0])
-	{
-//		Write("Was not allowed to run, nothing TO run anyway");
-//		while (INP_KEYIN != KEYSCAN_F1)
-//			vbl();
-		diskEntryMayRun = false;
-	}
-	else
-	{
-//		Write("Was not allowed to run, would've run \"%s\"", shellName);
-//		while (INP_KEYIN != KEYSCAN_F1)
-//			vbl();
-		diskEntryMayRun = true;
-	}
 }
 
 void Jingle()
@@ -534,6 +390,7 @@ void Jingle()
 	//MIDI_KEYOFF(1, MIDI_B6, 100);
 }
 
+__attribute__ ((noreturn, cold))
 void ShowException(int which, int what)
 {
 	const char text[4][20] = {
