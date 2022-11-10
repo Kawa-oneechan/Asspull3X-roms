@@ -10,11 +10,15 @@ These two folders are the source for `disk1.img` and `disk2.img`, as built with 
 ### `basic`
 A work-in-progress classic BASIC interpreter. The same source file is shared between the A3X version and a Visual Studio 2015 project for ease of testing.
 
+![](./screenshots/basic.png)
+
 ### `bios`
 This is the complete source of the BIOS and boot firmware. It compiles to `ass-bios.apb` ("*a*ss*p*ull *b*ios") and contains several functions available to other programs, subdivided into a couple different libraries, Amiga style.
 
 ### `columns`
 It's *Columns*, and it's in development.
+
+![](./screenshots/columns.png)
 
 ### `devkit68k`
 Contains the linker scripts and such. Merge it into devkitPro's `devkit68K` folder.
@@ -23,10 +27,12 @@ Contains the linker scripts and such. Merge it into devkitPro's `devkit68K` fold
 A small "Hello World" variant that demonstrates how to identify and use an external line printer device.
 
 ### `fromdisk`
-Hello World, but as a file on a bootable diskette. It compiles straight into `_disk2_` as an `app` file ("*a*ss*p*ull *p*rogram"). The BIOS can then detect its presence.
+Hello World, but as a file on a bootable diskette. It compiles straight into `_disk2_` as an `app` file ("*a*ss*p*ull *p*rogram"), that you can run from the Navigator.
 
 ### `hdma-api`
 Testing `api`-format images, but with HDMA gradients baked in.
+
+![](./screenshots/hdma-api.png)
 
 ### `helloworld`
 Much the same as `fromdisk`, but as a cart application.
@@ -34,8 +40,12 @@ Much the same as `fromdisk`, but as a cart application.
 ### `midiboard`
 A toy piano. Use the keyboard to play notes, change octaves with the left and right arrow keys, and change instruments with the up and down arrow keys.
 
+![](./screenshots/midiboard.png)
+
 ### `navigator`
-A disk navigator, *Norton Commander*-style that *may* become part of the BIOS.
+A disk navigator, *Norton Commander*-style that will become part of the BIOS.
+
+![](./screenshots/navigator.png)
 
 ### `ranmya`
 A more graphical Hello World featuring the *previous*, placeholder mascot. Should be updated and renamed.
@@ -43,8 +53,12 @@ A more graphical Hello World featuring the *previous*, placeholder mascot. Shoul
 ### `rpg`
 A work-in-progress JRPG framework.
 
+![](./screenshots/rpg.png)
+
 ### `salanyander`
 An attempt to make a Gradius-style horizontal space shooter.
+
+![](./screenshots/salanyander.png)
 
 ### `slideshow`
 Tries to display all the `api` files on the currently-inserted diskette.
@@ -52,14 +66,20 @@ Tries to display all the `api` files on the currently-inserted diskette.
 ### `snake`
 Your classic snake game. Not Nibbles -- that would require level layouts. Maybe later?
 
+![](./screenshots/snake.png)
+
 ### `sokoban`
 The classic box pushing puzzle.
+
+![](./screenshots/sokoban.png)
 
 ### `test`
 A test suite that will eventually cover all features of the system.
 
 ### `tetris`
 It's *Tetris*, and it's in development.
+
+![](./screenshots/tetris.png)
 
 ### `tiletest`
 Early work to test the games console-style tilemap mode.

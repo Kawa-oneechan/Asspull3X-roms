@@ -211,6 +211,7 @@ int main(void)
 		PALETTE[KEYPALSTART + i] = colors[i] ? EBONY : IVORY; //live together in perfect harmony...
 	}
 
+	DRAW->SetupDrawChar(0);
 	interface->DrawCharFont = (char*)tinyTiles;
 	interface->DrawCharHeight = 6;
 	int pitoff = 48;
