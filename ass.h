@@ -25,6 +25,10 @@ typedef unsigned long long uint64_t;
 
 #define printf interface->textLibrary->Write
 #define vbl interface->miscLibrary->WaitForVBlank
+#define malloc interface->miscLibrary->HeapAlloc
+#define free interface->miscLibrary->HeapFree
+#define realloc interface->miscLibrary->HeapReAlloc
+#define calloc interface->miscLibrary->HeapCAlloc
 
 //-----------------
 //ASSPULL REGISTERS
@@ -346,10 +350,6 @@ extern char* strdup(const char*);
 extern int atoi(char*);
 extern void* memcpy(void*, const void*, size_t);
 extern void* memset(void*, int, size_t);
-extern void* malloc(size_t);
-extern void* realloc(void*, size_t);
-extern void* calloc(size_t, size_t);
-extern void free(void*);
 extern char* asctime(const tm*);
 extern tm* gmtime(const time_t*);
 extern time_t mktime(tm*);
@@ -393,7 +393,10 @@ typedef struct
 	void(*OplReset)(void);
 	void(*RleUnpack)(int8_t* dst, int8_t* src, size_t size);
 	char*(*GetLocaleStr)(ELocale category, int item);
-
+	void*(*HeapAlloc)(size_t size);
+	void(*HeapFree)(void* ptr);
+	void*(*HeapReAlloc)(void* ptr, size_t size);
+	void*(*HeapCAlloc)(size_t nelem, size_t elsize);
 } IMiscLibrary;
 
 typedef struct

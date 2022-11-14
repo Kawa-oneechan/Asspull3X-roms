@@ -185,6 +185,15 @@ char* strcpy(char* s2, const char* s1)
 	return s2;
 }
 
+char* strdup(const char* s1)
+{
+	int l = strnlen_s((char*)s1, 1024);
+	char* s2 = (char*)malloc(l + 1);
+	memcpy(s2, s1, l + 1);
+	s2[l + 1] = 0;
+	return s2;
+}
+
 int atoi(char* str)
 {
 	int res = 0;
