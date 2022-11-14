@@ -18,15 +18,15 @@ const IDrawingLibrary drawingLibrary =
  */
 
 #define DRAWCHAR4(WIDTH) \
-	char* glyph = interface->DrawCharFont + (c * (interface->DrawCharHeight & 0x00FF)); \
+	char* glyph = interface->drawCharFont + (c * (interface->drawCharHeight & 0x00FF)); \
 	char* target = (char*)MEM_VRAM + (y * (WIDTH/2)) + (x / 2); \
-	if (x % 2 == 0) { for (int line = 0; line < (interface->DrawCharHeight & 0x00FF); line++) { \
+	if (x % 2 == 0) { for (int line = 0; line < (interface->drawCharHeight & 0x00FF); line++) { \
 			char g = *glyph++; for (int bit = 0; bit < 8; bit += 2) { \
 				int p = g >> bit; \
 				if (p & 1) *target = (*target & 0xF0) | (color << 0); \
 				if (p & 2) *target = (*target & 0x0F) | (color << 4); \
 				target++; } target += (WIDTH/2) - 4; \
-		} }	else { for (int line = 0; line < (interface->DrawCharHeight & 0x00FF); line++) { \
+		} }	else { for (int line = 0; line < (interface->drawCharHeight & 0x00FF); line++) { \
 			char g = *glyph++; if (g & 1) *target = (*target & 0x0F) | (color << 4); \
 			for (int bit = 1; bit < 7; bit += 2) { target++; int p = g >> bit; \
 				if (p & 1) *target = (*target & 0xF0) | (color << 0); \
@@ -35,9 +35,9 @@ const IDrawingLibrary drawingLibrary =
 			target += (WIDTH/2) - 4; } } \
 	return 8;
 #define DRAWCHAR8(WIDTH) \
-	char* glyph = interface->DrawCharFont + (c * (interface->DrawCharHeight & 0x00FF)); \
+	char* glyph = interface->drawCharFont + (c * (interface->drawCharHeight & 0x00FF)); \
 	char* target = (char*)MEM_VRAM + (y * (WIDTH)) + x; \
-	for (int line = 0; line < (interface->DrawCharHeight & 0x00FF); line++) { for (int bit = 0; bit < 8; bit++) { \
+	for (int line = 0; line < (interface->drawCharHeight & 0x00FF); line++) { for (int bit = 0; bit < 8; bit++) { \
 		int pixel = (*glyph >> bit) & 1; if (pixel == 0) continue; \
 		target[bit] = color; \
 	}  glyph++; target += (WIDTH); } \
@@ -147,21 +147,21 @@ void Fade(bool in, bool toWhite)
 void SetupDrawChar(int(*dcCallback)(unsigned char, int, int, int))
 {
 	if (dcCallback)
-		interface->DrawChar = dcCallback;
+		interface->drawChar = dcCallback;
 	else
 	{
 		if (REG_SCREENMODE & SMODE_BMP16)
-			interface->DrawChar = (REG_SCREENMODE & SMODE_320) ? DrawChar4_320 : DrawChar4_640;
+			interface->drawChar = (REG_SCREENMODE & SMODE_320) ? DrawChar4_320 : DrawChar4_640;
 		else if (REG_SCREENMODE & SMODE_BMP256)
-			interface->DrawChar = (REG_SCREENMODE & SMODE_320) ? DrawChar8_320 : DrawChar8_640;
+			interface->drawChar = (REG_SCREENMODE & SMODE_320) ? DrawChar8_320 : DrawChar8_640;
 		else
-			interface->DrawChar = NULL;
+			interface->drawChar = NULL;
 	}
 }
 
 void DrawString(const char* str, int x, int y, int color)
 {
-	if (interface->DrawChar == NULL) return;
+	if (interface->drawChar == NULL) return;
 	int sx = x;
 	while(*str)
 	{
@@ -169,7 +169,7 @@ void DrawString(const char* str, int x, int y, int color)
 		{
 			str++;
 			x = sx;
-			y += (int)(interface->DrawCharHeight & 0xFF00) >> 8;
+			y += (int)(interface->drawCharHeight & 0xFF00) >> 8;
 			continue;
 		}
 		//TODO: support \t?
@@ -179,7 +179,7 @@ void DrawString(const char* str, int x, int y, int color)
 
 void DrawFormat(const char* format, int x, int y, int color, ...)
 {
-	if (interface->DrawChar == NULL) return;
+	if (interface->drawChar == NULL) return;
 	char buffer[1024];
 	va_list args;
 	va_start(args, color);
@@ -190,8 +190,8 @@ void DrawFormat(const char* format, int x, int y, int color, ...)
 
 int DrawChar(char ch, int x, int y, int color)
 {
-	if (interface->DrawChar == NULL) return 8;
-	return interface->DrawChar(ch, x, y, color);
+	if (interface->drawChar == NULL) return 8;
+	return interface->drawChar(ch, x, y, color);
 }
 
 extern int abs(int);

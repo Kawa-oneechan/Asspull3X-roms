@@ -195,7 +195,7 @@ void Write(int program, int pitch)
 
 	while(*str)
 	{
-		interface->DrawChar((*str++) - ' ', x, y, 12);
+		interface->drawChar((*str++) - ' ', x, y, 12);
 		x += 4;
 	}
 }
@@ -212,8 +212,8 @@ int main(void)
 	}
 
 	DRAW->SetupDrawChar(0);
-	interface->DrawCharFont = (char*)tinyTiles;
-	interface->DrawCharHeight = 6;
+	interface->drawCharFont = (char*)tinyTiles;
+	interface->drawCharHeight = 6;
 	int pitoff = 48;
 	int program = MIDI_ACOUSTICGRANDPIANO;
 	Write(program, pitoff / 12);

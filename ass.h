@@ -137,6 +137,11 @@ typedef unsigned long long uint64_t;
 #define BLIT_SOURCESTRIDE(x)	((x) << 8)
 #define BLIT_TARGETSTRIDE(x)	((x) << 20)
 
+#define TEXTFONT_THIN8			(TEXTFONT + 0x0000)
+#define TEXTFONT_BOLD8			(TEXTFONT + 0x0800)
+#define TEXTFONT_THIN16			(TEXTFONT + 0x1000)
+#define TEXTFONT_BOLD16			(TEXTFONT + 0x2000)
+
 typedef struct
 {
 	int32_t Identifier;		// Should always be "AIMG".
@@ -423,20 +428,20 @@ typedef struct
 
 typedef struct
 {
-	const long AssBang;
+	const long assBang;
 	const int16_t biosVersion;
 	const int16_t extensions;
-	void(*Exception)(void*);
-	void(*VBlank)(void*);
-	void(*HBlank)(void*);
-	int(*DrawChar)(unsigned char, int, int, int);
+	void(*exception)(void*);
+	void(*vBlank)(void*);
+	void(*hBlank)(void*);
+	int(*drawChar)(unsigned char, int, int, int);
 	const ITextLibrary* textLibrary;
 	const IDrawingLibrary* drawingLibrary;
 	const IMiscLibrary* miscLibrary;
 	const IDiskLibrary* diskLibrary;
-	char* DrawCharFont;
-	uint16_t DrawCharHeight;
-	uint8_t* LinePrinter;
+	char* drawCharFont;
+	uint16_t drawCharHeight;
+	uint8_t* linePrinter;
 	TIOState io;
 	TLocale locale;
 } IBios;

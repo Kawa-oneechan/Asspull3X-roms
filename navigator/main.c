@@ -8,7 +8,7 @@ IBios* interface;
 
 void PrintBuffer(char* buffer)
 {
-	unsigned char* lpt = interface->LinePrinter;
+	unsigned char* lpt = interface->linePrinter;
 	if (lpt)
 	{
 		while (*buffer)

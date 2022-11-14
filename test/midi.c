@@ -115,10 +115,10 @@ void MIDITest()
 
 	TEXT->SetCursorPosition(0, 2);
 	REG_MIDIOUT = 0xC0; REG_MIDIOUT = 24;
-	interface->VBlank = MIDI_Play;
+	interface->vBlank = MIDI_Play;
 	_midiptr = mididata;
 	_midiwait = 0;
 
 	WaitForKey();
-	interface->VBlank = 0;
+	interface->vBlank = 0;
 }

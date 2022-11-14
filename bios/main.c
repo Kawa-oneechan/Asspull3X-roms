@@ -118,7 +118,7 @@ void main(void)
 				Write("Input controller");
 			else if (*(int16_t*)devices == 0x4C50)
 			{
-				interface->LinePrinter = devices + 2;
+				interface->linePrinter = devices + 2;
 				Write("Line printer");
 			}
 			else if (*(int16_t*)devices == 0x0144)
@@ -143,7 +143,7 @@ void main(void)
 	{
 		if (*(int16_t*)devices == 0x4C50)
 		{
-			interface->LinePrinter = devices + 2;
+			interface->linePrinter = devices + 2;
 			break;
 		}
 		devices += 0x8000;
@@ -199,8 +199,8 @@ goAgain:
 		{
 			OBJECTS_B[0] = OBJECTB_BUILD(-32, -32, 0, 0, 0, 0, 0, 0);
 			char about[256];
-			interface->DrawCharFont = (char*)0x0E060C00;
-			interface->DrawCharHeight = 0x0808;
+			interface->drawCharFont = (char*)TEXTFONT_BOLD8;
+			interface->drawCharHeight = 0x0808;
 			sprintf(about, "%s\nCode by Kawa\n" __DATE__, biosVer);
 			for (unsigned int i = 0; i < array_size(fade); i++)
 			{
@@ -286,9 +286,9 @@ void BlankOut()
 	REG_HDMACONTROL[0] = 0;
 	REG_HDMACONTROL[1] = 0;
 	OBJECTS_A[0] = 0;
-	interface->VBlank = 0;
-	interface->DrawCharFont = (char*)0x0E060C00;
-	interface->DrawCharHeight = 0x0808;
+	interface->vBlank = 0;
+	interface->drawCharFont = (char*)TEXTFONT_BOLD8;
+	interface->drawCharHeight = 0x0808;
 	interface->io.attribs = 0x0F;
 	ClearScreen();
 	ResetPalette();

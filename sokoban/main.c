@@ -513,7 +513,7 @@ void CheckForDisk()
 	OBJECTS_A[1] = OBJECTA_BUILD(16, 0, 1, 0);
 	OBJECTS_A[2] = OBJECTA_BUILD(32, 0, 1, 0);
 	OBJECTS_A[3] = OBJECTA_BUILD(48, 0, 1, 0);
-	interface->VBlank = RotateTheFloppy;
+	interface->vBlank = RotateTheFloppy;
 	DRAW->Fade(true, true);
 	while (1)
 	{
@@ -579,7 +579,7 @@ int main(void)
 	MISC->DmaClear(MAP2, 0, WIDTH * HEIGHT, 2);
 	MISC->DmaClear(MAP3, 0, WIDTH * HEIGHT, 2);
 
-	interface->VBlank = IMF_Play;
+	interface->vBlank = IMF_Play;
 
 	levelNum = -1;
 	PlaySound(1);

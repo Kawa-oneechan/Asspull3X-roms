@@ -104,7 +104,7 @@ void TitleMusic()
 		timer = cursor > 6 ? 16 : 8;
 		if (cursor == 10)
 		{
-			interface->VBlank = 0;
+			interface->vBlank = 0;
 			return;
 		}
 		if (lastPitch != 0)
@@ -132,7 +132,7 @@ void TitleScreen()
 	}
 	DRAW->Fade(true, false);
 
-	interface->VBlank = TitleMusic;
+	interface->vBlank = TitleMusic;
 
 	WaitForKey();
 
@@ -162,7 +162,7 @@ void TitleScreen()
 		Write(14, 22, buffer);
 	}
 
-	//interface->VBlank = 0;
+	//interface->vBlank = 0;
 	DRAW->Fade(false, false);
 	rndseed = REG_TICKCOUNT;
 }

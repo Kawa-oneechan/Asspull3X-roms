@@ -102,7 +102,7 @@ int main(void)
 {
 	REG_SCREENFADE = 31;
 	DRAW->DisplayPicture((TImageFile*)&title);
-	interface->VBlank = IMF_Play;
+	interface->vBlank = IMF_Play;
 	DRAW->Fade(true, false);
 	WaitForKey();
 	DRAW->Fade(false, true);

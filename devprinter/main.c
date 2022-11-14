@@ -4,7 +4,7 @@ IBios* interface;
 void LP_Print(const char* text)
 {
 	while (*text)
-		*interface->LinePrinter = *text++;
+		*interface->linePrinter = *text++;
 }
 //------
 
@@ -14,10 +14,10 @@ int main(void)
 	REG_SCREENMODE = SMODE_TEXT | SMODE_240 | SMODE_BOLD;
 	TEXT->SetTextColor(1, 7);
 	TEXT->ClearScreen();
-	if (interface->LinePrinter == 0)
+	if (interface->linePrinter == 0)
 	{
 		printf("No line printer attached.");
-		return;
+		return 0;
 	}
 	printf("Look at the printer.");
 

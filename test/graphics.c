@@ -24,7 +24,7 @@ void FloodFill(int x, int y, int newColor, uint8_t* dest);
 
 void GraphicsTest()
 {
-	interface->DrawCharFont -= 0x800;
+	interface->drawCharFont = (char*)TEXTFONT_THIN8;
 	for (int i = 0; i < 6; i++)
 	{
 		DRAW->DisplayPicture((TImageFile*)bitmaps[i]);

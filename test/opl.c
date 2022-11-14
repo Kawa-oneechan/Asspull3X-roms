@@ -125,10 +125,10 @@ void OPLTest()
 	TEXT->ClearScreen();
 	TEXT->Write("OPL3 music test\n\nPlaying: lot_bon by Nurykabe, CC-BY.");
 
-	interface->VBlank = IMF_Play;
+	interface->vBlank = IMF_Play;
 	IMF_LoadSong(imfData, true);
 	WaitForKey();
-	interface->VBlank = 0;
+	interface->vBlank = 0;
 
 	MISC->OplReset();
 }

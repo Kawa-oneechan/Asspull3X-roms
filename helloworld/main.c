@@ -13,7 +13,7 @@ int main(void)
 	TEXT->SetTextColor(1, 7);
 	printf("Version: %d.%d\t\t", (interface->biosVersion >> 8) & 0xFF, (interface->biosVersion >> 0) & 0xFF);
 	printf("Extensions: %d\n", interface->extensions);
-	printf("Printer: %#08X\t", interface->LinePrinter);
+	printf("Printer: %#08X\t", interface->linePrinter);
 	printf("Disk drives: %d\n", interface->io.numDrives);
 
 	TEXT->SetTextColor(1, 15);
