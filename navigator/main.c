@@ -235,10 +235,10 @@ void InfoPanel(int panel, char* workPath, char* filename)
 				DISK->OpenFile(&imgFile, filePath, FA_READ);
 				DISK->ReadFile(&imgFile, (void*)&imgHeader, sizeof(TImageFile));
 				DISK->CloseFile(&imgFile);
-				sprintf(t[i++], "Bit depth: %d", imgHeader.BitDepth);
-				if (imgHeader.Flags & 1) strcpy(t[i++], "Compressed");
-				if (imgHeader.Flags & 2) strcpy(t[i++], "Has HDMA data");
-				sprintf(t[i++], "Size: %d\xD7%d", imgHeader.Width, imgHeader.Height);
+				sprintf(t[i++], "Bit depth: %d", imgHeader.bitDepth);
+				if (imgHeader.flags & 1) strcpy(t[i++], "Compressed");
+				if (imgHeader.flags & 2) strcpy(t[i++], "Has HDMA data");
+				sprintf(t[i++], "Size: %d\xD7%d", imgHeader.width, imgHeader.height);
 			}
 			else if (!strncmp(ext, "TXT", 3)) strcpy(t[i++], "Text file");
 			else if (!strncmp(ext, "FNT", 3) && info.fsize == 12288) strcpy(t[i++], "Font - open to use");

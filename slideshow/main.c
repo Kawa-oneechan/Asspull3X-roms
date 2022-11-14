@@ -20,7 +20,7 @@ int main(void)
 		DISK->CloseFile(&file);
 
 		TImageFile* image = (TImageFile*)&stackImage;
-		if (image->BitDepth != 4 && image->BitDepth != 8)
+		if (image->bitDepth != 4 && image->bitDepth != 8)
 			continue;
 		DRAW->DisplayPicture(image);
 		//PALETTE[15] = 0x7FFF;

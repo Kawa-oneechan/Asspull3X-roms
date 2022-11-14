@@ -29,7 +29,7 @@ int ShowPic(char* filePath)
 	DISK->ReadFile(&file, (void*)image, nfo.fsize);
 	DISK->CloseFile(&file);
 	TImageFile* img = (TImageFile*)&image;
-	if (img->BitDepth != 4 && img->BitDepth != 8)
+	if (img->bitDepth != 4 && img->bitDepth != 8)
 	{
 		ShowError("Weird bitdepth, not happening.");
 		return 2;

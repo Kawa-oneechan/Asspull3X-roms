@@ -62,44 +62,29 @@ void ResetPalette()
 
 void DisplayPicture(TImageFile* picData)
 {
-	int mode = -1;
-	if (picData->Width == 320)
-	{
-		if (picData->Height == 240 || picData->Height == 200)
-			mode = SMODE_320 | SMODE_240;
-		else if (picData->Height == 480 || picData->Height == 400)
-			mode = SMODE_320;
-	}
-	else if (picData->Width == 640)
-	{
-		if (picData->Height == 240 || picData->Height == 200)
-			mode = SMODE_240;
-		else if (picData->Height == 480 || picData->Height == 400)
-			mode = 0;
-	}
-	if (picData->Height == 200 || picData->Height == 400)
+	int mode = 0;
+	if (picData->width == 320)
+		mode |= SMODE_320;
+	if (picData->height == 240 || picData->height == 200)
+		mode |= SMODE_240;
+	if (picData->height == 200 || picData->height == 400)
 		mode |= SMODE_1610;
-	if (mode > -1)
-	{
-		//mode |= (picData->BitDepth == 8) ? SMODE_BMP256 : SMODE_BMP16;
-		//REG_SCREENMODE = (uint8_t)mode;
-		if (picData->BitDepth == 8)
-			REG_SCREENMODE = SMODE_BMP256 | mode;
-		else
-			REG_SCREENMODE = SMODE_BMP16 | mode;
-	}
-	int colors = (picData->BitDepth == 8) ? 256 : 16;
-	DmaCopy((void*)PALETTE, (int8_t*)((int)picData + picData->ColorOffset), colors * 1, DMA_SHORT);
-	int8_t* source = (int8_t*)picData;
-	source += picData->ImageOffset;
-	if (picData->Flags & 1)
-		RleUnpack((void*)MEM_VRAM, source, picData->Stride * picData->Height);
+	if (picData->bitDepth == 8)
+		REG_SCREENMODE = SMODE_BMP256 | mode;
 	else
-		DmaCopy((void*)MEM_VRAM, source, picData->ByteSize, DMA_INT);
+		REG_SCREENMODE = SMODE_BMP16 | mode;
+	int colors = (picData->bitDepth == 8) ? 256 : 16;
+	DmaCopy((void*)PALETTE, (int8_t*)((int)picData + picData->colorOffset), colors * 1, DMA_SHORT);
+	int8_t* source = (int8_t*)picData;
+	source += picData->imageOffset;
+	if (picData->flags & 1)
+		RleUnpack((void*)MEM_VRAM, source, picData->stride * picData->height);
+	else
+		DmaCopy((void*)MEM_VRAM, source, picData->byteSize, DMA_INT);
 
-	if (picData->Flags & 2) //HDMA
+	if (picData->flags & 2) //HDMA
 	{
-		uint8_t* hdma = (uint8_t*)((int)picData + picData->HdmaOffset);
+		uint8_t* hdma = (uint8_t*)((int)picData + picData->hdmaOffset);
 		uint8_t channels = *hdma;
 		hdma++;
 		int32_t p = (int32_t)PALETTE;

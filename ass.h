@@ -144,16 +144,16 @@ typedef unsigned long long uint64_t;
 
 typedef struct
 {
-	int32_t Identifier;		// Should always be "AIMG".
-	uint8_t BitDepth;		// Should be equal to 4 or 8, for 16 or 256 colors respectively.
-	uint8_t Flags;			// Specifies if the image is compressed, among other things.
-	uint16_t Width;			// The pixel width of the image.
-	uint16_t Height;		// The pixel height of the image.
-	uint16_t Stride;		// Specifies how many bytes make up a full line. Should be half the width for a 4bpp image.
-	int32_t ByteSize;		// The total amount of bytes making up the full image. Should be equal to stride times height.
-	int32_t ColorOffset;	// The offset from the start of the structure to the color data.
-	int32_t ImageOffset;	// The offset from the start of the structure to the image data.
-	int32_t HdmaOffset;
+	int32_t identifier;		// Should always be "AIMG".
+	uint8_t bitDepth;		// Should be equal to 4 or 8, for 16 or 256 colors respectively.
+	uint8_t flags;			// Specifies if the image is compressed, among other things.
+	uint16_t width;			// The pixel width of the image.
+	uint16_t height;		// The pixel height of the image.
+	uint16_t stride;		// Specifies how many bytes make up a full line. Should be half the width for a 4bpp image.
+	int32_t byteSize;		// The total amount of bytes making up the full image. Should be equal to stride times height.
+	int32_t colorOffset;	// The offset from the start of the structure to the color data.
+	int32_t imageOffset;	// The offset from the start of the structure to the image data.
+	int32_t hdmaOffset;
 } TImageFile;
 
 typedef struct
