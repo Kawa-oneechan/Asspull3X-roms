@@ -1,6 +1,6 @@
 #include "../ass.h"
-#include "../ass-std.h"
 #include "../ass-keys.h"
+#include "funcs.h"
 
 //#define NORTON
 
@@ -42,6 +42,10 @@
 
 #define SplitColor(X) X >> 4, X & 0x0F
 
+#define WIDTH 39
+#define HEIGHT 24
+#define FILESSHOWN (HEIGHT-2)
+
 typedef struct
 {
 	uint8_t left, top, width, height;
@@ -72,14 +76,15 @@ extern tMenuItem leftMenu[], rightMenu[];
 extern void WaitForKey();
 extern tWindow* OpenWindow(char left, char top, char width, char height, uint8_t color);
 extern void CloseWindow(tWindow* win);
-extern void ShowError(const char* message);
 extern void DrawPanel(char left, char top, char width, char height, uint8_t color);
 extern void Highlight(char left, char top, char width, uint8_t color);
 extern void DrawKeys(const char** keys);
 extern void DrawMenu();
 extern char OpenMenu(int num);
 
+extern void ShowError(const char* message);
 extern int ChangeAttributes(char* filePath);
+extern int SwitchDrive(int which, int now);
 extern void PrintBuffer(char* buffer);
 
 extern int StartApp(char* filePath);
@@ -87,7 +92,14 @@ extern int ShowPic(char* filePath);
 extern int ShowText(char* filePath);
 extern int ShowFile(char* filePath, bool allowRun);
 
+extern int sprintf(char *buf, const char *fmt, ...);
 extern char *strrchr(const char *, int);
+extern size_t strlen(const char* str);
+extern int strncmp(const char *l, const char *r, size_t max);
+extern char* strcpy(char* s2, const char* s1);
+extern int strcat(char* dest, const char* src);
+extern int strkitten(char* dest, char src);
+extern int getchar();
 
 #define MAXPATH 512
 #define MAXFILES 512

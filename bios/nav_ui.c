@@ -134,14 +134,14 @@ tWindow* OpenWindow(char left, char top, char width, char height, uint8_t color)
 {
 	if (left == -1) left = 40 - (width >> 1);
 	if (top == -1) top = 12 - (height >> 1);
-	tWindow *win = (tWindow*)malloc(sizeof(tWindow));
+	tWindow *win = (tWindow*)HeapAlloc(sizeof(tWindow));
 	width += 2;
 	height++;
 	win->left = left;
 	win->top = top;
 	win->width = width;
 	win->height = height;
-	win->bits = (uint16_t*)malloc(sizeof(uint16_t) * (width * height));
+	win->bits = (uint16_t*)HeapAlloc(sizeof(uint16_t) * (width * height));
 	uint16_t* b = win->bits;
 	for (int i = 0; i < height; i++)
 	{
@@ -174,18 +174,8 @@ void CloseWindow(tWindow* win)
 			TEXTMAP[o] = *b++;
 		}
 	}
-	free(win->bits);
-	free(win);
-}
-
-void ShowError(const char* message)
-{
-	tWindow* win = OpenWindow(-1, -1, strnlen_s((char*)message, 80) + 8, 5, 0x4F);
-	TEXT->SetTextColor(SplitColor(0x4F));
-	TEXT->SetCursorPosition(win->left + 4, win->top + 2);
-	printf(message);
-	WaitForKey();
-	CloseWindow(win);
+	HeapFree(win->bits);
+	HeapFree(win);
 }
 
 void DrawPanel(char left, char top, char width, char height, uint8_t color)

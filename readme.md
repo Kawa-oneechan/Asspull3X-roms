@@ -15,6 +15,9 @@ A work-in-progress classic BASIC interpreter. The same source file is shared bet
 ### `bios`
 This is the complete source of the BIOS and boot firmware. It compiles to `ass-bios.apb` ("*a*ss*p*ull *b*ios") and contains several functions available to other programs, subdivided into a couple different libraries, Amiga style.
 
+![](./screenshots/bios.png)
+![](./screenshots/navigator.png)
+
 ### `columns`
 It's *Columns*, and it's in development.
 
@@ -41,11 +44,6 @@ Much the same as `fromdisk`, but as a cart application.
 A toy piano. Use the keyboard to play notes, change octaves with the left and right arrow keys, and change instruments with the up and down arrow keys.
 
 ![](./screenshots/midiboard.png)
-
-### `navigator`
-A disk navigator, *Norton Commander*-style that will become part of the BIOS.
-
-![](./screenshots/navigator.png)
 
 ### `ranmya`
 A more graphical Hello World featuring the *previous*, placeholder mascot. Should be updated and renamed.

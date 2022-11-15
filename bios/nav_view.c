@@ -4,12 +4,12 @@ int StartApp(char* filePath)
 {
 	void(*entry)(void) = (void*)0x01002020;
 	FILEINFO nfo;
-	DISK->FileStat(filePath, &nfo);
+	FileStat(filePath, &nfo);
 	FILE file;
-	DISK->OpenFile(&file, filePath, FA_READ);
-	DISK->ReadFile(&file, (void*)0x01002000, nfo.fsize);
-	DISK->CloseFile(&file);
-	TEXT->ClearScreen();
+	OpenFile(&file, filePath, FA_READ);
+	ReadFile(&file, (void*)0x01002000, nfo.fsize);
+	CloseFile(&file);
+	ClearScreen();
 	entry();
 	WaitForKey();
 	return 2;
@@ -18,23 +18,25 @@ int StartApp(char* filePath)
 int ShowPic(char* filePath)
 {
 	FILEINFO nfo;
-	DISK->FileStat(filePath, &nfo);
+	FileStat(filePath, &nfo);
 	size_t size = nfo.fsize;
 
-	TEXT->SetCursorPosition(0, 12);
+	SetCursorPosition(0, 12);
 
 	char image[size];
 	FILE file;
-	DISK->OpenFile(&file, filePath, FA_READ);
-	DISK->ReadFile(&file, (void*)image, nfo.fsize);
-	DISK->CloseFile(&file);
+	OpenFile(&file, filePath, FA_READ);
+	ReadFile(&file, (void*)image, nfo.fsize);
+	CloseFile(&file);
 	TImageFile* img = (TImageFile*)&image;
 	if (img->bitDepth != 4 && img->bitDepth != 8)
 	{
 		ShowError("Weird bitdepth, not happening.");
 		return 2;
 	}
-	DRAW->DisplayPicture(img);
+	REG_SCREENFADE = 31;
+	DisplayPicture(img);
+	REG_SCREENFADE = 0;
 	WaitForKey();
 	return 2;
 }
@@ -52,14 +54,14 @@ int ShowText(char* filePath)
 	bool wrap = false, hex = true;
 
 	FILEINFO nfo;
-	DISK->FileStat(filePath, &nfo);
+	FileStat(filePath, &nfo);
 	size_t size = nfo.fsize;
 
 	uint8_t fileText[size];
 	FILE file;
-	DISK->OpenFile(&file, filePath, FA_READ);
-	DISK->ReadFile(&file, (void*)fileText, nfo.fsize);
-	DISK->CloseFile(&file);
+	OpenFile(&file, filePath, FA_READ);
+	ReadFile(&file, (void*)fileText, nfo.fsize);
+	CloseFile(&file);
 	fileText[size] = 0;
 
 	uint8_t wrapText[size + 1024];
@@ -98,8 +100,8 @@ int ShowText(char* filePath)
 	int32_t cursor = 0;
 	uint8_t* d = fileText;
 
-	TEXT->SetTextColor(SplitColor(CLR_VIEWBACK));
-	TEXT->ClearScreen();
+	SetTextColor(SplitColor(CLR_VIEWBACK));
+	ClearScreen();
 
 
 	for (j = 0; j < 80; j++)
@@ -110,12 +112,12 @@ int ShowText(char* filePath)
 
 		if (redraw)
 		{
-			TEXT->SetTextColor(SplitColor(CLR_VIEWSTAT));
-			TEXT->SetCursorPosition(0, 0);
-			//printf(" %s \t%d/%d $%x, $%x", filePath, scroll, lineCt, b, b - fileText);
+			SetTextColor(SplitColor(CLR_VIEWSTAT));
+			SetCursorPosition(0, 0);
+			//Write(" %s \t%d/%d $%x, $%x", filePath, scroll, lineCt, b, b - fileText);
 
 			int percent = (int)(scroll * 100) / lineCt;
-			printf("%-72s %5d%%", filePath, percent);
+			Write("%-72s %5d%%", filePath, percent);
 
 			if (!hex)
 			{
@@ -290,39 +292,39 @@ int ShowText(char* filePath)
 int LoadFont(char* filePath)
 {
 	FILEINFO nfo;
-	DISK->FileStat(filePath, &nfo);
+	FileStat(filePath, &nfo);
 	if (nfo.fsize != 12288)
 	{
 		ShowError("Invalid font file, wrong size.");
 		return 3;
 	}
 	FILE file;
-	DISK->OpenFile(&file, filePath, FA_READ);
-	DISK->ReadFile(&file, (void*)TEXTFONT, 0x3000);
-	DISK->CloseFile(&file);
+	OpenFile(&file, filePath, FA_READ);
+	ReadFile(&file, (void*)TEXTFONT, 0x3000);
+	CloseFile(&file);
 	return 0;
 }
 
 int LoadLocale(char* filePath)
 {
 	FILEINFO nfo;
-	DISK->FileStat(filePath, &nfo);
+	FileStat(filePath, &nfo);
 	if (nfo.fsize != sizeof(TLocale))
 	{
 		ShowError("Invalid locale file, wrong size.");
 		return 3;
 	}
 	FILE file;
-	DISK->OpenFile(&file, filePath, FA_READ);
-	DISK->ReadFile(&file, (void*)&interface->locale, sizeof(TLocale));
-	DISK->CloseFile(&file);
+	OpenFile(&file, filePath, FA_READ);
+	ReadFile(&file, (void*)&interface->locale, sizeof(TLocale));
+	CloseFile(&file);
 	return 0;
 }
 
 int ShowFile(char* filePath, bool allowRun)
 {
 	FILEINFO info;
-	DISK->FileStat(filePath, &info);
+	FileStat(filePath, &info);
 	if (info.fattrib & AM_DIRECTORY || (info.fname[0] == 0))
 	{
 		ShowError("This is a directory.");
@@ -343,13 +345,13 @@ int ShowFile(char* filePath, bool allowRun)
 	else
 	{
 //		char msg[64];
-//		sprintf(msg, "Unknown file type \"%s\".", ext);
+//		Format(msg, "Unknown file type \"%s\".", ext);
 //		ShowError(msg);
 //		return 3;
 		ShowText(filePath);
 	}
-	TEXT->SetTextColor(0, 7);
+	SetTextColor(0, 7);
 	REG_SCREENMODE = SMODE_TEXT | SMODE_240 | SMODE_BOLD;
-	DRAW->ResetPalette();
+	ResetPalette();
 	return 2;
 }

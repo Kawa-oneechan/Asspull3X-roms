@@ -10,6 +10,12 @@
     <Filter Include="Source Files">
       <UniqueIdentifier>{33bcb525-7e93-40f4-8444-23f7ddb7b06b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Navigator">
+      <UniqueIdentifier>{aefeffd6-364e-4f15-99c9-48617da26547}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Interface">
+      <UniqueIdentifier>{f0d45275-b85b-4ef9-a1a3-3b466b821981}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="crt0.s" />
@@ -28,18 +34,6 @@
     <ClCompile Include="diskio.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="f_disk.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="f_misc.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="f_text.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="f_draw.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="ff.c">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -48,6 +42,30 @@
     </ClCompile>
     <ClCompile Include="printf.c">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="nav_ui.c">
+      <Filter>Source Files\Navigator</Filter>
+    </ClCompile>
+    <ClCompile Include="nav_view.c">
+      <Filter>Source Files\Navigator</Filter>
+    </ClCompile>
+    <ClCompile Include="navigator.c">
+      <Filter>Source Files\Navigator</Filter>
+    </ClCompile>
+    <ClCompile Include="f_disk.c">
+      <Filter>Source Files\Interface</Filter>
+    </ClCompile>
+    <ClCompile Include="f_draw.c">
+      <Filter>Source Files\Interface</Filter>
+    </ClCompile>
+    <ClCompile Include="f_misc.c">
+      <Filter>Source Files\Interface</Filter>
+    </ClCompile>
+    <ClCompile Include="f_text.c">
+      <Filter>Source Files\Interface</Filter>
+    </ClCompile>
+    <ClCompile Include="nav_dlgs.c">
+      <Filter>Source Files\Navigator</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -64,6 +82,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="funcs.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="nav.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

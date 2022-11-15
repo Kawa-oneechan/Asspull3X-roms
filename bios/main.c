@@ -47,6 +47,8 @@ void BlankOut();
 void LoadConfig(int);
 void Jingle();
 
+extern void Navigator();
+
 #pragma GCC diagnostic ignored "-Wmain"
 __attribute__ ((noreturn))
 void main(void)
@@ -174,10 +176,10 @@ void main(void)
 
 	//Fade(false, false);
 
-	for (int i = 0; i < 4; i++)
+	for (int i = 0; i < interface->io.numDrives; i++)
 	{
 		volatile uint8_t* firstDisk = (uint8_t*)0x02000000 + (interface->io.diskToDev[i] * 0x8000);
-		printf("disk %d @ %p\n", i, firstDisk);
+		//printf("disk %d @ %p\n", i, firstDisk);
 		if (firstDisk[4] & 1)
 		{
 			LoadConfig(i);
@@ -195,7 +197,8 @@ goAgain:
 			break;
 		}
 
-		if (INP_KEYIN == KEYSCAN_F1 && showSplash) //F1
+		int key = INP_KEYIN;
+		if (key == KEYSCAN_F1 && showSplash)
 		{
 			OBJECTS_B[0] = OBJECTB_BUILD(-32, -32, 0, 0, 0, 0, 0, 0);
 			char about[256];
@@ -227,6 +230,12 @@ goAgain:
 			}
 			OBJECTS_B[0] = OBJECTB_BUILD(88, 88, 1, 1, 0, 0, 1, 0);
 		}
+		else if (key == KEYSCAN_ENTER && showSplash)
+		{
+			entry = Navigator;
+			DrawString("Nav!", 0, 0, 15);
+			break;
+		}
 
 		if (!showSplash)
 		{
@@ -256,7 +265,8 @@ goAgain:
 	if (showSplash)
 	{
 #ifndef EXTENSIVE
-		Jingle();
+		if (entry != Navigator)
+			Jingle();
 		MidiReset();
 		OplReset();
 #else

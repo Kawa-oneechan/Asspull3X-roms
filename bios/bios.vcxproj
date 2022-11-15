@@ -21,6 +21,10 @@
     <ClCompile Include="f_misc.c" />
     <ClCompile Include="f_text.c" />
     <ClCompile Include="main.c" />
+    <ClCompile Include="navigator.c" />
+    <ClCompile Include="nav_dlgs.c" />
+    <ClCompile Include="nav_ui.c" />
+    <ClCompile Include="nav_view.c" />
     <ClCompile Include="printf.c" />
   </ItemGroup>
   <ItemGroup>
@@ -29,6 +33,7 @@
     <ClInclude Include="ffconf.h" />
     <ClInclude Include="funcs.h" />
     <ClInclude Include="integer.h" />
+    <ClInclude Include="nav.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="font.png" />

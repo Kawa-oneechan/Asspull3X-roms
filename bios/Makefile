@@ -15,7 +15,8 @@ TARGET		:= ass-bios
 # Regular makefile continues here
 SFILES	:=	crt0.s font.s splash.s icons.s
 CFILES	:=	main.c f_text.c f_draw.c f_misc.c f_disk.c \
-		minirt.c printf.c ff.c diskio.c 
+		minirt.c printf.c ff.c diskio.c \
+		navigator.c nav_ui.c nav_dlgs.c nav_view.c
 
 export OFILES	:= $(SFILES:.s=.o) $(CFILES:.c=.o)
 
@@ -44,7 +45,7 @@ LDFLAGS += -Wl,-Map $(MAPFILE) -nostartfiles
 ../$(TARGET).apb : $(TARGET).elf
 	$(OBJCOPY) -O binary $< $@
 	$(CROSS)objdump -d $(TARGET).elf > $(TARGET).txt
-	$(ASSFIX) ../$(TARGET).apb -p
+#	$(ASSFIX) ../$(TARGET).apb -p
 
 $(TARGET).elf : $(OFILES) $(AFILES) Makefile $(DEPENDFILE)
 	@echo > $(MAPFILE)
