@@ -1,14 +1,103 @@
 #include "nav.h"
 
-//TODO: replace with MessageBox?
-void ShowError(const char* message)
+int MessageBox(const char* message, int type)
 {
-	tWindow* win = OpenWindow(-1, -1, strlen((char*)message) + 8, 5, 0x4F);
-	SetTextColor(SplitColor(0x4F));
-	SetCursorPosition(win->left + 4, win->top + 2);
-	Write(message);
-	WaitForKey();
+	int maxWidth = 0;
+	char msg[strlen(message) + 10];
+	int l = 0;
+	const char* lines[10]; //let's assume this many lines total.
+
+	{
+		char* m1 = (char*)message;
+		char* m2 = msg;
+		lines[l++] = m2;
+		int w = 0;
+		while (true)
+		{
+			if (*m1 == '\n' || *m1 == '\0')
+			{
+				if (w > maxWidth)
+				{
+					maxWidth = w;
+					w = 0;
+					*m2++ = '\0';
+					lines[l++] = m2;
+				}
+				if (*m1 == '\0')
+				{
+					l--;
+					break;
+				}
+				m1++;
+			}
+			else
+			{
+				w++;
+				*m2++ = *m1++;
+			}
+		}
+	}
+
+	int h = l + 2;
+	int butts = 0;
+	const char* buttons[3] = { 0 };
+	char keys[6] = { 0 };
+
+	{
+		butts = 1;
+		buttons[0] = "  OK   ";
+		keys[0] = KEYSCAN_ENTER;
+		keys[3] = KEYSCAN_O;
+	}
+	if (type == 1)
+	{
+		butts = 2;
+		buttons[0] = "Cancel ";
+		keys[0] = KEYSCAN_ESCAPE;
+		keys[3] = KEYSCAN_C;
+	}
+	else if (type == 2)
+	{
+		butts = 2;
+		buttons[0] = " Abort ";
+		buttons[1] = " Retry ";
+		keys[0] = KEYSCAN_ESCAPE;
+		keys[1] = KEYSCAN_ENTER;
+		keys[3] = KEYSCAN_A;
+		keys[4] = KEYSCAN_R;
+	}
+
+	tWindow* win = OpenWindow(-1, -1, maxWidth + 8, 4 + h, CLR_DIALOG);
+	SetTextColor(SplitColor(CLR_DIALOG));
+	for (int i = 0; i < l; i++)
+	{
+		SetCursorPosition(win->left + 4, win->top + 2 + i);
+		Write(lines[i]);
+	}
+	SetTextColor(SplitColor(0x8F));
+	for (int i = 0; i < butts; i++)
+	{
+		SetCursorPosition(win->left + 4, win->top + 3 + l);
+		Write(buttons[i]);
+	}
+	
+	int ret = -1;
+	while (ret < 0)
+	{
+		int key = INP_KEYIN;
+		for (int i = 0; i < butts; i++)
+		{
+			if (key == keys[i] || key == keys[i + 3])
+			{
+				ret = i;
+				break;
+			}
+		}
+	}
+
 	CloseWindow(win);
+
+	return ret;
 }
 
 int SwitchDrive(int which, int now)

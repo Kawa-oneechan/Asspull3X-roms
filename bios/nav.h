@@ -82,6 +82,7 @@ extern void DrawKeys(const char** keys);
 extern void DrawMenu();
 extern char OpenMenu(int num);
 
+extern int MessageBox(const char* message, int type);
 extern void ShowError(const char* message);
 extern int ChangeAttributes(char* filePath);
 extern int SwitchDrive(int which, int now);
@@ -103,3 +104,5 @@ extern int getchar();
 
 #define MAXPATH 512
 #define MAXFILES 512
+
+#define ShowError(M) MessageBox(M, 0)

@@ -57,7 +57,7 @@ tryOpenDir:
 	ret = OpenDir(&dir, path);
 	if (ret)
 	{
-		//TODO: MessageBox function in nav_dlgs?
+		//TODO: use MessageBox here instead.
 		tWindow* error = OpenWindow(-1, -1, 50, 6, 0x1F);
 		SetTextColor(1, 15);
 		SetCursorPosition(error->left + 2, error->top + 1);
