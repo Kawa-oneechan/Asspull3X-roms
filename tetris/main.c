@@ -92,16 +92,8 @@ void DrawObject(const uint16_t* a, const uint32_t* b, int obj, int tile, int x, 
 	{
 		uint16_t na = *sa++;
 		uint32_t nb = *sb++;
-
-		na = (na & ~0x1FF) | ((na & 0x1FF) + tile);
-
-		//nb = (nb & ~0x3FFFFF) | ((nb & 0x7FF) + x) | ((((nb >> 12) & 0x3FF) + y) << 12);
-		int nx = (nb & 0x7FF) + x;
-		int ny = ((nb >> 12) & 0x3FF) + y;
-		nb = (nb & ~0x3FFFFF) | (ny << 12) | (nx);
-
-		OBJECTS_A[obj] = na;
-		OBJECTS_B[obj] = nb;
+		OBJECTS_A[obj] = (na & ~0x1FF) | ((na & 0x1FF) + tile);
+		OBJECTS_B[obj] = (nb & ~0x3FFFFF) | (((nb & 0x7FF) + x) & 0x7FF) | (((((nb >> 12) & 0x3FF) + y) & 0x3FF) << 12);
 		obj++;
 	}
 }
@@ -120,12 +112,12 @@ int main(void)
 	DRAW->Fade(true, false);
 	//WaitForKey();
 	{
-		int i = 200;
+		int i = -48;
 		while (!INP_KEYIN)
 		{
 			DrawObject(logoA, logoB, 16, 384, 106, i);
 			vbl();
-			if (i > 16) i -= 8;
+			if (i < 16) i++;
 		}
 	}
 	DRAW->Fade(false, true);
