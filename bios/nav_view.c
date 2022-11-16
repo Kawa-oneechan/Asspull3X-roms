@@ -51,13 +51,13 @@ const char* textViewerKeys[] = {
 int ShowText(char* filePath)
 {
 	int i, j, scroll = 0, lineCt = 0, redraw = 1;
-	bool wrap = false, hex = true;
+	bool wrap = false, hex = false;
 
 	FILEINFO nfo;
 	FileStat(filePath, &nfo);
 	size_t size = nfo.fsize;
 
-	uint8_t fileText[size];
+	uint8_t fileText[size + 8];
 	FILE file;
 	OpenFile(&file, filePath, FA_READ);
 	ReadFile(&file, (void*)fileText, nfo.fsize);
@@ -65,9 +65,20 @@ int ShowText(char* filePath)
 	fileText[size] = 0;
 
 	uint8_t wrapText[size + 1024];
+
 	memset(wrapText, 0, size + 1024);
 	uint8_t *b = fileText;
 	uint8_t *c = wrapText;
+
+	bool forcedNewLine = false;
+	if (fileText[size - 1] != 0x0A)
+	{
+		forcedNewLine = true;
+		fileText[size + 0] = 0x0D;
+		fileText[size + 1] = 0x0A;
+		fileText[size + 2] = 0x00;
+	}
+
 	i = 0;
 	while (*b != 0)
 	{
@@ -208,6 +219,9 @@ int ShowText(char* filePath)
 						col = 0;
 						row++;
 					}
+
+					if (forcedNewLine && (size_t)(c - d) >= size)
+						break;
 				}
 			}
 			DrawKeys(textViewerKeys);
