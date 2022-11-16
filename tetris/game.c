@@ -228,7 +228,7 @@ static void update_infos(game *game)
 	}
 	for (int i = 0; i < 4; i++)
 		for (int j = 0; j < 4; j++)
-			MAP2[((i + 2) * 64) + j + 17] = (shapes[next_shape][0][i][j]) ? (next_shape + 1) : 0;
+			MAP2[((i + 2) * 64) + j + 16] = (shapes[next_shape][0][i][j]) ? (next_shape + 1) : 0;
 
 	WriteF(28, 15, 2, "%7u", game->score);
 	WriteF(22, 18, 2, "%5u", game->lines);

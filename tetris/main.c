@@ -6,7 +6,7 @@
 IBios* interface;
 
 extern const TPicFile title;
-extern const uint16_t tilesTiles[], logoTiles[], logo_kotrisTiles[];
+extern const uint16_t tilesTiles[], logoTiles[], logo_kotrisTiles[], logobigTiles[], logobig_kotrisTiles[];
 extern const uint16_t tilesPal[];
 extern const uint16_t backgroundMap[];
 
@@ -51,6 +51,36 @@ static const uint32_t logoB[] = {
 	OBJECTB_BUILD(32, 32, 1, 1, 0, 0, 1, 0),
 	OBJECTB_BUILD(64, 32, 1, 1, 0, 0, 1, 0),
 	OBJECTB_BUILD(96, 32, 1, 1, 0, 0, 1, 0),
+	0,
+};
+static const uint16_t bigLogoA[] = {
+	OBJECTA_BUILD(  0, 0, 1, 1),
+	OBJECTA_BUILD( 16, 0, 1, 1),
+	OBJECTA_BUILD( 32, 0, 1, 1),
+	OBJECTA_BUILD( 48, 0, 1, 1),
+	OBJECTA_BUILD( 64, 0, 1, 1),
+	OBJECTA_BUILD( 80, 0, 1, 1),
+	OBJECTA_BUILD( 96, 0, 1, 1),
+	OBJECTA_BUILD(112, 0, 1, 1),
+	OBJECTA_BUILD(128, 0, 1, 1),
+	OBJECTA_BUILD(144, 0, 1, 1),
+	OBJECTA_BUILD(160, 0, 1, 1),
+	OBJECTA_BUILD(176, 0, 1, 1),
+	0,
+};
+static const uint32_t bigLogoB[] = {
+	OBJECTB_BUILD(  0,  0, 1, 1, 0, 0, 1, 0),
+	OBJECTB_BUILD( 32,  0, 1, 1, 0, 0, 1, 0),
+	OBJECTB_BUILD( 64,  0, 1, 1, 0, 0, 1, 0),
+	OBJECTB_BUILD( 96,  0, 1, 1, 0, 0, 1, 0),
+	OBJECTB_BUILD(128,  0, 1, 1, 0, 0, 1, 0),
+	OBJECTB_BUILD(160,  0, 1, 1, 0, 0, 1, 0),
+	OBJECTB_BUILD(  0, 32, 1, 1, 0, 0, 1, 0),
+	OBJECTB_BUILD( 32, 32, 1, 1, 0, 0, 1, 0),
+	OBJECTB_BUILD( 64, 32, 1, 1, 0, 0, 1, 0),
+	OBJECTB_BUILD( 96, 32, 1, 1, 0, 0, 1, 0),
+	OBJECTB_BUILD(128, 32, 1, 1, 0, 0, 1, 0),
+	OBJECTB_BUILD(160, 32, 1, 1, 0, 0, 1, 0),
 	0,
 };
 
@@ -102,30 +132,37 @@ int main(void)
 {
 	REG_SCREENFADE = 31;
 	DRAW->DisplayPicture(&title);
-	if (REG_TIMET % 24 >= 12)
-		MISC->DmaCopy(TILESET + 0x3000, (int8_t*)&logo_kotrisTiles, 1024, DMA_INT);
+	bool kotris = (REG_TIMET % 24 >= 12);
+	if (kotris)
+		MISC->DmaCopy(TILESET, (int8_t*)&logobig_kotrisTiles, 1536, DMA_INT);
 	else
-		MISC->DmaCopy(TILESET + 0x3000, (int8_t*)&logoTiles, 1024, DMA_INT);
+		MISC->DmaCopy(TILESET, (int8_t*)&logobigTiles, 1536, DMA_INT);
 	MISC->DmaCopy(PALETTE + 256, (int16_t*)&tilesPal, 32, DMA_SHORT);
 
 	interface->vBlank = IMF_Play;
 	DRAW->Fade(true, false);
 	//WaitForKey();
 	{
-		int i = -48;
+		int i = -64 - 9;
 		while (!INP_KEYIN)
 		{
-			DrawObject(logoA, logoB, 16, 384, 106, i);
+			DrawObject(bigLogoA, bigLogoB, 16, 0, 69, i);
 			vbl();
-			if (i < 16) i++;
+			if (i < 9) i += 2;
 		}
 	}
 	DRAW->Fade(false, true);
 
+	MISC->DmaClear(OBJECTS_A, 0, 0x1000, DMA_INT);
+
 	REG_SCREENMODE = SMODE_TILE;
-	MISC->DmaCopy(TILESET, (int8_t*)&tilesTiles, 1024, DMA_INT);
+	MISC->DmaCopy(TILESET, (int8_t*)&tilesTiles, 1024 + 320, DMA_INT);
+	if (kotris)
+		MISC->DmaCopy(TILESET + 0x3000, (int8_t*)&logo_kotrisTiles, 1024, DMA_INT);
+	else
+		MISC->DmaCopy(TILESET + 0x3000, (int8_t*)&logoTiles, 1024, DMA_INT);
 	//MISC->DmaCopy(TILESET + 0x1000, (int8_t*)&farahTiles, 1024, DMA_INT);
-	MISC->DmaCopy(PALETTE, (int16_t*)&tilesPal, 48, DMA_SHORT);
+	MISC->DmaCopy(PALETTE, (int16_t*)&tilesPal, 64, DMA_SHORT);
 	MISC->DmaCopy(PALETTE + 256, (int16_t*)&tilesPal, 32, DMA_SHORT);
 	//MISC->DmaCopy(PALETTE + 256, (int16_t*)&farahPal, 16, DMA_SHORT);
 	MISC->DmaClear(MAP1, 0, 64 * 64, 2);
