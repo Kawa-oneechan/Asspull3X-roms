@@ -6,8 +6,8 @@
 IBios* interface;
 
 extern const TPicFile title;
-extern const uint16_t tilesTiles[], farahTiles[], logoTiles[];
-extern const uint16_t tilesPal[], farahPal[];
+extern const uint16_t tilesTiles[], logoTiles[], logo_kotrisTiles[];
+extern const uint16_t tilesPal[];
 extern const uint16_t backgroundMap[];
 
 extern const uint16_t imfData1[];
@@ -31,40 +31,26 @@ extern const uint16_t imfData1[];
 	(((hp) & 0x7FF) << 0)						\
 )
 
-static const uint16_t objectsA[] = {
-	OBJECTA_BUILD(128, 0, 1, 0),
-	OBJECTA_BUILD(128 + 16, 0, 1, 0),
-	OBJECTA_BUILD(128 + 32, 0, 1, 0),
-	OBJECTA_BUILD(128 + 48, 0, 1, 0),
-
-	OBJECTA_BUILD(128 + 64, 0, 1, 0),
-
-	OBJECTA_BUILD(384, 0, 1, 1),
-	OBJECTA_BUILD(384 + 16, 0, 1, 1),
-	OBJECTA_BUILD(384 + 32, 0, 1, 1),
-	OBJECTA_BUILD(384 + 48, 0, 1, 1),
-	OBJECTA_BUILD(384 + 64, 0, 1, 1),
-	OBJECTA_BUILD(384 + 80, 0, 1, 1),
-	OBJECTA_BUILD(384 + 96, 0, 1, 1),
-	OBJECTA_BUILD(384 + 112, 0, 1, 1),
+static const uint16_t logoA[] = {
+	OBJECTA_BUILD(  0, 0, 1, 1),
+	OBJECTA_BUILD( 16, 0, 1, 1),
+	OBJECTA_BUILD( 32, 0, 1, 1),
+	OBJECTA_BUILD( 48, 0, 1, 1),
+	OBJECTA_BUILD( 64, 0, 1, 1),
+	OBJECTA_BUILD( 80, 0, 1, 1),
+	OBJECTA_BUILD( 96, 0, 1, 1),
+	OBJECTA_BUILD(112, 0, 1, 1),
 	0,
 };
-static const uint32_t objectsB[] = {
-	OBJECTB_BUILD(224, 24, 1, 1, 0, 0, 1, 0),
-	OBJECTB_BUILD(256, 24, 1, 1, 0, 0, 1, 0),
-	OBJECTB_BUILD(224, 56, 1, 1, 0, 0, 1, 0),
-	OBJECTB_BUILD(256, 56, 1, 1, 0, 0, 1, 0),
-
-	OBJECTB_BUILD(224, 48, 1, 1, 0, 0, 1, 0),
-
-	OBJECTB_BUILD(168, 176, 1, 1, 0, 0, 1, 0),
-	OBJECTB_BUILD(200, 176, 1, 1, 0, 0, 1, 0),
-	OBJECTB_BUILD(232, 176, 1, 1, 0, 0, 1, 0),
-	OBJECTB_BUILD(264, 176, 1, 1, 0, 0, 1, 0),
-	OBJECTB_BUILD(168, 208, 1, 1, 0, 0, 1, 0),
-	OBJECTB_BUILD(200, 208, 1, 1, 0, 0, 1, 0),
-	OBJECTB_BUILD(232, 208, 1, 1, 0, 0, 1, 0),
-	OBJECTB_BUILD(264, 208, 1, 1, 0, 0, 1, 0),
+static const uint32_t logoB[] = {
+	OBJECTB_BUILD( 0,  0, 1, 1, 0, 0, 1, 0),
+	OBJECTB_BUILD(32,  0, 1, 1, 0, 0, 1, 0),
+	OBJECTB_BUILD(64,  0, 1, 1, 0, 0, 1, 0),
+	OBJECTB_BUILD(96,  0, 1, 1, 0, 0, 1, 0),
+	OBJECTB_BUILD( 0, 32, 1, 1, 0, 0, 1, 0),
+	OBJECTB_BUILD(32, 32, 1, 1, 0, 0, 1, 0),
+	OBJECTB_BUILD(64, 32, 1, 1, 0, 0, 1, 0),
+	OBJECTB_BUILD(96, 32, 1, 1, 0, 0, 1, 0),
 	0,
 };
 
@@ -98,22 +84,58 @@ void WaitForKey()
 	while (INP_KEYIN == 0 && INP_JOYPAD1 == 0) { vbl(); }
 }
 
+void DrawObject(const uint16_t* a, const uint32_t* b, int obj, int tile, int x, int y)
+{
+	uint16_t* sa = (uint16_t*)a;
+	uint32_t* sb = (uint32_t*)b;
+	while (*sa)
+	{
+		uint16_t na = *sa++;
+		uint32_t nb = *sb++;
+
+		na = (na & ~0x1FF) | ((na & 0x1FF) + tile);
+
+		//nb = (nb & ~0x3FFFFF) | ((nb & 0x7FF) + x) | ((((nb >> 12) & 0x3FF) + y) << 12);
+		int nx = (nb & 0x7FF) + x;
+		int ny = ((nb >> 12) & 0x3FF) + y;
+		nb = (nb & ~0x3FFFFF) | (ny << 12) | (nx);
+
+		OBJECTS_A[obj] = na;
+		OBJECTS_B[obj] = nb;
+		obj++;
+	}
+}
+
 int main(void)
 {
 	REG_SCREENFADE = 31;
 	DRAW->DisplayPicture(&title);
+	if (REG_TIMET % 24 >= 12)
+		MISC->DmaCopy(TILESET + 0x3000, (int8_t*)&logo_kotrisTiles, 1024, DMA_INT);
+	else
+		MISC->DmaCopy(TILESET + 0x3000, (int8_t*)&logoTiles, 1024, DMA_INT);
+	MISC->DmaCopy(PALETTE + 256, (int16_t*)&tilesPal, 32, DMA_SHORT);
+
 	interface->vBlank = IMF_Play;
 	DRAW->Fade(true, false);
-	WaitForKey();
+	//WaitForKey();
+	{
+		int i = 200;
+		while (!INP_KEYIN)
+		{
+			DrawObject(logoA, logoB, 16, 384, 106, i);
+			vbl();
+			if (i > 16) i -= 8;
+		}
+	}
 	DRAW->Fade(false, true);
 
 	REG_SCREENMODE = SMODE_TILE;
 	MISC->DmaCopy(TILESET, (int8_t*)&tilesTiles, 1024, DMA_INT);
-	MISC->DmaCopy(TILESET + 0x1000, (int8_t*)&farahTiles, 1024, DMA_INT);
-	MISC->DmaCopy(TILESET + 0x3000, (int8_t*)&logoTiles, 1024, DMA_INT);
+	//MISC->DmaCopy(TILESET + 0x1000, (int8_t*)&farahTiles, 1024, DMA_INT);
 	MISC->DmaCopy(PALETTE, (int16_t*)&tilesPal, 48, DMA_SHORT);
 	MISC->DmaCopy(PALETTE + 256, (int16_t*)&tilesPal, 32, DMA_SHORT);
-	MISC->DmaCopy(PALETTE + 256, (int16_t*)&farahPal, 16, DMA_SHORT);
+	//MISC->DmaCopy(PALETTE + 256, (int16_t*)&farahPal, 16, DMA_SHORT);
 	MISC->DmaClear(MAP1, 0, 64 * 64, 2);
 	MISC->DmaClear(MAP2, 0, 64 * 64, 2);
 	REG_MAPSET = 0x30;
@@ -134,17 +156,7 @@ int main(void)
 		}
 	}
 
-	{
-		uint16_t* sa = (uint16_t*)objectsA;
-		uint32_t* sb = (uint32_t*)objectsB;
-		int i = 0;
-		while (*sa)
-		{
-			OBJECTS_A[i] = *sa++;
-			OBJECTS_B[i] = *sb++;
-			i++;
-		}
-	}
+	DrawObject(logoA, logoB, 16, 384, 168, 176);
 
 	DRAW->Fade(true, false);
 
