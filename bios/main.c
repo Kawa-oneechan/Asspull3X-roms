@@ -46,6 +46,7 @@ extern const uint16_t iconsPal[16];
 void BlankOut();
 void LoadConfig(int);
 void Jingle();
+bool AnyDisks();
 
 extern void Navigator();
 
@@ -179,7 +180,6 @@ void main(void)
 	for (int i = 0; i < interface->io.numDrives; i++)
 	{
 		volatile uint8_t* firstDisk = (uint8_t*)0x02000000 + (interface->io.diskToDev[i] * 0x8000);
-		//printf("disk %d @ %p\n", i, firstDisk);
 		if (firstDisk[4] & 1)
 		{
 			LoadConfig(i);
@@ -232,9 +232,19 @@ goAgain:
 		}
 		else if (key == KEYSCAN_ENTER && showSplash)
 		{
-			entry = Navigator;
-			DrawString("Nav!", 0, 0, 15);
-			break;
+			if (AnyDisks())
+			{
+				OBJECTS_A[0] = OBJECTA_BUILD(32, 0, 1, 0);
+				entry = Navigator;
+				WaitForVBlanks(128);
+				break;
+			}
+			else
+			{
+				OBJECTS_A[0] = OBJECTA_BUILD(48, 0, 1, 0);
+				WaitForVBlanks(128);
+				OBJECTS_A[0] = OBJECTA_BUILD(0, 0, 1, 0);
+			}
 		}
 
 		if (!showSplash)
@@ -302,6 +312,17 @@ void BlankOut()
 	interface->io.attribs = 0x0F;
 	ClearScreen();
 	ResetPalette();
+}
+
+bool AnyDisks()
+{
+	for (int i = 0; i < interface->io.numDrives; i++)
+	{
+		volatile uint8_t* firstDisk = (uint8_t*)0x02000000 + (interface->io.diskToDev[i] * 0x8000);
+		if (firstDisk[4] & 1)
+			return true;
+	}
+	return false;
 }
 
 void LoadConfig(int drive)
