@@ -5,7 +5,7 @@
 
 IBios* interface;
 
-extern const TImageFile title;
+extern const TPicFile title;
 extern const uint16_t tilesTiles[], farahTiles[], logoTiles[];
 extern const uint16_t tilesPal[], farahPal[];
 extern const uint16_t backgroundMap[];
@@ -101,7 +101,7 @@ void WaitForKey()
 int main(void)
 {
 	REG_SCREENFADE = 31;
-	DRAW->DisplayPicture((TImageFile*)&title);
+	DRAW->DisplayPicture(&title);
 	interface->vBlank = IMF_Play;
 	DRAW->Fade(true, false);
 	WaitForKey();

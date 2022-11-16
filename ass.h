@@ -158,7 +158,7 @@ typedef struct
 	int32_t colorOffset;	// The offset from the start of the structure to the color data.
 	int32_t imageOffset;	// The offset from the start of the structure to the image data.
 	int32_t hdmaOffset;
-} TImageFile;
+} TPicFile;
 
 typedef struct
 {
@@ -373,7 +373,7 @@ typedef struct
 typedef struct
 {
 	void(*ResetPalette)(void);
-	void(*DisplayPicture)(TImageFile* picData);
+	void(*DisplayPicture)(const TPicFile* picData);
 	void(*Fade)(bool in, bool toWhite);
 	void(*SetupDrawChar)(int(*dcCallback)(unsigned char, int, int, int));
 	void(*DrawString)(const char* str, int x, int y, int color);

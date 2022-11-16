@@ -13,16 +13,15 @@ int main(void)
 
 	while(ret == 0 && info.fname[0])
 	{
-		char stackImage[info.fsize];
+		char picData[info.fsize];
 		FILE file;
 		DISK->OpenFile(&file, info.fname, FA_READ);
-		DISK->ReadFile(&file, (void*)stackImage, info.fsize);
+		DISK->ReadFile(&file, (void*)picData, info.fsize);
 		DISK->CloseFile(&file);
 
-		TImageFile* image = (TImageFile*)&stackImage;
-		if (image->bitDepth != 4 && image->bitDepth != 8)
+		if (((TPicFile*)&picData)->bitDepth != 4 && ((TPicFile*)&picData)->bitDepth != 8)
 			continue;
-		DRAW->DisplayPicture(image);
+		DRAW->DisplayPicture((TPicFile*)&picData);
 		//PALETTE[15] = 0x7FFF;
 		//DRAW->SetupDrawChar(0);
 		//DRAW->DrawString(info.fname, 9, 9, 0);

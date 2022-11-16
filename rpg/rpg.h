@@ -3,7 +3,7 @@
 
 extern IBios* interface;
 
-extern const TImageFile titlePic;
+extern const TPicFile titlePic;
 extern const uint16_t spritepalPal[], uiTiles[], uiPal[], uiBackground[];
 extern const uint8_t testMap[], spritePals[];
 extern const uint32_t sprites[], portraits[];

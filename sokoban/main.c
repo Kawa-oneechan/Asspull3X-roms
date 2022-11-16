@@ -2,13 +2,13 @@
 #include "../ass-keys.h"
 IBios* interface;
 
-extern const TImageFile title;
+extern const TPicFile title;
 extern const uint16_t tilesTiles[], tilesPal[];
 extern const uint16_t fontTiles[];
 extern const uint16_t playerTiles[], playerPal[];
 extern const uint16_t backsTiles[], backPals[];
 extern const uint16_t disketteTiles[], diskettePal[];
-extern const TImageFile diskbg[];
+extern const TPicFile diskbg;
 extern const uint16_t hdma1[];
 extern const char * const levels[];
 
@@ -506,7 +506,7 @@ void CheckForDisk()
 	if (ret != 0) return;
 	if (nfo.fname[0] == 0) return;
 
-	DRAW->DisplayPicture((TImageFile*)&diskbg);
+	DRAW->DisplayPicture(&diskbg);
 
 	MISC->DmaCopy(PALETTE + 256, (int16_t*)&diskettePal, 16, DMA_SHORT);
 	OBJECTS_A[0] = OBJECTA_BUILD( 0, 0, 1, 0);
@@ -552,7 +552,7 @@ int main(void)
 	MISC->DmaClear(TILESET, 0, 0x4000, DMA_INT);
 	MISC->DmaClear(OBJECTS_A, 0, 0x1000, DMA_INT);
 
-	DRAW->DisplayPicture((TImageFile*)&title);
+	DRAW->DisplayPicture(&title);
 	DRAW->Fade(true, false);
 	WaitForKey();
 	DRAW->Fade(false, true);

@@ -1,13 +1,13 @@
 #include "../ass.h"
 extern IBios* interface;
 
-extern const TImageFile bmp320x200x4;
-extern const TImageFile bmp320x240x4;
-extern const TImageFile bmp640x480x4;
-extern const TImageFile bmp320x200x8;
-extern const TImageFile bmp320x240x8;
-extern const TImageFile bmp640x480x8;
-const TImageFile * const bitmaps[] =
+extern const TPicFile bmp320x200x4;
+extern const TPicFile bmp320x240x4;
+extern const TPicFile bmp640x480x4;
+extern const TPicFile bmp320x200x8;
+extern const TPicFile bmp320x240x8;
+extern const TPicFile bmp640x480x8;
+const TPicFile * const bitmaps[] =
 {
 	&bmp320x200x4, &bmp320x240x4, &bmp640x480x4,
 	&bmp320x200x8, &bmp320x240x8, &bmp640x480x8,
@@ -27,7 +27,7 @@ void GraphicsTest()
 	interface->drawCharFont = (char*)TEXTFONT_THIN8;
 	for (int i = 0; i < 6; i++)
 	{
-		DRAW->DisplayPicture((TImageFile*)bitmaps[i]);
+		DRAW->DisplayPicture(bitmaps[i]);
 		WaitForKey();
 	}
 	REG_SCREENMODE = SMODE_BMP16 | SMODE_320 | SMODE_240;

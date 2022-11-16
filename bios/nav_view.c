@@ -23,19 +23,18 @@ int ShowPic(char* filePath)
 
 	SetCursorPosition(0, 12);
 
-	char image[size];
+	char picData[size];
 	FILE file;
 	OpenFile(&file, filePath, FA_READ);
-	ReadFile(&file, (void*)image, nfo.fsize);
+	ReadFile(&file, (void*)picData, nfo.fsize);
 	CloseFile(&file);
-	TImageFile* img = (TImageFile*)&image;
-	if (img->bitDepth != 4 && img->bitDepth != 8)
+	if (((TPicFile*)&picData)->bitDepth != 4 && ((TPicFile*)&picData)->bitDepth != 8)
 	{
 		ShowError("Weird bitdepth, not happening.");
 		return 2;
 	}
 	REG_SCREENFADE = 31;
-	DisplayPicture(img);
+	DisplayPicture((TPicFile*)&picData);
 	REG_SCREENFADE = 0;
 	WaitForKey();
 	return 2;

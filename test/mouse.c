@@ -2,7 +2,7 @@
 extern IBios* interface;
 
 extern const uint16_t spritesTiles[], spritesPal[];
-extern const TImageFile bmp320x240x4;
+extern const TPicFile bmp320x240x4;
 
 #define OBJECTA_BUILD(t,b,e,p)	\
 (								\
@@ -83,7 +83,7 @@ void MouseTest()
 	MouseState.x = 136; MouseState.y = 104;
 	const uint16_t colors[] = { 0x0000, 0x2223, 0x5184, 0x1A9E };
 
-	DRAW->DisplayPicture((TImageFile*)&bmp320x240x4);
+	DRAW->DisplayPicture(&bmp320x240x4);
 	DRAW->SetupDrawChar(0);
 	DRAW->DrawString("Mouse test\nPress any key when satisfied.", 0, 0, 15);
 	MISC->DmaCopy(TILESET + 0x2000, (int8_t*)&spritesTiles, 0x2E0, DMA_INT);

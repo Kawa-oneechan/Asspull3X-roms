@@ -148,15 +148,15 @@ void InfoPanel(int panel, char* workPath, char* filename)
 			{
 				strcpy(t[i++], "A\x11\xD7 Image");
 				i++;
-				TImageFile imgHeader;
+				TPicFile picHeader;
 				FILE imgFile;
 				OpenFile(&imgFile, filePath, FA_READ);
-				ReadFile(&imgFile, (void*)&imgHeader, sizeof(TImageFile));
+				ReadFile(&imgFile, (void*)&picHeader, sizeof(TPicFile));
 				CloseFile(&imgFile);
-				Format(t[i++], "Bit depth: %d", imgHeader.bitDepth);
-				if (imgHeader.flags & 1) strcpy(t[i++], "Compressed");
-				if (imgHeader.flags & 2) strcpy(t[i++], "Has HDMA data");
-				Format(t[i++], "Size: %d\xD7%d", imgHeader.width, imgHeader.height);
+				Format(t[i++], "Bit depth: %d", picHeader.bitDepth);
+				if (picHeader.flags & 1) strcpy(t[i++], "Compressed");
+				if (picHeader.flags & 2) strcpy(t[i++], "Has HDMA data");
+				Format(t[i++], "Size: %d\xD7%d", picHeader.width, picHeader.height);
 			}
 			else if (!strncmp(ext, "TXT", 3)) strcpy(t[i++], "Text file");
 			else if (!strncmp(ext, "FNT", 3) && info.fsize == 12288) strcpy(t[i++], "Font - open to use");

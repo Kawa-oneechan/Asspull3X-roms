@@ -7,7 +7,7 @@ extern void SetCursorPosition(int, int);
 extern void SetTextColor(int, int);
 extern void ClearScreen(void);
 extern void ResetPalette(void);
-extern void DisplayPicture(TImageFile*);
+extern void DisplayPicture(const TPicFile*);
 extern void Fade(bool, bool);
 extern void SetupDrawChar(int(*)(unsigned char, int, int, int));
 extern void DrawString(const char*, int, int, int);

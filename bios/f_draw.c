@@ -60,7 +60,7 @@ void ResetPalette()
 	}
 }
 
-void DisplayPicture(TImageFile* picData)
+void DisplayPicture(const TPicFile* picData)
 {
 	int mode = 0;
 	if (picData->width == 320)

@@ -20,7 +20,7 @@ extern void PrepareDiskToDevMapping();
 IBios* interface = (IBios*)(0x01000000);
 
 extern const uint16_t fontTiles[];
-extern const TImageFile splashData;
+extern const TPicFile splashData;
 extern const uint16_t iconsTiles[256];
 extern const uint16_t iconsPal[16];
 
@@ -244,7 +244,7 @@ goAgain:
 			REG_SCREENFADE = 31;
 			MISC->DmaClear(TILESET, 0, 0x4000, DMA_INT);
 			MISC->DmaClear(OBJECTS_A, 0, 0x1000, DMA_INT);
-			DisplayPicture((TImageFile*)&splashData);
+			DisplayPicture(&splashData);
 			SetupDrawChar(0);
 			MISC->DmaCopy(PALETTE + 256, (int8_t*)&iconsPal, 16, DMA_SHORT);
 			MISC->DmaCopy(TILESET, (int8_t*)&iconsTiles, 512, DMA_INT);
