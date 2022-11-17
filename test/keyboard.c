@@ -1,5 +1,4 @@
 #include "../ass.h"
-extern IBios* interface;
 
 extern const char keyboardImage[];
 

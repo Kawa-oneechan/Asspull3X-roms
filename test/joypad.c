@@ -1,5 +1,4 @@
 #include "../ass.h"
-IBios* interface;
 
 extern const uint16_t spritesTiles[], spritesPal[];
 #define OBJECTA_BUILD(t,b,e,p)	\

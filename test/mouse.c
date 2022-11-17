@@ -1,5 +1,4 @@
 #include "../ass.h"
-extern IBios* interface;
 
 extern const uint16_t spritesTiles[], spritesPal[];
 extern const TPicFile bmp320x240x4;

@@ -178,8 +178,10 @@ int ShowText(char* filePath)
 				while (row < 29)
 				{
 					for (int l = 0; l < 80; l++)
+					{
 						TEXTMAP[(row * 80) + l] = 0x2000 | CLR_VIEWBACK;
 						row++;
+					}
 				}
 			}
 			else

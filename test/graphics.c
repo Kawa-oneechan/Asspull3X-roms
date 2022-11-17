@@ -1,5 +1,4 @@
 #include "../ass.h"
-extern IBios* interface;
 
 extern const TPicFile bmp320x200x4;
 extern const TPicFile bmp320x240x4;

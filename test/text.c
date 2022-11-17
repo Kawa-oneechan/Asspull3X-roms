@@ -1,5 +1,4 @@
 #include "../ass.h"
-IBios* interface;
 
 static void HighWaitForKey()
 {

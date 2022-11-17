@@ -1,5 +1,4 @@
 #include "../ass.h"
-extern IBios* interface;
 
 extern void WaitForKey();
 
@@ -46,7 +45,7 @@ void PCMTest()
 	WaitForKey();
 	TEXT->Write(" and panning it to and fro.");
 
-	for (int r = 0; r < 2; r++);
+	for (int r = 0; r < 2; r++)
 	{
 		for (int i = 0; i < 256; i++)
 		{

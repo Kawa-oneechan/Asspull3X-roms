@@ -29,7 +29,17 @@ void operator delete(void* ptr)
 	free(ptr);
 }
 
+void operator delete(void* ptr, unsigned long size)
+{
+	free(ptr);
+}
+
 void operator delete[](void* ptr)
+{
+	free(ptr);
+}
+
+void operator delete[](void* ptr, unsigned long size)
 {
 	free(ptr);
 }

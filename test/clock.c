@@ -1,6 +1,5 @@
 #include "../ass.h"
 #include "../ass-keys.h"
-extern IBios* interface;
 
 extern char* asctime(const tm*);
 extern tm* gmtime(const time_t*);
