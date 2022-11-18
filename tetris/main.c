@@ -6,7 +6,8 @@
 IBios* interface;
 
 extern const TPicFile title;
-extern const uint16_t tilesTiles[], logoTiles[], logo_kotrisTiles[], logobigTiles[], logobig_kotrisTiles[];
+extern const uint16_t tilesTiles[], farahTiles[];
+extern const uint16_t logoTiles[], logo_kotrisTiles[], logobigTiles[], logobig_kotrisTiles[];
 extern const uint16_t tilesPal[];
 extern const uint16_t backgroundMap[];
 
@@ -128,11 +129,17 @@ void DrawObject(const uint16_t* a, const uint32_t* b, int obj, int tile, int x, 
 	}
 }
 
+void LoadFarah(int face)
+{
+	MISC->DmaCopy(TILESET + 0xC00, (int8_t*)&farahTiles + (face * 2240), 560, DMA_INT);
+}
+
 int main(void)
 {
 	REG_SCREENFADE = 31;
-	DRAW->DisplayPicture(&title);
 	bool kotris = (REG_TIMET % 24 >= 12);
+	/*
+	DRAW->DisplayPicture(&title);
 	if (kotris)
 		MISC->DmaCopy(TILESET, (int8_t*)&logobig_kotrisTiles, 1536, DMA_INT);
 	else
@@ -152,6 +159,7 @@ int main(void)
 		}
 	}
 	DRAW->Fade(false, true);
+	*/
 
 	MISC->DmaClear(OBJECTS_A, 0, 0x1000, DMA_INT);
 
@@ -161,7 +169,7 @@ int main(void)
 		MISC->DmaCopy(TILESET + 0x3000, (int8_t*)&logo_kotrisTiles, 1024, DMA_INT);
 	else
 		MISC->DmaCopy(TILESET + 0x3000, (int8_t*)&logoTiles, 1024, DMA_INT);
-	//MISC->DmaCopy(TILESET + 0x1000, (int8_t*)&farahTiles, 1024, DMA_INT);
+	LoadFarah(0);
 	MISC->DmaCopy(PALETTE, (int16_t*)&tilesPal, 64, DMA_SHORT);
 	MISC->DmaCopy(PALETTE + 256, (int16_t*)&tilesPal, 32, DMA_SHORT);
 	//MISC->DmaCopy(PALETTE + 256, (int16_t*)&farahPal, 16, DMA_SHORT);

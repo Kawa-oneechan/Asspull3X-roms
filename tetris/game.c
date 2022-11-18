@@ -321,18 +321,22 @@ static int remove_full_lines(game *game)
 	int lines = 0;
 
 	for (int row = 0; row < game->grid->rows; row++)
+		if (is_full_row(game->grid, row))
+			lines++;
+
+	if (lines == 4)
+		LoadFarah(1);
+
+	for (int row = 0; row < game->grid->rows; row++)
 	{
 		if (is_full_row(game->grid, row))
 		{
 			refresh_grid(game->grid);
-			lines++;
 
 			//Animate!
 			for (int col = 0; col < game->grid->cols; col++)
 			{
 				MAP2[(row * 64) + col] = 0x101C;
-				vbl();
-				vbl();
 				vbl();
 				vbl();
 				MAP2[(row * 64) + col] = 0;
@@ -343,6 +347,8 @@ static int remove_full_lines(game *game)
 				swap_rows(game->grid, i, i - 1);
 		}
 	}
+
+	LoadFarah(0); //TODO: check height
 	return lines;
 }
 
