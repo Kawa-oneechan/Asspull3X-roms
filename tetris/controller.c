@@ -4,8 +4,10 @@ int perform_action(grid *grid, tetramino *tetramino, action action)
 {
 	switch (action)
 	{
-		case ROTATE:
-			return rotate_tetramino(grid, tetramino);
+		case ROTATE_CW:
+			return rotate_tetramino(grid, tetramino, 1);
+		case ROTATE_CCW:
+			return rotate_tetramino(grid, tetramino, 0);
 		case MOVE_DOWN:
 		case MOVE_LEFT:
 		case MOVE_RIGHT:
@@ -17,7 +19,7 @@ int perform_action(grid *grid, tetramino *tetramino, action action)
 	}
 }
 
-int rotate_tetramino(grid *grid, tetramino *tetramino)
+int rotate_tetramino(grid *grid, tetramino *tetramino, int dir)
 {
 	int ret = 1;
 
@@ -26,7 +28,10 @@ int rotate_tetramino(grid *grid, tetramino *tetramino)
 
 	if ( ! check_position(grid, tetramino, tetramino->row, tetramino->col))
 	{
-		rotate_backwards(tetramino);
+		if (dir)
+			rotate_forward(tetramino);
+		else
+			rotate_backwards(tetramino);
 		ret = 0;
 	}
 	put_on_grid(grid, tetramino, tetramino->row, tetramino->col);

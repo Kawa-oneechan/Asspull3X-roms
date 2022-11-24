@@ -254,7 +254,7 @@ static void update_infos(game *game)
 
 static action get_action(int delay)
 {
-	delay /= 10;
+	delay /= 16;
 	while (delay--)
 	{
 		vbl();
@@ -263,9 +263,9 @@ static action get_action(int delay)
 
 		if (dpadbuts)
 		{
-			int debounce = 10;
-			if (dpadbuts & (BUTTON_UP | BUTTON_A)) debounce = 20;
-			if (dpadbuts & BUTTON_B) debounce = 20;
+			int debounce = 5;
+			if (dpadbuts & (BUTTON_A | BUTTON_B)) debounce = 10;
+			if (dpadbuts & BUTTON_X) debounce = 10;
 			while (debounce)
 			{
 				vbl();
@@ -275,12 +275,13 @@ static action get_action(int delay)
 			}
 		}
 
-		if (dpadbuts & BUTTON_UP) return ROTATE;
+		//if (dpadbuts & BUTTON_UP) return ROTATE;
 		if (dpadbuts & BUTTON_RIGHT) return MOVE_RIGHT;
 		if (dpadbuts & BUTTON_LEFT) return MOVE_LEFT;
 		if (dpadbuts & BUTTON_DOWN) return MOVE_DOWN;
-		if (dpadbuts & BUTTON_A) return ROTATE;
-		if (dpadbuts & BUTTON_B) return DROP;
+		if (dpadbuts & BUTTON_A) return ROTATE_CCW;
+		if (dpadbuts & BUTTON_B) return ROTATE_CW;
+		if (dpadbuts & BUTTON_X) return DROP;
 		if (dpadbuts & BUTTON_START) return PAUSE;
 	}
 	return MOVE_DOWN;

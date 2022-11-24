@@ -13,7 +13,7 @@ int perform_action(grid *grid, tetramino *tetramino, action action);
  * rotate_tetramino:  rotates the shape of tetramino by +90. Return true if it
  *                    was possible, false otherwise.
  */
-int rotate_tetramino(grid *grid, tetramino *tetramino);
+int rotate_tetramino(grid *grid, tetramino *tetramino, int dir);
 
 /*
  * move_tetramino:  change the position of tetramino according to action. Return

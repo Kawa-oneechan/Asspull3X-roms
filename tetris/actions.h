@@ -2,7 +2,8 @@
 
 typedef enum
 {
-        ROTATE,
+        ROTATE_CW,
+        ROTATE_CCW,
         MOVE_DOWN,
         MOVE_LEFT,
         MOVE_RIGHT,
