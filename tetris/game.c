@@ -4,6 +4,9 @@
 extern uint32_t rndseed;
 extern void srand(uint32_t seed);
 extern uint32_t rand();
+extern void LoadFarah(int face);
+
+int towerHeight = 0;
 
 #define sprintf TEXT->Format
 
@@ -96,6 +99,8 @@ static void increase_level(game *game);
  */
 static void increase_score(game *game, int lines);
 
+static void update_tower_height(game *game);
+
 static game _theGame_;
 
 game *init_game(void)
@@ -176,6 +181,7 @@ void run_game(game *game)
 		if (game->falling->is_locked)
 		{
 			lines = remove_full_lines(game);
+			update_tower_height(game);
 			if (lines)
 			{
 				game->lines += lines;
@@ -316,6 +322,32 @@ static void pause_game(game *game)
 	game->is_paused = 0;
 }
 
+extern int is_empty_position(const grid *grid, int row, int col);
+extern uint16_t imfCycles;
+static void update_tower_height(game *game)
+{
+	towerHeight = 0;
+	for (int row = 0; row < game->grid->rows; row++)
+	{
+		for (int col = 0; col < game->grid->cols; col++)
+			if (!is_empty_position(game->grid, row, col))
+			{
+				towerHeight++;
+				break;
+			}
+	}
+	if (towerHeight > game->grid->rows - 6)
+	{
+		LoadFarah(2);
+		imfCycles = 24;
+	}
+	else
+	{
+		LoadFarah(0);
+		imfCycles = 16;
+	}
+}
+
 static int remove_full_lines(game *game)
 {
 	int lines = 0;
@@ -348,7 +380,10 @@ static int remove_full_lines(game *game)
 		}
 	}
 
-	LoadFarah(0); //TODO: check height
+	if (towerHeight > game->grid->rows - 6)
+		LoadFarah(2);
+	else
+		LoadFarah(0);
 	return lines;
 }
 
