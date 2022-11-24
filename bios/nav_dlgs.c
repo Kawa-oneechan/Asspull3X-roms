@@ -80,7 +80,7 @@ int MessageBox(const char* message, int type)
 		SetCursorPosition(win->left + 4, win->top + 3 + l);
 		Write(buttons[i]);
 	}
-	
+
 	int ret = -1;
 	while (ret < 0)
 	{
@@ -147,8 +147,16 @@ int SwitchDrive(int which, int now)
 			}
 			else if (key == 0x1C) //enter
 			{
-				CloseWindow(win);
-				return ret;
+				volatile uint8_t* firstDisk = (uint8_t*)0x02000000 + (interface->io.diskToDev[ret] * 0x8000);
+				if (firstDisk[4] & 1)
+				{
+					CloseWindow(win);
+					return ret;
+				}
+				else
+				{
+					MessageBox("No disk.", 0);
+				}
 			}
 			else if (key == 0x01) //escape
 			{

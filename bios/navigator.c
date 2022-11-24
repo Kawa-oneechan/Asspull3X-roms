@@ -53,38 +53,16 @@ void Populate(const char* path, int side)
 	}
 	curFN = filenames[side];
 
-tryOpenDir:
 	ret = OpenDir(&dir, path);
 	if (ret)
 	{
-		//TODO: use MessageBox here instead.
-		tWindow* error = OpenWindow(-1, -1, 50, 6, 0x1F);
-		SetTextColor(1, 15);
-		SetCursorPosition(error->left + 2, error->top + 1);
-		Write("Disk error reading %s:", path);
-		SetTextColor(1, 9);
-		SetCursorPosition(error->left + 4, error->top + 2);
-		if (ret == FE_NoDisk)
-			Write("No disk inserted?");
-		else
-			Write(DISK->FileErrStr(ret));
-		SetTextColor(1, 14);
-		SetCursorPosition(error->left + 2, error->top + 4);
-		Write("Abort or Retry? >");
-		while (1)
-		{
-			char k = getchar();
-			CloseWindow(error);
-			if (k == 'a')
-			{
-				//Ask for another drive instead?
-				strcpy(curFN, "<ERROR>");
-				fileCt[side]++;
-				return;
-			}
-			else if (k == 'r')
-				goto tryOpenDir;
-		}
+		char msg[256];
+		Format(msg, "Disk error reading %s:\n  %s", path, (ret == FE_NoDisk) ? "No disk inserted?" : FileErrStr(ret));
+		MessageBox(msg, 0);
+		//TODO: ask for another drive instead.
+		strcpy(curFN, "<ERROR>");
+		fileCt[side]++;
+		return;
 	}
 
 	if (strlen(path) > 3)
