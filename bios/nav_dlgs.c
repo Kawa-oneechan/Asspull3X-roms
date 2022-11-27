@@ -84,7 +84,7 @@ int MessageBox(const char* message, int type)
 	int ret = -1;
 	while (ret < 0)
 	{
-		int key = INP_KEYIN;
+		key = INP_KEYIN;
 		for (int i = 0; i < butts; i++)
 		{
 			if (key == keys[i] || key == keys[i + 3])
@@ -120,7 +120,7 @@ int SwitchDrive(int which, int now)
 	Highlight(win->left + 1, win->top + 1 + ret, win->width - 4, 0x90);
 	while (1)
 	{
-		uint16_t key = INP_KEYIN;
+		key = INP_KEYIN;
 		if ((key & 0xFF) > 0)
 		{
 			for (int i = 0; i < numDrives; i++)
@@ -197,7 +197,7 @@ int ChangeAttributes(char* filePath)
 	while (1)
 	{
 		vbl();
-		uint16_t key = INP_KEYIN;
+		key = INP_KEYIN;
 		if ((key & 0xFF) > 0)
 		{
 			if (key == KEYSCAN_UP)

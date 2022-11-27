@@ -102,6 +102,8 @@ extern int strcat(char* dest, const char* src);
 extern int strkitten(char* dest, char src);
 extern int getchar();
 
+extern uint16_t key;
+
 #define MAXPATH 512
 #define MAXFILES 512
 

@@ -55,7 +55,7 @@ tWindow* menuWindow = NULL;
 
 void WaitForKey()
 {
-	while (INP_KEYIN == 0) { vbl(); }
+	while ((key = INP_KEYIN) == 0) { vbl(); }
 }
 
 void DrawWindow(char left, char top, char width, char height, uint8_t color, bool shadow)
@@ -297,7 +297,7 @@ char OpenMenu(int cm)
 	DropMenu(cm);
 	while (1)
 	{
-		uint16_t key = INP_KEYIN;
+		key = INP_KEYIN;
 		if ((key & 0xFF) > 0)
 		{
 			if (key == KEYSCAN_LEFT)

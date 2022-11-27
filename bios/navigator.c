@@ -1,5 +1,7 @@
 #include "nav.h"
 
+extern void ScreenSaverTick();
+
 void PrintBuffer(char* buffer)
 {
 	unsigned char* lpt = interface->linePrinter;
@@ -211,6 +213,7 @@ void SelectFile(const char* path1, const char* path2)
 		vbl();
 		if (redraw)
 		{
+			interface->vBlank = ScreenSaverTick;
 			if (redraw < 2)
 			{
 				DrawPanel(0, 1, WIDTH + 1, FILESSHOWN + 5, CLR_PANEL);
@@ -342,7 +345,7 @@ void SelectFile(const char* path1, const char* path2)
 			if (filePath[cs][strlen(filePath[cs])-1] != '\\') strkitten(filePath[cs], '\\');
 			strcat(filePath[cs], curFN);
 
-			uint16_t key = INP_KEYIN;
+			key = INP_KEYIN;
 			if ((key & 0xFF) > 0)
 			{
 				if (key & 0x200)

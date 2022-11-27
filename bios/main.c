@@ -50,6 +50,24 @@ bool AnyDisks();
 
 extern void Navigator();
 
+uint16_t key;
+uint32_t ssTicks;
+extern void Starfield();
+void ScreenSaverTick()
+{
+	if (key)
+		ssTicks = 0;
+
+	ssTicks++;
+	if (ssTicks > 60 * 60)
+	{
+		interface->vBlank = 0;
+		Starfield();
+		ssTicks = 0;
+		interface->vBlank = ScreenSaverTick;
+	}
+}
+
 #pragma GCC diagnostic ignored "-Wmain"
 __attribute__ ((noreturn))
 void main(void)
@@ -187,6 +205,8 @@ void main(void)
 		}
 	}
 
+	ssTicks = 0;
+	interface->vBlank = ScreenSaverTick;
 	while(true)
 	{
 goAgain:
@@ -197,7 +217,7 @@ goAgain:
 			break;
 		}
 
-		int key = INP_KEYIN;
+		key = INP_KEYIN;
 		if (key == KEYSCAN_F1 && showSplash)
 		{
 			OBJECTS_B[0] = OBJECTB_BUILD(-32, -32, 0, 0, 0, 0, 0, 0);
@@ -212,7 +232,7 @@ goAgain:
 				WaitForVBlanks(8);
 			}
 			WaitForVBlanks(8);
-			while (!INP_KEYIN)
+			while (!(key = INP_KEYIN))
 			{
 				if (blinker % 8 == 60)
 					DrawString("\x03", 144, 136, blink[blinker / 8]);
@@ -252,12 +272,12 @@ goAgain:
 			showSplash = true;
 			WaitForVBlank();
 			REG_SCREENFADE = 31;
-			MISC->DmaClear(TILESET, 0, 0x4000, DMA_INT);
-			MISC->DmaClear(OBJECTS_A, 0, 0x1000, DMA_INT);
+			DmaClear(TILESET, 0, 0x4000, DMA_INT);
+			DmaClear(OBJECTS_A, 0, 0x1000, DMA_INT);
 			DisplayPicture(&splashData);
 			SetupDrawChar(0);
-			MISC->DmaCopy(PALETTE + 256, (int8_t*)&iconsPal, 16, DMA_SHORT);
-			MISC->DmaCopy(TILESET, (int8_t*)&iconsTiles, 512, DMA_INT);
+			DmaCopy(PALETTE + 256, (int8_t*)&iconsPal, 16, DMA_SHORT);
+			DmaCopy(TILESET, (int8_t*)&iconsTiles, 512, DMA_INT);
 			OBJECTS_A[0] = OBJECTA_BUILD(0, 0, 1, 0);
 			OBJECTS_B[0] = OBJECTB_BUILD(88, 88, 1, 1, 0, 0, 1, 0);
 			MIDI_PROGRAM(1, MIDI_SEASHORE);

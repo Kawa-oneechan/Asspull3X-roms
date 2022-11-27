@@ -2,6 +2,7 @@
 
 int StartApp(char* filePath)
 {
+	interface->vBlank = 0;
 	void(*entry)(void) = (void*)0x01002020;
 	FILEINFO nfo;
 	FileStat(filePath, &nfo);
@@ -227,7 +228,7 @@ int ShowText(char* filePath)
 			redraw = 0;
 		}
 
-		uint16_t key = INP_KEYIN;
+		key = INP_KEYIN;
 		//vbl();
 		if ((key & 0xFF) > 0)
 		{
