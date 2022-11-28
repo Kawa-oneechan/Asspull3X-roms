@@ -30,6 +30,7 @@ Debug
 *.map
 *.vhd
 *.api
+!_disk1_/*.*
 *.img.bin
 *.pal.bin
 *.srm

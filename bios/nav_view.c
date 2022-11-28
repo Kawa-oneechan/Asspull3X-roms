@@ -53,6 +53,11 @@ int ShowText(char* filePath)
 	int i, j, scroll = 0, lineCt = 0, redraw = 1;
 	bool wrap = false, hex = false;
 
+	tWindow* win = OpenWindow(-1, -1, 18, 5, CLR_DIALOG);
+	SetTextColor(SplitColor(CLR_DIALOG));
+	SetCursorPosition(win->left + 4, win->top + 2);
+	Write("Loading...");
+
 	FILEINFO nfo;
 	FileStat(filePath, &nfo);
 	size_t size = nfo.fsize;
@@ -110,6 +115,8 @@ int ShowText(char* filePath)
 
 	int32_t cursor = 0;
 	uint8_t* d = fileText;
+
+	CloseWindow(win);
 
 	SetTextColor(SplitColor(CLR_VIEWBACK));
 	ClearScreen();

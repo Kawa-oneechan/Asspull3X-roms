@@ -1,0 +1,32 @@
+00    20    40 @  60 ` 80 Ä  A0 †  C0 ¿  E0 ‡ 
+01   21 !  41 A  61 a 81 Å  A1 °  C1 ¡  E1 · 
+02   22 "  42 B  62 b 82 Ç  A2 ¢  C2 ¬  E2 ‚ 
+03   23 #  43 C  63 c 83 É  A3 £  C3 √  E3 „ 
+04   24 $  44 D  64 d 84 Ñ  A4 §  C4 ƒ  E4 ‰ 
+05   25 %  45 E  65 e 85 Ö  A5 •  C5 ≈  E5 Â 
+06   26 &  46 F  66 f 86 Ü  A6 ¶  C6 ∆  E6 Ê 
+07   27 '  47 G  67 g 87 á  A7 ß  C7 «  E7 Á 
+08   28 (  48 H  68 h 88 à  A8 ®  C8 »  E8 Ë 
+09    29 )  49 I  69 i 89 â  A9 ©  C9 …  E9 È 
+0A    2A *  4A J  6A j 8A ä  AA ™  CA    EA Í 
+0B   2B +  4B K  6B k 8B ã  AB ´  CB À  EB Î 
+0C   2C ,  4C L  6C l 8C å  AC ¨  CC Ã  EC Ï 
+0D    2D -  4D M  6D m 8D ç  AD ≠  CD Õ  ED Ì 
+0E   2E .  4E N  6E n 8E é  AE Æ  CE Œ  EE Ó 
+0F   2F /  4F O  6F o 8F è  AF Ø  CF œ  EF Ô 
+10   30 0  50 P  70 p 90 ê  B0 ∞  D0 –  F0  
+11   31 1  51 Q  71 q 91 ë  B1 ±  D1 —  F1 Ò 
+12   32 2  52 R  72 r 92 í  B2 ≤  D2 “  F2 Ú 
+13   33 3  53 S  73 s 93 ì  B3 ≥  D3 ”  F3 Û 
+14   34 4  54 T  74 t 94 î  B4 ¥  D4 ‘  F4 Ù 
+15   35 5  55 U  75 u 95 ï  B5 µ  D5 ’  F5 ı 
+16   36 6  56 V  76 v 96 ñ  B6 ∂  D6 ÷  F6 ˆ 
+17   37 7  57 W  77 w 97 ó  B7 ∑  D7 ◊  F7 ˜ 
+18   38 8  58 X  78 x 98 ò  B8 ∏  D8 ÿ  F8 ¯ 
+19   39 9  59 Y  79 y 99 ô  B9 π  D9 Ÿ  F9 ˘ 
+1A   3A :  5A Z  7A z 9A ö  BA ∫  DA ⁄  FA ˙ 
+1B   3B ;  5B [  7B { 9B õ  BB ª  DB €  FB ˚ 
+1C   3C <  5C \  7C | 9C ú  BC º  DC ‹  FC ¸ 
+1D   3D =  5D ]  7D } 9D ù  BD Ω  DD ›  FD ˝ 
+1E   3E >  5E ^  7E ~ 9E û  BE æ  DE ﬁ  FE ˛ 
+1F   3F ?  5F _  7F  9F ü  BF ø  DF ﬂ  FF ˇ 
