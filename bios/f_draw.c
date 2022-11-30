@@ -74,15 +74,16 @@ void DisplayPicture(const TPicFile* picData)
 	else
 		REG_SCREENMODE = SMODE_BMP16 | mode;
 	int colors = (picData->bitDepth == 8) ? 256 : 16;
-	DmaCopy((void*)PALETTE, (int8_t*)((int)picData + picData->colorOffset), colors * 1, DMA_SHORT);
+	if (!(picData->flags & PIC_NOPAL))
+		DmaCopy((void*)PALETTE, (int8_t*)((int)picData + picData->colorOffset), colors * 1, DMA_SHORT);
 	int8_t* source = (int8_t*)picData;
 	source += picData->imageOffset;
-	if (picData->flags & 1)
+	if (picData->flags & PIC_RLE)
 		RleUnpack((void*)MEM_VRAM, source, picData->stride * picData->height);
 	else
 		DmaCopy((void*)MEM_VRAM, source, picData->byteSize, DMA_INT);
 
-	if (picData->flags & 2) //HDMA
+	if (picData->flags & PIC_HDMA)
 	{
 		uint8_t* hdma = (uint8_t*)((int)picData + picData->hdmaOffset);
 		uint8_t channels = *hdma;

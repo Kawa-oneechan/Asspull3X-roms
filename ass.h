@@ -157,27 +157,34 @@ typedef struct
 	int32_t byteSize;		// The total amount of bytes making up the full image. Should be equal to stride times height.
 	int32_t colorOffset;	// The offset from the start of the structure to the color data.
 	int32_t imageOffset;	// The offset from the start of the structure to the image data.
-	int32_t hdmaOffset;
+	int32_t hdmaOffset;		// The offset from the start of the structure to the HDMA gradient data.
 } TPicFile;
+
+typedef enum
+{
+	PIC_RLE = 1,			// Picture data is RLE compressed.
+	PIC_HDMA = 2,			// Picture has HDMA gradients. hdmaOffset may be null or missing.
+	PIC_NOPAL = 4,			// Picture has no palette. colorOffset is null.
+} EPicFlags;
 
 typedef struct
 {
-	char code[6];			//Locale name
-	char wday_name[32];		//"Sun"..."Sat"
-	char mon_name[64];		//"Jan"..."Dec"
-	char wday_nameF[64];	//"Sunday"..."Saturday"
-	char mon_nameF[106];	//"January"..."December"
-	char shortDateFmt[16];	//Format for "1983-06-26"
-	char longDateFmt[16];	//Format for "Sunday, June 26, 1983"
-	char shortTimeFmt[16];	//Format for "17:42:07"
-	char longTimeFmt[16];	//Format for "17:42:07"
-	char thousands;			//What to put between clusters of three digits, ','
-	char decimals;			//What to put between an integer and decimals, '.'
-	char thousandsCt;		//How many digits per cluster, 3
-	char currency[4];		//Currency symbol, '$'
-	bool currencyAfter;		//Is it "10$" or "$10"?
+	char code[6];			// Locale name
+	char wday_name[32];		// "Sun"..."Sat"
+	char mon_name[64];		// "Jan"..."Dec"
+	char wday_nameF[64];	// "Sunday"..."Saturday"
+	char mon_nameF[106];	// "January"..."December"
+	char shortDateFmt[16];	// Format for "1983-06-26"
+	char longDateFmt[16];	// Format for "Sunday, June 26, 1983"
+	char shortTimeFmt[16];	// Format for "17:42:07"
+	char longTimeFmt[16];	// Format for "17:42:07"
+	char thousands;			// What to put between clusters of three digits, ','
+	char decimals;			// What to put between an integer and decimals, '.'
+	char thousandsCt;		// How many digits per cluster, 3
+	char currency[4];		// Currency symbol, '$'
+	bool currencyAfter;		// Is it "10$" or "$10"?
 	char reserved[16];
-	char sctoasc[256];		//Scancode map
+	char sctoasc[256];		// Scancode map
 } TLocale;
 
 typedef enum
