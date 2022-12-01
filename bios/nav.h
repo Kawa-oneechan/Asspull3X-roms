@@ -83,6 +83,7 @@ extern void DrawMenu();
 extern char OpenMenu(int num);
 
 extern int MessageBox(const char* message, int type);
+extern char* InputBox(const char* message, char* text, int max);
 extern void ShowError(const char* message);
 extern int ChangeAttributes(char* filePath);
 extern int SwitchDrive(int which, int now);

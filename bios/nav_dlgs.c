@@ -1,5 +1,10 @@
 #include "nav.h"
 
+static inline int _isgraph(int c)
+{
+	return (unsigned int)c - 0x21 < 0x5E;
+}
+
 int MessageBox(const char* message, int type)
 {
 	int maxWidth = 0;
@@ -98,6 +103,60 @@ int MessageBox(const char* message, int type)
 	CloseWindow(win);
 
 	return ret;
+}
+
+char* InputBox(const char* message, char* text, int max)
+{
+	int maxWidth = strlen(message);
+	if (maxWidth < max)
+		maxWidth = max;
+	tWindow* win = OpenWindow(-1, -1, maxWidth + 8, 7, CLR_DIALOG);
+	SetTextColor(SplitColor(CLR_DIALOG));
+	SetCursorPosition(win->left + 4, win->top + 2);
+	Write(message);
+	SetTextColor(SplitColor(0x8F));
+	SetCursorPosition(win->left + 4, win->top + 4);
+	int len = strlen(text);
+	Write(text);
+	for (int i = len; i < max; i++)
+		WriteChar(' ');
+
+	while (true)
+	{
+		SetCursorPosition(win->left + 4 + len, win->top + 4);
+		REG_CARET |= 0x8000;
+
+		while ((key = INP_KEYIN) == 0) vbl();
+
+		char ascii = interface->locale.sctoasc[(INP_KEYSHIFT & 1) ? key + 128 : key];
+
+		if (key == KEYSCAN_ENTER)
+			break;
+		else if (key == KEYSCAN_ESCAPE)
+		{
+			CloseWindow(win);
+			REG_CARET &= ~0x8000;
+			return NULL;
+		}
+		else if (key == KEYSCAN_BACKSP && len > 0)
+		{
+			len--;
+			text[len] = '\0';
+			SetCursorPosition(win->left + 4 + len, win->top + 4);
+			WriteChar(' ');
+		}
+		else if (len < max && _isgraph(ascii))
+		{
+			text[len] = ascii;
+			SetCursorPosition(win->left + 4 + len, win->top + 4);
+			WriteChar(text[len]);
+			len++;
+		}
+	}
+
+	CloseWindow(win);
+	REG_CARET &= ~0x8000;
+	return text;
 }
 
 int SwitchDrive(int which, int now)

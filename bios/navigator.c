@@ -620,8 +620,26 @@ HandleMenu:
 								ShowError("Renaming and moving not implemented yet.");
 								break;
 							case 15: //Mkdir
-								ShowError("Directory creating not implemented yet.");
+								//ShowError("Directory creating not implemented yet.");
+							{
+								char inp[16] = "TEST";
+								if (InputBox("Enter directory name:", inp, 12) != NULL && inp[0] != 0)
+								{
+									EFileError ret = MakeDir(inp);
+									if (ret)
+									{
+										char message[256] = { 0 };
+										sprintf(message, "Could not create directory \"%s\".", inp);
+										MessageBox(message, 0);
+									}
+									else
+									{
+										Populate(workPath[cs], cs);
+										redraw = 2;
+									}
+								}
 								break;
+							}
 							case 16: //Delete
 								ShowError("File deleting not implemented yet.");
 								break;
@@ -664,6 +682,7 @@ HandleMenu:
 								Populate(workPath[0], 0);
 								Populate(workPath[1], 1);
 								redraw = 2;
+								break;
 							}
 						}
 					}
