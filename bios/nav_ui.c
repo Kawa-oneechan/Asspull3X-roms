@@ -58,6 +58,45 @@ void WaitForKey()
 	while ((key = INP_KEYIN) == 0) { vbl(); }
 }
 
+bool GetString(char left, char top, size_t width, size_t max, uint8_t color, char* text)
+{
+	SetTextColor(SplitColor(color));
+	SetCursorPosition(left, top);
+	int len = strlen(text);
+	Write(text);
+	for (int i = len; i < max; i++)
+		WriteChar(' ');
+
+	while (true)
+	{
+		SetCursorPosition(left + len, top);
+		REG_CARET |= 0x8000;
+
+		while ((key = INP_KEYIN) == 0) vbl();
+
+		char ascii = interface->locale.sctoasc[(INP_KEYSHIFT & 1) ? key + 128 : key];
+
+		if (key == KEYSCAN_ENTER)
+			return true;
+		else if (key == KEYSCAN_ESCAPE)
+			return false;
+		else if (key == KEYSCAN_BACKSP && len > 0)
+		{
+			len--;
+			text[len] = '\0';
+			SetCursorPosition(left + len, top);
+			WriteChar(' ');
+		}
+		else if (len < max && (unsigned int)ascii - 0x21 < 0x5E);
+		{
+			text[len] = ascii;
+			SetCursorPosition(left + len, top);
+			WriteChar(text[len]);
+			len++;
+		}
+	}
+}
+
 void DrawWindow(char left, char top, char width, char height, uint8_t color, bool shadow)
 {
 	uint16_t c;

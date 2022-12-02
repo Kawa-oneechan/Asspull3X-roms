@@ -23,6 +23,7 @@
     <ClCompile Include="main.c" />
     <ClCompile Include="navigator.c" />
     <ClCompile Include="nav_dlgs.c" />
+    <ClCompile Include="nav_edit.c" />
     <ClCompile Include="nav_ui.c" />
     <ClCompile Include="nav_view.c" />
     <ClCompile Include="printf.c" />

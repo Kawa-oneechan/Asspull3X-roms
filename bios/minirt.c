@@ -55,6 +55,15 @@ char* strcpy(char* s2, const char* s1)
 	return s2;
 }
 
+char* strdup(const char* s1)
+{
+	int l = strlen((char*)s1);
+	char* s2 = (char*)malloc(l + 1);
+	memcpy(s2, s1, l + 1);
+	s2[l + 1] = 0;
+	return s2;
+}
+
 int strcat(char* dest, const char* src)
 {
 	size_t i, j;
