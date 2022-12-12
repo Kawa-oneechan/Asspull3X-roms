@@ -34,6 +34,7 @@ typedef unsigned long long uint64_t;
 //ASSPULL REGISTERS
 //-----------------
 #define MEM_VRAM	0x0E000000
+#define MEM_DEVS	0x02000000
 #define MEM_IO		0x0D000000
 #define TEXTMAP		((uint16_t*)(MEM_VRAM))
 #define BITMAP		((uint8_t*)(MEM_VRAM))
@@ -66,18 +67,8 @@ typedef unsigned long long uint64_t;
 #define REG_WINMASK		*(uint16_t*)(MEM_IO + 0x0020)
 #define REG_WINLEFT		*(uint16_t*)(MEM_IO + 0x0022)
 #define REG_WINRIGHT	*(uint16_t*)(MEM_IO + 0x0024)
-#define REG_MIDIOUT		*(volatile uint8_t*)(MEM_IO + 0x0044)
-#define REG_OPLOUT		*(volatile int16_t*)(MEM_IO + 0x0048)
 #define REG_CARET		*(uint16_t*)(MEM_IO + 0x0054)
 #define REG_TIMET		*(int64_t*)(MEM_IO + 0x0060)
-#define REG_PCM1OFFSET	*(int32_t*)(MEM_IO + 0x0070)
-#define REG_PCM2OFFSET	*(int32_t*)(MEM_IO + 0x0074)
-#define REG_PCM1LENGTH	*(int32_t*)(MEM_IO + 0x0078)
-#define REG_PCM2LENGTH	*(int32_t*)(MEM_IO + 0x007C)
-#define REG_PCM1VOLUMEL	*(int8_t*)(MEM_IO + 0x0080)
-#define REG_PCM1VOLUMER	*(int8_t*)(MEM_IO + 0x0081)
-#define REG_PCM2VOLUMEL	*(int8_t*)(MEM_IO + 0x0082)
-#define REG_PCM2VOLUMER	*(int8_t*)(MEM_IO + 0x0083)
 #define REG_DMASOURCE	*(volatile uint32_t*)(MEM_IO + 0x0100)
 #define REG_DMATARGET	*(volatile uint32_t*)(MEM_IO + 0x0104)
 #define REG_DMALENGTH	*(volatile uint32_t*)(MEM_IO + 0x0108)
@@ -91,21 +82,33 @@ typedef unsigned long long uint64_t;
 #define REG_BLITLENGTH	*(uint32_t*)(MEM_IO + 0x020C)
 #define REG_BLITKEY		*(uint32_t*)(MEM_IO + 0x0210)
 
-#define PCMOFFSET		((int32_t*)(MEM_IO + 0x0070))
-#define PCMLENGTH		((int32_t*)(MEM_IO + 0x0078))
-#define PCMVOLUME		((int8_t*)(MEM_IO + 0x0080))
+#define INP_KEYIN		*(volatile uint8_t*)(MEM_DEVS + 0x0002)
+#define INP_KEYSHIFT	*(volatile uint8_t*)(MEM_DEVS + 0x0003)
+#define INP_JOYSTATES	*(uint8_t*)(MEM_DEVS + 0x0010)
+#define INP_JOYPAD1		*(volatile uint16_t*)(MEM_DEVS + 0x0012)
+#define INP_JOYSTK1H	*(volatile int8_t*)(MEM_DEVS + 0x0014)
+#define INP_JOYSTK1V	*(volatile int8_t*)(MEM_DEVS + 0x0015)
+#define INP_JOYPAD2		*(volatile uint16_t*)(MEM_DEVS + 0x0016)
+#define INP_JOYSTK2H	*(volatile int8_t*)(MEM_DEVS + 0x0017)
+#define INP_JOYSTK2V	*(volatile int8_t*)(MEM_DEVS + 0x0018)
+#define INP_MOUSE		*(uint16_t*)(MEM_DEVS + 0x0020)
+#define INP_KEYMAP		((volatile uint8_t*)(MEM_DEVS + 0x0040))
 
-#define INP_KEYIN		*(volatile uint8_t*)(0x02000000 + 0x0002)
-#define INP_KEYSHIFT	*(volatile uint8_t*)(0x02000000 + 0x0003)
-#define INP_JOYSTATES	*(uint8_t*)(0x02000000 + 0x0010)
-#define INP_JOYPAD1		*(volatile uint16_t*)(0x02000000 + 0x0012)
-#define INP_JOYSTK1H	*(volatile int8_t*)(0x02000000 + 0x0014)
-#define INP_JOYSTK1V	*(volatile int8_t*)(0x02000000 + 0x0015)
-#define INP_JOYPAD2		*(volatile uint16_t*)(0x02000000 + 0x0016)
-#define INP_JOYSTK2H	*(volatile int8_t*)(0x02000000 + 0x0017)
-#define INP_JOYSTK2V	*(volatile int8_t*)(0x02000000 + 0x0018)
-#define INP_MOUSE		*(uint16_t*)(0x02000000 + 0x0020)
-#define INP_KEYMAP		((volatile uint8_t*)(0x02000000 + 0x0040))
+#define REG_MIDIOUT		*(volatile uint8_t*)(MEM_DEVS + 0x0004)
+#define REG_OPLOUT		*(volatile int16_t*)(MEM_DEVS + 0x0005)
+#define REG_PCM1OFFSET	*(int32_t*)(MEM_DEVS + 0x0010)
+#define REG_PCM2OFFSET	*(int32_t*)(MEM_DEVS + 0x0014)
+#define REG_PCM1LENGTH	*(int32_t*)(MEM_DEVS + 0x0018)
+#define REG_PCM2LENGTH	*(int32_t*)(MEM_DEVS + 0x001C)
+#define REG_PCM1VOLUMEL	*(int8_t*)(MEM_DEVS + 0x0020)
+#define REG_PCM1VOLUMER	*(int8_t*)(MEM_DEVS + 0x0021)
+#define REG_PCM2VOLUMEL	*(int8_t*)(MEM_DEVS + 0x0022)
+#define REG_PCM2VOLUMER	*(int8_t*)(MEM_DEVS + 0x0023)
+
+#define PCMOFFSET		((int32_t*)(MEM_DEVS + 0x0010))
+#define PCMLENGTH		((int32_t*)(MEM_DEVS + 0x0018))
+#define PCMVOLUME		((int8_t*)(MEM_DEVS + 0x0020))
+
 
 #define DMA_BYTE 0
 #define DMA_SHORT 1
