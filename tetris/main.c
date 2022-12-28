@@ -88,7 +88,7 @@ static const uint32_t bigLogoB[] = {
 const uint8_t * const sounds[] = { 0 };
 
 extern int IMF_LoadSong(const uint16_t *sauce, bool loop);
-extern void IMF_Play();
+extern void IMF_Install(void(*next)(void));
 
 void PlaySound(int id)
 {
@@ -146,7 +146,7 @@ int main(void)
 		MISC->DmaCopy(TILESET, (int8_t*)&logobigTiles, 1536, DMA_INT);
 	MISC->DmaCopy(PALETTE + 256, (int16_t*)&tilesPal, 32, DMA_SHORT);
 
-	interface->vBlank = IMF_Play;
+	IMF_Install(NULL);
 	DRAW->Fade(true, false);
 	//WaitForKey();
 	{
@@ -161,6 +161,7 @@ int main(void)
 	DRAW->Fade(false, true);
 	*/
 
+	IMF_Install(NULL);
 	MISC->DmaClear(OBJECTS_A, 0, 0x1000, DMA_INT);
 
 	REG_SCREENMODE = SMODE_TILE;

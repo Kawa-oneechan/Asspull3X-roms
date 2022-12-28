@@ -444,9 +444,9 @@ typedef struct
 	const long assBang;
 	const int16_t biosVersion;
 	const int16_t extensions;
-	void(*exception)(void*);
-	void(*vBlank)(void*);
-	void(*hBlank)(void*);
+	void(*exception)(void);
+	void(*vBlank)(void);
+	void(*hBlank)(void);
 	int(*drawChar)(unsigned char, int, int, int);
 	const ITextLibrary* textLibrary;
 	const IDrawingLibrary* drawingLibrary;

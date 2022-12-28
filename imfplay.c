@@ -7,6 +7,7 @@ static const uint16_t *_imfptr;
 static uint16_t _imfwait, _imfsize;
 static bool imfLoop = true;
 
+void(*nextVBlank)(void);
 uint16_t imfCycles = 16;
 
 typedef struct
@@ -23,12 +24,8 @@ static uint16_t _audiotptr, _audiotlen, _audiotpriority;
 static uint8_t _audiotblock;
 static bool _audiotnote;
 
-
-void IMF_Service()
+static void IMF_Service()
 {
-	if (!_imfptr)
-		return;
-
 	while ((_imfsize) && (!_imfwait))
 	{
 		REG_OPLOUT = *_imfptr++;
@@ -52,7 +49,7 @@ void IMF_Service()
 	}
 }
 
-void IMF_Play()
+static void IMF_Play()
 {
 	if (_audiotlen)
 	{
@@ -86,8 +83,30 @@ void IMF_Play()
 	}
 
 	if (!_imfptr)
+	{
+		if (nextVBlank)
+			nextVBlank();
 		return;
+	}
+
 	for (int i = 0; i < imfCycles; i++) IMF_Service();
+
+	if (nextVBlank)
+		nextVBlank();
+}
+
+void IMF_Install(void(*next)(void))
+{
+	if (next == NULL)
+		next = interface->vBlank;
+	nextVBlank = next;
+	interface->vBlank = IMF_Play;
+}
+
+void IMF_Remove()
+{
+	interface->vBlank = nextVBlank;
+	nextVBlank = NULL;
 }
 
 int IMF_LoadSong(const uint16_t *sauce, bool loop)

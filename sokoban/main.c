@@ -19,7 +19,7 @@ extern const uint8_t stepSound[];
 const uint8_t * const sounds[] = { 0, jingleSound, slideSound, stepSound };
 
 extern int IMF_LoadSong(const uint16_t *sauce, bool loop);
-extern void IMF_Play();
+extern void IMF_Install(void(*next)(void));
 
 char *levelPack;
 char *thisLevel;
@@ -579,7 +579,7 @@ int main(void)
 	MISC->DmaClear(MAP2, 0, WIDTH * HEIGHT, 2);
 	MISC->DmaClear(MAP3, 0, WIDTH * HEIGHT, 2);
 
-	interface->vBlank = IMF_Play;
+	IMF_Install(NULL);
 
 	levelNum = -1;
 	PlaySound(1);

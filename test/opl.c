@@ -1,6 +1,7 @@
 #include "../ass.h"
 
-extern void IMF_Play();
+extern void IMF_Install(void(*next)(void));
+extern void IMF_Remove(void);
 extern void IMF_AudioT(void*);
 extern int IMF_LoadSong(const uint16_t *sauce, bool loop);
 extern const uint16_t imfData[];
@@ -124,10 +125,10 @@ void OPLTest()
 	TEXT->ClearScreen();
 	TEXT->Write("OPL3 music test\n\nPlaying: lot_bon by Nurykabe, CC-BY.");
 
-	interface->vBlank = IMF_Play;
+	IMF_Install(NULL);
 	IMF_LoadSong(imfData, true);
 	WaitForKey();
-	interface->vBlank = 0;
+	IMF_Remove();
 
 	MISC->OplReset();
 }
