@@ -1,52 +1,55 @@
 #include "nav.h"
 
+#define SEPARATOR { "-", 0, DISABLED, 0 }
+
 tMenuItem leftMenu[] = {
-	{ "~Files", 33, CHECKED, 101 },
-	{ "~Info", 23, 0, 102 },
-	{ "~Preview", 25, 1, 103  },
-	{ "Director~y info", 21, DISABLED, 104 },
-	{ "~On/off           Ctrl-F1", 24, DISABLED, 105 },
-	{ "-", 0, 1, 0 },
-	{ "~Drive\x98                F1", 32, 0, 106 },
+	{ "~Files", KEYSCAN_F, CHECKED, 101 },
+	{ "~Info", KEYSCAN_I, 0, 102 },
+	{ "~Preview", KEYSCAN_P, 1, 103  },
+	{ "Director~y info", KEYSCAN_Y, DISABLED, 104 },
+	{ "~On/off           Ctrl-F1", KEYSCAN_O, DISABLED, 105 },
+	SEPARATOR,
+	{ "~Drive\x98                F1", KEYSCAN_D, 0, 106 },
 };
 
 const tMenuItem filesMenu[] = {
-	{ "~View             F2", 47, 0, 11 },
-	{ "~Edit             F3", 18, DISABLED, 12 },
-	{ "~Copy             F5", 46, DISABLED, 13 },
-	{ "~Rename or Move   F6", 19, DISABLED, 14 },
-	{ "~Make directory   F7", 50, 0, 15 },
-	{ "~Delete           F8", 32, DISABLED, 16 },
-	{ "~Print            F9", 25, 0, 17 },
-	{ "File ~attributes", 30, 0, 18 },
+	{ "~View             F2", KEYSCAN_V, 0, 11 },
+	{ "~Edit             F3", KEYSCAN_E, DISABLED, 12 },
+	{ "~Copy             F5", KEYSCAN_C, DISABLED, 13 },
+	{ "~Rename or Move   F6", KEYSCAN_R, DISABLED, 14 },
+	{ "~Make directory   F7", KEYSCAN_M, 0, 15 },
+	{ "~Delete           F8", KEYSCAN_D, DISABLED, 16 },
+	{ "~Print            F9", KEYSCAN_P, 0, 17 },
+	{ "File ~attributes", KEYSCAN_A, 0, 18 },
 };
 
 const tMenuItem commandsMenu[] = {
-	{ "~Swap panels        Ctrl-U", 31, 0, 31 },
-	{ "-", 0, 1, 0 },
-	{ "~Copy diskette\x98", 46, DISABLED, 32 },
-	{ "~Format diskette\x98", 33, DISABLED, 33 },
-	{ "~Label disk\x98", 38, DISABLED, 34 },
-	{ "-", 0, 1, 0 },
-	{ "Confi~guration", 34, DISABLED, 35 },
+	{ "~Swap panels        Ctrl-U", KEYSCAN_S, 0, 31 },
+	SEPARATOR,
+	{ "~Copy diskette\x98", KEYSCAN_C, DISABLED, 32 },
+	{ "~Format diskette\x98", KEYSCAN_F, DISABLED, 33 },
+	{ "~Label disk\x98", KEYSCAN_L, DISABLED, 34 },
+	SEPARATOR,
+	//{ "Confi~guration", KEYSCAN_G, DISABLED, 35 },
+	{ "Set ~time", KEYSCAN_T, DISABLED, 35  },
 };
 
 tMenuItem rightMenu[] = {
-	{ "~Files", 33, CHECKED, 111 },
-	{ "~Info", 23, 0, 112 },
-	{ "~Preview", 25, DISABLED, 113  },
-	{ "Director~y info", 21, DISABLED, 114 },
-	{ "~On/off           Ctrl-F2", 24, DISABLED, 115 },
-	{ "-", 0, 1, 0 },
-	{ "~Drive\x98                F2", 32, 0, 116 },
+	{ "~Files", KEYSCAN_F, CHECKED, 111 },
+	{ "~Info", KEYSCAN_I, 0, 112 },
+	{ "~Preview", KEYSCAN_P, DISABLED, 113  },
+	{ "Director~y info", KEYSCAN_Y, DISABLED, 114 },
+	{ "~On/off           Ctrl-F2", KEYSCAN_O, DISABLED, 115 },
+	SEPARATOR,
+	{ "~Drive\x98                F2", KEYSCAN_D, 0, 116 },
 };
 
 const tMenu menuBar[] =
 {
-	{ "~Left", 38, 7, leftMenu },
-	{ "~Files", 33, 8, filesMenu },
-	{ "~Commands", 46, 7, commandsMenu },
-	{ "~Right", 19, 7, rightMenu },
+	{ "~Left", KEYSCAN_L, 7, leftMenu },
+	{ "~Files", KEYSCAN_F, 8, filesMenu },
+	{ "~Commands", KEYSCAN_C, 7, commandsMenu },
+	{ "~Right", KEYSCAN_R, 7, rightMenu },
 };
 
 char menuLefts[NUMMENUS], menuWidths[NUMMENUS];
@@ -62,9 +65,9 @@ bool GetString(char left, char top, size_t width, size_t max, uint8_t color, cha
 {
 	SetTextColor(SplitColor(color));
 	SetCursorPosition(left, top);
-	int len = strlen(text);
+	uint8_t len = strlen(text);
 	Write(text);
-	for (int i = len; i < max; i++)
+	for (uint16_t i = len; i < max; i++)
 		WriteChar(' ');
 
 	while (true)
@@ -87,7 +90,7 @@ bool GetString(char left, char top, size_t width, size_t max, uint8_t color, cha
 			SetCursorPosition(left + len, top);
 			WriteChar(' ');
 		}
-		else if (len < max && (unsigned int)ascii - 0x21 < 0x5E);
+		else if (len < max && (unsigned int)ascii - 0x21 < 0x5E)
 		{
 			text[len] = ascii;
 			SetCursorPosition(left + len, top);
@@ -353,7 +356,7 @@ char OpenMenu(int cm)
 				Highlight(menuLefts[cm], 0, myStrLen(menuBar[cm].title) + 4, CLR_MENUBAR);
 				cm++;
 				ci = 0;
-				if (cm == NUMMENUS) cm = 0;
+				if (cm >= NUMMENUS) cm = 0;
 				Highlight(menuLefts[cm], 0, myStrLen(menuBar[cm].title) + 4, CLR_MENUSEL);
 				DropMenu(cm);
 			}
@@ -369,8 +372,15 @@ char OpenMenu(int cm)
 			{
 				Highlight(menuLefts[cm] + 1, 2 + ci, menuWidths[cm] + 4, CLR_MENUITEM);
 				ci++;
-				while (menuBar[cm].items[ci].state & DISABLED) ci++;
-				if (ci == menuBar[cm].numItems) ci = 0;
+				if (ci >= menuBar[cm].numItems)
+				{
+					ci = 0;
+				}
+				else
+				{
+					while (menuBar[cm].items[ci].state & DISABLED) ci++;
+					if (ci >= menuBar[cm].numItems) ci = 0;
+				}
 				Highlight(menuLefts[cm] + 1, 2 + ci, menuWidths[cm] + 4, CLR_MENUSEL);
 			}
 			else if (key == KEYSCAN_ENTER || key == KEYSCAN_ESCAPE)
