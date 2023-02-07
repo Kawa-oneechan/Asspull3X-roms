@@ -81,7 +81,7 @@ static void drawCircle(int hand_max, int sYcen, int sXcen)
 				c = 0x880F;
 				break;
 			default:
-				c = 0xB807;
+				c = 0x0807;
 				break;
 		}
 		drawChar(x, y, c);
@@ -91,7 +91,6 @@ static void drawCircle(int hand_max, int sYcen, int sXcen)
 
 void ClockTest()
 {
-reset:
 	TEXT->SetTextColor(0, 7);
 	TEXT->ClearScreen();
 	printf("Real-time clock test");
@@ -100,151 +99,10 @@ reset:
 	time_t now_t = REG_TIMET;
 	tm* now_tm = gmtime(&now_t);
 
-	if (now_t == 0)
-	{
-		printf("RTC isn't set. Please enter the correct time:");
-
-		const int muls[] = { 1000, 100, 10, 1 };
-		int cursor = 0;
-		int changed = 1;
-		REG_CARET = 0xC000; //block shape please
-		while (1)
-		{
-			if (changed)
-			{
-				DrawClock(now_tm);
-				changed = 0;
-			}
-
-			TEXT->SetCursorPosition(6 + cursor, 5);
-
-			int in = INP_KEYIN;
-			if (in == KEYSCAN_ENTER)
-			{
-				REG_TIMET = mktime(now_tm);
-				break;
-			}
-			else if (in == KEYSCAN_LEFT)
-			{
-				if (cursor == 0) cursor = 20;
-				else if (cursor == 5) cursor = 3;
-				else if (cursor == 8) cursor = 6;
-				else if (cursor == 13) cursor = 9;
-				else if (cursor == 16) cursor = 14;
-				else if (cursor == 19) cursor = 17;
-				else cursor--;
-			}
-			else if (in == KEYSCAN_RIGHT)
-			{
-				if (cursor == 20) cursor = 0;
-				else if (cursor == 3) cursor = 5;
-				else if (cursor == 6) cursor = 8;
-				else if (cursor == 9) cursor = 13;
-				else if (cursor == 11) cursor = 14;
-				else if (cursor == 14) cursor = 16;
-				else if (cursor == 17) cursor = 19;
-				else cursor++;
-			}
-			else if (in == KEYSCAN_UP || in == KEYSCAN_DOWN)
-			{
-				switch(cursor)
-				{
-					//year
-					case 0:
-					case 1:
-					case 2:
-					case 3:
-					{
-						int y = now_tm->tm_year + 1900;
-						int mul = muls[cursor];
-						if (in == KEYSCAN_DOWN) mul = -mul;
-						y += mul;
-						now_tm->tm_year = y - 1900;
-						changed = 1;
-						break;
-					}
-					//month
-					case 5:
-					case 6:
-					{
-						int y = now_tm->tm_mon + 1;
-						int mul = muls[cursor - 3];
-						if (in == KEYSCAN_DOWN) mul = -mul;
-						y += mul;
-						if (y > 12) y = 1;
-						else if (y <= 0) y = 12;
-						now_tm->tm_mon = y - 1;
-						changed = 1;
-						break;
-					}
-					//day
-					case 8:
-					case 9:
-					{
-						int y = now_tm->tm_mday;
-						int mul = muls[cursor - 6];
-						if (in == KEYSCAN_DOWN) mul = -mul;
-						y += mul;
-						if (y > 31) y = 1;
-						else if (y <= 0) y = 31;
-						now_tm->tm_mday = y;
-						changed = 1;
-						break;
-					}
-					//hour
-					case 13:
-					case 14:
-					{
-						int y = now_tm->tm_hour;
-						int mul = muls[cursor - 11];
-						if (in == KEYSCAN_DOWN) mul = -mul;
-						y += mul;
-						if (y > 23) y = 0;
-						else if (y <= 0) y = 23;
-						now_tm->tm_hour = y;
-						changed = 1;
-						break;
-					}
-					//minute
-					case 16:
-					case 17:
-					{
-						int y = now_tm->tm_min;
-						int mul = muls[cursor - 14];
-						if (in == KEYSCAN_DOWN) mul = -mul;
-						y += mul;
-						if (y > 59) y = 0;
-						else if (y <= 0) y = 59;
-						now_tm->tm_min = y;
-						changed = 1;
-						break;
-					}
-					//second
-					case 19:
-					case 20:
-					{
-						int y = now_tm->tm_sec;
-						int mul = muls[cursor - 17];
-						if (in == KEYSCAN_DOWN) mul = -mul;
-						y += mul;
-						if (y > 59) y = 0;
-						else if (y <= 0) y = 59;
-						now_tm->tm_sec = y;
-						changed = 1;
-						break;
-					}
-				}
-			}
-			vbl();
-		}
-
-		goto reset;
-	}
-
 	REG_CARET = 0;
 
 	const int hand_max = 10;
-	const int sXcen = 50;
+	const int sXcen = 54;
 	const int sYcen = 16;
 
 	drawCircle(hand_max, sYcen, sXcen);
@@ -261,9 +119,9 @@ reset:
 		now_t = REG_TIMET;
 		now_tm = gmtime(&now_t);
 
-		drawHand(now_tm->tm_hour % 12 * 5 + now_tm->tm_min / 12, hand_max - 3, 0x0809, sYcen, sXcen);
-		drawHand(now_tm->tm_min, hand_max - 2, 0x080A, sYcen, sXcen);
-		drawHand(now_tm->tm_sec, hand_max - 1, 0x080B, sYcen, sXcen);
+		drawHand(now_tm->tm_hour % 12 * 5 + now_tm->tm_min / 12, hand_max - 3, 0x8809, sYcen, sXcen);
+		drawHand(now_tm->tm_min, hand_max - 2, 0x880A, sYcen, sXcen);
+		drawHand(now_tm->tm_sec, hand_max - 1, 0x880B, sYcen, sXcen);
 
 		DrawClock(now_tm);
 
