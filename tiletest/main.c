@@ -10,7 +10,7 @@ IBios* interface;
 
 extern const uint16_t tilesetPal[], tilesetTiles[], hdma1[];
 extern const uint16_t map16[];
-extern const uint16_t farahPal[], farahTiles[];
+extern const uint16_t cortiPal[], cortiTiles[];
 //extern const uint16_t tileanimTiles[];
 extern const uint16_t bg1Map[], bg2Map[], levelMap[];
 
@@ -105,7 +105,7 @@ typedef struct
 #define objectsB ((TObjectB*)OBJECTS_B)
 
 
-const uint8_t farahSprites[][6] =
+const uint8_t cortiSprites[][6] =
 {
 	{  0, 1, 3, 4,13,14 }, //stand
 	{  2, 1, 5, 6,15,16 }, //walk 1
@@ -142,7 +142,7 @@ void BuildPlayer()
 	{
 		for (int i = 0; i < 6; i++)
 		{
-			objectsA[i].tile = farahSprites[player.frame][i] + 1;
+			objectsA[i].tile = cortiSprites[player.frame][i] + 1;
 			objectsA[i].enabled = 1;
 			objectsB[i].x = player.posX + offsets[i][0];
 			objectsB[i].y = player.posY + offsets[i][1];
@@ -153,7 +153,7 @@ void BuildPlayer()
 	{
 		for (int i = 0; i < 6; i++)
 		{
-			objectsA[i].tile = farahSprites[player.frame][i ^ 1] + 1;
+			objectsA[i].tile = cortiSprites[player.frame][i ^ 1] + 1;
 			objectsA[i].enabled = 1;
 			objectsB[i].x = player.posX + offsets[i][0];
 			objectsB[i].y = player.posY + offsets[i][1];
@@ -272,8 +272,8 @@ int main(void)
 	MISC->DmaCopy(TILESET + (32*256), (int8_t*)&tilesetTiles, 20480 / 4, DMA_INT);
 	MISC->DmaCopy(PALETTE, (int8_t*)&tilesetPal, 128, DMA_SHORT);
 
-	MISC->DmaCopy(TILESET + 32, (int8_t*)&farahTiles, 384, DMA_INT);
-	MISC->DmaCopy(PALETTE + 256, (int8_t*)&farahPal, 16, DMA_SHORT);
+	MISC->DmaCopy(TILESET + 32, (int8_t*)&cortiTiles, 384, DMA_INT);
+	MISC->DmaCopy(PALETTE + 256, (int8_t*)&cortiPal, 16, DMA_SHORT);
 
 	REG_MAPSET = 0x70; //just enable it, don't worry about tile offsets.
 	//REG_MAPBLEND = 0x01;
