@@ -7,12 +7,12 @@
 	.global fonts
 
 sprites:
-	.long 0, farahTiles, iliraTiles, 0,0,0,0,0
+	.long 0, farahTiles, iliraTiles, candyTiles,0,0,0,0
 	.long 0,0,0,0,0,0,0,0
 	.long 0,0,0,0,0,0,0,0
 	.long 0,0,0,0,0,0,0,0
 spritePals:
-	.byte 0,0,1,0,0,0,0,0
+	.byte 0,0,1,1,0,0,0,0
 	.byte 0,0,0,0,0,0,0,0
 	.byte 0,0,0,0,0,0,0,0
 	.byte 0,0,0,0,0,0,0,0
