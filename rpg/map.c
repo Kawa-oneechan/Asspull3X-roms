@@ -11,6 +11,8 @@ MapEntity entities[MAXENTITIES];
 MapEntity* playerEntity;
 int oidCt;
 
+int8_t* spriteGfx[MAXENTITIES];
+
 void drawTile(int x, int y, int tileNum)
 {
 	x &= 31;
@@ -150,8 +152,13 @@ void drawEntity(MapEntity *entity)
 	if (entity == playerEntity)
 		aimCamera(x, y);
 
-	MISC->DmaClear(TILESET + (oid * 256), 0, 64, DMA_INT);
-	MISC->DmaCopy(TILESET + (oid * 256) + 64, entity->tileset + (tile * 24), 48, DMA_INT);
+	int8_t* tileGfx = entity->tileset + (tile * 24);
+	if (spriteGfx[entity->oid] != tileGfx)
+	{
+		MISC->DmaClear(TILESET + (oid * 256), 0, 64, DMA_INT);
+		MISC->DmaCopy(TILESET + (oid * 256) + 64, tileGfx, 48, DMA_INT);
+		spriteGfx[entity->oid] = tileGfx;
+	}
 	OBJECTS_A[entity->oid] = OBJECTA_BUILD(oid * 8, 0, 1, entity->palette);
 	OBJECTS_B[entity->oid] = OBJECTB_BUILD(x - cameraX, y - cameraY, 0, 1, flip, 0, 1, 2);
 }
