@@ -309,7 +309,7 @@ goAgain:
 		Fade(false, false);
 	}
 
-	DmaClear((int8_t*)0x01001000, 0, 0x00200000, DMA_INT); //Reset cart's workram
+	DmaClear((int8_t*)0x01001000, 0, 0x00080000 / 4, DMA_INT); //Reset cart's workram
 	BlankOut();
 	entry();
 
