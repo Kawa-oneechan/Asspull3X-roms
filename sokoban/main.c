@@ -10,7 +10,7 @@ extern const uint16_t backsTiles[], backPals[];
 extern const uint16_t disketteTiles[], diskettePal[];
 extern const TPicFile diskbg;
 extern const uint16_t hdma1[];
-extern const char * const levels[];
+extern const unsigned char * const levels[];
 
 extern const uint16_t imfData1[], imfData2[], imfData3[], imfData4[], imfData5[];
 extern const uint8_t jingleSound[];
@@ -21,8 +21,8 @@ const uint8_t * const sounds[] = { 0, jingleSound, slideSound, stepSound };
 extern int IMF_LoadSong(const uint16_t *sauce, bool loop);
 extern void IMF_Install(void(*next)(void));
 
-char *levelPack;
-char *thisLevel;
+unsigned char *levelPack;
+unsigned char *thisLevel;
 
 #define WIDTH 40
 #define HEIGHT 30
@@ -275,106 +275,28 @@ void move(char byX, char byY)
 	}
 }
 
-void loadFromCode(const char* source)
+void loadLevel(int num)
 {
-	char ch = *source;
-	int wasDigit = 0;
-	int row = 0, col = 0;
-	int len = 1;
-	int type = -1;
-	for (int i = 0; i < BOUNDS * BOUNDS; i++)
-		map[i] = EXTERIOR;
-	while ((ch = *source++))
-	{
-		type = -1;
-		switch (ch)
-		{
-			case '0':
-			case '1':
-			case '2':
-			case '3':
-			case '4':
-			case '5':
-			case '6':
-			case '7':
-			case '8':
-			case '9':
-				if (!wasDigit)
-					len = 0;
-				len = (len * 10) + (ch - '0');
-				wasDigit = 1;
-				break;
-			case '|':
-				wasDigit = 0;
-				len = 1;
-				row++;
-				col = 0;
-				break;
-			case ' ':
-			case '_':
-			case '-':
-				type = SPACE;
-				break;
-			case '$':
-				type = BOX;
-				break;
-			case '.':
-				type = GOAL;
-				break;
-			case '*':
-				type = BOXINGOAL;
-				break;
-			case '#':
-				type = WALL;
-				break;
-			case 'x':
-				type = EXTERIOR;
-				break;
-			case '@':
-			case '+':
-				type = (ch == '@') ? SPACE : GOAL;
-				playerX = col;
-				playerY = row;
-				break;
-		}
-		if (type != -1)
-		{
-			while (len > 0)
-			{
-				map[(row * BOUNDS) + col] = type;
-				col++;
-				len--;
-			}
-			len = 1;
-			wasDigit = 0;
-		}
-	}
-}
-
-void load(const char* source)
-{
+	unsigned char *level = levelPack + (0x140 * num);
 	char* here = map;
-	int k = 0;
 	for (int j = 0; j < 16; j++)
 	{
-		for (int i = 0; i < 19; i++)
+		for (int i = 0; i < 20; i++)
 		{
-			switch (source[k++])
+			if (*level == 0xFF || *level == 0xFE)
 			{
-				case ' ': *here++ = SPACE; break;
-				case '$': *here++ = BOX; break;
-				case '.': *here++ = GOAL; break;
-				case '*': *here++ = BOXINGOAL;  break;
-				case '#': *here++ = WALL; break;
-				case '@':
-					*here++ = SPACE;
-					playerX = i;
-					playerY = j;
-					break;
-				case 0: return;
+				playerX = i;
+				playerY = j;
+				if (*level == 0xFE)
+					*here = GOAL;
+				else
+					*here = SPACE;
 			}
+			else if (*level <= EXTERIOR)
+				*here = *level;
+			level++;
+			here++;
 		}
-		here++;
 	}
 }
 
@@ -392,7 +314,7 @@ int checkWin()
 
 void nextLevel()
 {
-	if (*thisLevel == 0)
+	if (*thisLevel == 0x80)
 	{
 		//Reached a blank level? Must be the end. Cool beans.
 		//TODO: make this a nice bitmap image instead.
@@ -414,8 +336,7 @@ void nextLevel()
 	levelNum++;
 	if (levelNum > 0)
 		DRAW->Fade(false, true);
-	loadFromCode(thisLevel);
-	while(*thisLevel++) ;
+	loadLevel(levelNum);
 	lastDir = 2;
 	moves = seconds = minutes = 0;
 	draw();
@@ -529,17 +450,10 @@ void CheckForDisk()
 		}
 	}
 
-	levelPack = (char*)malloc(nfo.fsize);
+	levelPack = (unsigned char*)malloc(nfo.fsize);
 	ret = DISK->OpenFile(&file, filename, FA_READ);
 	ret = DISK->ReadFile(&file, (void*)levelPack, nfo.fsize);
 	ret = DISK->CloseFile(&file);
-	char* c = levelPack;
-	while (*c)
-	{
-		if (*c == '\n')
-			*c = 0;
-		c++;
-	}
 	DRAW->Fade(false, true);
 	REG_HDMACONTROL[0] = 0;
 	OBJECTS_A[0] = OBJECTS_A[1] = OBJECTS_A[2] = OBJECTS_A[3] = 0;
@@ -563,7 +477,7 @@ int main(void)
 	REG_SCREENFADE = 31;
 	REG_MAPSET = 0x70;
 
-	levelPack = (char*)levels[0];
+	levelPack = (unsigned char*)&levels;
 	CheckForDisk();
 	//levelPack = (char**)diskLevels;
 	thisLevel = levelPack;

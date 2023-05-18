@@ -1,10 +1,13 @@
 	.include "../ass-macros.i"
+	.global levels
 	.global backPals
 	.global jingleSound
 	.global slideSound
 	.global stepSound
 	.global imfData1, imfData2, imfData3, imfData4, imfData5, imfData6
 	.text
+levels:
+	.incbin "levels.bin"
 backPals:
 	.hword 0x0000,0x6DAE,0x7739,0x7FFF,0x1021,0x2021,0x3021,0x04A1
 	.hword 0x0501,0x0982,0x0423,0x0427,0x042B,0x0C63,0x14A5,0x1CE7
