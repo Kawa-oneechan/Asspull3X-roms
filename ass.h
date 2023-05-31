@@ -29,6 +29,9 @@ typedef unsigned long long uint64_t;
 #define free interface->miscLibrary->HeapFree
 #define realloc interface->miscLibrary->HeapReAlloc
 #define calloc interface->miscLibrary->HeapCAlloc
+#define strftime interface->miscLibrary->FormatTime
+#define gmtime interface->miscLibrary->TimeToCalendar
+#define mktime interface->miscLibrary->CalendarToTime
 
 //-----------------
 //ASSPULL REGISTERS
@@ -360,9 +363,6 @@ extern char* strdup(const char*);
 extern int atoi(char*);
 extern void* memcpy(void*, const void*, size_t);
 extern void* memset(void*, int, size_t);
-extern char* asctime(const tm*);
-extern tm* gmtime(const time_t*);
-extern time_t mktime(tm*);
 
 //---------
 //INTERFACE
@@ -407,6 +407,9 @@ typedef struct
 	void(*HeapFree)(void* ptr);
 	void*(*HeapReAlloc)(void* ptr, size_t size);
 	void*(*HeapCAlloc)(size_t nelem, size_t elsize);
+	size_t(*FormatTime)(char*, size_t, const char*, const tm*);
+	tm*(*TimeToCalendar)(const time_t*);
+	time_t(*CalendarToTime)(tm*);
 } IMiscLibrary;
 
 typedef struct

@@ -1,9 +1,18 @@
 #include "../ass.h"
-#include "../ass-keys.h"
 
-extern char* asctime(const tm*);
-extern tm* gmtime(const time_t*);
-extern time_t mktime(tm*);
+#define YEAR_BASE 1900
+
+char* asctime(const tm *timeptr)
+{
+	static char buf[32];
+	TEXT->Format(buf, "%.3s %.3s%3d %.2d:%.2d:%.2d %d",
+		MISC->GetLocaleStr(LC_DAYS, timeptr->tm_wday),
+		MISC->GetLocaleStr(LC_MONS, timeptr->tm_mon),
+		timeptr->tm_mday, timeptr->tm_hour,
+		timeptr->tm_min, timeptr->tm_sec,
+		YEAR_BASE + timeptr->tm_year);
+	return buf;
+}
 
 extern void WaitForKey();
 void Spinner()
@@ -127,6 +136,11 @@ void ClockTest()
 
 		TEXT->SetCursorPosition(0, 8);
 		printf("Time_T: %llu\nAscTime: \"%s\"\n", now_t, asctime(now_tm));
+		char strf[32];
+		strftime(strf, 32, MISC->GetLocaleStr(LC_DATES, 0), now_tm);
+		printf("StrFTime: \"%s ", strf);
+		strftime(strf, 32, MISC->GetLocaleStr(LC_TIMEL, 0), now_tm);
+		printf("%s\"\n", strf);
 		printf("GMTime:\n  sec   %d\n  min   %d\n  hour  %d\n  mday  %d\n  mon   %d\n  year  %d\n  wday  %d\n  yday  %d\n", now_tm->tm_sec, now_tm->tm_min, now_tm->tm_hour, now_tm->tm_mday, now_tm->tm_mon, now_tm->tm_year, now_tm->tm_wday, now_tm->tm_yday);
 
 		Spinner();
