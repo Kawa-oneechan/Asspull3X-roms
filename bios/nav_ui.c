@@ -1,60 +1,118 @@
 #include "nav.h"
 
-#define SEPARATOR { "-", 0, DISABLED, 0 }
-
-tMenuItem leftMenu[] = {
-	{ "~Files", KEYSCAN_F, CHECKED, 101 },
-	{ "~Info", KEYSCAN_I, 0, 102 },
-	{ "~Preview", KEYSCAN_P, 1, 103  },
-	{ "Director~y info", KEYSCAN_Y, DISABLED, 104 },
-	{ "~On/off           Ctrl-F1", KEYSCAN_O, DISABLED, 105 },
-	SEPARATOR,
-	{ "~Drive\x98                F1", KEYSCAN_D, 0, 106 },
-};
-
-const tMenuItem filesMenu[] = {
-	{ "~View             F2", KEYSCAN_V, 0, 11 },
-	{ "~Edit             F3", KEYSCAN_E, DISABLED, 12 },
-	{ "~Copy             F5", KEYSCAN_C, DISABLED, 13 },
-	{ "~Rename or Move   F6", KEYSCAN_R, DISABLED, 14 },
-	{ "~Make directory   F7", KEYSCAN_M, 0, 15 },
-	{ "~Delete           F8", KEYSCAN_D, DISABLED, 16 },
-	{ "~Print            F9", KEYSCAN_P, 0, 17 },
-	{ "File ~attributes", KEYSCAN_A, 0, 18 },
-};
-
-const tMenuItem commandsMenu[] = {
-	{ "~Swap panels        Ctrl-U", KEYSCAN_S, 0, 31 },
-	SEPARATOR,
-	{ "~Copy diskette\x98", KEYSCAN_C, DISABLED, 32 },
-	{ "~Format diskette\x98", KEYSCAN_F, DISABLED, 33 },
-	{ "~Label disk\x98", KEYSCAN_L, DISABLED, 34 },
-	SEPARATOR,
-	//{ "Confi~guration", KEYSCAN_G, DISABLED, 35 },
-	{ "Set ~time", KEYSCAN_T, DISABLED, 35  },
-};
-
-tMenuItem rightMenu[] = {
-	{ "~Files", KEYSCAN_F, CHECKED, 111 },
-	{ "~Info", KEYSCAN_I, 0, 112 },
-	{ "~Preview", KEYSCAN_P, DISABLED, 113  },
-	{ "Director~y info", KEYSCAN_Y, DISABLED, 114 },
-	{ "~On/off           Ctrl-F2", KEYSCAN_O, DISABLED, 115 },
-	SEPARATOR,
-	{ "~Drive\x98                F2", KEYSCAN_D, 0, 116 },
-};
-
-const tMenu menuBar[] =
+typedef struct
 {
-	{ "~Left", KEYSCAN_L, 7, leftMenu },
-	{ "~Files", KEYSCAN_F, 8, filesMenu },
-	{ "~Commands", KEYSCAN_C, 7, commandsMenu },
-	{ "~Right", KEYSCAN_R, 7, rightMenu },
+	char* label;
+	uint8_t type;
+	uint8_t scan;
+	uint8_t left, top;
+	uint8_t width, height;
+	uint8_t state;
+	uint8_t id;
+} tDialogItem;
+
+typedef struct
+{
+	char* title;
+	uint8_t width, height;
+	uint8_t numItems;
+	tDialogItem* items;
+} tDialog;
+
+tDialogItem testDialogItems[] = {
+	{ "This is a test.", 0, 0, 1, 0, 16, 1, 0, 0 },
+	{ " Button1 ", 1, KEYSCAN_B, 2, 2, 9, 1, 0, 100 },
+	{ " Button2 ", 1, KEYSCAN_C, 12, 2, 9, 1, 0, 101 },
+};
+tDialog testDialog = {
+	"Test", 22, 3, 3, testDialogItems
 };
 
-char menuLefts[NUMMENUS], menuWidths[NUMMENUS];
+int DialogTest()
+{
+	tDialog* dlg = &testDialog;
+	REG_SCREENFADE = 0;
+	tWindow* win = OpenWindow(-1, -1, dlg->width + 2, dlg->height + 2, CLR_DIALOG);
+	size_t len = strlen(dlg->title);
+	SetTextColor(SplitColor(CLR_DIALOG));
+	SetCursorPosition(win->left + (win->width / 2) - (len / 2), win->top);
+	Write(dlg->title);
 
-tWindow* menuWindow = NULL;
+	int focus = 0;
+	for (int i = 0; i < dlg->numItems; i++)
+	{
+		if (dlg->items[i].type != 0) //not a label, not disabled
+		{
+			focus = i;
+			break;
+		}
+	}
+
+	while(true)
+	{
+		for (int i = 0; i < dlg->numItems; i++)
+		{
+			tDialogItem* item =  &dlg->items[i];
+			SetCursorPosition(win->left + 1 + item->left, win->top + 1 + item->top);
+			switch(item->type)
+			{
+				case 0: //label
+				{
+					SetTextColor(SplitColor(CLR_DIALOG));
+					Write(item->label);
+					break;
+				}
+				case 1: //button
+				{
+					SetTextColor(8, (focus == i) ? 15 : 7);
+					Write(item->label);
+					break;
+				}
+			}
+		}
+		SetCursorPosition(0, 0);
+		SetTextColor(0, 7);
+		Write("focus: %d \n", focus);
+		Write("id: %d \n", dlg->items[focus].id);
+		while ((key = INP_KEYIN) == 0) vbl();
+		if (key == KEYSCAN_TAB)
+		{
+			int tries = 2;
+			focus++;
+			while (tries && dlg->items[focus].type == 0) //not a label, not disabled
+			{
+				focus++;
+				if (focus >= dlg->numItems)
+				{
+					focus = 0;
+					tries--;
+				}
+			}
+		}
+		else if (key == KEYSCAN_ENTER)
+		{
+			break;
+		}
+		else
+		{
+			for (int i = 0; i < dlg->numItems; i++)
+			{
+				tDialogItem* item = &dlg->items[i];
+				if (item->scan && item->scan == key)
+				{
+					focus = i;
+					if (item->type == 1) //button
+					{
+						CloseWindow(win);
+						return item->id;
+					}
+				}
+			}
+		}
+	}
+	CloseWindow(win);
+	return dlg->items[focus].id;
+}
 
 void WaitForKey()
 {
@@ -225,6 +283,14 @@ void DrawPanel(char left, char top, char width, char height, uint8_t color)
 	DrawWindow(left, top, width, height, color, false);
 }
 
+void DrawPanelSeparator(char left, char top, char width, uint8_t color)
+{
+	TEXTMAP[(top * 80) + left] = 0x8F00 | color; //|-
+	for (int i = 1; i < width - 1; i++)
+		TEXTMAP[(top * 80) + left + i] = 0x9000 | color; //--
+	TEXTMAP[(top * 80) + left + width - 1] = 0x8A00 | color; //-|
+}
+
 void DrawKeys(const char** keys)
 {
 	int o = 29 * 80;
@@ -254,142 +320,11 @@ static size_t myStrLen(const char* str)
 	return i;
 }
 
-void DrawMenu()
-{
-	int o = 0;
-	char* c;
-	for (int i = 0; i < NUMMENUS; i++)
-	{
-		menuLefts[i] = o;
-		TEXTMAP[o++] = 0x2000 | CLR_MENUBAR;
-		TEXTMAP[o++] = 0x2000 | CLR_MENUBAR;
-		c = menuBar[i].title;
-		while (*c)
-		{
-			if (*c == '~')
-			{
-				c++;
-				TEXTMAP[o++] = (*c++ << 8) | CLR_MENUBARKEY;
-			}
-			else
-				TEXTMAP[o++] = (*c++ << 8) | CLR_MENUBAR;
-		}
-		TEXTMAP[o++] = 0x2000 | CLR_MENUBAR;
-		TEXTMAP[o++] = 0x2000 | CLR_MENUBAR;
-
-		for (int j = 0; j < menuBar[i].numItems; j++)
-		{
-			int l = myStrLen(menuBar[i].items[j].title);
-			if (l > menuWidths[i])
-				menuWidths[i] = l;
-		}
-	}
-	for (; o < 80;)
-		TEXTMAP[o++] = 0x2000 | CLR_MENUBAR;
-}
-
 void Highlight(char left, char top, char width, uint8_t color)
 {
 	int o = (top * 80) + left;
 	for (int i = 0; i < width; i++, o++)
 	{
 		TEXTMAP[o] = (TEXTMAP[o] & ~0x00F0) | (color & 0xF0);
-	}
-}
-
-void DropMenu(int c)
-{
-	if (menuWindow != NULL)
-		CloseWindow(menuWindow);
-	menuWindow = OpenWindow(menuLefts[c], 1, menuWidths[c] + 6, menuBar[c].numItems + 2, CLR_MENU);
-	for (int i = 0; i < menuBar[c].numItems; i++)
-	{
-		if (menuBar[c].items[i].title[0] == '-')
-		{
-			int o = ((2 + i) * 80) + menuLefts[c];
-			TEXTMAP[o++] = 0x8F00 | CLR_MENU; //|-
-			for (int j = 0; j < menuWidths[c] + 4; j++)
-				TEXTMAP[o++] = 0x9000 | CLR_MENU; //--
-			TEXTMAP[o] = 0x8A00 | CLR_MENU; //-|
-			continue;
-		}
-		int o = ((2 + i) * 80) + menuLefts[c] + 3;
-		if (menuBar[c].items[i].state & 2)
-			TEXTMAP[o - 2] = 0x1000 | CLR_MENUITEM;
-
-		char *ch = menuBar[c].items[i].title;
-		while (*ch)
-		{
-			if (*ch == '~')
-			{
-				ch++;
-				TEXTMAP[o++] = (*ch++ << 8) | (menuBar[c].items[i].state & 1 ? CLR_MENUDIS : CLR_MENUITEMKEY);
-			}
-			else
-				TEXTMAP[o++] = (*ch++ << 8) | (menuBar[c].items[i].state & 1 ? CLR_MENUDIS : CLR_MENUITEM);
-		}
-	}
-	Highlight(menuLefts[c] + 1, 2, menuWidths[c] + 4, CLR_MENUSEL);
-}
-
-char OpenMenu(int cm)
-{
-	int ci = 0;
-	Highlight(menuLefts[cm], 0, myStrLen(menuBar[cm].title) + 4, CLR_MENUSEL);
-	DropMenu(cm);
-	while (1)
-	{
-		key = INP_KEYIN;
-		if ((key & 0xFF) > 0)
-		{
-			if (key == KEYSCAN_LEFT)
-			{
-				Highlight(menuLefts[cm], 0, myStrLen(menuBar[cm].title) + 4, CLR_MENUBAR);
-				if (cm == 0) cm = NUMMENUS;
-				cm--;
-				ci = 0;
-				Highlight(menuLefts[cm], 0, myStrLen(menuBar[cm].title) + 4, CLR_MENUSEL);
-				DropMenu(cm);
-			}
-			else if (key == KEYSCAN_RIGHT)
-			{
-				Highlight(menuLefts[cm], 0, myStrLen(menuBar[cm].title) + 4, CLR_MENUBAR);
-				cm++;
-				ci = 0;
-				if (cm >= NUMMENUS) cm = 0;
-				Highlight(menuLefts[cm], 0, myStrLen(menuBar[cm].title) + 4, CLR_MENUSEL);
-				DropMenu(cm);
-			}
-			else if (key == KEYSCAN_UP)
-			{
-				Highlight(menuLefts[cm] + 1, 2 + ci, menuWidths[cm] + 4, CLR_MENUITEM);
-				if (ci == 0) ci = menuBar[cm].numItems;
-				ci--;
-				while (menuBar[cm].items[ci].state & DISABLED) ci--;
-				Highlight(menuLefts[cm] + 1, 2 + ci, menuWidths[cm] + 4, CLR_MENUSEL);
-			}
-			else if (key == KEYSCAN_DOWN)
-			{
-				Highlight(menuLefts[cm] + 1, 2 + ci, menuWidths[cm] + 4, CLR_MENUITEM);
-				ci++;
-				if (ci >= menuBar[cm].numItems)
-				{
-					ci = 0;
-				}
-				else
-				{
-					while (menuBar[cm].items[ci].state & DISABLED) ci++;
-					if (ci >= menuBar[cm].numItems) ci = 0;
-				}
-				Highlight(menuLefts[cm] + 1, 2 + ci, menuWidths[cm] + 4, CLR_MENUSEL);
-			}
-			else if (key == KEYSCAN_ENTER || key == KEYSCAN_ESCAPE)
-			{
-				Highlight(menuLefts[cm], 0, myStrLen(menuBar[cm].title) + 4, CLR_MENUBAR);
-				CloseWindow(menuWindow);
-				menuWindow = NULL;
-				return (key == KEYSCAN_ENTER) ? menuBar[cm].items[ci].code : 0;
-			}
-		}
 	}
 }

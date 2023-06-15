@@ -68,6 +68,8 @@ void ScreenSaverTick()
 	}
 }
 
+//extern int Kilo(char* file);
+
 #pragma GCC diagnostic ignored "-Wmain"
 __attribute__ ((noreturn))
 void main(void)
@@ -204,6 +206,8 @@ void main(void)
 			break;
 		}
 	}
+
+//	Kilo("A:/README.TXT");
 
 	ssTicks = 0;
 	interface->vBlank = ScreenSaverTick;

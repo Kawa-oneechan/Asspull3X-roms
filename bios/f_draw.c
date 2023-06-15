@@ -218,6 +218,8 @@ void DrawLine(int x1, int y1, int x2, int y2, int color, uint8_t* dest)
 	if (REG_SCREENMODE & SMODE_320) stride /= 2;
 	if (REG_SCREENMODE & SMODE_BMP16) stride /= 2;
 
+	if (dest == NULL) dest = BITMAP;
+
 	void(*setPixel)(int,int,int,int,uint8_t*) = _setPixel8;
 	if (REG_SCREENMODE & SMODE_BMP16)
 		setPixel = _setPixel4;
@@ -339,6 +341,8 @@ void FloodFill(int x, int y, int newColor, uint8_t* dest)
 		getPixel = _getPixel4;
 		setPixel = _setPixel4;
 	}
+
+	if (dest == NULL) dest = BITMAP;
 
 	int oldColor = getPixel(x, y, stride, dest);
 

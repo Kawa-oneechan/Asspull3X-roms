@@ -117,12 +117,12 @@ char* InputBox(const char* message, char* text, size_t max)
 	return text;
 }
 
-int SwitchDrive(int which, int now)
+int SwitchDrive(int now)
 {
 	const uint16_t abcd[] = { 30, 48, 46, 32 };
 	int numDrives = interface->io.numDrives;
 
-	tWindow* win = OpenWindow((WIDTH >> 1) - 2 + (WIDTH * which), 8, 9, numDrives + 2, CLR_DIALOG);
+	tWindow* win = OpenWindow((WIDTH >> 1) - 2, 8, 9, numDrives + 2, CLR_DIALOG);
 	for (int i = 0; i < numDrives; i++)
 	{
 		//int16_t icon = ((0xB9 + (driveTypes[i] << 1)) << 8) | ((CLR_DIALOG >> 4) << 4);

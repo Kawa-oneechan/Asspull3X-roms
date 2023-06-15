@@ -43,7 +43,10 @@
 #define SplitColor(X) X >> 4, X & 0x0F
 
 #define WIDTH 39
-#define HEIGHT 24
+#define FILEWIDTH 48
+#define INFOLEFT 48
+#define INFOWIDTH 32
+#define HEIGHT 26
 #define FILESSHOWN (HEIGHT-2)
 
 typedef struct
@@ -52,42 +55,20 @@ typedef struct
 	uint16_t* bits;
 } tWindow;
 
-typedef struct
-{
-	char* title;
-	uint8_t scan;
-	uint8_t state;
-	int16_t code;
-} tMenuItem;
-
-typedef struct
-{
-	char* title;
-	uint8_t scan;
-	uint8_t numItems;
-	const tMenuItem* items;
-} tMenu;
-extern const tMenu menuBar[];
-extern tMenuItem leftMenu[], rightMenu[];
-#define NUMMENUS 4
-#define DISABLED 1
-#define CHECKED 2
-
 extern void WaitForKey();
 extern bool GetString(char left, char top, size_t width, size_t max, uint8_t color, char* text);
 extern tWindow* OpenWindow(char left, char top, char width, char height, uint8_t color);
 extern void CloseWindow(tWindow* win);
 extern void DrawPanel(char left, char top, char width, char height, uint8_t color);
+extern void DrawPanelSeparator(char left, char top, char width, uint8_t color);
 extern void Highlight(char left, char top, char width, uint8_t color);
 extern void DrawKeys(const char** keys);
-extern void DrawMenu();
-extern char OpenMenu(int num);
 
 extern int MessageBox(const char* message, int type);
 extern char* InputBox(const char* message, char* text, size_t max);
 extern void ShowError(const char* message);
 extern int ChangeAttributes(char* filePath);
-extern int SwitchDrive(int which, int now);
+extern int SwitchDrive(int now);
 extern void PrintBuffer(char* buffer);
 
 extern int StartApp(char* filePath);
