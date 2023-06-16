@@ -18,6 +18,12 @@ void* memcpy(void* dst, const void* src, size_t count)
 	return(ret);
 }
 
+void* memmove(void* dst, const void* src, size_t count)
+{
+	//this is so absolutely gonna bite me in the ass lol
+	return memcpy(dst, src, count);
+}
+
 void* memset(void* dst, int val, size_t count)
 {
 	void* start = dst;
@@ -92,6 +98,13 @@ int strkitten(char* dest, char src)
 	i = strlen(dest);
 	dest[i++] = src;
 	dest[i++] = '\0';
+	return 0;
+}
+
+char* strrchr(const char* s, int c)
+{
+	size_t n = strlen(s) + 1;
+	while (n--) if (s[n]==c) return (void *)(s+n);
 	return 0;
 }
 
