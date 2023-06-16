@@ -11,6 +11,7 @@ parser.add_argument('-r', '--raw', help='skip compression', action='store_true')
 parser.add_argument('-v', '--verbose', help='use verbose output', action='store_true')
 parser.add_argument('-g', '--nograds', help='skip HDMA gradients', action='store_true')
 parser.add_argument('-c', '--clipgrads', help='clip HDMA gradients', action='store_true')
+parser.add_argument('-t', '--truepal', help='store minimal palette data', action='store_true')
 args = parser.parse_args()
 
 stem = Path(args.inFile).stem
@@ -40,6 +41,8 @@ if fourBits:
 	stride = im.width // 2
 
 palSize = 32 if fourBits else 512
+if args.truepal:
+	palSize = truePalLength * 2
 palLength = 16 if fourBits else 256
 palOffset = 0x18
 dataOffset = palOffset + palSize
@@ -127,7 +130,7 @@ if args.verbose:
 	print(f'flags: {flags}')
 	print(f'width: {im.width}, height: {im.height}, stride: {stride}')
 	print(f'palLength: {palLength} (true {truePalLength})')
-	print(f'palSize: 0x{palSize:X}')
+	print(f'palSize: 0x{palSize:X} ({palSize})')
 	print(f'palOffset: 0x{palOffset:X}')
 	print(f'dataSize: 0x{len(outData):X}')
 	print(f'dataOffset: 0x{dataOffset:X}')
@@ -152,6 +155,8 @@ for i in range(palLength):
 	if i < truePalLength:
 		r, g, b = inPal[(i * 3) + 0], inPal[(i * 3) + 1], inPal[(i * 3) + 2]
 	else:
+		if args.truepal:
+			break;
 		r, g, b = 0, 0, 0
 	snes = ((b >> 3) << 10) | ((g >> 3) << 5) | (r >> 3)
 	bf.write(struct.pack('>H', snes))
@@ -203,7 +208,7 @@ if len(hdmaChannels) > 0:
 		for y in gradient:
 			bf.write(struct.pack('>H', y))
 		if args.verbose:
-			print(f'hdma[{i}]: 0x{hdmaControl:X}, size 0x{len(gradient):X}, {start} to {stop}, for {length}')
+			print(f'hdma[{i}]: 0x{hdmaControl:0>8X}, size {len(gradient)}, {start} to {stop}, for {length}')
 
 if Path(args.outFile).suffix == '.c' or Path(args.outFile).suffix == '.s':
 	asS = not Path(args.outFile).suffix == '.c'

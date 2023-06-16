@@ -327,8 +327,6 @@ void BlankOut()
 	OplReset();
 	REG_SCREENMODE = REG_SCREENFADE = REG_MAPSET = 0;
 	REG_SCROLLX1 = REG_SCROLLX2 = REG_SCROLLY1 = REG_SCROLLY2 = 0;
-	REG_HDMACONTROL[0] = 0;
-	REG_HDMACONTROL[1] = 0;
 	OBJECTS_A[0] = 0;
 	interface->vBlank = 0;
 	interface->drawCharFont = (char*)TEXTFONT_BOLD8;

@@ -73,8 +73,8 @@ clean:
 # --------------------------------------------------------------------
 
 splash.s : splash.api
-splash.api : splash.png splash-h0.png splash-h1.png
-	$(IMG2ASS) splash.png splash.api -c
+splash.api : splash.png
+	$(IMG2ASS) splash.png splash.api -t
 
 icons.s : icons.img.bin
 icons.img.bin : icons.png
