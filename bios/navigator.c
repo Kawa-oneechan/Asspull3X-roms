@@ -41,6 +41,42 @@ void PrintFile(char* filePath)
 char* filenames = { 0 };
 int fileCt = 0;
 
+void SortExt()
+{
+	char t[16] = { 0 };
+	for (int i = 0; i < fileCt - 1; i++)
+	{
+		for (int j = i + 1; j < fileCt; j++)
+		{
+			char *ext1 = strrchr(&filenames[i * 16], '.') + 1;
+			char *ext2 = strrchr(&filenames[j * 16], '.') + 1;
+			if (strncmp(ext1, ext2, 3) > 0)
+			{
+				strcpy(t, &filenames[j * 16]);
+				strcpy(&filenames[j * 16], &filenames[i * 16]);
+				strcpy(&filenames[i * 16], t);
+			}
+		}
+	}
+}
+
+void SortName()
+{
+	char t[16] = { 0 };
+	for (int i = 0; i < fileCt - 1; i++)
+	{
+		for (int j = i + 1; j < fileCt; j++)
+		{
+			if (strncmp(&filenames[i * 16], &filenames[j * 16], 3) > 0)
+			{
+				strcpy(t, &filenames[j * 16]);
+				strcpy(&filenames[j * 16], &filenames[i * 16]);
+				strcpy(&filenames[i * 16], t);
+			}
+		}
+	}
+}
+
 void Populate(const char* path)
 {
 	EFileError ret;
@@ -87,7 +123,7 @@ void Populate(const char* path)
 	}
 
 	ret = FindFirst(&dir, &info, path, "*.*");
-	while(ret == 0 && info.fname[0] && fileCt < MAXFILES)
+	while (ret == 0 && info.fname[0] && fileCt < MAXFILES)
 	{
 		if (!(info.fattrib & AM_HIDDEN))
 		{
@@ -607,7 +643,7 @@ void Navigator(void)
 	char startingPath[8] = "_:\\";
 	for (int i = 0; i < interface->io.numDrives; i++)
 	{
-		volatile uint8_t* firstDisk = (uint8_t*)0x02000000 + (interface->io.diskToDev[i] * 0x8000);
+		volatile uint8_t* firstDisk = (uint8_t*)MEM_DEVS + (interface->io.diskToDev[i] * 0x8000);
 		if (firstDisk[4] & 1)
 		{
 			startingPath[0] = 'A' + i;

@@ -52,11 +52,11 @@ extern int f_mount (FATFS* fs, const char* path, char opt);
 
 void PrepareDiskToDevMapping()
 {
-	unsigned char* devices = (unsigned char*)0x02000000;
+	unsigned char* devices = (unsigned char*)MEM_DEVS;
 	int n = 0;
 	for (char i = 0; i < 16; i++)
 	{
-		if (*(int16_t*)devices == 0x0144)
+		if (*(int16_t*)devices == DEVICE_ID_DISKDRIVE)
 		{
 			if (interface->io.numDrives < FF_VOLUMES)
 				interface->io.diskToDev[n] = i;

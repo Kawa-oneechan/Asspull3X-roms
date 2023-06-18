@@ -21,6 +21,7 @@
     <ClCompile Include="f_misc.c" />
     <ClCompile Include="f_text.c" />
     <ClCompile Include="main.c" />
+    <ClCompile Include="minirt.c" />
     <ClCompile Include="navigator.c" />
     <ClCompile Include="nav_dlgs.c" />
     <ClCompile Include="nav_edit.c" />

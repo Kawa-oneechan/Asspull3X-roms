@@ -152,6 +152,10 @@ typedef unsigned long long uint64_t;
 #define TEXTFONT_THIN16			(TEXTFONT + 0x1000)
 #define TEXTFONT_BOLD16			(TEXTFONT + 0x2000)
 
+#define CARTRIDGE_MARKER		0x41535321
+#define DEVICE_ID_LINEPRINTER	0x4C50
+#define DEVICE_ID_DISKDRIVE		0x0144
+
 typedef struct
 {
 	int32_t identifier;		// Should always be "AIMG".

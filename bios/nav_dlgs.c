@@ -164,7 +164,7 @@ int SwitchDrive(int now)
 			}
 			else if (key == 0x1C) //enter
 			{
-				volatile uint8_t* firstDisk = (uint8_t*)0x02000000 + (interface->io.diskToDev[ret] * 0x8000);
+				volatile uint8_t* firstDisk = (uint8_t*)MEM_DEVS + (interface->io.diskToDev[ret] * 0x8000);
 				if (firstDisk[4] & 1)
 				{
 					CloseWindow(win);

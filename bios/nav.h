@@ -83,6 +83,7 @@ extern int strncmp(const char *l, const char *r, size_t max);
 extern char* strcpy(char* s2, const char* s1);
 extern int strcat(char* dest, const char* src);
 extern int strkitten(char* dest, char src);
+extern char* strrchr(const char* s, int c);
 extern int getchar();
 
 extern uint16_t key;

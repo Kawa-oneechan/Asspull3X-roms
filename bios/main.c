@@ -132,19 +132,19 @@ void main(void)
 	{
 		REG_CARET = 80 * 7;
 		Write("  Devices\n  \x90\x90\x90\x90\x90\x90\x90\n");
-		uint8_t* devices = (uint8_t*)0x02000000;
+		uint8_t* devices = (uint8_t*)MEM_DEVS;
 		for (char i = 0; i < 16; i++)
 		{
 			REG_CARET = (80 * ((i % 8) + 9)) + ((i / 8) * 30) + 2;
 			Write("%2d. ", i);
 			if (i == 0)
 				Write("Input controller");
-			else if (*(int16_t*)devices == 0x4C50)
+			else if (*(int16_t*)devices == DEVICE_ID_LINEPRINTER)
 			{
 				interface->linePrinter = devices + 2;
 				Write("Line printer");
 			}
-			else if (*(int16_t*)devices == 0x0144)
+			else if (*(int16_t*)devices == DEVICE_ID_DISKDRIVE)
 			{
 				for (int j = 0; j < 4; j++)
 				{
@@ -161,10 +161,10 @@ void main(void)
 		}
 	}
 #else
-	uint8_t* devices = (uint8_t*)0x02000000;
+	uint8_t* devices = (uint8_t*)MEM_DEVS;
 	for (char i = 0; i < 15; i++)
 	{
-		if (*(int16_t*)devices == 0x4C50)
+		if (*(int16_t*)devices == DEVICE_ID_LINEPRINTER)
 		{
 			interface->linePrinter = devices + 2;
 			break;
@@ -199,7 +199,7 @@ void main(void)
 
 	for (int i = 0; i < interface->io.numDrives; i++)
 	{
-		volatile uint8_t* firstDisk = (uint8_t*)0x02000000 + (interface->io.diskToDev[i] * 0x8000);
+		volatile uint8_t* firstDisk = (uint8_t*)MEM_DEVS + (interface->io.diskToDev[i] * 0x8000);
 		if (firstDisk[4] & 1)
 		{
 			LoadConfig(i);
@@ -214,7 +214,7 @@ void main(void)
 	while(true)
 	{
 goAgain:
-		if (*cartCode == 0x41535321) //ASS!
+		if (*cartCode == CARTRIDGE_MARKER)
 		{
 			entry = (void*)0x00020004;
 			OBJECTS_A[0] = OBJECTA_BUILD(16, 0, 1, 0); //cart
@@ -340,7 +340,7 @@ bool AnyDisks()
 {
 	for (int i = 0; i < interface->io.numDrives; i++)
 	{
-		volatile uint8_t* firstDisk = (uint8_t*)0x02000000 + (interface->io.diskToDev[i] * 0x8000);
+		volatile uint8_t* firstDisk = (uint8_t*)MEM_DEVS + (interface->io.diskToDev[i] * 0x8000);
 		if (firstDisk[4] & 1)
 			return true;
 	}
