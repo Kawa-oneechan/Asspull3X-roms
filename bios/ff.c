@@ -311,7 +311,7 @@ static BYTE CurrVol;				/* Current drive */
 #endif
 
 
-#if FF_STR_VOLUME_ID
+#if FF_STR_VOLUME_ID && FF_STR_VOLUME_ID < 3
 #ifdef FF_VOLUME_STRS
 static const char* const VolumeStr[FF_VOLUMES] = {FF_VOLUME_STRS};	/* Pre-defined volume ID */
 #endif
@@ -758,7 +758,7 @@ static DWORD create_chain (	/* 0:No free cluster, 1:Internal error, 0xFFFFFFFF:D
 	if (res == FR_OK && clst != 0) {
 		res = put_fat(fs, clst, ncl);		/* Link it from the previous one if needed */
 	}
-	
+
 	if (res == FR_OK) {			/* Update FSINFO if function succeeded. */
 		fs->last_clst = ncl;
 		if (fs->free_clst <= fs->n_fatent - 2) fs->free_clst--;
@@ -1376,7 +1376,7 @@ static int get_ldnumber (	/* Returns logical drive number (-1:invalid drive numb
 	TCHAR tc;
 	int i;
 	int vol = -1;
-#if FF_STR_VOLUME_ID		/* Find string volume ID */
+#if FF_STR_VOLUME_ID && FF_STR_VOLUME_ID < 3		/* Find string volume ID */
 	const char *sp;
 	char c;
 #endif
@@ -1390,6 +1390,14 @@ static int get_ldnumber (	/* Returns logical drive number (-1:invalid drive numb
 		if (IsDigit(*tp) && tp + 2 == tt) {	/* Is there a numeric volume ID + colon? */
 			i = (int)*tp - '0';	/* Get the LD number */
 		}
+#if FF_STR_VOLUME_ID == 3	/* Kawa's drive letter hack */
+		if (tp + 2 == tt) {
+			if (IsLower(*tp))
+				i = (int)*tp - 'a';
+			else if (IsUpper(*tp))
+				i = (int)*tp - 'A';
+		}
+#endif
 #if FF_STR_VOLUME_ID == 1	/* Arbitrary string is enabled */
 		else {
 			i = 0;
@@ -2378,7 +2386,7 @@ FRESULT f_getcwd (
 	TCHAR *tp = buff;
 #if FF_VOLUMES >= 2
 	UINT vl;
-#if FF_STR_VOLUME_ID
+#if FF_STR_VOLUME_ID && FF_STR_VOLUME_ID < 3
 	const char *vp;
 #endif
 #endif
@@ -2426,7 +2434,13 @@ FRESULT f_getcwd (
 			if (i == len) buff[--i] = '/';	/* Is it the root-directory? */
 #if FF_VOLUMES >= 2			/* Put drive prefix */
 			vl = 0;
-#if FF_STR_VOLUME_ID >= 1	/* String volume ID */
+#if FF_STR_VOLUME_ID == 3	/* Kawa's single letter hack */
+			if (i >= 3) {
+				*tp++ = (TCHAR)'A' + CurrVol;
+				*tp++ = (TCHAR)':';
+				vl = 2;
+			}
+#elif FF_STR_VOLUME_ID >= 1	/* String volume ID */
 			for (n = 0, vp = (const char*)VolumeStr[CurrVol]; vp[n]; n++) ;
 			if (i >= n + 2) {
 				if (FF_STR_VOLUME_ID == 2) *tp++ = (TCHAR)'/';
@@ -3350,7 +3364,7 @@ FRESULT f_setlabel (
 	}
 	if (dirvn[0] == DDEM) LEAVE_FF(fs, FR_INVALID_NAME);	/* Reject illegal name (heading DDEM) */
 	while (di && dirvn[di - 1] == ' ') di--;				/* Snip trailing spaces */
-	
+
 	/* Set volume label */
 	dj.obj.fs = fs; dj.obj.sclust = 0;	/* Open root directory */
 	res = dir_sdi(&dj, 0);
@@ -3798,7 +3812,7 @@ FRESULT f_mkfs (
 
 	/* Now start to create an FAT volume at b_vol and sz_vol */
 
-	do {	/* Pre-determine the FAT type */		
+	do {	/* Pre-determine the FAT type */
 		if (sz_au > 128) sz_au = 128;	/* Invalid AU for FAT/FAT32? */
 		if (fsopt & FM_FAT32) {	/* FAT32 possible? */
 			if (!(fsopt & FM_FAT)) {	/* no-FAT? */

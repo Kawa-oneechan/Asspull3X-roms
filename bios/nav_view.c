@@ -3,6 +3,7 @@
 int StartApp(char* filePath)
 {
 	interface->vBlank = 0;
+	interface->io.attribs = 0x07;
 	void(*entry)(void) = (void*)0x01002020;
 	FILEINFO nfo;
 	FileStat(filePath, &nfo);
