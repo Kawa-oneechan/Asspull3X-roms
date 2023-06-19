@@ -18,7 +18,7 @@ const IDiskLibrary diskLibrary =
 	GetFree
 };
 
-FATFS FatFs[FF_VOLUMES] = { 0 };
+FATFS* FatFs[FF_VOLUMES];
 
 extern int f_open (FILE* fp, const char* path, char mode);
 extern int f_close (FILE* fp);
@@ -67,7 +67,8 @@ void PrepareDiskToDevMapping()
 	for (int i = 0; i < n && i < FF_VOLUMES; i++)
 	{
 		char path[4] = { i + 'A', ':', 0 };
-		f_mount(&FatFs[i], path, 1);
+		FatFs[i] = malloc(sizeof(FATFS));
+		f_mount(FatFs[i], path, 1);
 	}
 	interface->io.numDrives = n;
 }
