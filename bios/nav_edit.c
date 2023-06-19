@@ -58,7 +58,7 @@ int getdelim(char** linePtr, int* n, char delim, FILE* file)
 
 /*** data ***/
 
-typedef struct erow
+typedef struct
 {
 	int size;
 	int rsize;
@@ -66,7 +66,7 @@ typedef struct erow
 	char *render;
 } erow;
 
-struct editorConfig
+typedef struct
 {
 	int cx, cy;
 	int rx;
@@ -81,21 +81,21 @@ struct editorConfig
 	bool redraw;
 	int redrawrow;
 //	struct termios orig_termios;
-};
+} editorConfig;
 
-struct editorConfig E;
+editorConfig E;
 
-int editorRowCxToRx(erow *row, int cx);
-void editorInsertChar(int c, bool shift);
-void editorInsertNewline();
-void editorDelChar();
-void editorSave();
+static int editorRowCxToRx(erow *row, int cx);
+static void editorInsertChar(int c, bool shift);
+static void editorInsertNewline();
+static void editorDelChar();
+static void editorSave();
 
 /*** terminal ***/
 
 /*** output ***/
 
-void editorScroll()
+static void editorScroll()
 {
 	E.rx = 0;
 	if (E.cy < E.numrows)
@@ -132,7 +132,7 @@ void editorScroll()
 	}
 }
 
-void put(char *text, int len)
+static void put(char *text, int len)
 {
 	while (len--)
 	{
@@ -141,7 +141,7 @@ void put(char *text, int len)
 	}
 }
 
-void editorDrawRows()
+static void editorDrawRows()
 {
 	if (!E.redraw)
 	{
@@ -190,7 +190,7 @@ void editorDrawRows()
 	REG_CARET = 0x8000;
 }
 
-void editorDrawStatusBar()
+static void editorDrawStatusBar()
 {
 	char status[80];
 	char rstatus[80];
@@ -205,7 +205,7 @@ void editorDrawStatusBar()
 	Write(status);
 }
 
-void editorRefreshScreen()
+static void editorRefreshScreen()
 {
 	REG_CARET = 0x0000;
 	editorScroll();
@@ -217,7 +217,7 @@ void editorRefreshScreen()
 
 /*** input ***/
 
-void editorMoveCursor(uint8_t key)
+static void editorMoveCursor(uint8_t key)
 {
 	erow *row = (E.cy >= E.numrows) ? NULL : &E.row[E.cy];
 	switch (key)
@@ -260,7 +260,7 @@ void editorMoveCursor(uint8_t key)
 		E.cx = rowlen;
 }
 
-void editorProcessKeypress()
+static void editorProcessKeypress()
 {
 	uint8_t c;
 	while ((c = INP_KEYIN) == 0) vbl();
@@ -332,7 +332,7 @@ void editorProcessKeypress()
 
 /*** row operations ***/
 
-int editorRowCxToRx(erow *row, int cx)
+static int editorRowCxToRx(erow *row, int cx)
 {
 	int rx = 0;
 	int j;
@@ -345,7 +345,7 @@ int editorRowCxToRx(erow *row, int cx)
 	return rx;
 }
 
-void editorUpdateRow(erow *row)
+static void editorUpdateRow(erow *row)
 {
 	int tabs = 0;
 	int j;
@@ -375,7 +375,7 @@ void editorUpdateRow(erow *row)
 	E.redraw = true;
 }
 
-void editorInsertRow(int at, char *s, size_t len)
+static void editorInsertRow(int at, char *s, size_t len)
 {
 	if (at < 0 || at > E.numrows) return;
 	E.row = realloc(E.row, sizeof(erow) * (E.numrows + 1));
@@ -393,13 +393,13 @@ void editorInsertRow(int at, char *s, size_t len)
 	E.dirty = true;
 }
 
-void editorFreeRow(erow *row)
+static void editorFreeRow(erow *row)
 {
 	free(row->render);
 	free(row->chars);
 }
 
-void editorDelRow(int at)
+static void editorDelRow(int at)
 {
 	if (at < 0 || at >= E.numrows) return;
 	editorFreeRow(&E.row[at]);
@@ -408,7 +408,7 @@ void editorDelRow(int at)
 	E.dirty = true;
 }
 
-void editorRowInsertChar(erow *row, int at, int c)
+static void editorRowInsertChar(erow *row, int at, int c)
 {
 	if (at < 0 || at > row->size) at = row->size;
 	row->chars = realloc(row->chars, row->size + 2);
@@ -420,7 +420,7 @@ void editorRowInsertChar(erow *row, int at, int c)
 	E.dirty = true;
 }
 
-void editorInsertNewline()
+static void editorInsertNewline()
 {
 	if (E.cx == 0)
 	{
@@ -439,7 +439,7 @@ void editorInsertNewline()
 	E.cx = 0;
 }
 
-void editorRowAppendString(erow *row, char *s, size_t len)
+static void editorRowAppendString(erow *row, char *s, size_t len)
 {
 	row->chars = realloc(row->chars, row->size + len + 1);
 	memcpy(&row->chars[row->size], s, len);
@@ -449,7 +449,7 @@ void editorRowAppendString(erow *row, char *s, size_t len)
 	E.dirty = true;
 }
 
-void editorRowDelChar(erow *row, int at)
+static void editorRowDelChar(erow *row, int at)
 {
 	if (at < 0 || at >= row->size) return;
 	//memmove(&row->chars[at], &row->chars[at + 1], row->size - at);
@@ -462,7 +462,7 @@ void editorRowDelChar(erow *row, int at)
 
 /*** editor operations ***/
 
-void editorInsertChar(int c, bool shift)
+static void editorInsertChar(int c, bool shift)
 {
 	if (E.cy == E.numrows)
 	{
@@ -473,7 +473,7 @@ void editorInsertChar(int c, bool shift)
 	E.redrawrow = E.cy;
 }
 
-void editorDelChar()
+static void editorDelChar()
 {
 	if (E.cx == 0 && E.cy == 0) return;
 	if (E.cy == E.numrows) return;
@@ -494,7 +494,7 @@ void editorDelChar()
 
 /*** file i/o ***/
 
-char *editorRowsToString(int *buflen)
+static char *editorRowsToString(int *buflen)
 {
 	int totlen = 0;
 	int j;
@@ -513,7 +513,7 @@ char *editorRowsToString(int *buflen)
 	return buf;
 }
 
-void editorOpen(char *filename)
+static void editorOpen(char *filename)
 {
 	if (E.filename) free(E.filename);
 	E.filename = strdup(filename);
@@ -537,7 +537,7 @@ void editorOpen(char *filename)
 	E.dirty = false;
 }
 
-void editorSave()
+static void editorSave()
 {
 	if (E.filename == NULL) return;
 	int len;
@@ -552,7 +552,7 @@ void editorSave()
 
 /*** init ***/
 
-void initEditor()
+static void initEditor()
 {
 	E.cx = 0;
 	E.cy = 0;

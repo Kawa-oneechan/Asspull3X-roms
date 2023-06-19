@@ -382,6 +382,7 @@ void SelectFile(const char* startingPath)
 			{
 				Highlight(1, 1 + index - scroll, WIDTH - 1, CLR_PANELSEL);
 				InfoPanel(workPath, &filenames[index * 16]);
+				SetTextColor(0, 7);
 			}
 		}
 		curFN = &filenames[index * 16];
@@ -586,7 +587,7 @@ void SelectFile(const char* startingPath)
 				}
 				else if (key == KEYSCAN_F4)
 				{
-					ShowError("Editor is in development.");
+					Kilo(filePath);
 				}
 				else if (key == KEYSCAN_F5)
 				{
