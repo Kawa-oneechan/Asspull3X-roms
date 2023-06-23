@@ -444,6 +444,7 @@ void CheckForDisk()
 		else if (key == KEYSCAN_N)
 		{
 			DRAW->Fade(false, true);
+			interface->vBlank = NULL;
 			REG_HDMACONTROL[0] = 0;
 			OBJECTS_A[0] = OBJECTS_A[1] = OBJECTS_A[2] = OBJECTS_A[3] = 0;
 			return;
@@ -455,6 +456,7 @@ void CheckForDisk()
 	ret = DISK->ReadFile(&file, (void*)levelPack, nfo.fsize);
 	ret = DISK->CloseFile(&file);
 	DRAW->Fade(false, true);
+	interface->vBlank = NULL;
 	REG_HDMACONTROL[0] = 0;
 	OBJECTS_A[0] = OBJECTS_A[1] = OBJECTS_A[2] = OBJECTS_A[3] = 0;
 }
