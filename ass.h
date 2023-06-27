@@ -155,6 +155,7 @@ typedef unsigned long long uint64_t;
 #define CARTRIDGE_MARKER		0x41535321
 #define DEVICE_ID_LINEPRINTER	0x4C50
 #define DEVICE_ID_DISKDRIVE		0x0144
+#define DEVICE_ID_INPUTOUTPUT	0x499F
 
 typedef struct
 {

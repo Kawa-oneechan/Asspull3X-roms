@@ -147,7 +147,7 @@ void KeyboardTest()
 	{
 		vbl();
 		int theKey = 0;
-		for (int i = 0; i < 100; i++)
+		for (int i = 0; i < 0x100; i++)
 		{
 			if (INP_KEYMAP[i])
 			{
