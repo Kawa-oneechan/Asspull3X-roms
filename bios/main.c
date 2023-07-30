@@ -2,8 +2,6 @@
 #include "../ass-midi.h"
 #include "../ass-keys.h"
 
-//#define EXTENSIVE
-
 #ifdef printf
 #undef printf
 #define printf Write
@@ -102,65 +100,8 @@ void main(void)
 	((char*)TEXTMAP)[19 + 160 + 4] = 0x09;
 	interface->io.attribs = 0x07;
 
-#ifdef EXTENSIVE
-	{
-		REG_CARET = 80 * 3;
-		Write("  Memory\n  \x90\x90\x90\x90\x90\x90\n");
-		uint8_t* memTest = (uint8_t*)0x01000000;
-		while (memTest < (uint8_t*)0x01400000)
-		{
-			REG_CARET = (80 * 5) + 2;
-			Write("%#08X...", memTest);
-			*memTest = 42;
-			vbl();
-			if (*memTest != 42)
-			{
-				interface->io.attribs = 0x0C;
-				Write(" something's up.");
-				while (1) vbl();
-			}
-			memTest += 1024 * 32;
-		}
-		interface->io.attribs = 0x0A;
-		Write(" okay!\n\n");
-		interface->io.attribs = 0x07;
-	}
-#endif
 	PrepareDiskToDevMapping();
 
-#ifdef EXTENSIVE
-	{
-		REG_CARET = 80 * 7;
-		Write("  Devices\n  \x90\x90\x90\x90\x90\x90\x90\n");
-		uint8_t* devices = (uint8_t*)MEM_DEVS;
-		for (char i = 0; i < 16; i++)
-		{
-			REG_CARET = (80 * ((i % 8) + 9)) + ((i / 8) * 30) + 2;
-			Write("%2d. ", i);
-			if (i == 0)
-				Write("Input controller");
-			else if (*(int16_t*)devices == DEVICE_ID_LINEPRINTER)
-			{
-				interface->linePrinter = devices + 2;
-				Write("Line printer");
-			}
-			else if (*(int16_t*)devices == DEVICE_ID_DISKDRIVE)
-			{
-				for (int j = 0; j < 4; j++)
-				{
-					if (interface->io.diskToDev[j] == i)
-					{
-						Write("%s drive %c:", *(char*)&devices[5] ? "Hard disk" : "Diskette", 'A' + j);
-						break;
-					}
-				}
-			}
-			else
-				Write("----");
-			devices += 0x8000;
-		}
-	}
-#else
 	uint8_t* devices = (uint8_t*)MEM_DEVS;
 	for (char i = 0; i < 15; i++)
 	{
@@ -171,7 +112,6 @@ void main(void)
 		}
 		devices += 0x8000;
 	}
-#endif
 
 	REG_CARET = 80 * 18;
 
@@ -187,13 +127,6 @@ void main(void)
 		while (INP_KEYIN != KEYSCAN_F1)
 			vbl();
 	}
-#ifdef EXTENSIVE
-	else
-	{
-		WaitForVBlanks(1);
-		Jingle();
-	}
-#endif
 
 	//Fade(false, false);
 
@@ -207,7 +140,9 @@ void main(void)
 		}
 	}
 
+//	ShowText("A:/README.TXT");
 //	Kilo("A:/README.TXT");
+//	Navigator();
 
 	ssTicks = 0;
 	interface->vBlank = ScreenSaverTick;
@@ -298,18 +233,10 @@ goAgain:
 
 	if (showSplash)
 	{
-#ifndef EXTENSIVE
 		if (entry != Navigator)
 			Jingle();
 		MidiReset();
 		OplReset();
-#else
-		MidiReset();
-		OplReset();
-		MIDI_PROGRAM(1, MIDI_GUITARFRETNOISE);
-		MIDI_KEYON(1, MIDI_C4, 80);
-		WaitForVBlanks(256);
-#endif
 		Fade(false, false);
 	}
 

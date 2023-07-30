@@ -28,6 +28,8 @@ void WaitForVBlanks(int vbls)
 }
 
 //CONSIDER: Replace these with #define macros in ass.h.
+//RECONSIDER: That may cause GCC to optimize away all but the
+//last setup in a series.
 void DmaCopy(void* dst, const void* src, size_t size, int step)
 {
 	REG_DMASOURCE = (int)src;
@@ -118,9 +120,9 @@ char* GetLocaleStr(ELocale category, int item)
 #define ALIGN4(x) (((((x)-1)>>2)<<2)+4)
 extern int __HEAP_START; //0x01100000 presumed.
 
-void* heap = (void*)0x01100000; //0;
+static void* heap = (void*)0x01100000; //0;
 
-void* sbrk(int incr)
+static void* sbrk(int incr)
 {
 	if (incr == 0) return heap;
 	void *prev_heap;
@@ -139,13 +141,6 @@ void* sbrk(int incr)
 	return prev_heap; //(void*)ALIGN4((uint32_t)prev_heap);
 }
 
-void* brk(void* new_heap)
-{
-	void* prev_heap = heap;
-	heap = new_heap;
-	return prev_heap;
-}
-
 typedef struct malloc_block_meta {
 	uint32_t size;
 	struct malloc_block_meta* next;
@@ -154,7 +149,7 @@ typedef struct malloc_block_meta {
 
 #define MALLOC_META_SIZE sizeof(struct malloc_block_meta)
 
-void* malloc_global_base = NULL;
+static void* malloc_global_base = NULL;
 
 static malloc_block_meta* malloc_find_free_block(struct malloc_block_meta** last, size_t size)
 {
@@ -181,6 +176,7 @@ static struct malloc_block_meta* malloc_request_space(struct malloc_block_meta* 
 	return block;
 }
 
+__attribute__((alloc_size(1)))
 void* HeapAlloc(size_t size)
 {
 	malloc_block_meta* block;
@@ -225,6 +221,7 @@ void HeapFree(void* ptr)
 	block_ptr->is_free = true;
 }
 
+__attribute__((alloc_size(2)))
 void* HeapReAlloc(void* ptr, size_t size)
 {
 	if (!ptr) //NULL ptr. realloc should act like malloc.
@@ -245,6 +242,7 @@ void* HeapReAlloc(void* ptr, size_t size)
 	return new_ptr;
 }
 
+__attribute__((alloc_size(1, 2)))
 void* HeapCAlloc(size_t nelem, size_t elsize)
 {
 	size_t size = nelem * elsize; //TODO: check for overflow.

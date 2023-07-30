@@ -54,7 +54,8 @@ void TilemapTest()
 	while (INP_KEYIN == 0) vbl();
 }
 
-#define NUMOPTS 11
+#define NUMOPTS 12
+extern void SystemInfo();
 extern void TextTest();
 extern void GraphicsTest();
 extern void KeyboardTest();
@@ -67,6 +68,7 @@ extern void OPLTest();
 
 const char* const optionNames[] =
 {
+	"System Information",
 	"Textmode",
 	"Bitmap graphics",
 	"Tilemaps",
@@ -81,6 +83,7 @@ const char* const optionNames[] =
 };
 const void* const optionFuncs[] =
 {
+	SystemInfo,
 	TextTest,
 	GraphicsTest,
 	TilemapTest,
