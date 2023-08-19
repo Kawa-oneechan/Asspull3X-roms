@@ -54,8 +54,9 @@ void TilemapTest()
 	while (INP_KEYIN == 0) vbl();
 }
 
-#define NUMOPTS 12
+#define NUMOPTS 13
 extern void SystemInfo();
+extern void MiscInfo();
 extern void TextTest();
 extern void GraphicsTest();
 extern void KeyboardTest();
@@ -69,7 +70,8 @@ extern void OPLTest();
 const char* const optionNames[] =
 {
 	"System Information",
-	"Textmode",
+	"Miscellaneous Information",
+	"Text mode",
 	"Bitmap graphics",
 	"Tilemaps",
 	"Keyboard",
@@ -84,6 +86,7 @@ const char* const optionNames[] =
 const void* const optionFuncs[] =
 {
 	SystemInfo,
+	MiscInfo,
 	TextTest,
 	GraphicsTest,
 	TilemapTest,
@@ -132,7 +135,7 @@ int main(void)
 			TEXT->Write(optionNames[i]);
 		}
 		char option = getchar();
-		if (option >= 'a' && option <= 'a' + NUMOPTS)
+		if (option >= 'a' && option < 'a' + NUMOPTS)
 		{
 			void (*func)(void) = (void*)optionFuncs[option-'a'];
 			if (func == 0)
