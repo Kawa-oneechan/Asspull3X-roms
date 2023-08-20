@@ -25,6 +25,7 @@ static const char sctopit[] = {
 	 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  // 0xf0
 };
 
+/*
 static const char* const pits[] = {
 	"C-1","C#-1","D-1","D#-1","E-1","F-1","F#-1","G-1","G#-1","A-1","A#-1","B-1",
 	"C0","C#0","D0","D#0","E0","F0","F#0","G0","G#0","A0","A#0","B0",
@@ -38,6 +39,7 @@ static const char* const pits[] = {
 	"C8","C#8","D8","D#8","E8","F8","F#8","G8","G#8","A8","A#8","B8",
 	"C9","C#9","D9","D#9","E9","F9","F#9","G9","G#9","A9","A#9","B9",
 };
+*/
 
 #define IVORY 0x7FFF
 #define EBONY 0x0C63
