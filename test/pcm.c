@@ -47,20 +47,20 @@ void PCMTest()
 
 	for (int r = 0; r < 2; r++)
 	{
-		for (int i = 0; i < 256; i++)
+		for (int i = 0; i < 256; i += 16)
 		{
 			PCMVOLUME[0] = 255 - i;
 			PCMVOLUME[1] = i;
 			MISC->WaitForVBlanks(4);
 		}
-		MISC->WaitForVBlanks(128);
-		for (int i = 0; i < 256; i++)
+		MISC->WaitForVBlanks(32);
+		for (int i = 0; i < 256; i += 16)
 		{
 			PCMVOLUME[0] = i;
 			PCMVOLUME[1] = 255 - i;
 			MISC->WaitForVBlanks(4);
 		}
-		MISC->WaitForVBlanks(128);
+		MISC->WaitForVBlanks(32);
 	}
 
 	PCMLENGTH[0] = 0;

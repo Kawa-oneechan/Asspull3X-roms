@@ -1,5 +1,7 @@
 #include "../ass.h"
 
+extern void WaitForKey();
+
 static void HighWaitForKey()
 {
 	//TEXT->SetCursorPosition(0, 28);
