@@ -71,7 +71,7 @@ typedef unsigned long long uint64_t;
 #define REG_WINLEFT		*(uint16_t*)(MEM_IO + 0x0022)
 #define REG_WINRIGHT	*(uint16_t*)(MEM_IO + 0x0024)
 #define REG_CARET		*(uint16_t*)(MEM_IO + 0x0054)
-#define REG_TIMET		*(volatile int64_t*)(MEM_IO + 0x0060)
+#define REG_TIMET		*(volatile int32_t*)(MEM_IO + 0x0060)
 #define REG_DMASOURCE	*(volatile uint32_t*)(MEM_IO + 0x0100)
 #define REG_DMATARGET	*(volatile uint32_t*)(MEM_IO + 0x0104)
 #define REG_DMALENGTH	*(volatile uint32_t*)(MEM_IO + 0x0108)
@@ -326,7 +326,7 @@ typedef enum {
 //ASS-RT SUPPORT
 //--------------
 
-typedef int64_t time_t;
+typedef int32_t time_t;
 typedef struct {
 	int tm_sec;   //0-59
 	int tm_min;   //0-59

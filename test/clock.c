@@ -135,7 +135,7 @@ void ClockTest()
 		DrawClock(now_tm);
 
 		TEXT->SetCursorPosition(0, 8);
-		printf("Time_T: %llu\nAscTime: \"%s\"\n", now_t, asctime(now_tm));
+		printf("Time_T: %lu\nAscTime: \"%s\"\n", now_t, asctime(now_tm));
 		char strf[32];
 		strftime(strf, 32, MISC->GetLocaleStr(LC_DATES, 0), now_tm);
 		printf("StrFTime: \"%s ", strf);
