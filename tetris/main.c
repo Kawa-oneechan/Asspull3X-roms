@@ -138,7 +138,7 @@ int main(void)
 {
 	REG_SCREENFADE = 31;
 	bool kotris = (REG_TIMET % 24 >= 12);
-	/*
+
 	DRAW->DisplayPicture(&title);
 	if (kotris)
 		MISC->DmaCopy(TILESET, (int8_t*)&logobig_kotrisTiles, 1536, DMA_INT);
@@ -159,9 +159,8 @@ int main(void)
 		}
 	}
 	DRAW->Fade(false, true);
-	*/
 
-	IMF_Install(NULL);
+//	IMF_Install(NULL);
 	MISC->DmaClear(OBJECTS_A, 0, 0x1000, DMA_INT);
 
 	REG_SCREENMODE = SMODE_TILE;
@@ -196,9 +195,9 @@ int main(void)
 
 	DrawObject(logoA, logoB, 16, 384, 168, 176);
 
-	DRAW->Fade(true, false);
-
 	IMF_LoadSong(imfData1, true);
+
+	DRAW->Fade(true, true);
 
 	game *game = init_game();
 	do
