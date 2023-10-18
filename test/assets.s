@@ -5,8 +5,8 @@
 keyboardImage:
 	.incbin "kbdimg.bin"
 soundLoop:
-	incwav "heyevery.wav"
+	incwav "funkydrummer.wav"
 soundOne:
-	incwav "jingle.wav"
+	incwav "wow.wav"
 imfData:
 	.incbin "lot_bon.imf"
