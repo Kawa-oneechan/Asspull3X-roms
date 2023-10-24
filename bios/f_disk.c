@@ -67,7 +67,10 @@ void PrepareDiskToDevMapping()
 	for (int i = 0; i < n && i < FF_VOLUMES; i++)
 	{
 		char path[4] = { i + 'A', ':', 0 };
-		FatFs[i] = malloc(sizeof(FATFS));
+		if (i == 0)
+			FatFs[i] = &interface->io.firstDisk;
+		else
+			FatFs[i] = malloc(sizeof(FATFS));
 		f_mount(FatFs[i], path, 1);
 	}
 	interface->io.numDrives = n;

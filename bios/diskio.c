@@ -27,6 +27,7 @@ typedef struct
 	unsigned char attribs;
 	char numDrives;
 	char diskToDev[4];
+	char firstDisk[564]; //about the size of a FATFS
 } TIOState;
 typedef struct
 {

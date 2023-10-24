@@ -211,13 +211,6 @@ typedef enum
 	LC_CURR,
 } ELocale;
 
-typedef struct
-{
-	unsigned char attribs;
-	char numDrives;
-	char diskToDev[4];
-} TIOState;
-
 typedef struct {
 	int8_t	fs_type;		// File system type (0: N/A)
 	int8_t	drv;			// Physical drive number
@@ -239,6 +232,14 @@ typedef struct {
 	int32_t	winsect;		// Current sector appearing in the win[]
 	int8_t	win[512];		// Disk access window for directory and FAT
 } FATFS;
+
+typedef struct
+{
+	unsigned char attribs;
+	char numDrives;
+	char diskToDev[4];
+	FATFS firstDisk;
+} TIOState;
 
 typedef struct {
 	FATFS*	fs;				// Pointer to the owner file system object

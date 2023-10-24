@@ -18,7 +18,7 @@ void MiscInfo()
 	if (interface->extensions)
 		TEXT->Write("I'm not sure how you can have a non-zero Extensions field -- Kawa\n");
 	else
-		TEXT->Write("An Extensions field of zero would indicate there are BIOS extensions.\n");
+		TEXT->Write("An Extensions field of zero would indicate there are no BIOS extensions.\n");
 
 	TEXT->Write("\nLocale\n\x90\x90\x90\x90\x90\x90\n");
 	TEXT->Write("ID code: \"%s\"\n", MISC->GetLocaleStr(LC_CODE, 0));

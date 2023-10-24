@@ -8,7 +8,9 @@ typedef struct
 	unsigned char attribs;
 	char numDrives;
 	char diskToDev[4];
+	char firstDisk[564]; //about the size of a FATFS
 } TIOState;
+
 typedef struct
 {
 	char code[6];			//Locale name
@@ -28,6 +30,7 @@ typedef struct
 	char reserved[16];
 	char sctoasc[256];		//Scancode map
 } TLocale;
+
 typedef struct
 {
 	const long AssBang;

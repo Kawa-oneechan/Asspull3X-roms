@@ -167,6 +167,7 @@ interface:
 	.byte 0x07
 	.byte 0
 	.long 0
+	.skip 564 | one FATFS worth
 	.incbin "en_US.loc"
 
 	.text
