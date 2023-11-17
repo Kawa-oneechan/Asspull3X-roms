@@ -1,5 +1,24 @@
 #include "ass.h"
 
+/*
+TECHNICAL NOTE
+--------------
+IMF files normally run at one of three speeds:
+ 1. 280 Hz, in Duke Nukem 2.
+ 2. 560 Hz, in most other games that use the format.
+ 3. 700 Hz, in the 3D games.
+
+Because the A3X *cannot* as it is now run this thing at any of these speeds,
+we can either run it several times per VBlank (16 times to be precise) or
+re-time the song data to similar effect.
+
+I have chosen death. So to prepare a given IMF file for use on the A3X, use
+the IMFCRUSH utility by K1n9_Duk3 as follows:
+  imfcrush <infile> <outfile> /convert 560 30
+assuming it's one of the 2D games and any DN2 songs have already been adjusted
+for playback with modern tools.
+*/
+
 #define BYTESWAP(x) x = ((x & 0xFF00) >> 8) | ((x & 0xFF) << 8);
 
 static const uint16_t *imfdata;
@@ -8,7 +27,6 @@ static uint16_t _imfwait, _imfsize;
 static bool imfLoop = true;
 
 void(*nextVBlank)(void);
-uint16_t imfCycles = 2;
 
 typedef struct
 {
@@ -30,7 +48,6 @@ static void IMF_Service()
 	{
 		REG_OPLOUT = *_imfptr++;
 		_imfwait = *_imfptr++;
-		//_imfwait = (_imfwait + 127) / 128;
 		_imfwait /= 128;
 		_imfsize -= 4;
 	}
@@ -90,7 +107,6 @@ static void IMF_Play()
 		return;
 	}
 
-	//for (int i = 0; i < imfCycles; i++)
 	IMF_Service();
 
 	if (nextVBlank)
