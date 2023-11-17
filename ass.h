@@ -145,6 +145,8 @@ typedef unsigned long long uint64_t;
 #define BLIT_INT				(2 << 6)
 #define BLIT_SOURCESTRIDE(x)	((x) << 8)
 #define BLIT_TARGETSTRIDE(x)	((x) << 20)
+#define BLIT_8TO8				(0x00) //why would you use this?
+#define BLIT_4TO4				(0x40 | 0x80)
 
 #define TEXTFONT_THIN8			(TEXTFONT + 0x0000)
 #define TEXTFONT_BOLD8			(TEXTFONT + 0x0800)

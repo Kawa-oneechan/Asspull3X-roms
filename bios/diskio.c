@@ -3,6 +3,8 @@
 
 #include <stddef.h>
 
+#include "extrabits.h"
+
 //Keeping this separate from ass.h because you REALLY have no business here!
 #define DEVS ((uint8_t*)0x02000000)
 #define DEVSIZE 0x8000
@@ -22,33 +24,6 @@
 #define REG_DMALENGTH	*(volatile uint32_t*)(0x0D000108)
 #define REG_DMACONTROL	*(volatile uint8_t*)(0x0D00010A)
 #define REG_TIMET		*(volatile int64_t*)(0x0D00060)
-typedef struct
-{
-	unsigned char attribs;
-	char numDrives;
-	char diskToDev[4];
-	char firstDisk[564]; //about the size of a FATFS
-} TIOState;
-typedef struct
-{
-	const long assBang;
-	const int16_t biosVersion;
-	const int16_t extensions;
-	void(*exception)(void*);
-	void(*vBlank)(void*);
-	void(*hBlank)(void*);
-	void(*drawChar)(unsigned char, int, int, int);
-	const void* textLibrary;
-	const void* drawingLibrary;
-	const void* miscLibrary;
-	const void* diskLibrary;
-	char* drawCharFont;
-	uint16_t drawCharHeight;
-	uint8_t* linePrinter;
-	TIOState io;
-} IBios;
-
-extern IBios* interface;
 
 extern void* memcpy(void*, const void*, size_t);
 extern void* memset(void*, int, size_t);

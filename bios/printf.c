@@ -1,57 +1,7 @@
 #include <stdarg.h>
 #include <stdint.h>
 #include <stdbool.h>
-
-//jeez, all this just to grab the thousands separator, cos we can't just #include ../ass.h? WOW!
-typedef struct
-{
-	unsigned char attribs;
-	char numDrives;
-	char diskToDev[4];
-	char firstDisk[564]; //about the size of a FATFS
-} TIOState;
-
-typedef struct
-{
-	char code[6];			//Locale name
-	char wday_name[32];		//"Sun"..."Sat"
-	char mon_name[64];		//"Jan"..."Dec"
-	char wday_nameF[64];	//"Sunday"..."Saturday"
-	char mon_nameF[106];	//"January"..."December"
-	char shortDateFmt[16];	//Format for "1983-06-26"
-	char longDateFmt[16];	//Format for "Sunday, June 26, 1983"
-	char shortTimeFmt[16];	//Format for "17:42:07"
-	char longTimeFmt[16];	//Format for "17:42:07"
-	char thousands;			//What to put between clusters of three digits, ','
-	char decimals;			//What to put between an integer and decimals, '.'
-	char thousandsCt;		//How many digits per cluster, 3
-	char currency[4];		//Currency symbol, '$'
-	bool currencyAfter;		//Is it "10$" or "$10"?
-	char reserved[16];
-	char sctoasc[256];		//Scancode map
-} TLocale;
-
-typedef struct
-{
-	const long AssBang;
-	const int16_t biosVersion;
-	const int16_t extensions;
-	void(*Exception)(void*);
-	void(*VBlank)(void*);
-	void(*HBlank)(void*);
-	void(*DrawChar)(unsigned char, int, int, int);
-	const void* textLibrary;
-	const void* drawingLibrary;
-	const void* miscLibrary;
-	const void* diskLibrary;
-	const char* DrawCharFont;
-	uint16_t DrawCharHeight;
-	uint8_t* LinePrinter;
-	TIOState io;
-	TLocale locale;
-} IBios;
-
-extern IBios* interface;
+#include "extrabits.h" //for locale info
 
 /* vsprintf.c -- Lars Wirzenius & Linus Torvalds.
 
