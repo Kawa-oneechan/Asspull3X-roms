@@ -8,7 +8,7 @@ static uint16_t _imfwait, _imfsize;
 static bool imfLoop = true;
 
 void(*nextVBlank)(void);
-uint16_t imfCycles = 16;
+uint16_t imfCycles = 2;
 
 typedef struct
 {
@@ -30,7 +30,8 @@ static void IMF_Service()
 	{
 		REG_OPLOUT = *_imfptr++;
 		_imfwait = *_imfptr++;
-		_imfwait = (_imfwait + 127) / 128;
+		//_imfwait = (_imfwait + 127) / 128;
+		_imfwait /= 128;
 		_imfsize -= 4;
 	}
 	_imfwait--;
@@ -89,7 +90,8 @@ static void IMF_Play()
 		return;
 	}
 
-	for (int i = 0; i < imfCycles; i++) IMF_Service();
+	//for (int i = 0; i < imfCycles; i++)
+	IMF_Service();
 
 	if (nextVBlank)
 		nextVBlank();
