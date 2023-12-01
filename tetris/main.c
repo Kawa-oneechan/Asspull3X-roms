@@ -7,7 +7,7 @@ IBios* interface;
 
 extern const TPicFile title;
 extern const uint16_t tilesTiles[], farahTiles[];
-extern const uint16_t logoTiles[], logo_kotrisTiles[], logobigTiles[], logobig_kotrisTiles[];
+extern const uint16_t logoTiles[], logo_kotrisTiles[], logobigTiles[], logobig_kotrisTiles[], press_startTiles[];
 extern const uint16_t tilesPal[];
 extern const uint16_t backgroundMap[];
 
@@ -83,6 +83,24 @@ static const uint32_t bigLogoB[] = {
 	OBJECTB_BUILD(128, 32, 1, 1, 0, 0, 1, 0),
 	OBJECTB_BUILD(160, 32, 1, 1, 0, 0, 1, 0),
 	0,
+};
+static const uint16_t pressStartA[] = {
+	OBJECTA_BUILD(  0, 0, 1, 1),
+	OBJECTA_BUILD(  8, 0, 1, 1),
+};
+static const uint32_t pressStartB[] = {
+	OBJECTB_BUILD(  0,  0, 1, 0, 0, 0, 1, 0),
+	OBJECTB_BUILD( 32,  0, 1, 0, 0, 0, 1, 0),
+};
+static const uint16_t noControllerA[] = {
+	OBJECTA_BUILD( 24, 0, 1, 1),
+	OBJECTA_BUILD( 32, 0, 1, 1),
+	OBJECTA_BUILD( 40, 0, 1, 1),
+};
+static const uint32_t noControllerB[] = {
+	OBJECTB_BUILD(  0,  0, 1, 0, 0, 0, 1, 0),
+	OBJECTB_BUILD( 32,  0, 1, 0, 0, 0, 1, 0),
+	OBJECTB_BUILD( 64,  0, 1, 0, 0, 0, 1, 0),
 };
 
 const uint8_t * const sounds[] = { 0 };
@@ -174,6 +192,7 @@ int main(void)
 		MISC->DmaCopy(TILESET, (int8_t*)&logobig_kotrisTiles, 1536, DMA_INT);
 	else
 		MISC->DmaCopy(TILESET, (int8_t*)&logobigTiles, 1536, DMA_INT);
+	MISC->DmaCopy(TILESET + 6144, (int8_t*)&press_startTiles, 384, DMA_INT);
 	MISC->DmaCopy(PALETTE + 256, (int16_t*)&tilesPal, 32, DMA_SHORT);
 
 	IMFPlus_Install(NULL);
@@ -182,11 +201,16 @@ int main(void)
 	//WaitForKey();
 	{
 		int i = -64 - 9;
-		while (!INP_KEYIN)
+		while (!INP_JOYPAD1)
 		{
 			DrawObject(bigLogoA, bigLogoB, 16, 0, 69, i);
 			vbl();
 			if (i < 9) i += 2;
+
+			if (INP_JOYSTATES & 3)
+				DrawObject(pressStartA, pressStartB, 1, 192, 16, 211);
+			else
+				DrawObject(noControllerA, noControllerB, 1, 192, 16, 211);
 		}
 	}
 	DRAW->Fade(false, true);
