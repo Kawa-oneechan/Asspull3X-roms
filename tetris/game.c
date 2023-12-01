@@ -324,7 +324,7 @@ static void pause_game(game *game)
 }
 
 extern int is_empty_position(const grid *grid, int row, int col);
-//extern uint16_t imfCycles;
+extern uint16_t imfCycles;
 static void update_tower_height(game *game)
 {
 	towerHeight = 0;
@@ -340,13 +340,12 @@ static void update_tower_height(game *game)
 	if (towerHeight > game->grid->rows - 6)
 	{
 		LoadFarah(2);
-		//TODO: Find a different way to do "panic" music.
-		//imfCycles = 24;
+		imfCycles = 2;
 	}
 	else
 	{
 		LoadFarah(0);
-		//imfCycles = 16;
+		imfCycles = 1;
 	}
 }
 

@@ -134,6 +134,36 @@ void LoadFarah(int face)
 	MISC->DmaCopy(TILESET + 0xC00, (int8_t*)&farahTiles + (face * 2240), 560, DMA_INT);
 }
 
+//And now, an absolute freakin' hack to get double-speed music.
+//Problem: can't use AudioT sound effects any more.
+uint16_t imfCycles = 1;
+void(*imfPlusPlay)(void);
+void(*imfPlusNext)(void);
+void IMFPlus_Play()
+{
+	if (imfCycles == 1)
+		imfPlusPlay();
+	else
+		for (int i = 0; i < imfCycles; i++)
+			imfPlusPlay();
+
+	if (imfPlusNext)
+		imfPlusNext();
+}
+void IMFPlus_Install(void(*next)(void))
+{
+	if (next == NULL)
+		next = interface->vBlank;
+
+	//Install original handler to grab IMF_Play
+	IMF_Install(NULL);
+	imfPlusPlay = interface->vBlank;
+
+	//Replace with our own.
+	imfPlusNext = next;
+	interface->vBlank = IMFPlus_Play;
+}
+
 int main(void)
 {
 	REG_SCREENFADE = 31;
@@ -146,7 +176,8 @@ int main(void)
 		MISC->DmaCopy(TILESET, (int8_t*)&logobigTiles, 1536, DMA_INT);
 	MISC->DmaCopy(PALETTE + 256, (int16_t*)&tilesPal, 32, DMA_SHORT);
 
-	IMF_Install(NULL);
+	IMFPlus_Install(NULL);
+
 	DRAW->Fade(true, false);
 	//WaitForKey();
 	{
