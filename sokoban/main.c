@@ -2,6 +2,9 @@
 #include "../ass-keys.h"
 IBios* interface;
 
+#define TILESIZE_INTS(W, H) ((W)/8*(H)/8*32/4)
+#define TILESIZE_BYTES(W, H) ((W)/8*(H)/8*32)
+
 extern const TPicFile title;
 extern const uint16_t tilesTiles[], tilesPal[];
 extern const uint16_t fontTiles[];
@@ -122,14 +125,26 @@ void animateMove()
 
 void victoryDance()
 {
-	int x = (playerX * 16) + 8;
-	int y = (playerY * 16) - 24;
+	//int x = (playerX * 16) + 8;
+	//int y = (playerY * 16) - 24;
 	int tile = 256 + 96;
 
 	//shut up
 	IMF_LoadSong(0, false);
 
 	OBJECTS_A[0] = OBJECTA_BUILD(tile, 0, 1, 0);
+	MISC->WaitForVBlanks(32);
+
+	for (int i = 1; i < 6; i++)
+	{
+		tile += 8;
+		OBJECTS_A[0] = OBJECTA_BUILD(tile, 0, 1, 0);
+		MISC->WaitForVBlanks(8);
+	}
+
+	MISC->WaitForVBlanks(64);
+
+/*
 	for (int i = 0; i < 32; i++) vbl();
 
 	tile += 8;
@@ -151,7 +166,9 @@ void victoryDance()
 
 	tile += 8;
 	OBJECTS_A[0] = OBJECTA_BUILD(tile, 0, 1, 0);
+
 	for (int i = 0; i < 64; i++) vbl();
+*/
 
 	nextLevel();
 }
@@ -385,7 +402,7 @@ void RotateTheFloppy()
 	const char bops[] = { 1, 2, 1 , 0 };
 	if (timer == 0)
 	{
-		MISC->DmaCopy(TILESET, (int8_t*)&disketteTiles + (0x800 * frame), 0x400, DMA_INT);
+		MISC->DmaCopy(TILESET, (int8_t*)&disketteTiles + (0x800 * frame), 0x200, DMA_INT);
 
 		OBJECTS_B[0] = OBJECTB_BUILD(128, 49 + bops[bop], 1, 1, 0, 0, 1, 0);
 		OBJECTS_B[1] = OBJECTB_BUILD(128 + 32, 49 + bops[bop], 1, 1, 0, 0, 1, 0);
@@ -485,9 +502,9 @@ int main(void)
 	thisLevel = levelPack;
 
 	REG_SCREENMODE = SMODE_TILE;
-	MISC->DmaCopy(TILESET, (int8_t*)&tilesTiles, 0x200, DMA_INT);
-	MISC->DmaCopy(TILESET + 0x800, (int8_t*)&fontTiles, 0x280, DMA_INT);
-	MISC->DmaCopy(TILESET + 0x2000, (int8_t*)&playerTiles, 0x400, DMA_INT);
+	MISC->DmaCopy(TILESET, (int8_t*)&tilesTiles, TILESIZE_INTS(128, 32), DMA_INT);
+	MISC->DmaCopy(TILESET + 0x800, (int8_t*)&fontTiles, TILESIZE_INTS(128, 40), DMA_INT);
+	MISC->DmaCopy(TILESET + 0x2000, (int8_t*)&playerTiles, TILESIZE_INTS(96,96), DMA_INT);
 	MISC->DmaCopy(PALETTE, (int16_t*)&tilesPal, 16, DMA_SHORT);
 	MISC->DmaCopy(PALETTE + 16, (int16_t*)&backPals, 4, DMA_SHORT);
 	MISC->DmaCopy(PALETTE + 256, (int16_t*)&playerPal, 16, DMA_SHORT);
